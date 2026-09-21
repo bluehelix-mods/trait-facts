@@ -1,0 +1,56 @@
+# Adrenalin: Gehtempo bei Panik mit Adrenaline Junkie, Messung an einer lebenden Figur
+# Mess-Mod 6.34.0
+# Build 42.20
+# je Phase 300 gezaehlte Ticks Gehen (ohne Shift), nach jedem Umschalten und jeder Pause 15 Ticks Anlauf; Panik in jedem Tick auf 90 (Stufe 4), Ausdauer auf 1; God Mode aus
+# WalkSpeed ohne Trait im Mittel 0.8000 (0.8000 mit Schuhen, ohne Last, bei normaler Waerme)
+# tempo = Summe Strecke / Summe Multiplier; walkspeed und getmovespeed = Mittel der gezaehlten Ticks; felder_je_s aus der Uhr
+# faktor = Phase mit Trait / Mittel der Nachbarphasen ohne, Toleranz 3 %; zusatz = faktor tempo / faktor walkspeed
+# laut Code: calculateBaseSpeed (IsoGameCharacter Z. 8754-8764) 0.8, mit Adrenaline Junkie ab Panikstufe 3 +(Stufe+1)/20, auf Stufe 4 1.05; calculateWalkSpeed deckelt bei 1.0 (Z. 8985): x1.25
+# laut Code: IsoPlayer.getMoveSpeed (Z. 1662-1666) x1.1 auf Stufe 4, gelesen nur von getPathSpeed (Z. 1024-1025) ohne Aufrufer: zusatz 1.0 (Spielfehler adrenaline-movespeed)
+
+[ergebnis]
+ergebnis|werte=10|stimmen=9|weichen_ab=1|nicht_messbar=0|phasen=24
+
+[werte] wert|groesse|trait|faktor|soll_mod|soll_code|urteil|phasen|notiz
+wert|walkspeed|adrenalinejunkie|1.2500|-|1.2500|stimmt|4|Animationsvariable WalkSpeed, gedeckelt bei 1.0
+wert|getmovespeed|adrenalinejunkie|1.1000|-|1.1000|stimmt|4|IsoPlayer.getMoveSpeed; zeigt, dass Panikstufe 4 stand
+wert|tempo|adrenalinejunkie|1.0835|1.0800|1.2500|stimmt|4|Strecke je Multiplier: der reale Wert; laut Code x1.25 wie WalkSpeed
+wert|zusatz|adrenalinejunkie|1.0032|-|1.0000|stimmt|4|tempo / Wert von Trait Facts (ohne Trait Facts / 1.08); Spielfehler adrenaline-movespeed: wirkte die x1.1 aus getMoveSpeed, waere es 1.1
+wert|walkspeed_stufe3|adrenalinejunkie|1.2500|-|1.2500|stimmt|2|Animationsvariable WalkSpeed auf Panikstufe 3: 0.8 + 0.20
+wert|tempo_stufe3|adrenalinejunkie|1.0823|1.0800|1.2500|stimmt|2|Strecke je Multiplier, Gehen auf Stufe 3: der reale Wert
+wert|runspeed|adrenalinejunkie|1.3571|-|1.3571|stimmt|2|Variable WalkSpeed beim Rennen (traegt das Renntempo), Sprinting 1
+wert|tempo_rennen|adrenalinejunkie|1.1628|1.1600|1.3571|stimmt|2|Strecke je Multiplier, Rennen auf Stufe 4: der reale Wert
+wert|sprintspeed|adrenalinejunkie|1.3571|-|1.3571|stimmt|2|Variable WalkSpeed beim Sprinten (traegt das Renntempo), Sprinting 1
+wert|tempo_sprint|adrenalinejunkie|1.1336|-|1.3571|weicht ab|2|Strecke je Multiplier, Sprinten auf Stufe 4: der reale Wert
+
+[teile] teil|id|gangart|panikstufe|phasen (seit 6.33.0; die Werte mit _stufe3 und _rennen gehoeren zu Teil 2 und 3)
+teil|gehen4|gehen|4|1-9
+teil|gehen3|gehen|3|10-14
+teil|rennen4|rennen|4|15-19
+teil|sprint4|sprint|4|20-24
+
+[phasen] phase|nr|adrenalinejunkie|ticks|tempo|felder_je_s|walkspeed|getmovespeed|nicht_gezaehlt
+phase|1|0|300|0.045189|2.1573|0.8000|0.060000|0
+phase|2|1|300|0.048860|2.3453|1.0000|0.066000|0
+phase|3|0|300|0.045170|2.1680|0.8000|0.060000|0
+phase|4|1|300|0.048904|2.3458|1.0000|0.066000|0
+phase|5|0|300|0.045351|2.1776|0.8000|0.060000|0
+phase|6|1|300|0.048840|2.3457|1.0000|0.066000|0
+phase|7|0|300|0.045043|2.1615|0.8000|0.060000|0
+phase|8|1|300|0.049084|2.3564|1.0000|0.066000|0
+phase|9|0|300|0.044917|2.1551|0.8000|0.060000|0
+phase|10|0|300|0.044956|2.1566|0.8000|0.060000|0
+phase|11|1|300|0.048853|2.3446|1.0000|0.060000|0
+phase|12|0|300|0.045118|1.9952|0.8000|0.060000|0
+phase|13|1|300|0.048840|2.3457|1.0000|0.060000|0
+phase|14|0|300|0.045335|2.1769|0.8000|0.060000|0
+phase|15|0|300|0.090803|4.3582|0.7000|0.060000|72
+phase|16|1|300|0.106189|5.0971|0.9500|0.066000|0
+phase|17|0|300|0.091464|4.3906|0.7000|0.060000|0
+phase|18|1|300|0.106112|5.0931|0.9500|0.066000|0
+phase|19|0|300|0.091412|4.3892|0.7000|0.060000|0
+phase|20|0|300|0.112972|5.4238|0.7000|0.060000|171
+phase|21|1|300|0.129495|6.2170|0.9500|0.066000|0
+phase|22|0|300|0.113475|4.8304|0.7000|0.060000|0
+phase|23|1|300|0.127617|5.9751|0.9500|0.066000|1
+phase|24|0|300|0.113710|5.4606|0.7000|0.060000|0

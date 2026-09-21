@@ -1,0 +1,762 @@
+# Trait Facts, Messung an einer lebenden Figur
+# Mess-Mod 6.14.0
+# Build 42.20
+# Traits geprueft: 97, Wirkungen: 23, Groessen lesbar: 18 von 18
+
+[groessen] name|zustand|basiswert|herkunft
+grapple|lesbar|1.000000|IsoGameCharacter:7917
+chopTreeSpeed|lesbar|0.800000|IsoGameCharacter:12388
+hearDistanceMod|lesbar|1.000000|IsoGameCharacter:13934
+detectionRange|lesbar|3.499995|IsoGameCharacter:13952
+blurFactor|lesbar|0.000000|IsoGameCharacter:14118
+awkwardHands|lesbar|0.000000|IsoGameCharacter:14876
+maxWeight|lesbar|8.000000|in Vanilla-Lua benutzt
+meleeDamage|lesbar|1.000000|CharacterTraits:132
+enduranceLoss|lesbar|1.000000|CharacterTraits:146
+weatherPenalty|lesbar|1.500000|CharacterTraits:150
+climbFailChance|lesbar|4.000000|Kandidat
+pathSpeed|lesbar|0.054000|Kandidat
+moveSpeed|lesbar|0.060000|Kandidat
+combatSpeed|lesbar|1.016917|Kandidat
+runSpeedMod|lesbar|1.000000|Kandidat
+wornHearingMod|lesbar|1.000000|Kandidat
+wornHearingMult|lesbar|1.000000|Kandidat
+hyperthermiaMod|lesbar|1.000000|Kandidat
+# schwankt ohne Trait, deshalb verworfen: combatSpeed
+
+[wirkungen] trait|groesse|basis|mitTrait|prozent|faktor|differenz
+allthumbs|awkwardHands|0.000000|1.000000|0.0000|0.000000|1.000000
+asthmatic|enduranceLoss|1.000000|1.200000|20.0000|1.200000|0.200000
+athletic|grapple|1.000000|1.250000|25.0000|1.250000|0.250000
+axeman|chopTreeSpeed|0.800000|1.000000|25.0000|1.250000|0.200000
+brave|grapple|1.000000|1.100000|10.0000|1.100000|0.100000
+clumsy|climbFailChance|4.000000|3.000000|-25.0000|0.750000|-1.000000
+cowardly|grapple|1.000000|0.900000|-10.0000|0.900000|-0.100000
+deaf|detectionRange|3.499995|1.999995|-42.8572|0.571428|-1.500000
+emaciated|grapple|1.000000|0.600000|-40.0000|0.600000|-0.400000
+emaciated|meleeDamage|1.000000|0.400000|-60.0000|0.400000|-0.600000
+hardofhearing|detectionRange|3.499995|2.499995|-28.5715|0.714285|-1.000000
+hardofhearing|hearDistanceMod|1.000000|4.500000|350.0000|4.500000|3.500000
+keenhearing|detectionRange|3.499995|6.499995|85.7144|1.857144|3.000000
+obese|climbFailChance|4.000000|0.000000|-100.0000|0.000000|-4.000000
+obese|grapple|1.000000|1.050000|5.0000|1.050000|0.050000
+outdoorsman|weatherPenalty|1.500000|1.000000|-33.3333|0.666667|-0.500000
+overweight|climbFailChance|4.000000|2.000000|-50.0000|0.500000|-2.000000
+overweight|grapple|1.000000|1.100000|10.0000|1.100000|0.100000
+speeddemon|grapple|1.000000|1.150000|15.0000|1.150000|0.150000
+strong|grapple|1.000000|1.250000|25.0000|1.250000|0.250000
+underweight|meleeDamage|1.000000|0.800000|-20.0000|0.800000|-0.200000
+veryunderweight|grapple|1.000000|0.800000|-20.0000|0.800000|-0.200000
+veryunderweight|meleeDamage|1.000000|0.600000|-40.0000|0.600000|-0.400000
+
+[registry] trait|felder...
+adrenalinejunkie|label=Adrenaline Junkie|cost=4|mpBanned=false|excludes=agoraphobic,claustrophobic,cowardly,desensitized
+agoraphobic|label=Agoraphobic|cost=-4|mpBanned=false|excludes=adrenalinejunkie,brave,claustrophobic,desensitized
+allthumbs|label=All Thumbs|cost=-2|mpBanned=false|excludes=dextrous
+artisan|label=Artisan|cost=2|mpBanned=false|recipes=MakeDrinkingGlass,MakeGlassBottle,MakeGlassJar,MakeGlassPanel,MakeLanternGlass,MakeWineGlass
+asthmatic|label=Short of Breath|cost=-5|mpBanned=false
+athletic|label=Athletic|cost=10|mpBanned=false|excludes=fit,obese,out of shape,overweight,smoker,unfit,very underweight
+axeman|label=Ax-pert|cost=0|mpBanned=false
+baseballplayer|label=Baseball Player|cost=4|mpBanned=false|recipes=CarveBat
+blacksmith2|label=Blacksmith Knowledge|cost=0|mpBanned=false|excludes=blacksmith
+blacksmith|label=Blacksmith Knowledge|cost=6|mpBanned=false|recipes=Advanced_Forge,Blast_Furnace,Charcoal_Burner,Construct_Charcoal_Pit,Construct_Dome_Kiln,Construct_Makeshift_Electric_Blower_Forge,Forge,ForgeLongSpearHead,ForgeMaceHead,ForgeSpearHead,Forge_Baking_Pan,Forge_Baking_Tray,Forge_Ball_Peen_Hammer_Head,Forge_Bucket,Forge_Buckle,Forge_Carpentry_Chisel,Forge_Clawhammer_Head,Forge_Cooking_Pot,Forge_Corkscrew,Forge_Crowbar,Forge_Crude_Shortsword_Blade,Forge_Crude_Sword_Blade,Forge_Cup,Forge_Door_Knob,Forge_Draw_Plate,Forge_Drill,Forge_File,Forge_Fine_Butter_Knives,Forge_Fine_Forks,Forge_Fine_Spoons,Forge_Fishing_Hooks,Forge_Fleshing_Tool,Forge_Forceps,Forge_Forks,Forge_Frying_Pan,Forge_Garden_Hoe_Head,Forge_Gardening_Trowel,Forge_Goblets,Forge_Hand_Axe_Head,Forge_Hand_Scythe_Head,Forge_Heading_Tool,Forge_Hinge,Forge_Hunting_Knife_Blade,Forge_Kettle,Forge_Kitchen_Knife_Blade,Forge_Lantern,Forge_Large_Knife_Blade,Forge_Machete_Blade,Forge_Masons_Chisel,Forge_Masons_Trowel,Forge_Meat_Cleaver_Blade,Forge_Metalworking_Chisel,Forge_Metalworking_Pliers,Forge_Metalworking_Punch,Forge_Nails,Forge_Needle,Forge_Old_Axe_Head,Forge_Pick_Axe_Head,Forge_Primitive_Forge,Forge_Railroad_Spike_Knife,Forge_Roasting_Pan,Forge_Saucepan,Forge_Saw,Forge_Scissors,Forge_Scythe_Head,Forge_Sheep_Shears,Forge_ShortSword_Blade,Forge_Sledgehammer_Head,Forge_Small_Knife,Forge_Small_Steel_Sheet,Forge_Smithing_Hammer_Head,Forge_Spade_Head,Forge_Spoons,Forge_Steel_Sheet,Forge_Straight_Razor,Forge_Sword_Blade,Forge_Tongs,Forge_Tweezers,Forge_Wood_Axe_Head,Forge_Wrench,MakeCrudeWhetstone,MakeSpikedClub,Make_Metal_Drum,Primitive_Furnace,Smelting_Furnace|excludes=blacksmith2
+brave|label=Brave|cost=4|mpBanned=false|excludes=agoraphobic,claustrophobic,cowardly,desensitized
+brawler|label=Brawler|cost=6|mpBanned=false|recipes=BarbedWireWeapon,BoltBat,CanReinforceLongWeapon,CanReinforceShortWeapon,CanReinforceWeapon,SheetMetalWeapon
+burglar|label=Burglar|cost=0|mpBanned=false
+claustrophobic|label=Claustrophobic|cost=-4|mpBanned=false|excludes=adrenalinejunkie,agoraphobic,brave,desensitized
+clumsy|label=Clumsy|cost=-2|mpBanned=false|excludes=graceful
+conspicuous|label=Conspicuous|cost=-4|mpBanned=false|excludes=inconspicuous
+cook2|label=Keen Cook|cost=0|mpBanned=false|excludes=cook
+cook|label=Keen Cook|cost=3|mpBanned=false|recipes=MakeBaguetteDough,MakeBiscuits,MakeBreaddough,MakeCabbageRolls,MakeCakeBatter,MakeChocolateChipCookieDough,MakeCookieDough,MakeFriedOnionRings,MakeFriedShrimp,MakeGuacamole,MakeJar,MakeOatmealCookieDough,MakePieDough,MakePizza,MakeShortbreadCookieDough,MakeSugarCookieDough|excludes=cook2
+cowardly|label=Cowardly|cost=-2|mpBanned=false|excludes=adrenalinejunkie,brave,desensitized
+crafty|label=Crafty|cost=3|mpBanned=false|excludes=fastlearner,slowlearner
+deaf|label=Deaf|cost=-12|mpBanned=false|excludes=hardofhearing,keenhearing
+desensitized|label=Desensitized|cost=0|mpBanned=false|excludes=adrenalinejunkie,agoraphobic,brave,claustrophobic,cowardly,hemophobic
+dextrous|label=Dextrous|cost=2|mpBanned=false|excludes=allthumbs
+disorganized|label=Disorganized|cost=-6|mpBanned=false|excludes=organized
+eagleeyed|label=Eagle Eyed|cost=4|mpBanned=false|excludes=shortsighted
+emaciated|label=Emaciated|cost=-10|mpBanned=false|excludes=obese,overweight
+fasthealer|label=Fast Healer|cost=6|mpBanned=false|excludes=slowhealer
+fastlearner|label=Fast Learner|cost=6|mpBanned=false|excludes=crafty,slowlearner
+fastreader|label=Fast Reader|cost=2|mpBanned=false|excludes=illiterate,slowreader
+feeble|label=Weak|cost=-6|mpBanned=false|excludes=stout,strong,weak
+firstaid|label=First Aider|cost=2|mpBanned=false
+fishing|label=Angler|cost=4|mpBanned=false|recipes=FixFishingRod,MakeChum,MakeFishingRod
+fit|label=Fit|cost=6|mpBanned=false|excludes=athletic,obese,out of shape,overweight,unfit
+formerscout|label=Former Scout|cost=6|mpBanned=false|recipes=FixFishingRod,MakeChum,MakeFishingRod
+gardener|label=Gardener|cost=2|mpBanned=false|recipes=MakeAphidsCure,MakeFliesCureFromChewingTobacco,MakeFliesCureFromCigarettes,MakeFliesCureFromLooseTobacco,MakeJarofBellPeppers,MakeJarofBroccoli,MakeJarofCabbage,MakeJarofCarrots,MakeJarofEggplant,MakeJarofLeeks,MakeJarofPotatoes,MakeJarofRedRadishes,MakeJarofTomatoes,MakeMildewCure,MakeScarecrow,base:basil growing season,base:bell pepper growing season,base:black sage growing season,base:broadleaf plantain growing season,base:broccoli growing season,base:cabbage growing season,base:carrot growing season,base:cauliflower growing season,base:chamomile growing season,base:chives growing season,base:cilantro growing season,base:comfrey growing season,base:common mallow growing season,base:corn growing season,base:cucumber growing season,base:garlic growing season,base:green pea growing season,base:habanero growing season,base:hops growing season,base:jalapeno growing season,base:kale growing season,base:lavender growing season,base:leek growing season,base:lemongrass growing season,base:lettuce growing season,base:marigold growing season,base:mint growing season,base:onion growing season,base:oregano growing season,base:parsley growing season,base:poppy growing season,base:potato growing season,base:pumpkin growing season,base:radish growing season,base:rose growing season,base:rosemary growing season,base:sage growing season,base:soybean growing season,base:spinach growing season,base:strawberry growing season,base:sugar beet growing season,base:sunflower growing season,base:sweet potato growing season,base:thyme growing season,base:tomato growing season,base:turnip growing season,base:watermelon growing season,base:wild garlic growing season,base:zucchini growing season
+graceful|label=Graceful|cost=4|mpBanned=false|excludes=clumsy
+gymnast|label=Gymnast|cost=5|mpBanned=false
+handy|label=Handy|cost=8|mpBanned=false|recipes=BarbedWireWeapon,BoltBat,CanReinforceLongWeapon,CanReinforceShortWeapon,CanReinforceWeapon,MakeBrakeWeapon,MakeBucketMaul,MakeGardenForkHeadWeapon,MakeKettleMaul,MakeRailspikeCudgel,MakeRailspikeIronPipe,MakeRailspikeLongHandle,MakeRailspikeWeapon,MakeRakeHeadWeapon,MakeSawPlank,MakeSawbladeCudgel,MakeSawbladeLongHandle,MakeSawbladePlank,MakeSawbladeTableLeg,MakeSawbladeWeapon,MakeScrewdriver,MakeSpadeHeadCudgel,RailspikeBaseballBat,SheetMetalWeapon
+hardofhearing|label=Hard of Hearing|cost=-4|mpBanned=false|excludes=deaf,keenhearing
+heartyappetite|label=Hearty Appetite|cost=-4|mpBanned=false|excludes=lighteater,very underweight
+hemophobic|label=Fear of Blood|cost=-5|mpBanned=false|excludes=desensitized
+herbalistprof|label=Herbalist|cost=0|mpBanned=false|recipes=Herbalist,MakeComfreyPoultice,MakePlantainPoultice,MakeWildGarlicPoultice,base:black sage growing season,base:broadleaf plantain growing season,base:comfrey growing season,base:common mallow growing season,base:wild garlic growing season|excludes=herbalist
+herbalist|label=Herbalist|cost=4|mpBanned=false|recipes=Herbalist,MakeComfreyPoultice,MakePlantainPoultice,MakeWildGarlicPoultice,base:black sage growing season,base:broadleaf plantain growing season,base:comfrey growing season,base:common mallow growing season,base:wild garlic growing season|excludes=herbalist_prof
+highthirst|label=High Thirst|cost=-2|mpBanned=false|excludes=lowthirst
+hiker|label=Hiker|cost=5|mpBanned=false|recipes=MakeSnareTrap,MakeStickTrap,MakeWoodenBoxTrap
+hunter|label=Hunter|cost=8|mpBanned=false|recipes=MakeCageTrap,MakeSnareTrap,MakeStagHeadTrophy,MakeStickTrap,MakeTrapBox,MakeWoodenBoxTrap
+illiterate|label=Illiterate|cost=-10|mpBanned=false|excludes=fastreader,slowreader
+inconspicuous|label=Inconspicuous|cost=4|mpBanned=false|excludes=conspicuous
+insomniac|label=Restless Sleeper|cost=-6|mpBanned=false
+inventiveprof|label=Inventive|cost=0|mpBanned=false|excludes=inventive
+inventive|label=Inventive|cost=2|mpBanned=false|excludes=inventive_prof
+irongut|label=Iron Gut|cost=2|mpBanned=false|excludes=weakstomach
+jogger|label=Runner|cost=4|mpBanned=false
+keenhearing|label=Keen Hearing|cost=6|mpBanned=false|excludes=deaf,hardofhearing
+lighteater|label=Light Eater|cost=2|mpBanned=false|excludes=heartyappetite,obese
+lowthirst|label=Low Thirst|cost=2|mpBanned=false|excludes=highthirst
+marksman|label=Marksman|cost=0|mpBanned=false
+mason|label=Mason|cost=2|mpBanned=false|recipes=Advanced_Forge,Blast_Furnace,Construct_Dome_Kiln,Forge,Forge_Primitive_Forge,Primitive_Furnace,Smelting_Furnace
+mechanics2|label=Vehicle Knowledge|cost=0|mpBanned=false|excludes=mechanics
+mechanics|label=Vehicle Knowledge|cost=3|mpBanned=false|recipes=Basic Mechanics,Intermediate Mechanics|excludes=mechanics2
+needslesssleep|label=Wakeful|cost=3|mpBanned=false|excludes=needsmoresleep
+needsmoresleep|label=Sleepyhead|cost=-4|mpBanned=false|excludes=needslesssleep
+nightowl|label=Night Owl|cost=0|mpBanned=false
+nightvision|label=Cat's Eyes|cost=3|mpBanned=false
+nutritionist2|label=Nutritionist|cost=0|mpBanned=false|excludes=nutritionist
+nutritionist|label=Nutritionist|cost=2|mpBanned=false|excludes=nutritionist2
+obese|label=Very High Weight|cost=0|mpBanned=false|excludes=athletic,emaciated,fit,lighteater,overweight,underweight,very underweight
+organized|label=Organized|cost=4|mpBanned=false|excludes=disorganized
+outdoorsman|label=Outdoorsy|cost=2|mpBanned=false
+outofshape|label=Out of Shape|cost=-6|mpBanned=false|excludes=athletic,fit,unfit
+overweight|label=High Weight|cost=0|mpBanned=false|excludes=athletic,emaciated,fit,underweight,very underweight
+pacifist|label=Reluctant Fighter|cost=-5|mpBanned=false
+pronetoillness|label=Prone to Illness|cost=-4|mpBanned=false|excludes=resilient
+resilient|label=Resilient|cost=4|mpBanned=false|excludes=pronetoillness
+shortsighted|label=Short Sighted|cost=-2|mpBanned=false|excludes=eagleeyed
+slowhealer|label=Slow Healer|cost=-3|mpBanned=false|excludes=fasthealer
+slowlearner|label=Slow Learner|cost=-6|mpBanned=false|excludes=crafty,fastlearner
+slowreader|label=Slow Reader|cost=-2|mpBanned=false|excludes=fastreader,illiterate
+smoker|label=Smoker|cost=-3|mpBanned=false|excludes=athletic
+speeddemon|label=Speed Demon|cost=1|mpBanned=false|excludes=sundaydriver
+stout|label=Stout|cost=6|mpBanned=false|excludes=feeble,strong,weak
+strong|label=Strong|cost=10|mpBanned=false|excludes=feeble,stout,weak
+sundaydriver|label=Sunday Driver|cost=-1|mpBanned=false|excludes=speeddemon
+tailor|label=Sewer|cost=4|mpBanned=false|recipes=AssembleAdvancedFramepack,AssembleAdvancedLargeFramepack,AssembleLargeFramepack,AssembleSmallFramepack,KnitBalaclavaFace,KnitBalaclavaFull,KnitBeany,KnitDoily,KnitLegwarmers,KnitScarf,KnitSocks,KnitSweaterVest,KnitWoolyHat,MakeGarbageBagDress,MakeGarbageBagTankTop,MakeTarpChestRig,MakeTarpDress,MakeTarpTankTop,MakeWesternBoots,SewBandolier,SewBelt,SewClothSatchel,SewCrudeLeatherBackpack,SewDressKnees,SewDressLong,SewElbowPads,SewFurredHideCoat,SewFurredHideJacket,SewHideBoots,SewHideCoat,SewHideFannyBag,SewHideHat,SewHideHoodie,SewHideJacket,SewHidePants,SewHideRobe,SewHideSleepingBag,SewHideWallet,SewHolster,SewHolsterDouble,SewKneePads,SewLeatherCodpiece,SewLeatherGaiter,SewLeatherGloves,SewLeatherGorget,SewLeatherPants,SewLeatherToolRoll,SewLeatherVambrace,SewLeatherWaterBag,SewLongjohns,SewLongjohnsBottom,SewSandals,SewShellsBandolier,SewShirt,SewShirtSleeveless,SewSkirtKnees,SewSkirtLong,SewTrousers,WeaveTwineShoes
+targetshooter|label=Target Shooter|cost=5|mpBanned=false
+thickskinned|label=Thick-skinned|cost=8|mpBanned=false|excludes=thinskinned
+thinskinned|label=Thin-skinned|cost=-8|mpBanned=false|excludes=thickskinned
+tinkerer|label=Tinkerer|cost=4|mpBanned=false
+underweight|label=Low Weight|cost=0|mpBanned=false|excludes=obese,overweight,very underweight
+unfit|label=Unfit|cost=-10|mpBanned=false|excludes=athletic,fit,out of shape
+veryunderweight|label=Very Low Weight|cost=0|mpBanned=false|excludes=athletic,heartyappetite,obese,overweight,underweight
+weakstomach|label=Weak Stomach|cost=-2|mpBanned=false|excludes=irongut
+weak|label=Puny|cost=-10|mpBanned=false|excludes=feeble,stout,strong
+weightgain|label=Slow Metabolism|cost=-2|mpBanned=false|grants=overweight|excludes=weightloss
+weightloss|label=Fast Metabolism|cost=-2|mpBanned=false|grants=underweight|excludes=weightgain
+whittler|label=Whittler|cost=2|mpBanned=false|recipes=CarveBat,CarveBucket,CarveFleshingTool,CarveGoblets,CarveKnittingNeedles,CarveShortBat,CarveWhistle,CarveWoodenFork,CarveWoodenSpade,MakeBoneAwl,MakeBoneFishingHook,MakeBoneFork,MakeBoneHatchetHead,MakeBoneSewingNeedle,MakeLargeBoneBead,MakeLargeBoneBeads,SharpenBone,SharpenJawbone,SharpenLongBone
+wildernessknowledge|label=Bushcrafter|cost=8|mpBanned=false|recipes=BindSpear,CarveBucket,CarveFleshingTool,FireHardenSpear,Herbalist,MakeBoneAwl,MakeBoneClub,MakeBoneFishingHook,MakeBoneHatchetHead,MakeBoneSewingNeedle,MakeComfreyPoultice,MakeCrudeWhetstone,MakeFishingRod,MakeJawboneAxe,MakeLargeStoneAxeHead,MakeLongStoneBlade,MakePlantainPoultice,MakeSnareTrap,MakeStoneAwl,MakeStoneBlade,MakeStoneBladeSaw,MakeStoneBladeScythe,MakeStoneChisel,MakeStoneDrill,MakeStoneMaulHead,MakeWildGarlicPoultice,RemakeLongStoneBlade,SharpenLongBone,WireSpear
+
+[foraging] trait|felder...
+# forageSkills nicht geladen
+
+[xp] art|skill|felder...
+boost|Combat - Melee|boost=0|buchfaktor=0
+boost|Axe|boost=0|buchfaktor=0
+boost|Long Blunt|boost=0|buchfaktor=0
+boost|Short Blunt|boost=0|buchfaktor=0
+boost|Long Blade|boost=0|buchfaktor=0
+boost|Short Blade|boost=0|buchfaktor=0
+boost|Spear|boost=0|buchfaktor=0
+boost|Maintenance|boost=0|buchfaktor=0
+boost|Combat - Firearms|boost=0|buchfaktor=0
+boost|Aiming|boost=0|buchfaktor=0
+boost|Reloading|boost=0|buchfaktor=0
+boost|Crafting|boost=0|buchfaktor=0
+boost|Carpentry|boost=0|buchfaktor=0
+boost|Carving|boost=0|buchfaktor=0
+boost|Cooking|boost=0|buchfaktor=0
+boost|Electrical|boost=0|buchfaktor=0
+boost|First Aid|boost=0|buchfaktor=0
+boost|Glassmaking|boost=0|buchfaktor=0
+boost|Knapping|boost=0|buchfaktor=0
+boost|Masonry|boost=0|buchfaktor=0
+boost|Blacksmithing|boost=0|buchfaktor=0
+boost|Mechanics|boost=0|buchfaktor=0
+boost|Pottery|boost=0|buchfaktor=0
+boost|Tailoring|boost=0|buchfaktor=0
+boost|Welding|boost=0|buchfaktor=0
+boost|Survival|boost=0|buchfaktor=0
+boost|Fishing|boost=0|buchfaktor=0
+boost|Foraging|boost=0|buchfaktor=0
+boost|Tracking|boost=0|buchfaktor=0
+boost|Trapping|boost=0|buchfaktor=0
+boost|Physical|boost=0|buchfaktor=0
+boost|Fitness|boost=3|buchfaktor=0
+boost|Strength|boost=3|buchfaktor=0
+boost|Agility|boost=0|buchfaktor=0
+boost|Lightfooted|boost=0|buchfaktor=0
+boost|Nimble|boost=0|buchfaktor=0
+boost|Running|boost=0|buchfaktor=0
+boost|Sneaking|boost=0|buchfaktor=0
+boost|Farming|boost=0|buchfaktor=0
+boost|Agriculture|boost=0|buchfaktor=0
+boost|Animal Care|boost=0|buchfaktor=0
+boost|Butchering|boost=0|buchfaktor=0
+leiter|Woodwork|boost=0|20 gegeben|erhalten=5.0000 (x0.250)
+leiter|Woodwork|boost=1|20 gegeben|erhalten=20.0000 (x1.000)
+leiter|Woodwork|boost=2|20 gegeben|erhalten=26.6000 (x1.330)
+leiter|Woodwork|boost=3|20 gegeben|erhalten=33.2000 (x1.660)
+addxp|Woodwork|20 gegeben|ohne=5.0000|fastlearner=6.5000 (x1.300)|slowlearner=3.5000 (x0.700)
+addxp|Strength|20 gegeben|ohne=20.0000|fastlearner=20.0000 (x1.000)|slowlearner=20.0000 (x1.000)
+addxp|Sprinting|20 gegeben|ohne=20.0000|fastlearner=26.0000 (x1.300)|slowlearner=20.0000 (x1.000)
+
+[behaelter] fall|felder...
+# Tasche: Base.Bag_Schoolbag
+basis|capacity=15|effective=15
+organized|effective=19|faktor=1.2667|differenz=4
+disorganized|effective=10|faktor=0.6667|differenz=-5
+
+[ohne messbare wirkung] 79 Traits
+adrenalinejunkie
+agoraphobic
+artisan
+baseballplayer
+blacksmith
+blacksmith2
+brawler
+burglar
+claustrophobic
+conspicuous
+cook
+cook2
+crafty
+desensitized
+dextrous
+disorganized
+eagleeyed
+fasthealer
+fastlearner
+fastreader
+feeble
+firstaid
+fishing
+fit
+formerscout
+gardener
+graceful
+gymnast
+handy
+heartyappetite
+hemophobic
+herbalist
+herbalistprof
+highthirst
+hiker
+hunter
+illiterate
+inconspicuous
+insomniac
+inventive
+inventiveprof
+irongut
+jogger
+lighteater
+lowthirst
+marksman
+mason
+mechanics
+mechanics2
+needslesssleep
+needsmoresleep
+nightowl
+nightvision
+nutritionist
+nutritionist2
+organized
+outofshape
+pacifist
+pronetoillness
+resilient
+shortsighted
+slowhealer
+slowlearner
+slowreader
+smoker
+stout
+sundaydriver
+tailor
+targetshooter
+thickskinned
+thinskinned
+tinkerer
+unfit
+weak
+weakstomach
+weightgain
+weightloss
+whittler
+wildernessknowledge
+
+[beschleunigung] phase|nr|trait|richtung|laeufe|ticks
+# abgeschlossen
+# streuung: wie weit die Anlaeufe einer Phase auseinanderliegen; ueber 10 % steht UNRUHIG daneben und der Wert taugt wenig
+# info: alles, was Fahrzeug und Fahrzeugskript ueber sich sagen, einmal je Testlauf abgefragt
+# probe: jede Groesse, die sich beim Fahren aendert, als Median je Tempofenster; was fehlt, steht als nicht lesbar im info-Block
+# zustand: die Auspraegungen, die im Anlauf vorkamen (Gang, Pedale)
+# hoechst: das hoechste Tempo dieses Anlaufs; beide Richtungen fahren bis das Tempo steht, damit Beschleunigung und Hoechstgeschwindigkeit aus einer Fahrt kommen
+# tempofaktor: Hoechstgeschwindigkeit mit Trait geteilt durch ohne Trait, je Richtung
+# vorhersage: der Kraftfaktor, den control_ForwardNew fuer die Mitte dieses Fensters ergibt; STEIL heisst, er aendert sich ueber das Fenster um mehr als ein Viertel
+# BEGRENZER: in diesem Fenster stand die Drehzahl ueber 6000, dort senkt die Engine die Kraft trait-unabhaengig auf null bei 7000 - der Faktor misst dann den Begrenzer
+# GANGKANTE: im Fenster lag ein Gangwechsel, der Median mischt zwei Gaenge
+# wertfaktor: dieselbe Groesse mit Trait geteilt durch ohne Trait, im selben Tempofenster - getForce ist die Zahl, die in die Mod gehoert
+# rueckwaerts ist die Kraft null ab tempo * 1.5 > maxSpeedReverse (40); wo sie davor abfaellt, zeigen die Fenster - die fruehere Lesart 'null bei 10 km/h' widerspricht dem Spiel
+# Zeit in Ticks UND Millisekunden, Median je Phase und Richtung; vorwaerts von 10 auf 50 km/h, rueckwaerts von 2 auf 6; abgebrochene Anlaeufe zaehlen nicht. Ticks sind Bilder, die Millisekunden sind die Wanduhr - weichen die Faktoren voneinander ab, hat die Bildrate geschwankt und die Ticks luegen
+info|grenzen|maxSpeed=60.0|SundayDriver senkt ab 36.0, Kraft null bei 65.0|ohne Trait senkt ab 60.0, null bei 80.0|SpeedDemon senkt ab 69.0, null bei 89.0|Schranke 122.4 (34 m/s)
+info|zeitfenster|UNSAUBER fuer sundaydriver: seine Schwelle 36.0 liegt zwischen 10 und 50 km/h; nimm die Kraft je Fenster, nicht die Zeit
+# Fahrzeug: PickUpVan
+info|fahrzeug|getScriptName=Base.PickUpVan|getVehicleType=|getMaxSpeed=60|getEnginePower=4000|getEngineQuality=100|getEngineLoudness=48|getEngineCondition=100|getMass=1372|getInitialMass=1104|getFudgedMass=1372|getBaseQuality=0|getOffroadEfficiency=2.200|getRemainingFuelPercentage=100|getRust=0|getMaxPassengers=2|getMaxWheelSteering=0|getMinWheelSkid=1
+info|skript|getName=PickUpVan|getFullType=Base.PickUpVan|getFileName=media/scripts/generated/vehicles/vehicle_pickupvan.txt|getEngineForce=4000|getEngineIdleSpeed=750|getEngineQuality=80|getEngineLoudness=120|getEngineRPMType=jeep|getMass=1104|getGearRatioCount=4|getWheelCount=4|getWheelFriction=1.400|getRollInfluence=0.600|getSteeringIncrement=0.040|getSuspensionStiffness=20|getSuspensionDamping=3.880|getOffroadEfficiency=1.100|getPlayerDamageProtection=1.300|getSeats=2|getStorageCapacity=100
+phase|1|none|vor|laeufe=1|ticks=271.0|ms=4515|einzeln=271|streuung=0.0%|hoechst=79.890|trait=-
+phase|1|none|rueck|laeufe=1|ticks=14.0|ms=234|einzeln=14|streuung=0.0%|hoechst=27.110|trait=-
+phase|2|sundaydriver|vor|laeufe=1|ticks=375.0|ms=6252|einzeln=375|streuung=0.0%|hoechst=64.803|trait=gesetzt
+phase|2|sundaydriver|rueck|laeufe=1|ticks=23.0|ms=388|einzeln=23|streuung=0.0%|hoechst=9.999|trait=gesetzt
+phase|3|none|vor|laeufe=1|ticks=270.0|ms=4500|einzeln=270|streuung=0.0%|hoechst=79.925|trait=-
+phase|3|none|rueck|laeufe=1|ticks=14.0|ms=233|einzeln=14|streuung=0.0%|hoechst=27.125|trait=-
+phase|4|speeddemon|vor|laeufe=1|ticks=272.0|ms=4532|einzeln=272|streuung=0.0%|hoechst=88.893|trait=gesetzt
+phase|4|speeddemon|rueck|laeufe=1|ticks=13.0|ms=216|einzeln=13|streuung=0.0%|hoechst=27.206|trait=gesetzt
+probe|1|none|vor|ab10|getForce=1955.592|getEngineSpeed=1434.624|getThrottle=1.000|getBrakingForce=91.270|getClientForce=0.000|getCurrentSpeedKmHour=12.583|getCurrentAbsoluteSpeedKmHour=12.583|getSpeed2D=3.524|getTransmissionNumber=1.000|getCurrentSteering=0.000|getRegulatorSpeed=0.000|getEngineCondition=100.000
+probe|1|none|vor|ab15|getForce=1956.665|getEngineSpeed=1719.624|getThrottle=1.000|getBrakingForce=91.270|getClientForce=0.000|getCurrentSpeedKmHour=17.460|getCurrentAbsoluteSpeedKmHour=17.460|getSpeed2D=4.879|getTransmissionNumber=1.000|getCurrentSteering=0.000|getRegulatorSpeed=0.000|getEngineCondition=100.000
+probe|1|none|vor|ab20|getForce=1955.022|getEngineSpeed=2014.625|getThrottle=1.000|getBrakingForce=91.270|getClientForce=0.000|getCurrentSpeedKmHour=22.491|getCurrentAbsoluteSpeedKmHour=22.491|getSpeed2D=6.276|getTransmissionNumber=1.000|getCurrentSteering=0.000|getRegulatorSpeed=0.000|getEngineCondition=100.000
+probe|1|none|vor|ab25|getForce=1950.192|getEngineSpeed=2309.624|getThrottle=1.000|getBrakingForce=91.270|getClientForce=0.000|getCurrentSpeedKmHour=27.513|getCurrentAbsoluteSpeedKmHour=27.513|getSpeed2D=7.671|getTransmissionNumber=1.000|getCurrentSteering=0.000|getRegulatorSpeed=0.000|getEngineCondition=100.000
+probe|1|none|vor|ab30|getForce=1943.773|getEngineSpeed=2599.624|getThrottle=1.000|getBrakingForce=91.270|getClientForce=0.000|getCurrentSpeedKmHour=32.470|getCurrentAbsoluteSpeedKmHour=32.470|getSpeed2D=9.048|getTransmissionNumber=1.000|getCurrentSteering=0.000|getRegulatorSpeed=0.000|getEngineCondition=100.000
+probe|1|none|vor|ab35|getForce=1933.409|getEngineSpeed=2859.624|getThrottle=1.000|getBrakingForce=91.270|getClientForce=0.000|getCurrentSpeedKmHour=37.558|getCurrentAbsoluteSpeedKmHour=37.558|getSpeed2D=10.461|getTransmissionNumber=1.000|getCurrentSteering=0.000|getRegulatorSpeed=0.000|getEngineCondition=100.000
+probe|1|none|vor|ab40|getForce=1228.112|getEngineSpeed=2696.000|getThrottle=1.000|getBrakingForce=91.270|getClientForce=0.000|getCurrentSpeedKmHour=42.526|getCurrentAbsoluteSpeedKmHour=42.526|getSpeed2D=11.831|getTransmissionNumber=3.000|getCurrentSteering=0.000|getRegulatorSpeed=0.000|getEngineCondition=100.000
+probe|1|none|vor|ab45|getForce=1222.085|getEngineSpeed=3028.450|getThrottle=1.000|getBrakingForce=91.270|getClientForce=0.000|getCurrentSpeedKmHour=47.606|getCurrentAbsoluteSpeedKmHour=47.606|getSpeed2D=13.242|getTransmissionNumber=3.000|getCurrentSteering=0.000|getRegulatorSpeed=0.000|getEngineCondition=100.000
+probe|1|none|vor|ab50|getForce=1214.479|getEngineSpeed=3350.500|getThrottle=1.000|getBrakingForce=91.270|getClientForce=0.000|getCurrentSpeedKmHour=52.498|getCurrentAbsoluteSpeedKmHour=52.498|getSpeed2D=14.601|getTransmissionNumber=3.000|getCurrentSteering=0.000|getRegulatorSpeed=0.000|getEngineCondition=100.000
+probe|1|none|vor|ab55|getForce=1204.760|getEngineSpeed=3679.500|getThrottle=1.000|getBrakingForce=91.270|getClientForce=0.000|getCurrentSpeedKmHour=57.483|getCurrentAbsoluteSpeedKmHour=57.483|getSpeed2D=15.985|getTransmissionNumber=3.000|getCurrentSteering=0.000|getRegulatorSpeed=0.000|getEngineCondition=100.000
+probe|1|none|vor|ab60|getForce=932.610|getEngineSpeed=2977.002|getThrottle=1.000|getBrakingForce=91.270|getClientForce=0.000|getCurrentSpeedKmHour=62.778|getCurrentAbsoluteSpeedKmHour=62.778|getSpeed2D=17.452|getTransmissionNumber=4.000|getCurrentSteering=0.000|getRegulatorSpeed=0.000|getEngineCondition=100.000
+probe|1|none|vor|ab65|getForce=663.319|getEngineSpeed=3268.000|getThrottle=1.000|getBrakingForce=91.270|getClientForce=0.000|getCurrentSpeedKmHour=67.736|getCurrentAbsoluteSpeedKmHour=67.736|getSpeed2D=18.825|getTransmissionNumber=4.000|getCurrentSteering=0.000|getRegulatorSpeed=0.000|getEngineCondition=100.000
+probe|1|none|vor|ab70|getForce=389.007|getEngineSpeed=3955.000|getThrottle=1.000|getBrakingForce=91.270|getClientForce=0.000|getCurrentSpeedKmHour=72.912|getCurrentAbsoluteSpeedKmHour=72.912|getSpeed2D=20.259|getTransmissionNumber=4.000|getCurrentSteering=0.000|getRegulatorSpeed=0.000|getEngineCondition=100.000
+probe|1|none|vor|ab75|getForce=39.631|getEngineSpeed=4500.000|getThrottle=1.000|getBrakingForce=91.270|getClientForce=0.000|getCurrentSpeedKmHour=79.271|getCurrentAbsoluteSpeedKmHour=79.271|getSpeed2D=22.020|getTransmissionNumber=4.000|getCurrentSteering=0.000|getRegulatorSpeed=0.000|getEngineCondition=100.000
+probe|1|none|rueck|ab2|getForce=-3179.541|getEngineSpeed=1077.247|getThrottle=0.360|getBrakingForce=91.270|getClientForce=0.000|getCurrentSpeedKmHour=-3.228|getCurrentAbsoluteSpeedKmHour=3.228|getSpeed2D=0.943|getTransmissionNumber=-1.000|getCurrentSteering=0.000|getRegulatorSpeed=0.000|getEngineCondition=100.000
+probe|1|none|rueck|ab4|getForce=-3200.526|getEngineSpeed=1203.153|getThrottle=0.533|getBrakingForce=91.270|getClientForce=0.000|getCurrentSpeedKmHour=-4.983|getCurrentAbsoluteSpeedKmHour=4.983|getSpeed2D=1.431|getTransmissionNumber=-1.000|getCurrentSteering=0.000|getRegulatorSpeed=0.000|getEngineCondition=100.000
+probe|1|none|rueck|ab6|getForce=-3220.238|getEngineSpeed=1321.425|getThrottle=0.720|getBrakingForce=91.270|getClientForce=0.000|getCurrentSpeedKmHour=-7.003|getCurrentAbsoluteSpeedKmHour=7.003|getSpeed2D=1.992|getTransmissionNumber=-1.000|getCurrentSteering=0.000|getRegulatorSpeed=0.000|getEngineCondition=100.000
+probe|1|none|rueck|ab8|getForce=-3237.350|getEngineSpeed=1424.099|getThrottle=0.907|getBrakingForce=91.270|getClientForce=0.000|getCurrentSpeedKmHour=-9.034|getCurrentAbsoluteSpeedKmHour=9.034|getSpeed2D=2.557|getTransmissionNumber=-1.000|getCurrentSteering=0.000|getRegulatorSpeed=0.000|getEngineCondition=100.000
+probe|1|none|rueck|ab10|getForce=-3252.206|getEngineSpeed=1513.233|getThrottle=1.000|getBrakingForce=91.270|getClientForce=0.000|getCurrentSpeedKmHour=-10.906|getCurrentAbsoluteSpeedKmHour=10.906|getSpeed2D=3.077|getTransmissionNumber=-1.000|getCurrentSteering=0.000|getRegulatorSpeed=0.000|getEngineCondition=100.000
+probe|1|none|rueck|ab12|getForce=-3267.632|getEngineSpeed=1605.793|getThrottle=1.000|getBrakingForce=91.270|getClientForce=0.000|getCurrentSpeedKmHour=-13.385|getCurrentAbsoluteSpeedKmHour=13.385|getSpeed2D=3.766|getTransmissionNumber=-1.000|getCurrentSteering=0.000|getRegulatorSpeed=0.000|getEngineCondition=100.000
+probe|1|none|rueck|ab15|getForce=-3287.924|getEngineSpeed=1727.544|getThrottle=1.000|getBrakingForce=91.270|getClientForce=0.000|getCurrentSpeedKmHour=-17.426|getCurrentAbsoluteSpeedKmHour=17.426|getSpeed2D=4.889|getTransmissionNumber=-1.000|getCurrentSteering=0.000|getRegulatorSpeed=0.000|getEngineCondition=100.000
+probe|1|none|rueck|ab20|getForce=-3306.413|getEngineSpeed=1838.478|getThrottle=1.000|getBrakingForce=91.270|getClientForce=0.000|getCurrentSpeedKmHour=-22.443|getCurrentAbsoluteSpeedKmHour=22.443|getSpeed2D=6.282|getTransmissionNumber=-1.000|getCurrentSteering=0.000|getRegulatorSpeed=0.000|getEngineCondition=100.000
+probe|1|none|rueck|ab25|getForce=0.000|getEngineSpeed=2087.900|getThrottle=1.000|getBrakingForce=91.270|getClientForce=0.000|getCurrentSpeedKmHour=-26.825|getCurrentAbsoluteSpeedKmHour=26.825|getSpeed2D=7.448|getTransmissionNumber=-1.000|getCurrentSteering=0.000|getRegulatorSpeed=0.000|getEngineCondition=100.000
+probe|2|sundaydriver|vor|ab10|getForce=1504.615|getEngineSpeed=1703.895|getThrottle=1.000|getBrakingForce=91.270|getClientForce=0.000|getCurrentSpeedKmHour=12.577|getCurrentAbsoluteSpeedKmHour=12.577|getSpeed2D=3.516|getTransmissionNumber=1.000|getCurrentSteering=0.000|getRegulatorSpeed=0.000|getEngineCondition=100.000
+probe|2|sundaydriver|vor|ab15|getForce=1516.166|getEngineSpeed=2078.894|getThrottle=1.000|getBrakingForce=91.270|getClientForce=0.000|getCurrentSpeedKmHour=17.531|getCurrentAbsoluteSpeedKmHour=17.531|getSpeed2D=4.892|getTransmissionNumber=1.000|getCurrentSteering=0.000|getRegulatorSpeed=0.000|getEngineCondition=100.000
+probe|2|sundaydriver|vor|ab20|getForce=1524.777|getEngineSpeed=2453.894|getThrottle=1.000|getBrakingForce=91.270|getClientForce=0.000|getCurrentSpeedKmHour=22.502|getCurrentAbsoluteSpeedKmHour=22.502|getSpeed2D=6.273|getTransmissionNumber=1.000|getCurrentSteering=0.000|getRegulatorSpeed=0.000|getEngineCondition=100.000
+probe|2|sundaydriver|vor|ab25|getForce=1530.364|getEngineSpeed=2828.895|getThrottle=1.000|getBrakingForce=91.270|getClientForce=0.000|getCurrentSpeedKmHour=27.500|getCurrentAbsoluteSpeedKmHour=27.500|getSpeed2D=7.661|getTransmissionNumber=1.000|getCurrentSteering=0.000|getRegulatorSpeed=0.000|getEngineCondition=100.000
+probe|2|sundaydriver|vor|ab30|getForce=980.336|getEngineSpeed=2706.500|getThrottle=1.000|getBrakingForce=91.270|getClientForce=0.000|getCurrentSpeedKmHour=32.512|getCurrentAbsoluteSpeedKmHour=32.512|getSpeed2D=9.045|getTransmissionNumber=3.000|getCurrentSteering=0.000|getRegulatorSpeed=0.000|getEngineCondition=100.000
+probe|2|sundaydriver|vor|ab35|getForce=1291.699|getEngineSpeed=3070.501|getThrottle=1.000|getBrakingForce=91.270|getClientForce=0.000|getCurrentSpeedKmHour=37.384|getCurrentAbsoluteSpeedKmHour=37.384|getSpeed2D=10.404|getTransmissionNumber=3.000|getCurrentSteering=0.000|getRegulatorSpeed=0.000|getEngineCondition=100.000
+probe|2|sundaydriver|vor|ab40|getForce=1092.893|getEngineSpeed=3413.504|getThrottle=1.000|getBrakingForce=91.270|getClientForce=0.000|getCurrentSpeedKmHour=42.623|getCurrentAbsoluteSpeedKmHour=42.623|getSpeed2D=11.856|getTransmissionNumber=3.000|getCurrentSteering=0.000|getRegulatorSpeed=0.000|getEngineCondition=100.000
+probe|2|sundaydriver|vor|ab45|getForce=845.187|getEngineSpeed=3770.500|getThrottle=1.000|getBrakingForce=91.270|getClientForce=0.000|getCurrentSpeedKmHour=47.703|getCurrentAbsoluteSpeedKmHour=47.703|getSpeed2D=13.263|getTransmissionNumber=3.000|getCurrentSteering=0.000|getRegulatorSpeed=0.000|getEngineCondition=100.000
+probe|2|sundaydriver|vor|ab50|getForce=549.992|getEngineSpeed=3163.000|getThrottle=1.000|getBrakingForce=91.270|getClientForce=0.000|getCurrentSpeedKmHour=52.719|getCurrentAbsoluteSpeedKmHour=52.719|getSpeed2D=14.652|getTransmissionNumber=4.000|getCurrentSteering=0.000|getRegulatorSpeed=0.000|getEngineCondition=100.000
+probe|2|sundaydriver|vor|ab55|getForce=327.903|getEngineSpeed=3985.000|getThrottle=1.000|getBrakingForce=91.270|getClientForce=0.000|getCurrentSpeedKmHour=57.892|getCurrentAbsoluteSpeedKmHour=57.892|getSpeed2D=16.086|getTransmissionNumber=4.000|getCurrentSteering=0.000|getRegulatorSpeed=0.000|getEngineCondition=100.000
+probe|2|sundaydriver|vor|ab60|getForce=32.689|getEngineSpeed=4500.000|getThrottle=1.000|getBrakingForce=91.270|getClientForce=0.000|getCurrentSpeedKmHour=64.103|getCurrentAbsoluteSpeedKmHour=64.103|getSpeed2D=17.807|getTransmissionNumber=4.000|getCurrentSteering=0.000|getRegulatorSpeed=0.000|getEngineCondition=100.000
+probe|2|sundaydriver|rueck|ab2|getForce=-2225.919|getEngineSpeed=1158.536|getThrottle=0.480|getBrakingForce=91.270|getClientForce=0.000|getCurrentSpeedKmHour=-3.135|getCurrentAbsoluteSpeedKmHour=3.135|getSpeed2D=0.903|getTransmissionNumber=-1.000|getCurrentSteering=0.000|getRegulatorSpeed=0.000|getEngineCondition=100.000
+probe|2|sundaydriver|rueck|ab4|getForce=-1675.790|getEngineSpeed=1346.139|getThrottle=0.773|getBrakingForce=91.270|getClientForce=0.000|getCurrentSpeedKmHour=-5.050|getCurrentAbsoluteSpeedKmHour=5.050|getSpeed2D=1.428|getTransmissionNumber=-1.000|getCurrentSteering=0.000|getRegulatorSpeed=0.000|getEngineCondition=100.000
+probe|2|sundaydriver|rueck|ab6|getForce=-955.958|getEngineSpeed=1581.205|getThrottle=1.000|getBrakingForce=91.270|getClientForce=0.000|getCurrentSpeedKmHour=-7.210|getCurrentAbsoluteSpeedKmHour=7.210|getSpeed2D=2.017|getTransmissionNumber=-1.000|getCurrentSteering=0.000|getRegulatorSpeed=0.000|getEngineCondition=100.000
+probe|2|sundaydriver|rueck|ab8|getForce=-11.486|getEngineSpeed=2083.285|getThrottle=1.000|getBrakingForce=91.270|getClientForce=0.000|getCurrentSpeedKmHour=-9.967|getCurrentAbsoluteSpeedKmHour=9.967|getSpeed2D=2.769|getTransmissionNumber=-1.000|getCurrentSteering=0.000|getRegulatorSpeed=0.000|getEngineCondition=100.000
+probe|3|none|vor|ab10|getForce=1956.853|getEngineSpeed=1443.850|getThrottle=1.000|getBrakingForce=91.270|getClientForce=0.000|getCurrentSpeedKmHour=12.643|getCurrentAbsoluteSpeedKmHour=12.643|getSpeed2D=3.540|getTransmissionNumber=1.000|getCurrentSteering=0.000|getRegulatorSpeed=0.000|getEngineCondition=100.000
+probe|3|none|vor|ab15|getForce=1957.876|getEngineSpeed=1728.851|getThrottle=1.000|getBrakingForce=91.270|getClientForce=0.000|getCurrentSpeedKmHour=17.472|getCurrentAbsoluteSpeedKmHour=17.472|getSpeed2D=4.882|getTransmissionNumber=1.000|getCurrentSteering=0.000|getRegulatorSpeed=0.000|getEngineCondition=100.000
+probe|3|none|vor|ab20|getForce=1956.028|getEngineSpeed=2018.850|getThrottle=1.000|getBrakingForce=91.270|getClientForce=0.000|getCurrentSpeedKmHour=22.514|getCurrentAbsoluteSpeedKmHour=22.514|getSpeed2D=6.282|getTransmissionNumber=1.000|getCurrentSteering=0.000|getRegulatorSpeed=0.000|getEngineCondition=100.000
+probe|3|none|vor|ab25|getForce=1951.404|getEngineSpeed=2308.851|getThrottle=1.000|getBrakingForce=91.270|getClientForce=0.000|getCurrentSpeedKmHour=27.445|getCurrentAbsoluteSpeedKmHour=27.445|getSpeed2D=7.652|getTransmissionNumber=1.000|getCurrentSteering=0.000|getRegulatorSpeed=0.000|getEngineCondition=100.000
+probe|3|none|vor|ab30|getForce=1943.894|getEngineSpeed=2603.850|getThrottle=1.000|getBrakingForce=91.270|getClientForce=0.000|getCurrentSpeedKmHour=32.457|getCurrentAbsoluteSpeedKmHour=32.457|getSpeed2D=9.044|getTransmissionNumber=1.000|getCurrentSteering=0.000|getRegulatorSpeed=0.000|getEngineCondition=100.000
+probe|3|none|vor|ab35|getForce=1933.418|getEngineSpeed=2858.850|getThrottle=1.000|getBrakingForce=91.270|getClientForce=0.000|getCurrentSpeedKmHour=37.649|getCurrentAbsoluteSpeedKmHour=37.649|getSpeed2D=10.486|getTransmissionNumber=1.000|getCurrentSteering=0.000|getRegulatorSpeed=0.000|getEngineCondition=100.000
+probe|3|none|vor|ab40|getForce=1228.471|getEngineSpeed=2703.000|getThrottle=1.000|getBrakingForce=91.270|getClientForce=0.000|getCurrentSpeedKmHour=42.544|getCurrentAbsoluteSpeedKmHour=42.544|getSpeed2D=11.836|getTransmissionNumber=3.000|getCurrentSteering=0.000|getRegulatorSpeed=0.000|getEngineCondition=100.000
+probe|3|none|vor|ab45|getForce=1222.657|getEngineSpeed=3028.500|getThrottle=1.000|getBrakingForce=91.270|getClientForce=0.000|getCurrentSpeedKmHour=47.530|getCurrentAbsoluteSpeedKmHour=47.530|getSpeed2D=13.221|getTransmissionNumber=3.000|getCurrentSteering=0.000|getRegulatorSpeed=0.000|getEngineCondition=100.000
+probe|3|none|vor|ab50|getForce=1214.906|getEngineSpeed=3354.000|getThrottle=1.000|getBrakingForce=91.270|getClientForce=0.000|getCurrentSpeedKmHour=52.488|getCurrentAbsoluteSpeedKmHour=52.488|getSpeed2D=14.598|getTransmissionNumber=3.000|getCurrentSteering=0.000|getRegulatorSpeed=0.000|getEngineCondition=100.000
+probe|3|none|vor|ab55|getForce=1205.097|getEngineSpeed=3686.500|getThrottle=1.000|getBrakingForce=91.270|getClientForce=0.000|getCurrentSpeedKmHour=57.506|getCurrentAbsoluteSpeedKmHour=57.506|getSpeed2D=15.992|getTransmissionNumber=3.000|getCurrentSteering=0.000|getRegulatorSpeed=0.000|getEngineCondition=100.000
+probe|3|none|vor|ab60|getForce=929.152|getEngineSpeed=2977.000|getThrottle=1.000|getBrakingForce=91.270|getClientForce=0.000|getCurrentSpeedKmHour=62.844|getCurrentAbsoluteSpeedKmHour=62.844|getSpeed2D=17.470|getTransmissionNumber=4.000|getCurrentSteering=0.000|getRegulatorSpeed=0.000|getEngineCondition=100.000
+probe|3|none|vor|ab65|getForce=660.818|getEngineSpeed=3274.000|getThrottle=1.000|getBrakingForce=91.270|getClientForce=0.000|getCurrentSpeedKmHour=67.784|getCurrentAbsoluteSpeedKmHour=67.784|getSpeed2D=18.839|getTransmissionNumber=4.000|getCurrentSteering=0.000|getRegulatorSpeed=0.000|getEngineCondition=100.000
+probe|3|none|vor|ab70|getForce=388.599|getEngineSpeed=3958.000|getThrottle=1.000|getBrakingForce=91.270|getClientForce=0.000|getCurrentSpeedKmHour=72.920|getCurrentAbsoluteSpeedKmHour=72.920|getSpeed2D=20.261|getTransmissionNumber=4.000|getCurrentSteering=0.000|getRegulatorSpeed=0.000|getEngineCondition=100.000
+probe|3|none|vor|ab75|getForce=37.729|getEngineSpeed=4500.000|getThrottle=1.000|getBrakingForce=91.270|getClientForce=0.000|getCurrentSpeedKmHour=79.305|getCurrentAbsoluteSpeedKmHour=79.305|getSpeed2D=22.030|getTransmissionNumber=4.000|getCurrentSteering=0.000|getRegulatorSpeed=0.000|getEngineCondition=100.000
+probe|3|none|rueck|ab2|getForce=-3176.610|getEngineSpeed=1059.660|getThrottle=0.360|getBrakingForce=91.270|getClientForce=0.000|getCurrentSpeedKmHour=-3.307|getCurrentAbsoluteSpeedKmHour=3.307|getSpeed2D=0.965|getTransmissionNumber=-1.000|getCurrentSteering=0.000|getRegulatorSpeed=0.000|getEngineCondition=100.000
+probe|3|none|rueck|ab4|getForce=-3197.955|getEngineSpeed=1187.731|getThrottle=0.533|getBrakingForce=91.270|getClientForce=0.000|getCurrentSpeedKmHour=-5.144|getCurrentAbsoluteSpeedKmHour=5.144|getSpeed2D=1.475|getTransmissionNumber=-1.000|getCurrentSteering=0.000|getRegulatorSpeed=0.000|getEngineCondition=100.000
+probe|3|none|rueck|ab6|getForce=-3218.006|getEngineSpeed=1308.037|getThrottle=0.720|getBrakingForce=91.270|getClientForce=0.000|getCurrentSpeedKmHour=-6.994|getCurrentAbsoluteSpeedKmHour=6.994|getSpeed2D=1.990|getTransmissionNumber=-1.000|getCurrentSteering=0.000|getRegulatorSpeed=0.000|getEngineCondition=100.000
+probe|3|none|rueck|ab8|getForce=-3235.413|getEngineSpeed=1412.477|getThrottle=0.907|getBrakingForce=91.270|getClientForce=0.000|getCurrentSpeedKmHour=-9.024|getCurrentAbsoluteSpeedKmHour=9.024|getSpeed2D=2.554|getTransmissionNumber=-1.000|getCurrentSteering=0.000|getRegulatorSpeed=0.000|getEngineCondition=100.000
+probe|3|none|rueck|ab10|getForce=-3250.524|getEngineSpeed=1503.143|getThrottle=1.000|getBrakingForce=91.270|getClientForce=0.000|getCurrentSpeedKmHour=-11.065|getCurrentAbsoluteSpeedKmHour=11.065|getSpeed2D=3.121|getTransmissionNumber=-1.000|getCurrentSteering=0.000|getRegulatorSpeed=0.000|getEngineCondition=100.000
+probe|3|none|rueck|ab12|getForce=-3266.216|getEngineSpeed=1597.294|getThrottle=1.000|getBrakingForce=91.270|getClientForce=0.000|getCurrentSpeedKmHour=-13.458|getCurrentAbsoluteSpeedKmHour=13.458|getSpeed2D=3.786|getTransmissionNumber=-1.000|getCurrentSteering=0.000|getRegulatorSpeed=0.000|getEngineCondition=100.000
+probe|3|none|rueck|ab15|getForce=-3286.857|getEngineSpeed=1721.140|getThrottle=1.000|getBrakingForce=91.270|getClientForce=0.000|getCurrentSpeedKmHour=-17.412|getCurrentAbsoluteSpeedKmHour=17.412|getSpeed2D=4.884|getTransmissionNumber=-1.000|getCurrentSteering=0.000|getRegulatorSpeed=0.000|getEngineCondition=100.000
+probe|3|none|rueck|ab20|getForce=-3305.663|getEngineSpeed=1833.981|getThrottle=1.000|getBrakingForce=91.270|getClientForce=0.000|getCurrentSpeedKmHour=-22.427|getCurrentAbsoluteSpeedKmHour=22.427|getSpeed2D=6.278|getTransmissionNumber=-1.000|getCurrentSteering=0.000|getRegulatorSpeed=0.000|getEngineCondition=100.000
+probe|3|none|rueck|ab25|getForce=0.000|getEngineSpeed=2087.472|getThrottle=1.000|getBrakingForce=91.270|getClientForce=0.000|getCurrentSpeedKmHour=-26.832|getCurrentAbsoluteSpeedKmHour=26.832|getSpeed2D=7.449|getTransmissionNumber=-1.000|getCurrentSteering=0.000|getRegulatorSpeed=0.000|getEngineCondition=100.000
+probe|4|speeddemon|vor|ab10|getForce=1965.173|getEngineSpeed=1486.659|getThrottle=1.000|getBrakingForce=91.270|getClientForce=0.000|getCurrentSpeedKmHour=12.603|getCurrentAbsoluteSpeedKmHour=12.603|getSpeed2D=3.529|getTransmissionNumber=1.000|getCurrentSteering=0.000|getRegulatorSpeed=0.000|getEngineCondition=100.000
+probe|4|speeddemon|vor|ab15|getForce=1965.699|getEngineSpeed=1771.659|getThrottle=1.000|getBrakingForce=91.270|getClientForce=0.000|getCurrentSpeedKmHour=17.503|getCurrentAbsoluteSpeedKmHour=17.503|getSpeed2D=4.891|getTransmissionNumber=1.000|getCurrentSteering=0.000|getRegulatorSpeed=0.000|getEngineCondition=100.000
+probe|4|speeddemon|vor|ab20|getForce=1963.580|getEngineSpeed=2061.659|getThrottle=1.000|getBrakingForce=91.270|getClientForce=0.000|getCurrentSpeedKmHour=22.504|getCurrentAbsoluteSpeedKmHour=22.504|getSpeed2D=6.280|getTransmissionNumber=1.000|getCurrentSteering=0.000|getRegulatorSpeed=0.000|getEngineCondition=100.000
+probe|4|speeddemon|vor|ab25|getForce=1958.477|getEngineSpeed=2356.659|getThrottle=1.000|getBrakingForce=91.270|getClientForce=0.000|getCurrentSpeedKmHour=27.548|getCurrentAbsoluteSpeedKmHour=27.548|getSpeed2D=7.681|getTransmissionNumber=1.000|getCurrentSteering=0.000|getRegulatorSpeed=0.000|getEngineCondition=100.000
+probe|4|speeddemon|vor|ab30|getForce=1950.643|getEngineSpeed=2646.659|getThrottle=1.000|getBrakingForce=91.270|getClientForce=0.000|getCurrentSpeedKmHour=32.473|getCurrentAbsoluteSpeedKmHour=32.473|getSpeed2D=9.049|getTransmissionNumber=1.000|getCurrentSteering=0.000|getRegulatorSpeed=0.000|getEngineCondition=100.000
+probe|4|speeddemon|vor|ab35|getForce=1939.569|getEngineSpeed=2846.660|getThrottle=1.000|getBrakingForce=91.270|getClientForce=0.000|getCurrentSpeedKmHour=37.783|getCurrentAbsoluteSpeedKmHour=37.783|getSpeed2D=10.524|getTransmissionNumber=1.000|getCurrentSteering=0.000|getRegulatorSpeed=0.000|getEngineCondition=100.000
+probe|4|speeddemon|vor|ab40|getForce=1233.204|getEngineSpeed=2745.000|getThrottle=1.000|getBrakingForce=91.270|getClientForce=0.000|getCurrentSpeedKmHour=42.532|getCurrentAbsoluteSpeedKmHour=42.532|getSpeed2D=11.832|getTransmissionNumber=3.000|getCurrentSteering=0.000|getRegulatorSpeed=0.000|getEngineCondition=100.000
+probe|4|speeddemon|vor|ab45|getForce=1227.040|getEngineSpeed=3070.500|getThrottle=1.000|getBrakingForce=91.270|getClientForce=0.000|getCurrentSpeedKmHour=47.504|getCurrentAbsoluteSpeedKmHour=47.504|getSpeed2D=13.213|getTransmissionNumber=3.000|getCurrentSteering=0.000|getRegulatorSpeed=0.000|getEngineCondition=100.000
+probe|4|speeddemon|vor|ab50|getForce=1219.004|getEngineSpeed=3396.000|getThrottle=1.000|getBrakingForce=91.270|getClientForce=0.000|getCurrentSpeedKmHour=52.512|getCurrentAbsoluteSpeedKmHour=52.512|getSpeed2D=14.604|getTransmissionNumber=3.000|getCurrentSteering=0.000|getRegulatorSpeed=0.000|getEngineCondition=100.000
+probe|4|speeddemon|vor|ab55|getForce=1209.023|getEngineSpeed=3725.000|getThrottle=1.000|getBrakingForce=91.270|getClientForce=0.000|getCurrentSpeedKmHour=57.483|getCurrentAbsoluteSpeedKmHour=57.483|getSpeed2D=15.985|getTransmissionNumber=3.000|getCurrentSteering=0.000|getRegulatorSpeed=0.000|getEngineCondition=100.000
+probe|4|speeddemon|vor|ab60|getForce=1086.045|getEngineSpeed=2958.289|getThrottle=1.000|getBrakingForce=91.270|getClientForce=0.000|getCurrentSpeedKmHour=62.585|getCurrentAbsoluteSpeedKmHour=62.585|getSpeed2D=17.401|getTransmissionNumber=4.000|getCurrentSteering=0.000|getRegulatorSpeed=0.000|getEngineCondition=100.000
+probe|4|speeddemon|vor|ab65|getForce=1074.735|getEngineSpeed=3169.000|getThrottle=1.000|getBrakingForce=91.270|getClientForce=0.000|getCurrentSpeedKmHour=67.519|getCurrentAbsoluteSpeedKmHour=67.519|getSpeed2D=18.771|getTransmissionNumber=4.000|getCurrentSteering=0.000|getRegulatorSpeed=0.000|getEngineCondition=100.000
+probe|4|speeddemon|vor|ab70|getForce=866.349|getEngineSpeed=3526.000|getThrottle=1.000|getBrakingForce=91.270|getClientForce=0.000|getCurrentSpeedKmHour=72.700|getCurrentAbsoluteSpeedKmHour=72.700|getSpeed2D=20.207|getTransmissionNumber=4.000|getCurrentSteering=0.000|getRegulatorSpeed=0.000|getEngineCondition=100.000
+probe|4|speeddemon|vor|ab75|getForce=593.629|getEngineSpeed=4006.000|getThrottle=1.000|getBrakingForce=91.270|getClientForce=0.000|getCurrentSpeedKmHour=77.795|getCurrentAbsoluteSpeedKmHour=77.795|getSpeed2D=21.618|getTransmissionNumber=4.000|getCurrentSteering=0.000|getRegulatorSpeed=0.000|getEngineCondition=100.000
+probe|4|speeddemon|vor|ab80|getForce=314.039|getEngineSpeed=4500.000|getThrottle=1.000|getBrakingForce=91.270|getClientForce=0.000|getCurrentSpeedKmHour=83.034|getCurrentAbsoluteSpeedKmHour=83.034|getSpeed2D=23.070|getTransmissionNumber=4.000|getCurrentSteering=0.000|getRegulatorSpeed=0.000|getEngineCondition=100.000
+probe|4|speeddemon|vor|ab85|getForce=32.276|getEngineSpeed=4500.000|getThrottle=1.000|getBrakingForce=91.270|getClientForce=0.000|getCurrentSpeedKmHour=88.358|getCurrentAbsoluteSpeedKmHour=88.358|getSpeed2D=24.544|getTransmissionNumber=4.000|getCurrentSteering=0.000|getRegulatorSpeed=0.000|getEngineCondition=100.000
+probe|4|speeddemon|rueck|ab2|getForce=-3533.313|getEngineSpeed=3199.881|getThrottle=0.320|getBrakingForce=91.270|getClientForce=0.000|getCurrentSpeedKmHour=-3.162|getCurrentAbsoluteSpeedKmHour=3.162|getSpeed2D=0.929|getTransmissionNumber=-1.000|getCurrentSteering=0.000|getRegulatorSpeed=0.000|getEngineCondition=100.000
+probe|4|speeddemon|rueck|ab4|getForce=-3648.758|getEngineSpeed=3892.545|getThrottle=0.480|getBrakingForce=91.270|getClientForce=0.000|getCurrentSpeedKmHour=-5.038|getCurrentAbsoluteSpeedKmHour=5.038|getSpeed2D=1.452|getTransmissionNumber=-1.000|getCurrentSteering=0.000|getRegulatorSpeed=0.000|getEngineCondition=100.000
+probe|4|speeddemon|rueck|ab6|getForce=-3733.713|getEngineSpeed=4402.277|getThrottle=0.653|getBrakingForce=91.270|getClientForce=0.000|getCurrentSpeedKmHour=-7.066|getCurrentAbsoluteSpeedKmHour=7.066|getSpeed2D=2.017|getTransmissionNumber=-1.000|getCurrentSteering=0.000|getRegulatorSpeed=0.000|getEngineCondition=100.000
+probe|4|speeddemon|rueck|ab8|getForce=-3787.007|getEngineSpeed=4722.041|getThrottle=0.813|getBrakingForce=91.270|getClientForce=0.000|getCurrentSpeedKmHour=-9.035|getCurrentAbsoluteSpeedKmHour=9.035|getSpeed2D=2.565|getTransmissionNumber=-1.000|getCurrentSteering=0.000|getRegulatorSpeed=0.000|getEngineCondition=100.000
+probe|4|speeddemon|rueck|ab10|getForce=-3823.772|getEngineSpeed=4942.633|getThrottle=0.973|getBrakingForce=91.270|getClientForce=0.000|getCurrentSpeedKmHour=-11.029|getCurrentAbsoluteSpeedKmHour=11.029|getSpeed2D=3.119|getTransmissionNumber=-1.000|getCurrentSteering=0.000|getRegulatorSpeed=0.000|getEngineCondition=100.000
+probe|4|speeddemon|rueck|ab12|getForce=-3854.174|getEngineSpeed=5125.046|getThrottle=1.000|getBrakingForce=91.270|getClientForce=0.000|getCurrentSpeedKmHour=-13.545|getCurrentAbsoluteSpeedKmHour=13.545|getSpeed2D=3.819|getTransmissionNumber=-1.000|getCurrentSteering=0.000|getRegulatorSpeed=0.000|getEngineCondition=100.000
+probe|4|speeddemon|rueck|ab15|getForce=-3880.322|getEngineSpeed=5281.930|getThrottle=1.000|getBrakingForce=91.270|getClientForce=0.000|getCurrentSpeedKmHour=-17.400|getCurrentAbsoluteSpeedKmHour=17.400|getSpeed2D=4.890|getTransmissionNumber=-1.000|getCurrentSteering=0.000|getRegulatorSpeed=0.000|getEngineCondition=100.000
+probe|4|speeddemon|rueck|ab20|getForce=-3895.272|getEngineSpeed=5371.634|getThrottle=1.000|getBrakingForce=91.270|getClientForce=0.000|getCurrentSpeedKmHour=-22.296|getCurrentAbsoluteSpeedKmHour=22.296|getSpeed2D=6.250|getTransmissionNumber=-1.000|getCurrentSteering=0.000|getRegulatorSpeed=0.000|getEngineCondition=100.000
+probe|4|speeddemon|rueck|ab25|getForce=0.000|getEngineSpeed=5433.341|getThrottle=1.000|getBrakingForce=91.270|getClientForce=0.000|getCurrentSpeedKmHour=-26.820|getCurrentAbsoluteSpeedKmHour=26.820|getSpeed2D=7.454|getTransmissionNumber=-1.000|getCurrentSteering=0.000|getRegulatorSpeed=0.000|getEngineCondition=100.000
+zustand|1|none|vor|getTransmissionNumberLetter=1/3/4|isGasPedalPressed=ja|isBrakePedalPressed=nein|isBraking=nein|isDoingOffroad=nein|isEngineRunning=ja|isRegulator=nein|isAtRest=nein|isStopped=nein
+zustand|1|none|rueck|getTransmissionNumberLetter=R|isGasPedalPressed=ja|isBrakePedalPressed=nein|isBraking=nein|isDoingOffroad=nein|isEngineRunning=ja|isRegulator=nein|isAtRest=nein|isStopped=nein
+zustand|2|sundaydriver|vor|getTransmissionNumberLetter=1/3/4|isGasPedalPressed=ja|isBrakePedalPressed=nein|isBraking=nein|isDoingOffroad=nein|isEngineRunning=ja|isRegulator=nein|isAtRest=nein|isStopped=nein
+zustand|2|sundaydriver|rueck|getTransmissionNumberLetter=R|isGasPedalPressed=ja|isBrakePedalPressed=nein|isBraking=nein|isDoingOffroad=nein|isEngineRunning=ja|isRegulator=nein|isAtRest=nein|isStopped=nein
+zustand|3|none|vor|getTransmissionNumberLetter=1/3/4|isGasPedalPressed=ja|isBrakePedalPressed=nein|isBraking=nein|isDoingOffroad=nein|isEngineRunning=ja|isRegulator=nein|isAtRest=nein|isStopped=nein
+zustand|3|none|rueck|getTransmissionNumberLetter=R|isGasPedalPressed=ja|isBrakePedalPressed=nein|isBraking=nein|isDoingOffroad=nein|isEngineRunning=ja|isRegulator=nein|isAtRest=nein|isStopped=nein
+zustand|4|speeddemon|vor|getTransmissionNumberLetter=1/3/4|isGasPedalPressed=ja|isBrakePedalPressed=nein|isBraking=nein|isDoingOffroad=nein|isEngineRunning=ja|isRegulator=nein|isAtRest=nein|isStopped=nein
+zustand|4|speeddemon|rueck|getTransmissionNumberLetter=R|isGasPedalPressed=ja|isBrakePedalPressed=nein|isBraking=nein|isDoingOffroad=nein|isEngineRunning=ja|isRegulator=nein|isAtRest=nein|isStopped=nein
+wertfaktor|getForce|sundaydriver|vor|ab10|mit/ohne=0.7694|aus 1 Paaren|einzeln=0.7694|vorhersage=0.7500
+wertfaktor|getForce|sundaydriver|vor|ab15|mit/ohne=0.7749|aus 1 Paaren|einzeln=0.7749|vorhersage=0.7500
+wertfaktor|getForce|sundaydriver|vor|ab20|mit/ohne=0.7799|aus 1 Paaren|einzeln=0.7799|vorhersage=0.7500
+wertfaktor|getForce|sundaydriver|vor|ab25|mit/ohne=0.7847|aus 1 Paaren|einzeln=0.7847|vorhersage=0.7500
+wertfaktor|getForce|sundaydriver|vor|ab30|mit/ohne=0.5043|aus 1 Paaren|einzeln=0.5043|vorhersage=0.7500
+wertfaktor|getForce|sundaydriver|vor|ab35|mit/ohne=0.6681|aus 1 Paaren|einzeln=0.6681|vorhersage=1.0312
+wertfaktor|getForce|sundaydriver|vor|ab40|mit/ohne=0.8899|aus 1 Paaren|einzeln=0.8899|vorhersage=0.8438
+wertfaktor|getForce|sundaydriver|vor|ab45|mit/ohne=0.6916|aus 1 Paaren|einzeln=0.6916|vorhersage=0.6562
+wertfaktor|getForce|sundaydriver|vor|ab50|mit/ohne=0.4529|aus 1 Paaren|einzeln=0.4529|vorhersage=0.4688|STEIL
+wertfaktor|getForce|sundaydriver|vor|ab55|mit/ohne=0.2722|aus 1 Paaren|einzeln=0.2722|vorhersage=0.2812|STEIL
+wertfaktor|getForce|sundaydriver|vor|ab60|mit/ohne=0.0351|aus 1 Paaren|einzeln=0.0351|vorhersage=0.0938|STEIL
+wertfaktor|getForce|sundaydriver|rueck|ab2|mit/ohne=0.7001|aus 1 Paaren|einzeln=0.7001
+wertfaktor|getForce|sundaydriver|rueck|ab4|mit/ohne=0.5236|aus 1 Paaren|einzeln=0.5236
+wertfaktor|getForce|sundaydriver|rueck|ab6|mit/ohne=0.2969|aus 1 Paaren|einzeln=0.2969
+wertfaktor|getForce|sundaydriver|rueck|ab8|mit/ohne=0.0035|aus 1 Paaren|einzeln=0.0035
+wertfaktor|getForce|speeddemon|vor|ab10|mit/ohne=1.0043|aus 1 Paaren|einzeln=1.0043|vorhersage=1.0000
+wertfaktor|getForce|speeddemon|vor|ab15|mit/ohne=1.0040|aus 1 Paaren|einzeln=1.0040|vorhersage=1.0000
+wertfaktor|getForce|speeddemon|vor|ab20|mit/ohne=1.0039|aus 1 Paaren|einzeln=1.0039|vorhersage=1.0000
+wertfaktor|getForce|speeddemon|vor|ab25|mit/ohne=1.0036|aus 1 Paaren|einzeln=1.0036|vorhersage=1.0000
+wertfaktor|getForce|speeddemon|vor|ab30|mit/ohne=1.0035|aus 1 Paaren|einzeln=1.0035|vorhersage=1.0000
+wertfaktor|getForce|speeddemon|vor|ab35|mit/ohne=1.0032|aus 1 Paaren|einzeln=1.0032|vorhersage=1.0000
+wertfaktor|getForce|speeddemon|vor|ab40|mit/ohne=1.0039|aus 1 Paaren|einzeln=1.0039|vorhersage=1.0000
+wertfaktor|getForce|speeddemon|vor|ab45|mit/ohne=1.0036|aus 1 Paaren|einzeln=1.0036|vorhersage=1.0000
+wertfaktor|getForce|speeddemon|vor|ab50|mit/ohne=1.0034|aus 1 Paaren|einzeln=1.0034|vorhersage=1.0000
+wertfaktor|getForce|speeddemon|vor|ab55|mit/ohne=1.0033|aus 1 Paaren|einzeln=1.0033|vorhersage=1.0000
+wertfaktor|getForce|speeddemon|vor|ab60|mit/ohne=1.1689|aus 1 Paaren|einzeln=1.1689|vorhersage=1.1429
+wertfaktor|getForce|speeddemon|vor|ab65|mit/ohne=1.6264|aus 1 Paaren|einzeln=1.6264|vorhersage=1.6000|STEIL
+wertfaktor|getForce|speeddemon|vor|ab70|mit/ohne=2.2294|aus 1 Paaren|einzeln=2.2294|vorhersage=2.2000|STEIL
+wertfaktor|getForce|speeddemon|vor|ab75|mit/ohne=15.7339|aus 1 Paaren|einzeln=15.7339|vorhersage=4.6000
+wertfaktor|getForce|speeddemon|rueck|ab2|mit/ohne=1.1123|aus 1 Paaren|einzeln=1.1123
+wertfaktor|getForce|speeddemon|rueck|ab4|mit/ohne=1.1410|aus 1 Paaren|einzeln=1.1410
+wertfaktor|getForce|speeddemon|rueck|ab6|mit/ohne=1.1603|aus 1 Paaren|einzeln=1.1603
+wertfaktor|getForce|speeddemon|rueck|ab8|mit/ohne=1.1705|aus 1 Paaren|einzeln=1.1705
+wertfaktor|getForce|speeddemon|rueck|ab10|mit/ohne=1.1764|aus 1 Paaren|einzeln=1.1764
+wertfaktor|getForce|speeddemon|rueck|ab12|mit/ohne=1.1800|aus 1 Paaren|einzeln=1.1800
+wertfaktor|getForce|speeddemon|rueck|ab15|mit/ohne=1.1806|aus 1 Paaren|einzeln=1.1806
+wertfaktor|getForce|speeddemon|rueck|ab20|mit/ohne=1.1784|aus 1 Paaren|einzeln=1.1784
+wertfaktor|getEngineSpeed|sundaydriver|vor|ab10|mit/ohne=1.1877|aus 1 Paaren|einzeln=1.1877
+wertfaktor|getEngineSpeed|sundaydriver|vor|ab15|mit/ohne=1.2089|aus 1 Paaren|einzeln=1.2089
+wertfaktor|getEngineSpeed|sundaydriver|vor|ab20|mit/ohne=1.2180|aus 1 Paaren|einzeln=1.2180
+wertfaktor|getEngineSpeed|sundaydriver|vor|ab25|mit/ohne=1.2248|aus 1 Paaren|einzeln=1.2248
+wertfaktor|getEngineSpeed|sundaydriver|vor|ab30|mit/ohne=1.0411|aus 1 Paaren|einzeln=1.0411
+wertfaktor|getEngineSpeed|sundaydriver|vor|ab35|mit/ohne=1.0737|aus 1 Paaren|einzeln=1.0737
+wertfaktor|getEngineSpeed|sundaydriver|vor|ab40|mit/ohne=1.2661|aus 1 Paaren|einzeln=1.2661
+wertfaktor|getEngineSpeed|sundaydriver|vor|ab45|mit/ohne=1.2450|aus 1 Paaren|einzeln=1.2450
+wertfaktor|getEngineSpeed|sundaydriver|vor|ab50|mit/ohne=0.9440|aus 1 Paaren|einzeln=0.9440
+wertfaktor|getEngineSpeed|sundaydriver|vor|ab55|mit/ohne=1.0830|aus 1 Paaren|einzeln=1.0830
+wertfaktor|getEngineSpeed|sundaydriver|vor|ab60|mit/ohne=1.5116|aus 1 Paaren|einzeln=1.5116
+wertfaktor|getEngineSpeed|sundaydriver|rueck|ab2|mit/ohne=1.0755|aus 1 Paaren|einzeln=1.0755
+wertfaktor|getEngineSpeed|sundaydriver|rueck|ab4|mit/ohne=1.1188|aus 1 Paaren|einzeln=1.1188
+wertfaktor|getEngineSpeed|sundaydriver|rueck|ab6|mit/ohne=1.1966|aus 1 Paaren|einzeln=1.1966
+wertfaktor|getEngineSpeed|sundaydriver|rueck|ab8|mit/ohne=1.4629|aus 1 Paaren|einzeln=1.4629
+wertfaktor|getEngineSpeed|speeddemon|vor|ab10|mit/ohne=1.0296|aus 1 Paaren|einzeln=1.0296
+wertfaktor|getEngineSpeed|speeddemon|vor|ab15|mit/ohne=1.0248|aus 1 Paaren|einzeln=1.0248
+wertfaktor|getEngineSpeed|speeddemon|vor|ab20|mit/ohne=1.0212|aus 1 Paaren|einzeln=1.0212
+wertfaktor|getEngineSpeed|speeddemon|vor|ab25|mit/ohne=1.0207|aus 1 Paaren|einzeln=1.0207
+wertfaktor|getEngineSpeed|speeddemon|vor|ab30|mit/ohne=1.0164|aus 1 Paaren|einzeln=1.0164
+wertfaktor|getEngineSpeed|speeddemon|vor|ab35|mit/ohne=0.9957|aus 1 Paaren|einzeln=0.9957
+wertfaktor|getEngineSpeed|speeddemon|vor|ab40|mit/ohne=1.0155|aus 1 Paaren|einzeln=1.0155
+wertfaktor|getEngineSpeed|speeddemon|vor|ab45|mit/ohne=1.0139|aus 1 Paaren|einzeln=1.0139
+wertfaktor|getEngineSpeed|speeddemon|vor|ab50|mit/ohne=1.0125|aus 1 Paaren|einzeln=1.0125
+wertfaktor|getEngineSpeed|speeddemon|vor|ab55|mit/ohne=1.0104|aus 1 Paaren|einzeln=1.0104
+wertfaktor|getEngineSpeed|speeddemon|vor|ab60|mit/ohne=0.9937|aus 1 Paaren|einzeln=0.9937
+wertfaktor|getEngineSpeed|speeddemon|vor|ab65|mit/ohne=0.9679|aus 1 Paaren|einzeln=0.9679
+wertfaktor|getEngineSpeed|speeddemon|vor|ab70|mit/ohne=0.8909|aus 1 Paaren|einzeln=0.8909
+wertfaktor|getEngineSpeed|speeddemon|vor|ab75|mit/ohne=0.8902|aus 1 Paaren|einzeln=0.8902
+wertfaktor|getEngineSpeed|speeddemon|rueck|ab2|mit/ohne=3.0197|aus 1 Paaren|einzeln=3.0197
+wertfaktor|getEngineSpeed|speeddemon|rueck|ab4|mit/ohne=3.2773|aus 1 Paaren|einzeln=3.2773
+wertfaktor|getEngineSpeed|speeddemon|rueck|ab6|mit/ohne=3.3656|aus 1 Paaren|einzeln=3.3656
+wertfaktor|getEngineSpeed|speeddemon|rueck|ab8|mit/ohne=3.3431|aus 1 Paaren|einzeln=3.3431
+wertfaktor|getEngineSpeed|speeddemon|rueck|ab10|mit/ohne=3.2882|aus 1 Paaren|einzeln=3.2882
+wertfaktor|getEngineSpeed|speeddemon|rueck|ab12|mit/ohne=3.2086|aus 1 Paaren|einzeln=3.2086
+wertfaktor|getEngineSpeed|speeddemon|rueck|ab15|mit/ohne=3.0689|aus 1 Paaren|einzeln=3.0689
+wertfaktor|getEngineSpeed|speeddemon|rueck|ab20|mit/ohne=2.9289|aus 1 Paaren|einzeln=2.9289
+wertfaktor|getEngineSpeed|speeddemon|rueck|ab25|mit/ohne=2.6028|aus 1 Paaren|einzeln=2.6028
+wertfaktor|getThrottle|sundaydriver|vor|ab10|mit/ohne=1.0000|aus 1 Paaren|einzeln=1.0000
+wertfaktor|getThrottle|sundaydriver|vor|ab15|mit/ohne=1.0000|aus 1 Paaren|einzeln=1.0000
+wertfaktor|getThrottle|sundaydriver|vor|ab20|mit/ohne=1.0000|aus 1 Paaren|einzeln=1.0000
+wertfaktor|getThrottle|sundaydriver|vor|ab25|mit/ohne=1.0000|aus 1 Paaren|einzeln=1.0000
+wertfaktor|getThrottle|sundaydriver|vor|ab30|mit/ohne=1.0000|aus 1 Paaren|einzeln=1.0000
+wertfaktor|getThrottle|sundaydriver|vor|ab35|mit/ohne=1.0000|aus 1 Paaren|einzeln=1.0000
+wertfaktor|getThrottle|sundaydriver|vor|ab40|mit/ohne=1.0000|aus 1 Paaren|einzeln=1.0000
+wertfaktor|getThrottle|sundaydriver|vor|ab45|mit/ohne=1.0000|aus 1 Paaren|einzeln=1.0000
+wertfaktor|getThrottle|sundaydriver|vor|ab50|mit/ohne=1.0000|aus 1 Paaren|einzeln=1.0000
+wertfaktor|getThrottle|sundaydriver|vor|ab55|mit/ohne=1.0000|aus 1 Paaren|einzeln=1.0000
+wertfaktor|getThrottle|sundaydriver|vor|ab60|mit/ohne=1.0000|aus 1 Paaren|einzeln=1.0000
+wertfaktor|getThrottle|sundaydriver|rueck|ab2|mit/ohne=1.3333|aus 1 Paaren|einzeln=1.3333
+wertfaktor|getThrottle|sundaydriver|rueck|ab4|mit/ohne=1.4500|aus 1 Paaren|einzeln=1.4500
+wertfaktor|getThrottle|sundaydriver|rueck|ab6|mit/ohne=1.3889|aus 1 Paaren|einzeln=1.3889
+wertfaktor|getThrottle|sundaydriver|rueck|ab8|mit/ohne=1.1029|aus 1 Paaren|einzeln=1.1029
+wertfaktor|getThrottle|speeddemon|vor|ab10|mit/ohne=1.0000|aus 1 Paaren|einzeln=1.0000
+wertfaktor|getThrottle|speeddemon|vor|ab15|mit/ohne=1.0000|aus 1 Paaren|einzeln=1.0000
+wertfaktor|getThrottle|speeddemon|vor|ab20|mit/ohne=1.0000|aus 1 Paaren|einzeln=1.0000
+wertfaktor|getThrottle|speeddemon|vor|ab25|mit/ohne=1.0000|aus 1 Paaren|einzeln=1.0000
+wertfaktor|getThrottle|speeddemon|vor|ab30|mit/ohne=1.0000|aus 1 Paaren|einzeln=1.0000
+wertfaktor|getThrottle|speeddemon|vor|ab35|mit/ohne=1.0000|aus 1 Paaren|einzeln=1.0000
+wertfaktor|getThrottle|speeddemon|vor|ab40|mit/ohne=1.0000|aus 1 Paaren|einzeln=1.0000
+wertfaktor|getThrottle|speeddemon|vor|ab45|mit/ohne=1.0000|aus 1 Paaren|einzeln=1.0000
+wertfaktor|getThrottle|speeddemon|vor|ab50|mit/ohne=1.0000|aus 1 Paaren|einzeln=1.0000
+wertfaktor|getThrottle|speeddemon|vor|ab55|mit/ohne=1.0000|aus 1 Paaren|einzeln=1.0000
+wertfaktor|getThrottle|speeddemon|vor|ab60|mit/ohne=1.0000|aus 1 Paaren|einzeln=1.0000
+wertfaktor|getThrottle|speeddemon|vor|ab65|mit/ohne=1.0000|aus 1 Paaren|einzeln=1.0000
+wertfaktor|getThrottle|speeddemon|vor|ab70|mit/ohne=1.0000|aus 1 Paaren|einzeln=1.0000
+wertfaktor|getThrottle|speeddemon|vor|ab75|mit/ohne=1.0000|aus 1 Paaren|einzeln=1.0000
+wertfaktor|getThrottle|speeddemon|rueck|ab2|mit/ohne=0.8889|aus 1 Paaren|einzeln=0.8889
+wertfaktor|getThrottle|speeddemon|rueck|ab4|mit/ohne=0.9000|aus 1 Paaren|einzeln=0.9000
+wertfaktor|getThrottle|speeddemon|rueck|ab6|mit/ohne=0.9074|aus 1 Paaren|einzeln=0.9074
+wertfaktor|getThrottle|speeddemon|rueck|ab8|mit/ohne=0.8971|aus 1 Paaren|einzeln=0.8971
+wertfaktor|getThrottle|speeddemon|rueck|ab10|mit/ohne=0.9733|aus 1 Paaren|einzeln=0.9733
+wertfaktor|getThrottle|speeddemon|rueck|ab12|mit/ohne=1.0000|aus 1 Paaren|einzeln=1.0000
+wertfaktor|getThrottle|speeddemon|rueck|ab15|mit/ohne=1.0000|aus 1 Paaren|einzeln=1.0000
+wertfaktor|getThrottle|speeddemon|rueck|ab20|mit/ohne=1.0000|aus 1 Paaren|einzeln=1.0000
+wertfaktor|getThrottle|speeddemon|rueck|ab25|mit/ohne=1.0000|aus 1 Paaren|einzeln=1.0000
+wertfaktor|getBrakingForce|sundaydriver|vor|ab10|mit/ohne=1.0000|aus 1 Paaren|einzeln=1.0000
+wertfaktor|getBrakingForce|sundaydriver|vor|ab15|mit/ohne=1.0000|aus 1 Paaren|einzeln=1.0000
+wertfaktor|getBrakingForce|sundaydriver|vor|ab20|mit/ohne=1.0000|aus 1 Paaren|einzeln=1.0000
+wertfaktor|getBrakingForce|sundaydriver|vor|ab25|mit/ohne=1.0000|aus 1 Paaren|einzeln=1.0000
+wertfaktor|getBrakingForce|sundaydriver|vor|ab30|mit/ohne=1.0000|aus 1 Paaren|einzeln=1.0000
+wertfaktor|getBrakingForce|sundaydriver|vor|ab35|mit/ohne=1.0000|aus 1 Paaren|einzeln=1.0000
+wertfaktor|getBrakingForce|sundaydriver|vor|ab40|mit/ohne=1.0000|aus 1 Paaren|einzeln=1.0000
+wertfaktor|getBrakingForce|sundaydriver|vor|ab45|mit/ohne=1.0000|aus 1 Paaren|einzeln=1.0000
+wertfaktor|getBrakingForce|sundaydriver|vor|ab50|mit/ohne=1.0000|aus 1 Paaren|einzeln=1.0000
+wertfaktor|getBrakingForce|sundaydriver|vor|ab55|mit/ohne=1.0000|aus 1 Paaren|einzeln=1.0000
+wertfaktor|getBrakingForce|sundaydriver|vor|ab60|mit/ohne=1.0000|aus 1 Paaren|einzeln=1.0000
+wertfaktor|getBrakingForce|sundaydriver|rueck|ab2|mit/ohne=1.0000|aus 1 Paaren|einzeln=1.0000
+wertfaktor|getBrakingForce|sundaydriver|rueck|ab4|mit/ohne=1.0000|aus 1 Paaren|einzeln=1.0000
+wertfaktor|getBrakingForce|sundaydriver|rueck|ab6|mit/ohne=1.0000|aus 1 Paaren|einzeln=1.0000
+wertfaktor|getBrakingForce|sundaydriver|rueck|ab8|mit/ohne=1.0000|aus 1 Paaren|einzeln=1.0000
+wertfaktor|getBrakingForce|speeddemon|vor|ab10|mit/ohne=1.0000|aus 1 Paaren|einzeln=1.0000
+wertfaktor|getBrakingForce|speeddemon|vor|ab15|mit/ohne=1.0000|aus 1 Paaren|einzeln=1.0000
+wertfaktor|getBrakingForce|speeddemon|vor|ab20|mit/ohne=1.0000|aus 1 Paaren|einzeln=1.0000
+wertfaktor|getBrakingForce|speeddemon|vor|ab25|mit/ohne=1.0000|aus 1 Paaren|einzeln=1.0000
+wertfaktor|getBrakingForce|speeddemon|vor|ab30|mit/ohne=1.0000|aus 1 Paaren|einzeln=1.0000
+wertfaktor|getBrakingForce|speeddemon|vor|ab35|mit/ohne=1.0000|aus 1 Paaren|einzeln=1.0000
+wertfaktor|getBrakingForce|speeddemon|vor|ab40|mit/ohne=1.0000|aus 1 Paaren|einzeln=1.0000
+wertfaktor|getBrakingForce|speeddemon|vor|ab45|mit/ohne=1.0000|aus 1 Paaren|einzeln=1.0000
+wertfaktor|getBrakingForce|speeddemon|vor|ab50|mit/ohne=1.0000|aus 1 Paaren|einzeln=1.0000
+wertfaktor|getBrakingForce|speeddemon|vor|ab55|mit/ohne=1.0000|aus 1 Paaren|einzeln=1.0000
+wertfaktor|getBrakingForce|speeddemon|vor|ab60|mit/ohne=1.0000|aus 1 Paaren|einzeln=1.0000
+wertfaktor|getBrakingForce|speeddemon|vor|ab65|mit/ohne=1.0000|aus 1 Paaren|einzeln=1.0000
+wertfaktor|getBrakingForce|speeddemon|vor|ab70|mit/ohne=1.0000|aus 1 Paaren|einzeln=1.0000
+wertfaktor|getBrakingForce|speeddemon|vor|ab75|mit/ohne=1.0000|aus 1 Paaren|einzeln=1.0000
+wertfaktor|getBrakingForce|speeddemon|rueck|ab2|mit/ohne=1.0000|aus 1 Paaren|einzeln=1.0000
+wertfaktor|getBrakingForce|speeddemon|rueck|ab4|mit/ohne=1.0000|aus 1 Paaren|einzeln=1.0000
+wertfaktor|getBrakingForce|speeddemon|rueck|ab6|mit/ohne=1.0000|aus 1 Paaren|einzeln=1.0000
+wertfaktor|getBrakingForce|speeddemon|rueck|ab8|mit/ohne=1.0000|aus 1 Paaren|einzeln=1.0000
+wertfaktor|getBrakingForce|speeddemon|rueck|ab10|mit/ohne=1.0000|aus 1 Paaren|einzeln=1.0000
+wertfaktor|getBrakingForce|speeddemon|rueck|ab12|mit/ohne=1.0000|aus 1 Paaren|einzeln=1.0000
+wertfaktor|getBrakingForce|speeddemon|rueck|ab15|mit/ohne=1.0000|aus 1 Paaren|einzeln=1.0000
+wertfaktor|getBrakingForce|speeddemon|rueck|ab20|mit/ohne=1.0000|aus 1 Paaren|einzeln=1.0000
+wertfaktor|getBrakingForce|speeddemon|rueck|ab25|mit/ohne=1.0000|aus 1 Paaren|einzeln=1.0000
+wertfaktor|getCurrentSpeedKmHour|sundaydriver|vor|ab10|mit/ohne=0.9995|aus 1 Paaren|einzeln=0.9995
+wertfaktor|getCurrentSpeedKmHour|sundaydriver|vor|ab15|mit/ohne=1.0041|aus 1 Paaren|einzeln=1.0041
+wertfaktor|getCurrentSpeedKmHour|sundaydriver|vor|ab20|mit/ohne=1.0005|aus 1 Paaren|einzeln=1.0005
+wertfaktor|getCurrentSpeedKmHour|sundaydriver|vor|ab25|mit/ohne=0.9995|aus 1 Paaren|einzeln=0.9995
+wertfaktor|getCurrentSpeedKmHour|sundaydriver|vor|ab30|mit/ohne=1.0013|aus 1 Paaren|einzeln=1.0013
+wertfaktor|getCurrentSpeedKmHour|sundaydriver|vor|ab35|mit/ohne=0.9954|aus 1 Paaren|einzeln=0.9954
+wertfaktor|getCurrentSpeedKmHour|sundaydriver|vor|ab40|mit/ohne=1.0023|aus 1 Paaren|einzeln=1.0023
+wertfaktor|getCurrentSpeedKmHour|sundaydriver|vor|ab45|mit/ohne=1.0020|aus 1 Paaren|einzeln=1.0020
+wertfaktor|getCurrentSpeedKmHour|sundaydriver|vor|ab50|mit/ohne=1.0042|aus 1 Paaren|einzeln=1.0042
+wertfaktor|getCurrentSpeedKmHour|sundaydriver|vor|ab55|mit/ohne=1.0071|aus 1 Paaren|einzeln=1.0071
+wertfaktor|getCurrentSpeedKmHour|sundaydriver|vor|ab60|mit/ohne=1.0211|aus 1 Paaren|einzeln=1.0211
+wertfaktor|getCurrentSpeedKmHour|sundaydriver|rueck|ab2|mit/ohne=0.9712|aus 1 Paaren|einzeln=0.9712
+wertfaktor|getCurrentSpeedKmHour|sundaydriver|rueck|ab4|mit/ohne=1.0135|aus 1 Paaren|einzeln=1.0135
+wertfaktor|getCurrentSpeedKmHour|sundaydriver|rueck|ab6|mit/ohne=1.0297|aus 1 Paaren|einzeln=1.0297
+wertfaktor|getCurrentSpeedKmHour|sundaydriver|rueck|ab8|mit/ohne=1.1033|aus 1 Paaren|einzeln=1.1033
+wertfaktor|getCurrentSpeedKmHour|speeddemon|vor|ab10|mit/ohne=0.9968|aus 1 Paaren|einzeln=0.9968
+wertfaktor|getCurrentSpeedKmHour|speeddemon|vor|ab15|mit/ohne=1.0018|aus 1 Paaren|einzeln=1.0018
+wertfaktor|getCurrentSpeedKmHour|speeddemon|vor|ab20|mit/ohne=0.9996|aus 1 Paaren|einzeln=0.9996
+wertfaktor|getCurrentSpeedKmHour|speeddemon|vor|ab25|mit/ohne=1.0038|aus 1 Paaren|einzeln=1.0038
+wertfaktor|getCurrentSpeedKmHour|speeddemon|vor|ab30|mit/ohne=1.0005|aus 1 Paaren|einzeln=1.0005
+wertfaktor|getCurrentSpeedKmHour|speeddemon|vor|ab35|mit/ohne=1.0036|aus 1 Paaren|einzeln=1.0036
+wertfaktor|getCurrentSpeedKmHour|speeddemon|vor|ab40|mit/ohne=0.9997|aus 1 Paaren|einzeln=0.9997
+wertfaktor|getCurrentSpeedKmHour|speeddemon|vor|ab45|mit/ohne=0.9994|aus 1 Paaren|einzeln=0.9994
+wertfaktor|getCurrentSpeedKmHour|speeddemon|vor|ab50|mit/ohne=1.0004|aus 1 Paaren|einzeln=1.0004
+wertfaktor|getCurrentSpeedKmHour|speeddemon|vor|ab55|mit/ohne=0.9996|aus 1 Paaren|einzeln=0.9996
+wertfaktor|getCurrentSpeedKmHour|speeddemon|vor|ab60|mit/ohne=0.9959|aus 1 Paaren|einzeln=0.9959
+wertfaktor|getCurrentSpeedKmHour|speeddemon|vor|ab65|mit/ohne=0.9961|aus 1 Paaren|einzeln=0.9961
+wertfaktor|getCurrentSpeedKmHour|speeddemon|vor|ab70|mit/ohne=0.9970|aus 1 Paaren|einzeln=0.9970
+wertfaktor|getCurrentSpeedKmHour|speeddemon|vor|ab75|mit/ohne=0.9810|aus 1 Paaren|einzeln=0.9810
+wertfaktor|getCurrentSpeedKmHour|speeddemon|rueck|ab2|mit/ohne=0.9562|aus 1 Paaren|einzeln=0.9562
+wertfaktor|getCurrentSpeedKmHour|speeddemon|rueck|ab4|mit/ohne=0.9794|aus 1 Paaren|einzeln=0.9794
+wertfaktor|getCurrentSpeedKmHour|speeddemon|rueck|ab6|mit/ohne=1.0103|aus 1 Paaren|einzeln=1.0103
+wertfaktor|getCurrentSpeedKmHour|speeddemon|rueck|ab8|mit/ohne=1.0012|aus 1 Paaren|einzeln=1.0012
+wertfaktor|getCurrentSpeedKmHour|speeddemon|rueck|ab10|mit/ohne=0.9967|aus 1 Paaren|einzeln=0.9967
+wertfaktor|getCurrentSpeedKmHour|speeddemon|rueck|ab12|mit/ohne=1.0064|aus 1 Paaren|einzeln=1.0064
+wertfaktor|getCurrentSpeedKmHour|speeddemon|rueck|ab15|mit/ohne=0.9993|aus 1 Paaren|einzeln=0.9993
+wertfaktor|getCurrentSpeedKmHour|speeddemon|rueck|ab20|mit/ohne=0.9942|aus 1 Paaren|einzeln=0.9942
+wertfaktor|getCurrentSpeedKmHour|speeddemon|rueck|ab25|mit/ohne=0.9995|aus 1 Paaren|einzeln=0.9995
+wertfaktor|getCurrentAbsoluteSpeedKmHour|sundaydriver|vor|ab10|mit/ohne=0.9995|aus 1 Paaren|einzeln=0.9995
+wertfaktor|getCurrentAbsoluteSpeedKmHour|sundaydriver|vor|ab15|mit/ohne=1.0041|aus 1 Paaren|einzeln=1.0041
+wertfaktor|getCurrentAbsoluteSpeedKmHour|sundaydriver|vor|ab20|mit/ohne=1.0005|aus 1 Paaren|einzeln=1.0005
+wertfaktor|getCurrentAbsoluteSpeedKmHour|sundaydriver|vor|ab25|mit/ohne=0.9995|aus 1 Paaren|einzeln=0.9995
+wertfaktor|getCurrentAbsoluteSpeedKmHour|sundaydriver|vor|ab30|mit/ohne=1.0013|aus 1 Paaren|einzeln=1.0013
+wertfaktor|getCurrentAbsoluteSpeedKmHour|sundaydriver|vor|ab35|mit/ohne=0.9954|aus 1 Paaren|einzeln=0.9954
+wertfaktor|getCurrentAbsoluteSpeedKmHour|sundaydriver|vor|ab40|mit/ohne=1.0023|aus 1 Paaren|einzeln=1.0023
+wertfaktor|getCurrentAbsoluteSpeedKmHour|sundaydriver|vor|ab45|mit/ohne=1.0020|aus 1 Paaren|einzeln=1.0020
+wertfaktor|getCurrentAbsoluteSpeedKmHour|sundaydriver|vor|ab50|mit/ohne=1.0042|aus 1 Paaren|einzeln=1.0042
+wertfaktor|getCurrentAbsoluteSpeedKmHour|sundaydriver|vor|ab55|mit/ohne=1.0071|aus 1 Paaren|einzeln=1.0071
+wertfaktor|getCurrentAbsoluteSpeedKmHour|sundaydriver|vor|ab60|mit/ohne=1.0211|aus 1 Paaren|einzeln=1.0211
+wertfaktor|getCurrentAbsoluteSpeedKmHour|sundaydriver|rueck|ab2|mit/ohne=0.9712|aus 1 Paaren|einzeln=0.9712
+wertfaktor|getCurrentAbsoluteSpeedKmHour|sundaydriver|rueck|ab4|mit/ohne=1.0135|aus 1 Paaren|einzeln=1.0135
+wertfaktor|getCurrentAbsoluteSpeedKmHour|sundaydriver|rueck|ab6|mit/ohne=1.0297|aus 1 Paaren|einzeln=1.0297
+wertfaktor|getCurrentAbsoluteSpeedKmHour|sundaydriver|rueck|ab8|mit/ohne=1.1033|aus 1 Paaren|einzeln=1.1033
+wertfaktor|getCurrentAbsoluteSpeedKmHour|speeddemon|vor|ab10|mit/ohne=0.9968|aus 1 Paaren|einzeln=0.9968
+wertfaktor|getCurrentAbsoluteSpeedKmHour|speeddemon|vor|ab15|mit/ohne=1.0018|aus 1 Paaren|einzeln=1.0018
+wertfaktor|getCurrentAbsoluteSpeedKmHour|speeddemon|vor|ab20|mit/ohne=0.9996|aus 1 Paaren|einzeln=0.9996
+wertfaktor|getCurrentAbsoluteSpeedKmHour|speeddemon|vor|ab25|mit/ohne=1.0038|aus 1 Paaren|einzeln=1.0038
+wertfaktor|getCurrentAbsoluteSpeedKmHour|speeddemon|vor|ab30|mit/ohne=1.0005|aus 1 Paaren|einzeln=1.0005
+wertfaktor|getCurrentAbsoluteSpeedKmHour|speeddemon|vor|ab35|mit/ohne=1.0036|aus 1 Paaren|einzeln=1.0036
+wertfaktor|getCurrentAbsoluteSpeedKmHour|speeddemon|vor|ab40|mit/ohne=0.9997|aus 1 Paaren|einzeln=0.9997
+wertfaktor|getCurrentAbsoluteSpeedKmHour|speeddemon|vor|ab45|mit/ohne=0.9994|aus 1 Paaren|einzeln=0.9994
+wertfaktor|getCurrentAbsoluteSpeedKmHour|speeddemon|vor|ab50|mit/ohne=1.0004|aus 1 Paaren|einzeln=1.0004
+wertfaktor|getCurrentAbsoluteSpeedKmHour|speeddemon|vor|ab55|mit/ohne=0.9996|aus 1 Paaren|einzeln=0.9996
+wertfaktor|getCurrentAbsoluteSpeedKmHour|speeddemon|vor|ab60|mit/ohne=0.9959|aus 1 Paaren|einzeln=0.9959
+wertfaktor|getCurrentAbsoluteSpeedKmHour|speeddemon|vor|ab65|mit/ohne=0.9961|aus 1 Paaren|einzeln=0.9961
+wertfaktor|getCurrentAbsoluteSpeedKmHour|speeddemon|vor|ab70|mit/ohne=0.9970|aus 1 Paaren|einzeln=0.9970
+wertfaktor|getCurrentAbsoluteSpeedKmHour|speeddemon|vor|ab75|mit/ohne=0.9810|aus 1 Paaren|einzeln=0.9810
+wertfaktor|getCurrentAbsoluteSpeedKmHour|speeddemon|rueck|ab2|mit/ohne=0.9562|aus 1 Paaren|einzeln=0.9562
+wertfaktor|getCurrentAbsoluteSpeedKmHour|speeddemon|rueck|ab4|mit/ohne=0.9794|aus 1 Paaren|einzeln=0.9794
+wertfaktor|getCurrentAbsoluteSpeedKmHour|speeddemon|rueck|ab6|mit/ohne=1.0103|aus 1 Paaren|einzeln=1.0103
+wertfaktor|getCurrentAbsoluteSpeedKmHour|speeddemon|rueck|ab8|mit/ohne=1.0012|aus 1 Paaren|einzeln=1.0012
+wertfaktor|getCurrentAbsoluteSpeedKmHour|speeddemon|rueck|ab10|mit/ohne=0.9967|aus 1 Paaren|einzeln=0.9967
+wertfaktor|getCurrentAbsoluteSpeedKmHour|speeddemon|rueck|ab12|mit/ohne=1.0064|aus 1 Paaren|einzeln=1.0064
+wertfaktor|getCurrentAbsoluteSpeedKmHour|speeddemon|rueck|ab15|mit/ohne=0.9993|aus 1 Paaren|einzeln=0.9993
+wertfaktor|getCurrentAbsoluteSpeedKmHour|speeddemon|rueck|ab20|mit/ohne=0.9942|aus 1 Paaren|einzeln=0.9942
+wertfaktor|getCurrentAbsoluteSpeedKmHour|speeddemon|rueck|ab25|mit/ohne=0.9995|aus 1 Paaren|einzeln=0.9995
+wertfaktor|getSpeed2D|sundaydriver|vor|ab10|mit/ohne=0.9976|aus 1 Paaren|einzeln=0.9976
+wertfaktor|getSpeed2D|sundaydriver|vor|ab15|mit/ohne=1.0027|aus 1 Paaren|einzeln=1.0027
+wertfaktor|getSpeed2D|sundaydriver|vor|ab20|mit/ohne=0.9995|aus 1 Paaren|einzeln=0.9995
+wertfaktor|getSpeed2D|sundaydriver|vor|ab25|mit/ohne=0.9987|aus 1 Paaren|einzeln=0.9987
+wertfaktor|getSpeed2D|sundaydriver|vor|ab30|mit/ohne=0.9997|aus 1 Paaren|einzeln=0.9997
+wertfaktor|getSpeed2D|sundaydriver|vor|ab35|mit/ohne=0.9946|aus 1 Paaren|einzeln=0.9946
+wertfaktor|getSpeed2D|sundaydriver|vor|ab40|mit/ohne=1.0021|aus 1 Paaren|einzeln=1.0021
+wertfaktor|getSpeed2D|sundaydriver|vor|ab45|mit/ohne=1.0016|aus 1 Paaren|einzeln=1.0016
+wertfaktor|getSpeed2D|sundaydriver|vor|ab50|mit/ohne=1.0035|aus 1 Paaren|einzeln=1.0035
+wertfaktor|getSpeed2D|sundaydriver|vor|ab55|mit/ohne=1.0063|aus 1 Paaren|einzeln=1.0063
+wertfaktor|getSpeed2D|sundaydriver|vor|ab60|mit/ohne=1.0203|aus 1 Paaren|einzeln=1.0203
+wertfaktor|getSpeed2D|sundaydriver|rueck|ab2|mit/ohne=0.9581|aus 1 Paaren|einzeln=0.9581
+wertfaktor|getSpeed2D|sundaydriver|rueck|ab4|mit/ohne=0.9979|aus 1 Paaren|einzeln=0.9979
+wertfaktor|getSpeed2D|sundaydriver|rueck|ab6|mit/ohne=1.0126|aus 1 Paaren|einzeln=1.0126
+wertfaktor|getSpeed2D|sundaydriver|rueck|ab8|mit/ohne=1.0829|aus 1 Paaren|einzeln=1.0829
+wertfaktor|getSpeed2D|speeddemon|vor|ab10|mit/ohne=0.9969|aus 1 Paaren|einzeln=0.9969
+wertfaktor|getSpeed2D|speeddemon|vor|ab15|mit/ohne=1.0018|aus 1 Paaren|einzeln=1.0018
+wertfaktor|getSpeed2D|speeddemon|vor|ab20|mit/ohne=0.9996|aus 1 Paaren|einzeln=0.9996
+wertfaktor|getSpeed2D|speeddemon|vor|ab25|mit/ohne=1.0038|aus 1 Paaren|einzeln=1.0038
+wertfaktor|getSpeed2D|speeddemon|vor|ab30|mit/ohne=1.0005|aus 1 Paaren|einzeln=1.0005
+wertfaktor|getSpeed2D|speeddemon|vor|ab35|mit/ohne=1.0036|aus 1 Paaren|einzeln=1.0036
+wertfaktor|getSpeed2D|speeddemon|vor|ab40|mit/ohne=0.9997|aus 1 Paaren|einzeln=0.9997
+wertfaktor|getSpeed2D|speeddemon|vor|ab45|mit/ohne=0.9995|aus 1 Paaren|einzeln=0.9995
+wertfaktor|getSpeed2D|speeddemon|vor|ab50|mit/ohne=1.0004|aus 1 Paaren|einzeln=1.0004
+wertfaktor|getSpeed2D|speeddemon|vor|ab55|mit/ohne=0.9996|aus 1 Paaren|einzeln=0.9996
+wertfaktor|getSpeed2D|speeddemon|vor|ab60|mit/ohne=0.9960|aus 1 Paaren|einzeln=0.9960
+wertfaktor|getSpeed2D|speeddemon|vor|ab65|mit/ohne=0.9964|aus 1 Paaren|einzeln=0.9964
+wertfaktor|getSpeed2D|speeddemon|vor|ab70|mit/ohne=0.9973|aus 1 Paaren|einzeln=0.9973
+wertfaktor|getSpeed2D|speeddemon|vor|ab75|mit/ohne=0.9813|aus 1 Paaren|einzeln=0.9813
+wertfaktor|getSpeed2D|speeddemon|rueck|ab2|mit/ohne=0.9633|aus 1 Paaren|einzeln=0.9633
+wertfaktor|getSpeed2D|speeddemon|rueck|ab4|mit/ohne=0.9843|aus 1 Paaren|einzeln=0.9843
+wertfaktor|getSpeed2D|speeddemon|rueck|ab6|mit/ohne=1.0137|aus 1 Paaren|einzeln=1.0137
+wertfaktor|getSpeed2D|speeddemon|rueck|ab8|mit/ohne=1.0042|aus 1 Paaren|einzeln=1.0042
+wertfaktor|getSpeed2D|speeddemon|rueck|ab10|mit/ohne=0.9994|aus 1 Paaren|einzeln=0.9994
+wertfaktor|getSpeed2D|speeddemon|rueck|ab12|mit/ohne=1.0086|aus 1 Paaren|einzeln=1.0086
+wertfaktor|getSpeed2D|speeddemon|rueck|ab15|mit/ohne=1.0011|aus 1 Paaren|einzeln=1.0011
+wertfaktor|getSpeed2D|speeddemon|rueck|ab20|mit/ohne=0.9956|aus 1 Paaren|einzeln=0.9956
+wertfaktor|getSpeed2D|speeddemon|rueck|ab25|mit/ohne=1.0007|aus 1 Paaren|einzeln=1.0007
+wertfaktor|getTransmissionNumber|sundaydriver|vor|ab10|mit/ohne=1.0000|aus 1 Paaren|einzeln=1.0000
+wertfaktor|getTransmissionNumber|sundaydriver|vor|ab15|mit/ohne=1.0000|aus 1 Paaren|einzeln=1.0000
+wertfaktor|getTransmissionNumber|sundaydriver|vor|ab20|mit/ohne=1.0000|aus 1 Paaren|einzeln=1.0000
+wertfaktor|getTransmissionNumber|sundaydriver|vor|ab25|mit/ohne=1.0000|aus 1 Paaren|einzeln=1.0000
+wertfaktor|getTransmissionNumber|sundaydriver|vor|ab30|mit/ohne=3.0000|aus 1 Paaren|einzeln=3.0000
+wertfaktor|getTransmissionNumber|sundaydriver|vor|ab35|mit/ohne=3.0000|aus 1 Paaren|einzeln=3.0000
+wertfaktor|getTransmissionNumber|sundaydriver|vor|ab40|mit/ohne=1.0000|aus 1 Paaren|einzeln=1.0000
+wertfaktor|getTransmissionNumber|sundaydriver|vor|ab45|mit/ohne=1.0000|aus 1 Paaren|einzeln=1.0000
+wertfaktor|getTransmissionNumber|sundaydriver|vor|ab50|mit/ohne=1.3333|aus 1 Paaren|einzeln=1.3333
+wertfaktor|getTransmissionNumber|sundaydriver|vor|ab55|mit/ohne=1.3333|aus 1 Paaren|einzeln=1.3333
+wertfaktor|getTransmissionNumber|sundaydriver|vor|ab60|mit/ohne=1.0000|aus 1 Paaren|einzeln=1.0000
+wertfaktor|getTransmissionNumber|sundaydriver|rueck|ab2|mit/ohne=1.0000|aus 1 Paaren|einzeln=1.0000
+wertfaktor|getTransmissionNumber|sundaydriver|rueck|ab4|mit/ohne=1.0000|aus 1 Paaren|einzeln=1.0000
+wertfaktor|getTransmissionNumber|sundaydriver|rueck|ab6|mit/ohne=1.0000|aus 1 Paaren|einzeln=1.0000
+wertfaktor|getTransmissionNumber|sundaydriver|rueck|ab8|mit/ohne=1.0000|aus 1 Paaren|einzeln=1.0000
+wertfaktor|getTransmissionNumber|speeddemon|vor|ab10|mit/ohne=1.0000|aus 1 Paaren|einzeln=1.0000
+wertfaktor|getTransmissionNumber|speeddemon|vor|ab15|mit/ohne=1.0000|aus 1 Paaren|einzeln=1.0000
+wertfaktor|getTransmissionNumber|speeddemon|vor|ab20|mit/ohne=1.0000|aus 1 Paaren|einzeln=1.0000
+wertfaktor|getTransmissionNumber|speeddemon|vor|ab25|mit/ohne=1.0000|aus 1 Paaren|einzeln=1.0000
+wertfaktor|getTransmissionNumber|speeddemon|vor|ab30|mit/ohne=1.0000|aus 1 Paaren|einzeln=1.0000
+wertfaktor|getTransmissionNumber|speeddemon|vor|ab35|mit/ohne=1.0000|aus 1 Paaren|einzeln=1.0000
+wertfaktor|getTransmissionNumber|speeddemon|vor|ab40|mit/ohne=1.0000|aus 1 Paaren|einzeln=1.0000
+wertfaktor|getTransmissionNumber|speeddemon|vor|ab45|mit/ohne=1.0000|aus 1 Paaren|einzeln=1.0000
+wertfaktor|getTransmissionNumber|speeddemon|vor|ab50|mit/ohne=1.0000|aus 1 Paaren|einzeln=1.0000
+wertfaktor|getTransmissionNumber|speeddemon|vor|ab55|mit/ohne=1.0000|aus 1 Paaren|einzeln=1.0000
+wertfaktor|getTransmissionNumber|speeddemon|vor|ab60|mit/ohne=1.0000|aus 1 Paaren|einzeln=1.0000
+wertfaktor|getTransmissionNumber|speeddemon|vor|ab65|mit/ohne=1.0000|aus 1 Paaren|einzeln=1.0000
+wertfaktor|getTransmissionNumber|speeddemon|vor|ab70|mit/ohne=1.0000|aus 1 Paaren|einzeln=1.0000
+wertfaktor|getTransmissionNumber|speeddemon|vor|ab75|mit/ohne=1.0000|aus 1 Paaren|einzeln=1.0000
+wertfaktor|getTransmissionNumber|speeddemon|rueck|ab2|mit/ohne=1.0000|aus 1 Paaren|einzeln=1.0000
+wertfaktor|getTransmissionNumber|speeddemon|rueck|ab4|mit/ohne=1.0000|aus 1 Paaren|einzeln=1.0000
+wertfaktor|getTransmissionNumber|speeddemon|rueck|ab6|mit/ohne=1.0000|aus 1 Paaren|einzeln=1.0000
+wertfaktor|getTransmissionNumber|speeddemon|rueck|ab8|mit/ohne=1.0000|aus 1 Paaren|einzeln=1.0000
+wertfaktor|getTransmissionNumber|speeddemon|rueck|ab10|mit/ohne=1.0000|aus 1 Paaren|einzeln=1.0000
+wertfaktor|getTransmissionNumber|speeddemon|rueck|ab12|mit/ohne=1.0000|aus 1 Paaren|einzeln=1.0000
+wertfaktor|getTransmissionNumber|speeddemon|rueck|ab15|mit/ohne=1.0000|aus 1 Paaren|einzeln=1.0000
+wertfaktor|getTransmissionNumber|speeddemon|rueck|ab20|mit/ohne=1.0000|aus 1 Paaren|einzeln=1.0000
+wertfaktor|getTransmissionNumber|speeddemon|rueck|ab25|mit/ohne=1.0000|aus 1 Paaren|einzeln=1.0000
+wertfaktor|getEngineCondition|sundaydriver|vor|ab10|mit/ohne=1.0000|aus 1 Paaren|einzeln=1.0000
+wertfaktor|getEngineCondition|sundaydriver|vor|ab15|mit/ohne=1.0000|aus 1 Paaren|einzeln=1.0000
+wertfaktor|getEngineCondition|sundaydriver|vor|ab20|mit/ohne=1.0000|aus 1 Paaren|einzeln=1.0000
+wertfaktor|getEngineCondition|sundaydriver|vor|ab25|mit/ohne=1.0000|aus 1 Paaren|einzeln=1.0000
+wertfaktor|getEngineCondition|sundaydriver|vor|ab30|mit/ohne=1.0000|aus 1 Paaren|einzeln=1.0000
+wertfaktor|getEngineCondition|sundaydriver|vor|ab35|mit/ohne=1.0000|aus 1 Paaren|einzeln=1.0000
+wertfaktor|getEngineCondition|sundaydriver|vor|ab40|mit/ohne=1.0000|aus 1 Paaren|einzeln=1.0000
+wertfaktor|getEngineCondition|sundaydriver|vor|ab45|mit/ohne=1.0000|aus 1 Paaren|einzeln=1.0000
+wertfaktor|getEngineCondition|sundaydriver|vor|ab50|mit/ohne=1.0000|aus 1 Paaren|einzeln=1.0000
+wertfaktor|getEngineCondition|sundaydriver|vor|ab55|mit/ohne=1.0000|aus 1 Paaren|einzeln=1.0000
+wertfaktor|getEngineCondition|sundaydriver|vor|ab60|mit/ohne=1.0000|aus 1 Paaren|einzeln=1.0000
+wertfaktor|getEngineCondition|sundaydriver|rueck|ab2|mit/ohne=1.0000|aus 1 Paaren|einzeln=1.0000
+wertfaktor|getEngineCondition|sundaydriver|rueck|ab4|mit/ohne=1.0000|aus 1 Paaren|einzeln=1.0000
+wertfaktor|getEngineCondition|sundaydriver|rueck|ab6|mit/ohne=1.0000|aus 1 Paaren|einzeln=1.0000
+wertfaktor|getEngineCondition|sundaydriver|rueck|ab8|mit/ohne=1.0000|aus 1 Paaren|einzeln=1.0000
+wertfaktor|getEngineCondition|speeddemon|vor|ab10|mit/ohne=1.0000|aus 1 Paaren|einzeln=1.0000
+wertfaktor|getEngineCondition|speeddemon|vor|ab15|mit/ohne=1.0000|aus 1 Paaren|einzeln=1.0000
+wertfaktor|getEngineCondition|speeddemon|vor|ab20|mit/ohne=1.0000|aus 1 Paaren|einzeln=1.0000
+wertfaktor|getEngineCondition|speeddemon|vor|ab25|mit/ohne=1.0000|aus 1 Paaren|einzeln=1.0000
+wertfaktor|getEngineCondition|speeddemon|vor|ab30|mit/ohne=1.0000|aus 1 Paaren|einzeln=1.0000
+wertfaktor|getEngineCondition|speeddemon|vor|ab35|mit/ohne=1.0000|aus 1 Paaren|einzeln=1.0000
+wertfaktor|getEngineCondition|speeddemon|vor|ab40|mit/ohne=1.0000|aus 1 Paaren|einzeln=1.0000
+wertfaktor|getEngineCondition|speeddemon|vor|ab45|mit/ohne=1.0000|aus 1 Paaren|einzeln=1.0000
+wertfaktor|getEngineCondition|speeddemon|vor|ab50|mit/ohne=1.0000|aus 1 Paaren|einzeln=1.0000
+wertfaktor|getEngineCondition|speeddemon|vor|ab55|mit/ohne=1.0000|aus 1 Paaren|einzeln=1.0000
+wertfaktor|getEngineCondition|speeddemon|vor|ab60|mit/ohne=1.0000|aus 1 Paaren|einzeln=1.0000
+wertfaktor|getEngineCondition|speeddemon|vor|ab65|mit/ohne=1.0000|aus 1 Paaren|einzeln=1.0000
+wertfaktor|getEngineCondition|speeddemon|vor|ab70|mit/ohne=1.0000|aus 1 Paaren|einzeln=1.0000
+wertfaktor|getEngineCondition|speeddemon|vor|ab75|mit/ohne=1.0000|aus 1 Paaren|einzeln=1.0000
+wertfaktor|getEngineCondition|speeddemon|rueck|ab2|mit/ohne=1.0000|aus 1 Paaren|einzeln=1.0000
+wertfaktor|getEngineCondition|speeddemon|rueck|ab4|mit/ohne=1.0000|aus 1 Paaren|einzeln=1.0000
+wertfaktor|getEngineCondition|speeddemon|rueck|ab6|mit/ohne=1.0000|aus 1 Paaren|einzeln=1.0000
+wertfaktor|getEngineCondition|speeddemon|rueck|ab8|mit/ohne=1.0000|aus 1 Paaren|einzeln=1.0000
+wertfaktor|getEngineCondition|speeddemon|rueck|ab10|mit/ohne=1.0000|aus 1 Paaren|einzeln=1.0000
+wertfaktor|getEngineCondition|speeddemon|rueck|ab12|mit/ohne=1.0000|aus 1 Paaren|einzeln=1.0000
+wertfaktor|getEngineCondition|speeddemon|rueck|ab15|mit/ohne=1.0000|aus 1 Paaren|einzeln=1.0000
+wertfaktor|getEngineCondition|speeddemon|rueck|ab20|mit/ohne=1.0000|aus 1 Paaren|einzeln=1.0000
+wertfaktor|getEngineCondition|speeddemon|rueck|ab25|mit/ohne=1.0000|aus 1 Paaren|einzeln=1.0000
+tempofaktor|sundaydriver|vor|hoechst mit/ohne=0.8112|aus 1 Paaren|einzeln=0.8112
+tempofaktor|sundaydriver|rueck|hoechst mit/ohne=0.3688|aus 1 Paaren|einzeln=0.3688
+tempofaktor|speeddemon|vor|hoechst mit/ohne=1.1122|aus 1 Paaren|einzeln=1.1122
+tempofaktor|speeddemon|rueck|hoechst mit/ohne=1.0030|aus 1 Paaren|einzeln=1.0030
+info|verlauf|nicht lesbar: getFakeSpeedModifier
+faktor|sundaydriver|vor|zeit mit/ohne=1.3838|aus 1 Paaren|einzeln=1.3838|ZEITFENSTER UNSAUBER, siehe info|zeitfenster
+faktor|sundaydriver|rueck|zeit mit/ohne=1.6429|aus 1 Paaren|einzeln=1.6429
+faktor|speeddemon|vor|zeit mit/ohne=1.0074|aus 1 Paaren|einzeln=1.0074
+faktor|speeddemon|rueck|zeit mit/ohne=0.9286|aus 1 Paaren|einzeln=0.9286

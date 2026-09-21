@@ -1,0 +1,50 @@
+# Schlaf: Dauer, Einschlafen, Erholung, Messung an einer lebenden Figur
+# Mess-Mod 6.23.3
+# Build 42.20
+# Bett goodBed; Dauer: je Fall 200 Aufrufe von onSleepWalkToComplete bei Muedigkeit 0.9; Einschlafen: je Fall 300 Proben, 12 Suchschritte bis 2 Stunden
+# Dauer: faktor = groesster Wert mit / ohne (ZombRand in ganzen Stunden, exakt), Toleranz 2 %; Einschlafen: faktor = Deckel mit / Deckel ohne, Deckel = groesster Wert x (n + 1) / n, Toleranz 3 %; beide Teile mit den Faellen im Wechsel
+# Erholung: Muedigkeit weniger je Spielstunde, faktor = Phase mit Trait / Mittel der Nachbarphasen ohne, Toleranz 1 %
+
+[ergebnis]
+ergebnis|werte=9|stimmen=8|weichen_ab=1|nicht_messbar=0|abgelehnt=0|verworfen=0
+
+[werte] wert|teil|trait|faktor|soll_mod|soll_code|urteil
+wert|dauer|insomniac|0.5000|0.5000|0.5000|stimmt
+wert|dauer|needslesssleep|0.7500|0.7500|0.7500|stimmt
+wert|dauer|needsmoresleep|1.1800|1.1800|1.1800|stimmt
+wert|einschlafen|insomniac|3.3534|-|3.3333|stimmt
+wert|einschlafen|nightowl|0.4832|0.5000|0.5000|weicht ab
+wert|erholung|needslesssleep|1.3333|1.3300|1.3333|stimmt
+wert|erholung|needsmoresleep|0.8475|0.8500|0.8475|stimmt
+wert|erholung|insomniac|0.5000|0.5000|0.5000|stimmt
+wert|erholung|nightowl|1.4000|1.4000|1.4000|stimmt
+
+[dauer] fall|trait|proben|mittel|kleinster|groesster|geklemmt (Stunden)
+dauer|ohne|200|8.9050|8.0000|10.0000|0
+dauer|insomniac|200|4.4750|4.0000|5.0000|0
+dauer|needslesssleep|200|6.8250|6.0000|7.5000|0
+dauer|needsmoresleep|200|10.6082|9.4400|11.8000|0
+
+[einschlafen] fall|trait|proben|mittel|groesster|deckel (Stunden)|stress und schmerz: Proben mit der Stimmung|schritt: mittlere Schrittweite je Tick
+einschlafen|ohne|300|0.1186|0.2385|0.2393|stress=0|schmerz=0|schritt=0.0093
+einschlafen|insomniac|300|0.3859|0.7997|0.8023|stress=0|schmerz=0|schritt=0.0093
+einschlafen|nightowl|300|0.0572|0.1152|0.1156|stress=0|schmerz=0|schritt=0.0093
+
+[erholung] nr|gruppe|stunden|von|bis|je_h
+phase|1|ohne|0.3333|0.7971|0.7458|0.1540
+phase|2|needslesssleep|0.3334|0.7962|0.7278|0.2053
+phase|3|ohne|0.3334|0.7971|0.7458|0.1540
+phase|4|needsmoresleep|0.3334|0.7976|0.7541|0.1305
+phase|5|ohne|0.3334|0.7971|0.7458|0.1540
+phase|6|insomniac|0.3334|0.7986|0.7729|0.0770
+phase|7|ohne|0.3334|0.7971|0.7458|0.1540
+phase|8|nightowl|0.3334|0.7960|0.7241|0.2156
+phase|9|ohne|0.3334|0.7971|0.7458|0.1540
+phase|10|needslesssleep|0.3334|0.7962|0.7278|0.2053
+phase|11|ohne|0.3334|0.7971|0.7458|0.1540
+phase|12|needsmoresleep|0.3334|0.7976|0.7541|0.1305
+phase|13|ohne|0.3334|0.7971|0.7458|0.1540
+phase|14|insomniac|0.3334|0.7986|0.7729|0.0770
+phase|15|ohne|0.3334|0.7971|0.7458|0.1540
+phase|16|nightowl|0.3334|0.7960|0.7241|0.2156
+phase|17|ohne|0.3334|0.7971|0.7458|0.1540

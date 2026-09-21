@@ -1,0 +1,29 @@
+# Adrenalin: Gehtempo bei Panik mit Adrenaline Junkie, Messung an einer lebenden Figur
+# Mess-Mod 6.32.0
+# Build 42.20
+# je Phase 300 gezaehlte Ticks Gehen (ohne Shift), nach jedem Umschalten und jeder Pause 15 Ticks Anlauf; Panik in jedem Tick auf 90 (Stufe 4), Ausdauer auf 1; God Mode aus
+# WalkSpeed ohne Trait im Mittel 0.8000 (0.8000 mit Schuhen, ohne Last, bei normaler Waerme)
+# tempo = Summe Strecke / Summe Multiplier; walkspeed und getmovespeed = Mittel der gezaehlten Ticks; felder_je_s aus der Uhr
+# faktor = Phase mit Trait / Mittel der Nachbarphasen ohne, Toleranz 3 %; zusatz = faktor tempo / faktor walkspeed
+# laut Code: calculateBaseSpeed (IsoGameCharacter Z. 8754-8764) 0.8, mit Adrenaline Junkie ab Panikstufe 3 +(Stufe+1)/20, auf Stufe 4 1.05; calculateWalkSpeed deckelt bei 1.0 (Z. 8985): x1.25
+# laut Code: IsoPlayer.getMoveSpeed (Z. 1662-1666) x1.1 auf Stufe 4, gelesen nur von getPathSpeed (Z. 1024-1025) ohne Aufrufer: zusatz 1.0 (Spielfehler adrenaline-movespeed)
+
+[ergebnis]
+ergebnis|werte=4|stimmen=2|weichen_ab=2|nicht_messbar=0|phasen=9
+
+[werte] wert|groesse|trait|faktor|soll_mod|soll_code|urteil|phasen|notiz
+wert|walkspeed|adrenalinejunkie|1.2500|-|1.2500|stimmt|4|Animationsvariable WalkSpeed, gedeckelt bei 1.0
+wert|getmovespeed|adrenalinejunkie|1.1000|-|1.1000|stimmt|4|IsoPlayer.getMoveSpeed; zeigt, dass Panikstufe 4 stand
+wert|tempo|adrenalinejunkie|1.0813|1.2500|1.2500|weicht ab|4|Strecke je Multiplier
+wert|zusatz|adrenalinejunkie|0.8651|-|1.0000|weicht ab|4|tempo / walkspeed; Spielfehler adrenaline-movespeed: laut Code 1.0, mit der x1.1 aus getMoveSpeed waere es 1.1
+
+[phasen] phase|nr|adrenalinejunkie|ticks|tempo|felder_je_s|walkspeed|getmovespeed|nicht_gezaehlt
+phase|1|0|300|0.045446|2.1672|0.8000|0.060000|0
+phase|2|1|300|0.049117|2.3107|1.0000|0.066000|0
+phase|3|0|300|0.045453|2.1557|0.8000|0.060000|0
+phase|4|1|300|0.049185|2.2323|1.0000|0.066000|0
+phase|5|0|300|0.045441|2.1458|0.8000|0.060000|0
+phase|6|1|300|0.049141|2.3371|1.0000|0.066000|0
+phase|7|0|300|0.045426|2.1801|0.8000|0.060000|0
+phase|8|1|300|0.049125|2.3576|1.0000|0.066000|0
+phase|9|0|300|0.045478|2.1587|0.8000|0.060000|0

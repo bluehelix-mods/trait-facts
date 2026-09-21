@@ -1,0 +1,18 @@
+# Neue Figur: Tragekapazitaet und Stufen-Traits bei der Erschaffung
+# eine Zeile je frisch erschaffener Figur, gelesen 10 Ticks nach OnNewGame, mit God Mode aus
+# stufe = (int)(getMaxWeightBase x getWeightMod), mitfaktor = stufe x Tragefaktor der Mod; lesart: welche der beiden getMaxWeight zeigt
+# gewaehlt = IsoWorld.getLuaTraits (Erstellung, samt Berufs-Traits), jetzt = Traits der Figur, dazu/weg = was das Spiel dabei geaendert hat
+# Mess-Mod 6.22.0, Build 42.20, 13.09.2026
+figur|fall=strong|beruf=unemployed|gewaehlt=strong,weakstomach|jetzt=strong,weakstomach|dazu=-|weg=-|strength=9|fitness=5|tragen=18|stufe=18|mitfaktor=27|delta=1.00|lesart=stufe
+# Mess-Mod 6.22.0, Build 42.20, 13.09.2026
+figur|fall=ohne|beruf=unemployed|gewaehlt=-|jetzt=-|dazu=-|weg=-|strength=5|fitness=5|tragen=12|stufe=12|mitfaktor=-|delta=1.00|lesart=-
+# Mess-Mod 6.22.0, Build 42.20, 13.09.2026
+figur|fall=stout|beruf=unemployed|gewaehlt=stout|jetzt=stout|dazu=-|weg=-|strength=7|fitness=5|tragen=15|stufe=15|mitfaktor=18|delta=1.00|lesart=stufe
+# Mess-Mod 6.22.0, Build 42.20, 13.09.2026
+figur|fall=feeble|beruf=unemployed|gewaehlt=feeble|jetzt=feeble|dazu=-|weg=-|strength=3|fitness=5|tragen=9|stufe=9|mitfaktor=8|delta=1.00|lesart=stufe
+# Mess-Mod 6.22.0, Build 42.20, 13.09.2026
+figur|fall=weak|beruf=unemployed|gewaehlt=weak|jetzt=weak|dazu=-|weg=-|strength=0|fitness=5|tragen=6|stufe=6|mitfaktor=4|delta=1.00|lesart=stufe
+# Mess-Mod 6.22.0, Build 42.20, 13.09.2026
+figur|fall=overweight|beruf=unemployed|gewaehlt=overweight,weightgain|jetzt=outofshape,overweight,weightgain|dazu=outofshape|weg=-|strength=5|fitness=4|tragen=12|stufe=12|mitfaktor=-|delta=1.00|lesart=-
+# Mess-Mod 6.22.0, Build 42.20, 13.09.2026
+figur|fall=fit|beruf=fitnessinstructor|gewaehlt=fit,hemophobic,nutritionist2,slowlearner,sundaydriver|jetzt=athletic,hemophobic,nutritionist2,slowlearner,stout,sundaydriver|dazu=athletic,stout|weg=fit|strength=6|fitness=10|tragen=14|stufe=14|mitfaktor=-|delta=1.00|lesart=-

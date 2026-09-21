@@ -1,0 +1,29 @@
+# Einblenden: Tempo, mit dem ein Zombie fuer die Figur einblendet, Messung an einer lebenden Figur
+# Mess-Mod 6.32.0
+# Build 42.20
+# je Phase 120 Proben: Alpha des Zombies im OnTick auf 0, im naechsten gelesen; Zombie zuletzt 5 Felder entfernt, draussen, useless
+# wert je Probe = Alpha / (0.28 x getMultiplier); laut Code getAlphaUpdateRateMul 0.25 draussen ohne Trait (x2 im Raum)
+# faktor = Median der Phase mit Trait / Mittel der Mediane der Nachbarphasen ohne, Toleranz 2 %; faktor_rate ebenso aus Summe Alpha / Summe (0.28 x Multiplier)
+# laut Code: IsoGameCharacter.getAlphaUpdateRateMul Z. 6278-6289, Short Sighted /2, Eagle Eyed x1.5, Trait der Kamerafigur; IsoObject.updateAlpha(IFF) Bytecode 79-135
+# Brille: keine (laut Code ohne Einfluss, die Abfrage kennt nur den Trait)
+# Grundrate ohne Trait: 0.250000 (laut Code 0.250000)
+# Update-Stufen der Proben: FULL=1080
+# nicht gezaehlt: sicht=1; Felder versucht: 1
+
+[ergebnis]
+ergebnis|werte=2|stimmen=2|weichen_ab=0|nicht_messbar=0|phasen=9|grundrate=0.2500
+
+[werte] wert|trait|faktor|faktor_rate|soll_mod|soll_code|urteil|phasen
+wert|eagleeyed|1.5000|1.5000|1.5000|1.5000|stimmt|2
+wert|shortsighted|0.5000|0.5000|0.5000|0.5000|stimmt|2
+
+[phasen] phase|nr|gruppe|proben|median|rate|nicht_gezaehlt|abstand
+phase|1|ohne|120|0.250000|0.250000|1|5.1
+phase|2|adler|120|0.375000|0.375000|0|5.1
+phase|3|ohne|120|0.250000|0.250000|0|5.1
+phase|4|kurz|120|0.125000|0.125000|0|5.1
+phase|5|ohne|120|0.250000|0.250000|0|5.1
+phase|6|adler|120|0.375000|0.375000|0|5.1
+phase|7|ohne|120|0.250000|0.250000|0|5.1
+phase|8|kurz|120|0.125000|0.125000|0|5.1
+phase|9|ohne|120|0.250000|0.250000|0|5.1

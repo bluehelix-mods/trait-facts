@@ -1,0 +1,310 @@
+# Trait Facts, Messung an einer lebenden Figur
+# Mess-Mod 2.2.0
+# Build 42.20
+# Traits geprueft: 97, Wirkungen: 23, Groessen lesbar: 18 von 18
+
+[groessen] name|zustand|basiswert|herkunft
+grapple|lesbar|1.000000|IsoGameCharacter:7917
+chopTreeSpeed|lesbar|0.800000|IsoGameCharacter:12388
+hearDistanceMod|lesbar|1.000000|IsoGameCharacter:13934
+detectionRange|lesbar|3.421728|IsoGameCharacter:13952
+blurFactor|lesbar|0.000000|IsoGameCharacter:14118
+awkwardHands|lesbar|0.000000|IsoGameCharacter:14876
+maxWeight|lesbar|8.000000|in Vanilla-Lua benutzt
+meleeDamage|lesbar|1.000000|CharacterTraits:132
+enduranceLoss|lesbar|1.000000|CharacterTraits:146
+weatherPenalty|lesbar|1.500000|CharacterTraits:150
+climbFailChance|lesbar|4.000000|Kandidat
+pathSpeed|lesbar|0.054000|Kandidat
+moveSpeed|lesbar|0.060000|Kandidat
+combatSpeed|lesbar|1.044259|Kandidat
+runSpeedMod|lesbar|1.000000|Kandidat
+wornHearingMod|lesbar|1.000000|Kandidat
+wornHearingMult|lesbar|1.000000|Kandidat
+hyperthermiaMod|lesbar|1.000000|Kandidat
+# schwankt ohne Trait, deshalb verworfen: combatSpeed
+
+[wirkungen] trait|groesse|basis|mitTrait|prozent|faktor|differenz
+allthumbs|awkwardHands|0.000000|1.000000|0.0000|0.000000|1.000000
+asthmatic|enduranceLoss|1.000000|1.200000|20.0000|1.200000|0.200000
+athletic|grapple|1.000000|1.250000|25.0000|1.250000|0.250000
+axeman|chopTreeSpeed|0.800000|1.000000|25.0000|1.250000|0.200000
+brave|grapple|1.000000|1.100000|10.0000|1.100000|0.100000
+clumsy|climbFailChance|4.000000|3.000000|-25.0000|0.750000|-1.000000
+cowardly|grapple|1.000000|0.900000|-10.0000|0.900000|-0.100000
+deaf|detectionRange|3.421728|1.921728|-43.8375|0.561625|-1.500000
+emaciated|grapple|1.000000|0.600000|-40.0000|0.600000|-0.400000
+emaciated|meleeDamage|1.000000|0.400000|-60.0000|0.400000|-0.600000
+hardofhearing|detectionRange|3.421728|2.421728|-29.2250|0.707750|-1.000000
+hardofhearing|hearDistanceMod|1.000000|4.500000|350.0000|4.500000|3.500000
+keenhearing|detectionRange|3.421728|6.421728|87.6750|1.876750|3.000000
+obese|climbFailChance|4.000000|0.000000|-100.0000|0.000000|-4.000000
+obese|grapple|1.000000|1.050000|5.0000|1.050000|0.050000
+outdoorsman|weatherPenalty|1.500000|1.000000|-33.3333|0.666667|-0.500000
+overweight|climbFailChance|4.000000|2.000000|-50.0000|0.500000|-2.000000
+overweight|grapple|1.000000|1.100000|10.0000|1.100000|0.100000
+speeddemon|grapple|1.000000|1.150000|15.0000|1.150000|0.150000
+strong|grapple|1.000000|1.250000|25.0000|1.250000|0.250000
+underweight|meleeDamage|1.000000|0.800000|-20.0000|0.800000|-0.200000
+veryunderweight|grapple|1.000000|0.800000|-20.0000|0.800000|-0.200000
+veryunderweight|meleeDamage|1.000000|0.600000|-40.0000|0.600000|-0.400000
+
+[registry] trait|felder...
+adrenalinejunkie|label=Adrenaline Junkie|cost=4|mpBanned=false|excludes=agoraphobic,claustrophobic,cowardly,desensitized
+agoraphobic|label=Agoraphobic|cost=-4|mpBanned=false|excludes=adrenalinejunkie,brave,claustrophobic,desensitized
+allthumbs|label=All Thumbs|cost=-2|mpBanned=false|excludes=dextrous
+artisan|label=Artisan|cost=2|mpBanned=false|recipes=MakeDrinkingGlass,MakeGlassBottle,MakeGlassJar,MakeGlassPanel,MakeLanternGlass,MakeWineGlass
+asthmatic|label=Short of Breath|cost=-5|mpBanned=false
+athletic|label=Athletic|cost=10|mpBanned=false|excludes=fit,obese,out of shape,overweight,smoker,unfit,very underweight
+axeman|label=Ax-pert|cost=0|mpBanned=false
+baseballplayer|label=Baseball Player|cost=4|mpBanned=false|recipes=CarveBat
+blacksmith2|label=Blacksmith Knowledge|cost=0|mpBanned=false|excludes=blacksmith
+blacksmith|label=Blacksmith Knowledge|cost=6|mpBanned=false|recipes=Advanced_Forge,Blast_Furnace,Charcoal_Burner,Construct_Charcoal_Pit,Construct_Dome_Kiln,Construct_Makeshift_Electric_Blower_Forge,Forge,ForgeLongSpearHead,ForgeMaceHead,ForgeSpearHead,Forge_Baking_Pan,Forge_Baking_Tray,Forge_Ball_Peen_Hammer_Head,Forge_Bucket,Forge_Buckle,Forge_Carpentry_Chisel,Forge_Clawhammer_Head,Forge_Cooking_Pot,Forge_Corkscrew,Forge_Crowbar,Forge_Crude_Shortsword_Blade,Forge_Crude_Sword_Blade,Forge_Cup,Forge_Door_Knob,Forge_Draw_Plate,Forge_Drill,Forge_File,Forge_Fine_Butter_Knives,Forge_Fine_Forks,Forge_Fine_Spoons,Forge_Fishing_Hooks,Forge_Fleshing_Tool,Forge_Forceps,Forge_Forks,Forge_Frying_Pan,Forge_Garden_Hoe_Head,Forge_Gardening_Trowel,Forge_Goblets,Forge_Hand_Axe_Head,Forge_Hand_Scythe_Head,Forge_Heading_Tool,Forge_Hinge,Forge_Hunting_Knife_Blade,Forge_Kettle,Forge_Kitchen_Knife_Blade,Forge_Lantern,Forge_Large_Knife_Blade,Forge_Machete_Blade,Forge_Masons_Chisel,Forge_Masons_Trowel,Forge_Meat_Cleaver_Blade,Forge_Metalworking_Chisel,Forge_Metalworking_Pliers,Forge_Metalworking_Punch,Forge_Nails,Forge_Needle,Forge_Old_Axe_Head,Forge_Pick_Axe_Head,Forge_Primitive_Forge,Forge_Railroad_Spike_Knife,Forge_Roasting_Pan,Forge_Saucepan,Forge_Saw,Forge_Scissors,Forge_Scythe_Head,Forge_Sheep_Shears,Forge_ShortSword_Blade,Forge_Sledgehammer_Head,Forge_Small_Knife,Forge_Small_Steel_Sheet,Forge_Smithing_Hammer_Head,Forge_Spade_Head,Forge_Spoons,Forge_Steel_Sheet,Forge_Straight_Razor,Forge_Sword_Blade,Forge_Tongs,Forge_Tweezers,Forge_Wood_Axe_Head,Forge_Wrench,MakeCrudeWhetstone,MakeSpikedClub,Make_Metal_Drum,Primitive_Furnace,Smelting_Furnace|excludes=blacksmith2
+brave|label=Brave|cost=4|mpBanned=false|excludes=agoraphobic,claustrophobic,cowardly,desensitized
+brawler|label=Brawler|cost=6|mpBanned=false|recipes=BarbedWireWeapon,BoltBat,CanReinforceLongWeapon,CanReinforceShortWeapon,CanReinforceWeapon,SheetMetalWeapon
+burglar|label=Burglar|cost=0|mpBanned=false
+claustrophobic|label=Claustrophobic|cost=-4|mpBanned=false|excludes=adrenalinejunkie,agoraphobic,brave,desensitized
+clumsy|label=Clumsy|cost=-2|mpBanned=false|excludes=graceful
+conspicuous|label=Conspicuous|cost=-4|mpBanned=false|excludes=inconspicuous
+cook2|label=Keen Cook|cost=0|mpBanned=false|excludes=cook
+cook|label=Keen Cook|cost=3|mpBanned=false|recipes=MakeBaguetteDough,MakeBiscuits,MakeBreaddough,MakeCabbageRolls,MakeCakeBatter,MakeChocolateChipCookieDough,MakeCookieDough,MakeFriedOnionRings,MakeFriedShrimp,MakeGuacamole,MakeJar,MakeOatmealCookieDough,MakePieDough,MakePizza,MakeShortbreadCookieDough,MakeSugarCookieDough|excludes=cook2
+cowardly|label=Cowardly|cost=-2|mpBanned=false|excludes=adrenalinejunkie,brave,desensitized
+crafty|label=Crafty|cost=3|mpBanned=false|excludes=fastlearner,slowlearner
+deaf|label=Deaf|cost=-12|mpBanned=false|excludes=hardofhearing,keenhearing
+desensitized|label=Desensitized|cost=0|mpBanned=false|excludes=adrenalinejunkie,agoraphobic,brave,claustrophobic,cowardly,hemophobic
+dextrous|label=Dextrous|cost=2|mpBanned=false|excludes=allthumbs
+disorganized|label=Disorganized|cost=-6|mpBanned=false|excludes=organized
+eagleeyed|label=Eagle Eyed|cost=4|mpBanned=false|excludes=shortsighted
+emaciated|label=Emaciated|cost=-10|mpBanned=false|excludes=obese,overweight
+fasthealer|label=Fast Healer|cost=6|mpBanned=false|excludes=slowhealer
+fastlearner|label=Fast Learner|cost=6|mpBanned=false|excludes=crafty,slowlearner
+fastreader|label=Fast Reader|cost=2|mpBanned=false|excludes=illiterate,slowreader
+feeble|label=Weak|cost=-6|mpBanned=false|excludes=stout,strong,weak
+firstaid|label=First Aider|cost=2|mpBanned=false
+fishing|label=Angler|cost=4|mpBanned=false|recipes=FixFishingRod,MakeChum,MakeFishingRod
+fit|label=Fit|cost=6|mpBanned=false|excludes=athletic,obese,out of shape,overweight,unfit
+formerscout|label=Former Scout|cost=6|mpBanned=false|recipes=FixFishingRod,MakeChum,MakeFishingRod
+gardener|label=Gardener|cost=2|mpBanned=false|recipes=MakeAphidsCure,MakeFliesCureFromChewingTobacco,MakeFliesCureFromCigarettes,MakeFliesCureFromLooseTobacco,MakeJarofBellPeppers,MakeJarofBroccoli,MakeJarofCabbage,MakeJarofCarrots,MakeJarofEggplant,MakeJarofLeeks,MakeJarofPotatoes,MakeJarofRedRadishes,MakeJarofTomatoes,MakeMildewCure,MakeScarecrow,base:basil growing season,base:bell pepper growing season,base:black sage growing season,base:broadleaf plantain growing season,base:broccoli growing season,base:cabbage growing season,base:carrot growing season,base:cauliflower growing season,base:chamomile growing season,base:chives growing season,base:cilantro growing season,base:comfrey growing season,base:common mallow growing season,base:corn growing season,base:cucumber growing season,base:garlic growing season,base:green pea growing season,base:habanero growing season,base:hops growing season,base:jalapeno growing season,base:kale growing season,base:lavender growing season,base:leek growing season,base:lemongrass growing season,base:lettuce growing season,base:marigold growing season,base:mint growing season,base:onion growing season,base:oregano growing season,base:parsley growing season,base:poppy growing season,base:potato growing season,base:pumpkin growing season,base:radish growing season,base:rose growing season,base:rosemary growing season,base:sage growing season,base:soybean growing season,base:spinach growing season,base:strawberry growing season,base:sugar beet growing season,base:sunflower growing season,base:sweet potato growing season,base:thyme growing season,base:tomato growing season,base:turnip growing season,base:watermelon growing season,base:wild garlic growing season,base:zucchini growing season
+graceful|label=Graceful|cost=4|mpBanned=false|excludes=clumsy
+gymnast|label=Gymnast|cost=5|mpBanned=false
+handy|label=Handy|cost=8|mpBanned=false|recipes=BarbedWireWeapon,BoltBat,CanReinforceLongWeapon,CanReinforceShortWeapon,CanReinforceWeapon,MakeBrakeWeapon,MakeBucketMaul,MakeGardenForkHeadWeapon,MakeKettleMaul,MakeRailspikeCudgel,MakeRailspikeIronPipe,MakeRailspikeLongHandle,MakeRailspikeWeapon,MakeRakeHeadWeapon,MakeSawPlank,MakeSawbladeCudgel,MakeSawbladeLongHandle,MakeSawbladePlank,MakeSawbladeTableLeg,MakeSawbladeWeapon,MakeScrewdriver,MakeSpadeHeadCudgel,RailspikeBaseballBat,SheetMetalWeapon
+hardofhearing|label=Hard of Hearing|cost=-4|mpBanned=false|excludes=deaf,keenhearing
+heartyappetite|label=Hearty Appetite|cost=-4|mpBanned=false|excludes=lighteater,very underweight
+hemophobic|label=Fear of Blood|cost=-5|mpBanned=false|excludes=desensitized
+herbalistprof|label=Herbalist|cost=0|mpBanned=false|recipes=Herbalist,MakeComfreyPoultice,MakePlantainPoultice,MakeWildGarlicPoultice,base:black sage growing season,base:broadleaf plantain growing season,base:comfrey growing season,base:common mallow growing season,base:wild garlic growing season|excludes=herbalist
+herbalist|label=Herbalist|cost=4|mpBanned=false|recipes=Herbalist,MakeComfreyPoultice,MakePlantainPoultice,MakeWildGarlicPoultice,base:black sage growing season,base:broadleaf plantain growing season,base:comfrey growing season,base:common mallow growing season,base:wild garlic growing season|excludes=herbalist_prof
+highthirst|label=High Thirst|cost=-2|mpBanned=false|excludes=lowthirst
+hiker|label=Hiker|cost=5|mpBanned=false|recipes=MakeSnareTrap,MakeStickTrap,MakeWoodenBoxTrap
+hunter|label=Hunter|cost=8|mpBanned=false|recipes=MakeCageTrap,MakeSnareTrap,MakeStagHeadTrophy,MakeStickTrap,MakeTrapBox,MakeWoodenBoxTrap
+illiterate|label=Illiterate|cost=-10|mpBanned=false|excludes=fastreader,slowreader
+inconspicuous|label=Inconspicuous|cost=4|mpBanned=false|excludes=conspicuous
+insomniac|label=Restless Sleeper|cost=-6|mpBanned=false
+inventiveprof|label=Inventive|cost=0|mpBanned=false|excludes=inventive
+inventive|label=Inventive|cost=2|mpBanned=false|excludes=inventive_prof
+irongut|label=Iron Gut|cost=2|mpBanned=false|excludes=weakstomach
+jogger|label=Runner|cost=4|mpBanned=false
+keenhearing|label=Keen Hearing|cost=6|mpBanned=false|excludes=deaf,hardofhearing
+lighteater|label=Light Eater|cost=2|mpBanned=false|excludes=heartyappetite,obese
+lowthirst|label=Low Thirst|cost=2|mpBanned=false|excludes=highthirst
+marksman|label=Marksman|cost=0|mpBanned=false
+mason|label=Mason|cost=2|mpBanned=false|recipes=Advanced_Forge,Blast_Furnace,Construct_Dome_Kiln,Forge,Forge_Primitive_Forge,Primitive_Furnace,Smelting_Furnace
+mechanics2|label=Vehicle Knowledge|cost=0|mpBanned=false|excludes=mechanics
+mechanics|label=Vehicle Knowledge|cost=3|mpBanned=false|recipes=Basic Mechanics,Intermediate Mechanics|excludes=mechanics2
+needslesssleep|label=Wakeful|cost=3|mpBanned=false|excludes=needsmoresleep
+needsmoresleep|label=Sleepyhead|cost=-4|mpBanned=false|excludes=needslesssleep
+nightowl|label=Night Owl|cost=0|mpBanned=false
+nightvision|label=Cat's Eyes|cost=3|mpBanned=false
+nutritionist2|label=Nutritionist|cost=0|mpBanned=false|excludes=nutritionist
+nutritionist|label=Nutritionist|cost=2|mpBanned=false|excludes=nutritionist2
+obese|label=Very High Weight|cost=0|mpBanned=false|excludes=athletic,emaciated,fit,lighteater,overweight,underweight,very underweight
+organized|label=Organized|cost=4|mpBanned=false|excludes=disorganized
+outdoorsman|label=Outdoorsy|cost=2|mpBanned=false
+outofshape|label=Out of Shape|cost=-6|mpBanned=false|excludes=athletic,fit,unfit
+overweight|label=High Weight|cost=0|mpBanned=false|excludes=athletic,emaciated,fit,underweight,very underweight
+pacifist|label=Reluctant Fighter|cost=-5|mpBanned=false
+pronetoillness|label=Prone to Illness|cost=-4|mpBanned=false|excludes=resilient
+resilient|label=Resilient|cost=4|mpBanned=false|excludes=pronetoillness
+shortsighted|label=Short Sighted|cost=-2|mpBanned=false|excludes=eagleeyed
+slowhealer|label=Slow Healer|cost=-3|mpBanned=false|excludes=fasthealer
+slowlearner|label=Slow Learner|cost=-6|mpBanned=false|excludes=crafty,fastlearner
+slowreader|label=Slow Reader|cost=-2|mpBanned=false|excludes=fastreader,illiterate
+smoker|label=Smoker|cost=-3|mpBanned=false|excludes=athletic
+speeddemon|label=Speed Demon|cost=1|mpBanned=false|excludes=sundaydriver
+stout|label=Stout|cost=6|mpBanned=false|excludes=feeble,strong,weak
+strong|label=Strong|cost=10|mpBanned=false|excludes=feeble,stout,weak
+sundaydriver|label=Sunday Driver|cost=-1|mpBanned=false|excludes=speeddemon
+tailor|label=Sewer|cost=4|mpBanned=false|recipes=AssembleAdvancedFramepack,AssembleAdvancedLargeFramepack,AssembleLargeFramepack,AssembleSmallFramepack,KnitBalaclavaFace,KnitBalaclavaFull,KnitBeany,KnitDoily,KnitLegwarmers,KnitScarf,KnitSocks,KnitSweaterVest,KnitWoolyHat,MakeGarbageBagDress,MakeGarbageBagTankTop,MakeTarpChestRig,MakeTarpDress,MakeTarpTankTop,MakeWesternBoots,SewBandolier,SewBelt,SewClothSatchel,SewCrudeLeatherBackpack,SewDressKnees,SewDressLong,SewElbowPads,SewFurredHideCoat,SewFurredHideJacket,SewHideBoots,SewHideCoat,SewHideFannyBag,SewHideHat,SewHideHoodie,SewHideJacket,SewHidePants,SewHideRobe,SewHideSleepingBag,SewHideWallet,SewHolster,SewHolsterDouble,SewKneePads,SewLeatherCodpiece,SewLeatherGaiter,SewLeatherGloves,SewLeatherGorget,SewLeatherPants,SewLeatherToolRoll,SewLeatherVambrace,SewLeatherWaterBag,SewLongjohns,SewLongjohnsBottom,SewSandals,SewShellsBandolier,SewShirt,SewShirtSleeveless,SewSkirtKnees,SewSkirtLong,SewTrousers,WeaveTwineShoes
+targetshooter|label=Target Shooter|cost=5|mpBanned=false
+thickskinned|label=Thick-skinned|cost=8|mpBanned=false|excludes=thinskinned
+thinskinned|label=Thin-skinned|cost=-8|mpBanned=false|excludes=thickskinned
+tinkerer|label=Tinkerer|cost=4|mpBanned=false
+underweight|label=Low Weight|cost=0|mpBanned=false|excludes=obese,overweight,very underweight
+unfit|label=Unfit|cost=-10|mpBanned=false|excludes=athletic,fit,out of shape
+veryunderweight|label=Very Low Weight|cost=0|mpBanned=false|excludes=athletic,heartyappetite,obese,overweight,underweight
+weakstomach|label=Weak Stomach|cost=-2|mpBanned=false|excludes=irongut
+weak|label=Puny|cost=-10|mpBanned=false|excludes=feeble,stout,strong
+weightgain|label=Slow Metabolism|cost=-2|mpBanned=false|grants=overweight|excludes=weightloss
+weightloss|label=Fast Metabolism|cost=-2|mpBanned=false|grants=underweight|excludes=weightgain
+whittler|label=Whittler|cost=2|mpBanned=false|recipes=CarveBat,CarveBucket,CarveFleshingTool,CarveGoblets,CarveKnittingNeedles,CarveShortBat,CarveWhistle,CarveWoodenFork,CarveWoodenSpade,MakeBoneAwl,MakeBoneFishingHook,MakeBoneFork,MakeBoneHatchetHead,MakeBoneSewingNeedle,MakeLargeBoneBead,MakeLargeBoneBeads,SharpenBone,SharpenJawbone,SharpenLongBone
+wildernessknowledge|label=Bushcrafter|cost=8|mpBanned=false|recipes=BindSpear,CarveBucket,CarveFleshingTool,FireHardenSpear,Herbalist,MakeBoneAwl,MakeBoneClub,MakeBoneFishingHook,MakeBoneHatchetHead,MakeBoneSewingNeedle,MakeComfreyPoultice,MakeCrudeWhetstone,MakeFishingRod,MakeJawboneAxe,MakeLargeStoneAxeHead,MakeLongStoneBlade,MakePlantainPoultice,MakeSnareTrap,MakeStoneAwl,MakeStoneBlade,MakeStoneBladeSaw,MakeStoneBladeScythe,MakeStoneChisel,MakeStoneDrill,MakeStoneMaulHead,MakeWildGarlicPoultice,RemakeLongStoneBlade,SharpenLongBone,WireSpear
+
+[foraging] trait|felder...
+# forageSkills nicht geladen
+
+[xp] art|skill|felder...
+boost|Combat - Melee|boost=0|buchfaktor=0
+boost|Axe|boost=0|buchfaktor=0
+boost|Long Blunt|boost=0|buchfaktor=0
+boost|Short Blunt|boost=0|buchfaktor=0
+boost|Long Blade|boost=0|buchfaktor=0
+boost|Short Blade|boost=0|buchfaktor=0
+boost|Spear|boost=0|buchfaktor=0
+boost|Maintenance|boost=0|buchfaktor=0
+boost|Combat - Firearms|boost=0|buchfaktor=0
+boost|Aiming|boost=0|buchfaktor=0
+boost|Reloading|boost=0|buchfaktor=0
+boost|Crafting|boost=0|buchfaktor=0
+boost|Carpentry|boost=0|buchfaktor=0
+boost|Carving|boost=0|buchfaktor=0
+boost|Cooking|boost=0|buchfaktor=0
+boost|Electrical|boost=0|buchfaktor=0
+boost|First Aid|boost=0|buchfaktor=0
+boost|Glassmaking|boost=0|buchfaktor=0
+boost|Knapping|boost=0|buchfaktor=0
+boost|Masonry|boost=0|buchfaktor=0
+boost|Blacksmithing|boost=0|buchfaktor=0
+boost|Mechanics|boost=0|buchfaktor=0
+boost|Pottery|boost=0|buchfaktor=0
+boost|Tailoring|boost=0|buchfaktor=0
+boost|Welding|boost=0|buchfaktor=0
+boost|Survival|boost=0|buchfaktor=0
+boost|Fishing|boost=0|buchfaktor=0
+boost|Foraging|boost=0|buchfaktor=0
+boost|Tracking|boost=0|buchfaktor=0
+boost|Trapping|boost=0|buchfaktor=0
+boost|Physical|boost=0|buchfaktor=0
+boost|Fitness|boost=3|buchfaktor=0
+boost|Strength|boost=3|buchfaktor=0
+boost|Agility|boost=0|buchfaktor=0
+boost|Lightfooted|boost=0|buchfaktor=0
+boost|Nimble|boost=0|buchfaktor=0
+boost|Running|boost=0|buchfaktor=0
+boost|Sneaking|boost=0|buchfaktor=0
+boost|Farming|boost=0|buchfaktor=0
+boost|Agriculture|boost=0|buchfaktor=0
+boost|Animal Care|boost=0|buchfaktor=0
+boost|Butchering|boost=0|buchfaktor=0
+leiter|Woodwork|boost=0|20 gegeben|erhalten=5.0000 (x0.250)
+leiter|Woodwork|boost=1|20 gegeben|erhalten=20.0000 (x1.000)
+leiter|Woodwork|boost=2|20 gegeben|erhalten=26.6000 (x1.330)
+leiter|Woodwork|boost=3|20 gegeben|erhalten=33.2000 (x1.660)
+addxp|Woodwork|20 gegeben|ohne=5.0000|fastlearner=6.5000 (x1.300)|slowlearner=3.5000 (x0.700)
+addxp|Strength|20 gegeben|ohne=20.0000|fastlearner=20.0000 (x1.000)|slowlearner=20.0000 (x1.000)
+addxp|Sprinting|20 gegeben|ohne=20.0000|fastlearner=26.0000 (x1.300)|slowlearner=20.0000 (x1.000)
+
+[behaelter] fall|felder...
+# Tasche: Base.Bag_Schoolbag
+basis|capacity=15|effective=15
+organized|effective=19|faktor=1.2667|differenz=4
+disorganized|effective=10|faktor=0.6667|differenz=-5
+
+[ohne messbare wirkung] 79 Traits
+adrenalinejunkie
+agoraphobic
+artisan
+baseballplayer
+blacksmith
+blacksmith2
+brawler
+burglar
+claustrophobic
+conspicuous
+cook
+cook2
+crafty
+desensitized
+dextrous
+disorganized
+eagleeyed
+fasthealer
+fastlearner
+fastreader
+feeble
+firstaid
+fishing
+fit
+formerscout
+gardener
+graceful
+gymnast
+handy
+heartyappetite
+hemophobic
+herbalist
+herbalistprof
+highthirst
+hiker
+hunter
+illiterate
+inconspicuous
+insomniac
+inventive
+inventiveprof
+irongut
+jogger
+lighteater
+lowthirst
+marksman
+mason
+mechanics
+mechanics2
+needslesssleep
+needsmoresleep
+nightowl
+nightvision
+nutritionist
+nutritionist2
+organized
+outofshape
+pacifist
+pronetoillness
+resilient
+shortsighted
+slowhealer
+slowlearner
+slowreader
+smoker
+stout
+sundaydriver
+tailor
+targetshooter
+thickskinned
+thinskinned
+tinkerer
+unfit
+weak
+weakstomach
+weightgain
+weightloss
+whittler
+wildernessknowledge
+
+[sprint] phase|nr|trait|ticks|strecke|je tick
+# abgeschlossen
+phase|1|warmup|ticks=100|strecke=8.8136|je tick=0.088136|trait=-|blockiert=0|min=0.072292|max=0.099609|ms=1667|ausdauer>=0.996
+phase|2|none|ticks=100|strecke=9.0742|je tick=0.090742|trait=-|blockiert=0|min=0.056641|max=0.125000|ms=1667|ausdauer>=1.000
+phase|3|athletic|ticks=100|strecke=9.0801|je tick=0.090801|trait=gesetzt|blockiert=0|min=0.081055|max=0.099609|ms=1667|ausdauer>=1.000
+phase|4|none|ticks=100|strecke=9.4150|je tick=0.094150|trait=-|blockiert=0|min=0.036133|max=0.216797|ms=1725|ausdauer>=0.999
+phase|5|unfit|ticks=100|strecke=9.0908|je tick=0.090908|trait=gesetzt|blockiert=0|min=0.046875|max=0.129883|ms=1652|ausdauer>=1.000
+phase|6|none|ticks=100|strecke=9.1572|je tick=0.091572|trait=-|blockiert=0|min=0.043945|max=0.194336|ms=1666|ausdauer>=0.999
+phase|7|athletic|ticks=100|strecke=9.0781|je tick=0.090781|trait=gesetzt|blockiert=0|min=0.063477|max=0.144531|ms=1664|ausdauer>=1.000
+phase|8|none|ticks=100|strecke=9.0811|je tick=0.090811|trait=-|blockiert=0|min=0.089844|max=0.090820|ms=1667|ausdauer>=1.000
+phase|9|unfit|ticks=100|strecke=9.0771|je tick=0.090771|trait=gesetzt|blockiert=0|min=0.044922|max=0.135742|ms=1666|ausdauer>=1.000
+phase|10|none|ticks=100|strecke=9.1709|je tick=0.091709|trait=-|blockiert=0|min=0.035156|max=0.197266|ms=1682|ausdauer>=0.999
+phase|11|athletic|ticks=100|strecke=9.0791|je tick=0.090791|trait=gesetzt|blockiert=0|min=0.056641|max=0.134766|ms=1666|ausdauer>=1.000
+phase|12|none|ticks=100|strecke=9.0828|je tick=0.090828|trait=-|blockiert=0|min=0.058594|max=0.125977|ms=1671|ausdauer>=1.000
+phase|13|unfit|ticks=100|strecke=9.0744|je tick=0.090744|trait=gesetzt|blockiert=0|min=0.045575|max=0.151917|ms=1665|ausdauer>=1.000
+rauschen|ohne Trait|min=0.090742|max=0.094150|streuung=3.72%|sd=1.42%|aus 6 Phasen
+nachweisgrenze|2.84%|ein Faktor zwischen 0.9716 und 1.0284 ist Rauschen
+faktor|athletic|mit/ohne=0.9940|aus 3 Paaren|einzeln=1.0006,0.9914,0.9900|streuung der Paare=0.58%
+faktor|unfit|mit/ohne=0.9878|aus 3 Paaren|einzeln=0.9656,0.9996,0.9991|streuung der Paare=1.95%

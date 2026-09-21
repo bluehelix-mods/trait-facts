@@ -1,0 +1,45 @@
+# Blut und Laerm: Blutpanik, Blutstress, Stress aus Geraeuschen, Messung an einer lebenden Figur
+# Mess-Mod 6.32.0
+# Build 42.20
+# Spieltempo 1; je Phase 3000 ms nach 20 Ticks Vorlauf; Gesundheit im Panik-Teil 62, Start Panik 30, Stress 0.2; Geraeusch Radius 3, stressMod 1
+# Blutpanik laut Code (updateInternal Z. 8219-8221): je Bild (Hemophobic 0.4, sonst 0.2) x del x ThirtyFPS,
+#   del = (1 - Gesundheit/100) x blutende Teile; bloodpanic = mit/ohne (TF_Static x2.0),
+#   bloodpanic_ohne = Panik je del und ThirtyFPS ohne Trait (0.2)
+# Blutstress laut Code (updateStress Z. 9221-9223): je Update getTotalBlood x StressFromHemophobic x
+#   Multiplier/0.8 x DeltaMinutesPerDay; bloodstress = Stress je Blutpunkt und Einheit x 1e7
+#   (defines.lua 3.333); TF_Static fuehrt bloodstress als info
+# Geraeusche laut Code (updateStress Z. 9209-9210): je Update getStressFromSounds x
+#   StressFromSoundsMultiplier, mit Deaf nichts; sounds = Anteil mit Deaf (laut Code 0),
+#   sounds_ohne = Stress je Einheit getStressFromSounds x 1e5 (defines.lua 2.0); TF_Static: sounds info
+# je Messphase: (Aenderung - Grundrate der naechsten Grundphasen x Summe ThirtyFPS bzw. Multiplier x
+#   DeltaMinutesPerDay) / Summe der Einheit; Toleranz 2 %, beim Anteil mit Deaf 0.02
+# nicht messbar, schall: addSound mit flags geht nicht: No implementation found for function: addSound(class zombie.WorldSoundManager zombie.WorldSoundManager@1a3fc53f, class zombie.characters.IsoPlayer IsoPlayer{  Name:null,  ID:3 }, class java.lang.Double 10675.0, class java.lang.Double 9384.0, class java.lang.Double 0.0, class java.lang.Double 3.0, class java.lang.Double 1.0, class java.lang.Double 0.0, class java.lang.Double 1.0, class java.lang.Boolean false, class java.lang.Boolean false, class java.lang.Boolean false, class java.lang.Boolean false, class java.lang.Double 2.0)) java.lang.RuntimeException
+
+[ergebnis]
+ergebnis|werte=5|stimmen=3|weichen_ab=0|nicht_messbar=2|phasen=17|verworfen=0
+
+[werte] wert|trait|faktor|soll_mod|soll_code|phasen|urteil
+wert|bloodpanic|hemophobic|1.9998|2.0000|2.0000|3|stimmt
+wert|bloodpanic_ohne|-|0.2000|-|0.2000|3|stimmt
+wert|bloodstress|hemophobic|3.3336|info|3.3330|3|stimmt
+wert|sounds|deaf|-|info|0.0000|0|nicht messbar (addSound mit flags geht nicht: No implementation found for function: addSound(class zombie.WorldSoundManager zombie.WorldSoundManager@1a3fc53f, class zombie.characters.IsoPlayer IsoPlayer{  Name:null,  ID:3 }, class java.lang.Double 10675.0, class java.lang.Double 9384.0, class java.lang.Double 0.0, class java.lang.Double 3.0, class java.lang.Double 1.0, class java.lang.Double 0.0, class java.lang.Double 1.0, class java.lang.Boolean false, class java.lang.Boolean false, class java.lang.Boolean false, class java.lang.Boolean false, class java.lang.Double 2.0)) java.lang.RuntimeException)
+wert|sounds_ohne|-|-|-|2.0000|0|nicht messbar (addSound mit flags geht nicht: No implementation found for function: addSound(class zombie.WorldSoundManager zombie.WorldSoundManager@1a3fc53f, class zombie.characters.IsoPlayer IsoPlayer{  Name:null,  ID:3 }, class java.lang.Double 10675.0, class java.lang.Double 9384.0, class java.lang.Double 0.0, class java.lang.Double 3.0, class java.lang.Double 1.0, class java.lang.Double 0.0, class java.lang.Double 1.0, class java.lang.Boolean false, class java.lang.Boolean false, class java.lang.Boolean false, class java.lang.Boolean false, class java.lang.Double 2.0)) java.lang.RuntimeException)
+
+[phasen] nr|teil|art|ticks|ms|von|bis|mittel_x|koeffizient (x skala)
+phase|1|panik|leer|175|3003|29.401079|24.000021|62.4338|-
+phase|2|panik|ohne|177|3001|30.143084|31.357206|63.2494|0.2000
+phase|3|panik|mit|177|3004|30.851076|38.388222|64.0626|0.4000
+phase|4|panik|leer|153|3000|29.400118|24.230352|64.8576|-
+phase|5|panik|mit|175|3004|30.789597|37.753437|65.6522|0.4001
+phase|6|panik|ohne|158|3002|30.078562|30.698509|66.4628|0.2000
+phase|7|panik|leer|176|3002|29.399345|23.999748|67.2665|-
+phase|8|panik|ohne|147|3001|30.046568|30.372742|68.0677|0.2000
+phase|9|panik|mit|176|3001|30.663326|36.481407|68.8359|0.4000
+phase|10|panik|leer|165|3003|29.400221|24.092545|69.5031|-
+phase|11|blut|ohne|178|3016|0.199840|0.198392|200.0000|-
+phase|12|blut|mit|86|3000|0.200285|0.202527|200.0000|3.3338
+phase|13|blut|ohne|177|3017|0.199840|0.198392|200.0000|-
+phase|14|blut|mit|178|3000|0.200383|0.202943|200.0000|3.3346
+phase|15|blut|ohne|176|3012|0.199840|0.198397|200.0000|-
+phase|16|blut|mit|180|3000|0.200313|0.202873|200.0000|3.3325
+phase|17|blut|ohne|172|3003|0.199807|0.198372|200.0000|-

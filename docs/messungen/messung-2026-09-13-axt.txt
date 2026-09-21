@@ -1,0 +1,64 @@
+# Axt: Ax-pert, Messung an einer lebenden Figur
+# Mess-Mod 6.18.0
+# Build 42.20
+# Axt Base.Axe (Baumschaden 35.00), Axt-Skill fest auf 3, Baumleben vor jedem Treffer auf 5000
+# Ax-pert wechselt alle 2 Treffer und Schlaege; Treffer 0 und Schlag 0 sind Warmlauf
+# erwartet laut Code: abstand 0.8 (ChopTreeSpeed 1.0 statt 0.8), schaden 1.5 vor dem (int),
+#   schwung 0.8, wenn calculateCombatSpeed die Axt ohne Ax-pert mit 0.8 rechnet; 1.0 hiesse wirkungslos
+
+[ergebnis]
+faellen|abstand|ohne_ms=1249.8|mit_ms=1250.0|mit/ohne=1.0002|treffer=12/12
+faellen|schaden|ohne=34.00|mit=51.00|mit/ohne=1.5000
+schwung|takt|ohne_ms=833.5|mit_ms=659.9|mit/ohne=0.7917|schlaege=10/10
+schwung|dauer|ohne_ms=816.7|mit_ms=643.2|mit/ohne=0.7876
+
+[hiebe] nr|axeman|schaden|abstand_ms|abstand_ticks
+hieb|0|0|35|-|-
+hieb|1|0|35|1247|75
+hieb|2|0|35|1251|75
+hieb|3|1|53|1249|75
+hieb|4|1|53|1251|75
+hieb|5|0|35|1249|75
+hieb|6|0|35|1251|75
+hieb|7|1|53|1248|75
+hieb|8|1|53|1252|75
+hieb|9|0|35|1248|75
+hieb|10|0|35|1252|75
+hieb|11|1|50|1249|75
+hieb|12|1|50|1251|75
+hieb|13|0|33|1248|75
+hieb|14|0|33|1252|75
+hieb|15|1|50|1248|75
+hieb|16|1|50|1252|75
+hieb|17|0|33|1249|75
+hieb|18|0|33|1251|75
+hieb|19|1|50|1248|75
+hieb|20|1|50|1252|75
+hieb|21|0|33|1248|75
+hieb|22|0|33|1251|75
+hieb|23|1|50|1251|75
+hieb|24|1|50|1249|75
+
+[schlaege] nr|axeman|takt_ms|dauer_ms
+schlag|0|0|800|783
+schlag|1|0|834|817
+schlag|2|0|833|816
+schlag|3|1|683|667
+schlag|4|1|669|650
+schlag|5|0|848|831
+schlag|6|0|852|833
+schlag|7|1|681|665
+schlag|8|1|684|667
+schlag|9|0|850|834
+schlag|10|0|785|766
+schlag|11|1|681|665
+schlag|12|1|650|634
+schlag|13|0|817|801
+schlag|14|0|866|851
+schlag|15|1|634|617
+schlag|16|1|633|617
+schlag|17|0|851|835
+schlag|18|0|799|783
+schlag|19|1|617|600
+schlag|20|1|667|650
+schlag|21|0|-|-

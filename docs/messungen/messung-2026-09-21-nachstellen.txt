@@ -1,0 +1,16 @@
+# Nachstellen: von Hand im Spiel gespielt, die Mess-Mod gibt nur Gegenstaende, schaltet den Trait und schreibt mit
+# Mess-Mod 6.41.0, Build 42.20, 21.09.2026
+# bauzeit: mitgelesen in ISBuildAction.new beim echten Bauen ueber das Baumenue (Planks Barricade an einem Fenster);
+#   rezept = Zeit aus dem Rezept, angesetzt = maxTime der Aktion, handy = ob der Trait an der Figur steht
+# bleiche: God Mode aus, Mischungen von Hand umgefuellt, getrunken ueber das Kontextmenue; Ergebnis von Hand notiert
+bauzeit|sprite=nil|rezept=200|angesetzt=200|handy=false|carpentry=1|metalwelding=0
+bauzeit|sprite=nil|rezept=200|angesetzt=150|handy=true|carpentry=1|metalwelding=0
+# zweiter Durchgang, MetalWelding 3: erst Bretter, dann Metallplatte (Metal Sheet Barricade), je ohne und mit Handy;
+#   welche Zeile welches Rezept war, steht nicht im Protokoll (sprite leer), die Reihenfolge ist von Hand notiert
+bauzeit|sprite=nil|rezept=200|angesetzt=200|handy=false|carpentry=1|metalwelding=3
+bauzeit|sprite=nil|rezept=200|angesetzt=150|handy=true|carpentry=1|metalwelding=3
+bauzeit|sprite=nil|rezept=200|angesetzt=200|handy=false|carpentry=1|metalwelding=3
+bauzeit|sprite=nil|rezept=200|angesetzt=150|handy=true|carpentry=1|metalwelding=3
+bleiche|irongut=true|1 % verseuchtes Wasser + 99 % Bleiche|kein Gift
+bleiche|irongut=true|1 % sauberes Wasser + 99 % Bleiche|vergiftet
+bleiche|irongut=true|reine Bleiche|Figur tot

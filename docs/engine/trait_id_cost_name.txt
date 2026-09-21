@@ -1,0 +1,97 @@
+ADRENALINE_JUNKIE|4|Adrenaline Junkie
+AGORAPHOBIC|-4|Agoraphobic
+ALL_THUMBS|-2|All Thumbs
+ARTISAN|2|Artisan
+ASTHMATIC|-5|Short of Breath
+ATHLETIC|10|Athletic
+AXEMAN|0|Ax-pert
+BASEBALL_PLAYER|4|Baseball Player
+BLACKSMITH|6|Blacksmith Knowledge
+BLACKSMITH2|0|Blacksmith Knowledge
+BRAVE|4|Brave
+BRAWLER|6|Brawler
+BURGLAR|0|Burglar
+CLAUSTROPHOBIC|-4|Claustrophobic
+CLUMSY|-2|Clumsy
+CONSPICUOUS|-4|Conspicuous
+COOK|3|Keen Cook
+COOK2|0|Keen Cook
+COWARDLY|-2|Cowardly
+CRAFTY|3|Crafty
+DEAF|-12|Deaf
+DESENSITIZED|0|Desensitized
+DEXTROUS|2|Dextrous
+DISORGANIZED|-6|Disorganized
+EAGLE_EYED|4|Eagle Eyed
+EMACIATED|-10|Emaciated
+FAST_HEALER|6|Fast Healer
+FAST_LEARNER|6|Fast Learner
+FAST_READER|2|Fast Reader
+FEEBLE|-6|Weak
+FIRST_AID|2|First Aider
+FISHING|4|Angler
+FIT|6|Fit
+GARDENER|2|Gardener
+GRACEFUL|4|Graceful
+GYMNAST|5|Gymnast
+HANDY|8|Handy
+HARD_OF_HEARING|-4|Hard of Hearing
+HEARTY_APPETITE|-4|Hearty Appetite
+HEMOPHOBIC|-5|Fear of Blood
+HERBALIST|4|Herbalist
+HERBALIST_PROF|0|Herbalist
+HIKER|5|Hiker
+HIGH_THIRST|-2|High Thirst
+HUNTER|8|Hunter
+TINKERER|4|Tinkerer
+TARGET_SHOOTER|5|Target Shooter
+ILLITERATE|-10|Illiterate
+INCONSPICUOUS|4|Inconspicuous
+INVENTIVE|2|Inventive
+INVENTIVE_PROF|0|Inventive
+IRON_GUT|2|Iron Gut
+INSOMNIAC|-6|Restless Sleeper
+JOGGER|4|Runner
+KEEN_HEARING|6|Keen Hearing
+LIGHT_EATER|2|Light Eater
+LOW_THIRST|2|Low Thirst
+MARKSMAN|0|Marksman
+MASON|2|Mason
+MECHANICS|3|Vehicle Knowledge
+MECHANICS2|0|Vehicle Knowledge
+NEEDS_LESS_SLEEP|3|Wakeful
+NEEDS_MORE_SLEEP|-4|Sleepyhead
+NIGHT_OWL|0|Night Owl
+NIGHT_VISION|3|Cat's Eyes
+NUTRITIONIST|2|Nutritionist
+NUTRITIONIST2|0|Nutritionist
+OBESE|0|Very High Weight
+ORGANIZED|4|Organized
+OUTDOORSMAN|2|Outdoorsy
+OUT_OF_SHAPE|-6|Out of Shape
+OVERWEIGHT|0|High Weight
+PACIFIST|-5|Reluctant Fighter
+PRONE_TO_ILLNESS|-4|Prone to Illness
+RESILIENT|4|Resilient
+SCOUT|6|Former Scout
+SHORT_SIGHTED|-2|Short Sighted
+SLOW_HEALER|-3|Slow Healer
+SLOW_READER|-2|Slow Reader
+SLOW_LEARNER|-6|Slow Learner
+SMOKER|-3|Smoker
+SPEED_DEMON|1|Speed Demon
+STOUT|6|Stout
+STRONG|10|Strong
+SUNDAY_DRIVER|-1|Sunday Driver
+TAILOR|4|Sewer
+THICK_SKINNED|8|Thick-skinned
+THIN_SKINNED|-8|Thin-skinned
+UNDERWEIGHT|0|Low Weight
+UNFIT|-10|Unfit
+VERY_UNDERWEIGHT|0|Very Low Weight
+WEAK|-10|Puny
+WEAK_STOMACH|-2|Weak Stomach
+WEIGHT_GAIN|-2|Slow Metabolism
+WEIGHT_LOSS|-2|Fast Metabolism
+WHITTLER|2|Whittler
+WILDERNESS_KNOWLEDGE|8|Bushcrafter

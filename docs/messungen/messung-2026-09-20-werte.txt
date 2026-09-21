@@ -1,0 +1,145 @@
+# Code-Werte: Messung an einer lebenden Figur
+# Mess-Mod 6.32.0
+# Build 42.20
+# je Wert ohne und mit Trait gemessen, faktor = mit/ohne; soll_mod aus TF_Static (fehlt ohne Trait Facts oder ohne Zahl), soll_code aus dem gelesenen Code von 42.20
+# verglichen mit soll_mod, sonst soll_code; Toleranz 0.006, bei Stichproben 5 % (verdorbenes Essen 20 %)
+# Stichproben: je 500 Wunden oder Infektionsdauern, 1000 verdorbene Aepfel
+# Gruppen mit differenz (seit 6.24.0): faktor = mit - ohne, weil ohne Trait nichts passiert; die Notiz sagt es
+# Gruppen mit proben (seit 6.26.0): Stichproben ueber mehrere Ticks, die Faelle im Wechsel; toleranz fest in Einheiten des Faktors; die Notiz nennt Proben und Ticks
+
+[ergebnis]
+ergebnis|werte=132|stimmen=131|weichen_ab=0|nicht_messbar=1
+
+[werte] id|trait|ohne|mit|faktor|soll_mod|soll_code|urteil|notiz
+wert|panik|brave|7.0000|2.1000|0.3000|0.3000|0.3000|stimmt
+wert|panik|cowardly|7.0000|14.0000|2.0000|2.0000|2.0000|stimmt
+wert|panik|desensitized|7.0000|0.0000|0.0000|-|0.0000|stimmt
+wert|tempo3|adrenalinejunkie|0.8000|1.0000|1.2500|1.2500|1.2500|stimmt
+wert|tempo4|adrenalinejunkie|0.8000|1.0500|1.3125|-|1.3125|stimmt
+wert|tuer|jogger|0.1000|0.0900|0.9000|0.9000|0.9000|stimmt
+wert|erholung|veryunderweight|1.2000|0.8400|0.7000|0.7000|0.7000|stimmt
+wert|erholung|emaciated|1.2000|0.3600|0.3000|0.3000|0.3000|stimmt
+wert|erholung|overweight|1.2000|0.8400|0.7000|0.7000|0.7000|stimmt
+wert|erholung|obese|1.2000|0.4800|0.4000|0.4000|0.4000|stimmt
+wert|rueckstoss|strong|0.4000|0.5600|1.4000|1.4000|1.4000|stimmt
+wert|rueckstoss|weak|0.4000|0.2400|0.6000|0.6000|0.6000|stimmt
+wert|zielzeit|dextrous|25.0000|20.0000|0.8000|0.8000|0.8000|stimmt
+wert|zielzeit|allthumbs|25.0000|30.0000|1.2000|1.2000|1.2000|stimmt
+wert|zielruhe|marksman|0.3793|0.4173|1.1000|1.1000|1.1000|stimmt
+wert|sicht|eagleeyed|10.0000|12.0000|1.2000|1.2000|1.2000|stimmt
+wert|biss|fasthealer|65.0493|40.1183|0.6167|0.6200|0.6154|stimmt
+wert|biss|slowhealer|65.0493|115.0840|1.7692|1.7700|1.7692|stimmt
+wert|schnitt|fasthealer|14.8599|7.6499|0.5148|-|0.5000|stimmt
+wert|schnitt|slowhealer|14.8599|25.0435|1.6853|-|1.6667|stimmt
+wert|kratzer|fasthealer|10.7911|6.8756|0.6372|-|0.6364|stimmt
+wert|kratzer|slowhealer|10.7911|19.9388|1.8477|-|1.8182|stimmt
+wert|waffenkratzer|fasthealer|7.3893|2.9459|0.3987|-|0.4000|stimmt
+wert|waffenkratzer|slowhealer|7.3893|15.1636|2.0521|-|2.0000|stimmt
+wert|fensterkratzer|fasthealer|16.0839|7.5946|0.4722|-|0.4688|stimmt
+wert|fensterkratzer|slowhealer|16.0839|24.9647|1.5522|-|1.5625|stimmt
+wert|schnittkratzer|fasthealer|-|-|0.5057|0.5000|0.5013|stimmt
+wert|schnittkratzer|slowhealer|-|-|1.7843|1.7600|1.7618|stimmt
+wert|tiefewunde|fasthealer|17.5030|12.9806|0.7416|0.7400|0.7429|stimmt
+wert|tiefewunde|slowhealer|17.5030|26.0427|1.4879|1.4900|1.4857|stimmt
+wert|bruch|fasthealer|10.0000|6.0000|0.6000|0.6000|0.6000|stimmt
+wert|bruch|slowhealer|10.0000|18.0000|1.8000|1.8000|1.8000|stimmt
+wert|gift|irongut|10.0000|5.0000|0.5000|0.5000|0.5000|stimmt
+wert|gift|weakstomach|10.0000|20.0000|2.0000|2.0000|2.0000|stimmt
+wert|verdorben|irongut|0.3870|0.1820|0.4703|0.5000|0.5000|stimmt
+wert|verdorben|weakstomach|0.3870|0.8140|2.1034|2.0000|2.0000|stimmt
+wert|wasser|irongut|10.5000|0.0000|0.0000|0.0000|0.0000|stimmt
+wert|wasser|weakstomach|10.5000|12.6000|1.2000|1.2000|1.2000|stimmt
+wert|kaelteverlauf|resilient|0.0061|0.0049|0.7998|0.8000|0.8000|stimmt
+wert|kaelteverlauf|pronetoillness|0.0061|0.0073|1.1996|1.2000|1.2000|stimmt
+wert|kaelteerholung|resilient|0.0896|0.1344|1.5000|1.5000|1.5000|stimmt
+wert|kaelteerholung|pronetoillness|0.0896|0.0448|0.5000|0.5000|0.5000|stimmt
+wert|zombie|resilient|60.0558|74.6862|1.2436|1.2500|1.2500|stimmt
+wert|zombie|pronetoillness|60.0558|45.3346|0.7549|0.7500|0.7500|stimmt
+wert|lesen|fastreader|79200.0000|55440.0000|0.7000|0.7000|0.7000|stimmt
+wert|lesen|slowreader|79200.0000|102960.0000|1.3000|1.3000|1.3000|stimmt
+wert|forschen|fastlearner|450.0000|315.0000|0.7000|0.7000|0.7000|stimmt
+wert|forschen|slowlearner|450.0000|585.0000|1.3000|1.3000|1.3000|stimmt
+wert|umlagern|dextrous|75.0000|37.5000|0.5000|0.5000|0.5000|stimmt
+wert|umlagern|allthumbs|75.0000|150.0000|2.0000|2.0000|2.0000|stimmt
+wert|bauen|handy|200.0000|150.0000|0.7500|0.7500|0.7500|stimmt
+wert|barrikade|handy|100.0000|80.0000|0.8000|0.8000|0.8000|stimmt
+wert|abbauen|handy|200.0000|180.0000|0.9000|0.9000|0.9000|stimmt
+wert|xp|crafty|20.0000|26.0000|1.3000|1.3000|1.3000|stimmt
+wert|xp|pacifist|20.0000|15.0000|0.7500|0.7500|0.7500|stimmt
+wert|grillfeuer|outdoorsman|0.0033|0.0067|2.0000|2.0000|2.0000|stimmt
+wert|grillbruch|outdoorsman|0.0033|0.0022|0.6667|0.6670|0.6667|stimmt
+wert|lagerfeuer|wildernessknowledge|0.0033|0.0067|2.0000|2.0000|2.0000|stimmt
+wert|lagerfeuer|formerscout|0.0033|0.0067|2.0000|2.0000|2.0000|stimmt
+wert|lagerbruch|wildernessknowledge|0.0033|0.0022|0.6667|0.6670|0.6667|stimmt
+wert|lagerbruch|formerscout|0.0033|0.0022|0.6667|0.6670|0.6667|stimmt
+wert|leiche|brave|0.0358|0.0179|0.5000|0.5000|0.5000|stimmt
+wert|leiche|cowardly|0.0358|0.0717|2.0000|2.0000|2.0000|stimmt
+wert|leiche|desensitized|0.0358|0.0000|0.0000|-|0.0000|stimmt
+wert|blutsache|hemophobic|0.0000|1.0000|1.0000|-|1.0000|stimmt|Differenz mit - ohne
+wert|verbinden|hemophobic|0.0000|50.0000|50.0000|50.0000|50.0000|stimmt|Differenz mit - ohne
+wert|lesenseiten|illiterate|5.0000|0.0000|0.0000|-|0.0000|stimmt
+wert|ei|irongut|15.0000|0.0000|0.0000|-|0.0000|stimmt
+wert|krit|marksman|60.0000|70.0000|10.0000|10.0000|10.0000|stimmt|Differenz mit - ohne
+wert|forschungsstufe|inventive|4.0000|2.0000|-2.0000|-2.0000|-2.0000|stimmt|Differenz mit - ohne
+wert|forschungsstufe|inventiveprof|4.0000|2.0000|-2.0000|-2.0000|-2.0000|stimmt|Differenz mit - ohne
+wert|barrikademetall|handy|100.0000|80.0000|0.8000|-|0.8000|stimmt|Spielfehler metallbarrikade: laut Code ohne 100 wie Bretter, gemeint 170
+wert|craftweiblich|brave|0.0080|0.0040|0.5000|0.5000|0.5000|stimmt
+wert|craftweiblich|cowardly|0.0080|0.0160|2.0000|2.0000|2.0000|stimmt
+wert|craftweiblich|desensitized|0.0080|0.0000|0.0000|-|0.0000|stimmt
+wert|craftmaennlich|brave|0.0000|0.0000|0.0000|-|0.0000|stimmt|Differenz mit - ohne; Spielfehler leichenstress-craft: laut Code ohne 0, keine Wirkung aus maennlichen Leichen
+wert|craftmaennlich|cowardly|0.0000|0.0000|0.0000|-|0.0000|stimmt|Differenz mit - ohne; Spielfehler leichenstress-craft: laut Code ohne 0, keine Wirkung aus maennlichen Leichen
+wert|craftmaennlich|desensitized|0.0000|0.0000|0.0000|-|0.0000|stimmt|Differenz mit - ohne; Spielfehler leichenstress-craft: laut Code ohne 0, keine Wirkung aus maennlichen Leichen
+wert|zaun|clumsy|9.8000|19.8333|10.0333|10.0000|10.0000|stimmt|Differenz mit - ohne; 3000 bis 3000 Proben je Fall ueber 50 Ticks
+wert|zaun|graceful|9.8000|0.0000|-9.8000|-10.0000|-10.0000|stimmt|Differenz mit - ohne; 3000 bis 3000 Proben je Fall ueber 50 Ticks
+wert|zaun|obese|9.8000|31.4333|21.6333|20.0000|20.0000|stimmt|Differenz mit - ohne; 3000 bis 3000 Proben je Fall ueber 50 Ticks
+wert|zaun|overweight|9.8000|19.4667|9.6667|10.0000|10.0000|stimmt|Differenz mit - ohne; 3000 bis 3000 Proben je Fall ueber 50 Ticks
+wert|zaunfehler|veryunderweight|9.8000|41.3667|31.5667|30.0000|30.0000|stimmt|Differenz mit - ohne; Spielfehler zaun-veryunderweight: laut Code Very Underweight +30 (zweimal abgefragt) und Underweight 0, gemeint wohl +20 und +10; 3000 bis 3000 Proben je Fall ueber 70 Ticks
+wert|zaunfehler|underweight|9.8000|9.2000|-0.6000|-|0.0000|stimmt|Differenz mit - ohne; Spielfehler zaun-veryunderweight: laut Code Very Underweight +30 (zweimal abgefragt) und Underweight 0, gemeint wohl +20 und +10; 3000 bis 3000 Proben je Fall ueber 70 Ticks
+wert|sturzschaden|veryunderweight|18.9079|22.6929|1.2002|1.2000|1.2000|stimmt|Faktor aus dem groessten Schaden je Fall; 4000 bis 4000 Proben je Fall ueber 165 Ticks
+wert|sturzschaden|emaciated|18.9079|26.4730|1.4001|1.4000|1.4000|stimmt|Faktor aus dem groessten Schaden je Fall; 4000 bis 4000 Proben je Fall ueber 165 Ticks
+wert|sturzschaden|overweight|18.9079|22.6953|1.2003|1.2000|1.2000|stimmt|Faktor aus dem groessten Schaden je Fall; 4000 bis 4000 Proben je Fall ueber 165 Ticks
+wert|sturzschaden|obese|18.9079|26.4785|1.4004|1.4000|1.4000|stimmt|Faktor aus dem groessten Schaden je Fall; 4000 bis 4000 Proben je Fall ueber 165 Ticks
+wert|sturzverletzung|veryunderweight|30.6914|44.5906|13.8992|10.0000|10.0000|stimmt|Differenz mit - ohne; Anteil Brueche unter den verletzten Proben in Prozent; 4000 bis 4000 Proben je Fall ueber 165 Ticks
+wert|sturzverletzung|emaciated|30.6914|51.7157|21.0243|20.0000|20.0000|stimmt|Differenz mit - ohne; Anteil Brueche unter den verletzten Proben in Prozent; 4000 bis 4000 Proben je Fall ueber 165 Ticks
+wert|sturzverletzung|overweight|30.6914|43.3148|12.6234|10.0000|10.0000|stimmt|Differenz mit - ohne; Anteil Brueche unter den verletzten Proben in Prozent; 4000 bis 4000 Proben je Fall ueber 165 Ticks
+wert|sturzverletzung|obese|30.6914|53.4063|22.7149|20.0000|20.0000|stimmt|Differenz mit - ohne; Anteil Brueche unter den verletzten Proben in Prozent; 4000 bis 4000 Proben je Fall ueber 165 Ticks
+wert|unfall|fasthealer|80.8892|64.8881|0.8022|0.8000|0.8000|stimmt|1200 bis 1200 Proben je Fall ueber 72 Ticks
+wert|unfall|slowhealer|80.8892|97.3179|1.2031|1.2000|1.2000|stimmt|1200 bis 1200 Proben je Fall ueber 72 Ticks
+wert|unfallbruch|fasthealer|37.6770|34.8467|0.9249|-|0.9202|stimmt|Spielfehler unfallbruch: Bruchzeit ohne den Faktor aus generateFractureNew (0.6 und 1.8), nur ueber den Schaden; 1200 bis 1200 Proben je Fall ueber 72 Ticks
+wert|unfallbruch|slowhealer|37.6770|41.1425|1.0920|-|1.0798|stimmt|Spielfehler unfallbruch: Bruchzeit ohne den Faktor aus generateFractureNew (0.6 und 1.8), nur ueber den Schaden; 1200 bis 1200 Proben je Fall ueber 72 Ticks
+wert|kurzsicht|shortsighted|10.0000|2.0000|0.2000|-|0.2000|stimmt|TF_Static fuehrt sightrange als info; laut Code max = min, Faktor min/max
+wert|unschaerfe|shortsighted|0.0000|1.0000|1.0000|-|1.0000|stimmt|Differenz mit - ohne; TF_Static fuehrt blur als info; blurFactor ohne 0, mit 1
+wert|gewicht|weightgain|1000.0049|700.0049|-300.0000|-300.0000|-300.0000|stimmt|Differenz mit - ohne; Kalorienschwelle zum Zunehmen bei 80 kg
+wert|gewicht|weightloss|1000.0049|1800.0049|800.0000|800.0000|800.0000|stimmt|Differenz mit - ohne; Kalorienschwelle zum Zunehmen bei 80 kg
+wert|hemmung|dextrous|92.3650|93.9950|1.6300|-|2.0000|stimmt|Differenz mit - ohne; Prozent geloest aus 20000 Proben; TF_Static fuehrt jam als fromto (92 zu 94 bzw. 90), verglichen mit der Differenz laut Code
+wert|hemmung|allthumbs|92.3650|89.9250|-2.4400|-|-2.0000|stimmt|Differenz mit - ohne; Prozent geloest aus 20000 Proben; TF_Static fuehrt jam als fromto (92 zu 94 bzw. 90), verglichen mit der Differenz laut Code
+wert|zutaten|disorganized|1.0000|0.0000|0.0000|-|0.0000|stimmt|Umlager-Aktionen aus ReturnItemToContainer; TF_Static fuehrt ingredients als info
+wert|gehen|allthumbs|-|-|-|-|1.0000|nicht messbar|ohne Trait: nicht messbar: kein Rezept setzt CanWalk, Handwerk bricht beim Gehen immer ab
+wert|autolernen|inventive|4.0000|3.0000|-1.0000|-1.0000|-1.0000|stimmt|Differenz mit - ohne; kleinste Skill-Stufe, bei der das Rezept von selbst gelernt wird
+wert|autolernen|inventiveprof|4.0000|3.0000|-1.0000|-1.0000|-1.0000|stimmt|Differenz mit - ohne; kleinste Skill-Stufe, bei der das Rezept von selbst gelernt wird
+wert|nikotinstress|smoker|0.0000|-0.0500|-0.0500|-|-0.0500|stimmt|Differenz mit - ohne; Stress beim Rauchen, laut Code stressChange der Zigarette; TF_Static fuehrt nicotine als info
+wert|nikotinunglueck|smoker|0.0000|-0.0500|-0.0500|-|-0.0500|stimmt|Differenz mit - ohne; Unzufriedenheit beim Rauchen, laut Code ebenfalls stressChange; TF_Static fuehrt nicotine als info
+wert|nikotinuebel|smoker|14.0000|0.0000|0.0000|-|0.0000|stimmt|Uebelkeit beim Rauchen, nur ohne Smoker; TF_Static fuehrt nicotine als info
+wert|wind|marksman|36.2015|21.6412|0.5978|0.6000|0.6000|stimmt|Kritchance-Verlust je Windstaerke (Steigung); 3 % Toleranz wegen der ganzzahligen Chance
+wert|naehrwerte|nutritionist|2.0000|7.0000|5.0000|-|5.0000|stimmt|Differenz mit - ohne; Tooltip-Zeilen eines Apfels; TF_Static fuehrt nutrition als info
+wert|bleiche|irongut|57.7500|0.0000|0.0000|-|0.0000|stimmt|Spielfehler irongut-bleiche: 0.5 l verseuchtes Wasser mit 0.1 l Bleiche, laut Code nullt Iron Gut das Gift des ganzen Schlucks
+wert|bleicherein|irongut|70.0000|70.0000|1.0000|-|1.0000|stimmt|Gegenprobe zu irongut-bleiche: reine Bleiche, Iron Gut halbiert laut Code nicht
+wert|hoerradius|keenhearing|2.0000|5.0000|3.0000|3.0000|3.0000|stimmt|Differenz mit - ohne; Nur mit -debug (Reflection)
+wert|hoerradius|hardofhearing|2.0000|1.0000|-1.0000|-1.0000|-1.0000|stimmt|Differenz mit - ohne; Nur mit -debug (Reflection)
+wert|schritt|graceful|10.0000|6.0000|0.6000|0.6000|0.6000|stimmt|Nur mit -debug (Reflection)
+wert|schritt|clumsy|10.0000|12.0000|1.2000|1.2000|1.2000|stimmt|Nur mit -debug (Reflection)
+wert|albtraum|desensitized|4.3333|9.7333|5.4000|-|5.0000|stimmt|Differenz mit - ohne; Nur mit -debug (Reflection); 1500 bis 1500 Proben je Fall ueber 50 Ticks
+wert|leichenkrank|resilient|1.0000|0.7500|0.7500|0.7500|0.7500|stimmt|Rate / Grundrate mit sechs Leichen auf dem Feld der Figur, God Mode fuer den Tick aus
+wert|leichenkrank|pronetoillness|1.0000|1.2500|1.2500|1.2500|1.2500|stimmt|Rate / Grundrate mit sechs Leichen auf dem Feld der Figur, God Mode fuer den Tick aus
+wert|erkaeltung|resilient|1.0000|0.4500|0.4500|0.4500|0.4500|stimmt|Zuwachs von catchACold / (0.003 x delta x Multiplier), Haut fuer den Tick gekuehlt, delta ueber 0.45
+wert|erkaeltung|pronetoillness|1.0000|1.7000|1.7000|1.7000|1.7000|stimmt|Zuwachs von catchACold / (0.003 x delta x Multiplier), Haut fuer den Tick gekuehlt, delta ueber 0.45
+wert|erkaeltung|outdoorsman|1.0000|0.2500|0.2500|0.2500|0.2500|stimmt|Zuwachs von catchACold / (0.003 x delta x Multiplier), Haut fuer den Tick gekuehlt, delta ueber 0.45
+wert|erkaeltungschwelle|resilient|1.0000|0.0000|0.0000|-|0.0000|stimmt|Spielfehler erkaeltung-schwelle: bei delta 0.12 bis 0.2 zieht der Abbau (0.175) nach dem Trait-Faktor alles wieder ab, laut Code 0 statt x0.45 bzw. x0.25
+wert|erkaeltungschwelle|outdoorsman|1.0000|0.0000|0.0000|-|0.0000|stimmt|Spielfehler erkaeltung-schwelle: bei delta 0.12 bis 0.2 zieht der Abbau (0.175) nach dem Trait-Faktor alles wieder ab, laut Code 0 statt x0.45 bzw. x0.25
+wert|wand|handy|470.0000|470.0000|0.0000|-|0.0000|stimmt|Differenz mit - ohne; Spielfehler handy-haltbarkeit: ISBuildIsoEntity:setInfo rechnet die Lebenspunkte ohne Handy
+wert|holzleben|handy|50.0000|150.0000|100.0000|100.0000|100.0000|stimmt|Differenz mit - ohne; Gegenprobe: buildUtil.getWoodHealth, von keinem Bau im Baumenue gelesen
+wert|medcheck|hemophobic|1.0000|0.0000|0.0000|-|0.0000|stimmt|1 = Option Medical Check im Menue fuer einen anderen Spieler (Stellvertreter), 0 = fehlt; TF_Static fuehrt medcheck als info
+wert|dose|dextrous|18.8333|10.5667|-8.2667|-|-10.0000|stimmt|Differenz mit - ohne; Schnitt in Prozent beim Oeffnen mit Kuechenmesser am Stellvertreter (Cooking 1, Short Blade 0); TF_Static fuehrt canwound als fromto 20 zu 10 bzw. 30; 3000 bis 3000 Proben je Fall ueber 30 Ticks
+wert|dose|clumsy|18.8333|29.8000|10.9667|-|10.0000|stimmt|Differenz mit - ohne; Schnitt in Prozent beim Oeffnen mit Kuechenmesser am Stellvertreter (Cooking 1, Short Blade 0); TF_Static fuehrt canwound als fromto 20 zu 10 bzw. 30; 3000 bis 3000 Proben je Fall ueber 30 Ticks
+wert|zombieangriff|thickskinned|11.1083|13.5917|2.4833|-|3.0000|stimmt|Differenz mit - ohne; Prozent ohne Verletzung, ein Zombie von vorn, Stellvertreter ohne Waffe (Grundchance 15 - 5); TF_Static fuehrt zombieinjury als pct +30 bzw. -23 auf die Chance; 12000 bis 12000 Proben je Fall ueber 120 Ticks
+wert|zombieangriff|thinskinned|11.1083|8.0750|-3.0333|-|-3.0000|stimmt|Differenz mit - ohne; Prozent ohne Verletzung, ein Zombie von vorn, Stellvertreter ohne Waffe (Grundchance 15 - 5); TF_Static fuehrt zombieinjury als pct +30 bzw. -23 auf die Chance; 12000 bis 12000 Proben je Fall ueber 120 Ticks

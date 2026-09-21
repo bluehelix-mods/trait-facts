@@ -1,0 +1,9 @@
+# Trait Facts Patch-Tag-Lauf, Mess-Mod 6.40.1, Build 42.20, 20.09.2026
+# test|stand|schluessel=wert|...; Einzelheiten im Bericht des Tests
+gesamt|abweichend=0|fehlt=1|ohne-ergebnis=0|tests=6
+werte|fertig|abweichend=0|fassung=6.40.1|fehlt=1|stimmen=135|werte=136|zeit=378628|bericht=TraitFacts_werte.txt
+stufen|fertig|abweichend=0|fassung=6.40.1|fehlt=0|stimmen=20|werte=20|zeit=378628
+erschaffung|fertig|abweichend=0|fassung=6.40.1|fehlt=0|stimmen=11|werte=11|zeit=378628
+axt|fertig|abstand=1.0002|fassung=6.40.1|schaden=1.5143|schwung=0.7781|zeit=378628|bericht=TraitFacts_axt.txt
+klettern|fertig|abweichungen=528|faelle=21|fassung=6.40.1|zeit=378628|bericht=TraitFacts_klettern.txt
+xp|fertig|fassung=6.40.1|zeit=378628|bericht=TraitFacts_xp.txt

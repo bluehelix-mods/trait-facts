@@ -1,0 +1,51 @@
+# Blut und Laerm: Blutpanik, Blutstress, Stress aus Geraeuschen, Messung an einer lebenden Figur
+# Mess-Mod 6.33.0
+# Build 42.20
+# Spieltempo 1; je Phase 3000 ms nach 20 Ticks Vorlauf; Gesundheit im Panik-Teil 62, Start Panik 30, Stress 0.2; Geraeusch Radius 3, stressMod 1
+# Blutpanik laut Code (updateInternal Z. 8219-8221): je Bild (Hemophobic 0.4, sonst 0.2) x del x ThirtyFPS,
+#   del = (1 - Gesundheit/100) x blutende Teile; bloodpanic = mit/ohne (TF_Static x2.0),
+#   bloodpanic_ohne = Panik je del und ThirtyFPS ohne Trait (0.2)
+# Blutstress laut Code (updateStress Z. 9221-9223): je Update getTotalBlood x StressFromHemophobic x
+#   Multiplier/0.8 x DeltaMinutesPerDay; bloodstress = Stress je Blutpunkt und Einheit x 1e7
+#   (defines.lua 3.333); TF_Static fuehrt bloodstress als info
+# Geraeusche laut Code (updateStress Z. 9209-9210): je Update getStressFromSounds x
+#   StressFromSoundsMultiplier, mit Deaf nichts; sounds = Anteil mit Deaf (laut Code 0),
+#   sounds_ohne = Stress je Einheit getStressFromSounds x 1e5 (defines.lua 2.0); TF_Static: sounds info
+# je Messphase: (Aenderung - Grundrate der naechsten Grundphasen x Summe ThirtyFPS bzw. Multiplier x
+#   DeltaMinutesPerDay) / Summe der Einheit; Toleranz 2 %, beim Anteil mit Deaf 0.02
+
+[ergebnis]
+ergebnis|werte=5|stimmen=5|weichen_ab=0|nicht_messbar=0|phasen=24|verworfen=0
+
+[werte] wert|trait|faktor|soll_mod|soll_code|phasen|urteil
+wert|bloodpanic|hemophobic|2.0000|2.0000|2.0000|3|stimmt
+wert|bloodpanic_ohne|-|0.2000|-|0.2000|3|stimmt
+wert|bloodstress|hemophobic|3.3328|info|3.3330|3|stimmt
+wert|sounds|deaf|0.0000|info|0.0000|2|stimmt
+wert|sounds_ohne|-|2.0000|-|2.0000|2|stimmt
+
+[phasen] nr|teil|art|ticks|ms|von|bis|mittel_x|koeffizient (x skala)
+phase|1|panik|leer|180|3005|29.398640|23.990025|62.4439|-
+phase|2|panik|ohne|180|3000|30.142944|31.356651|63.2572|0.2000
+phase|3|panik|mit|180|3000|30.853363|38.388027|64.0703|0.4000
+phase|4|panik|leer|181|3017|29.399994|23.969997|64.8855|-
+phase|5|panik|mit|180|3000|30.788160|37.735950|65.7006|0.4000
+phase|6|panik|ohne|180|3000|30.077814|30.705338|66.5138|0.2000
+phase|7|panik|leer|180|3000|29.400002|23.999996|67.3269|-
+phase|8|panik|ohne|180|3000|30.045292|30.380081|68.1401|0.2000
+phase|9|panik|mit|180|3000|30.658058|36.434914|68.9532|0.4000
+phase|10|panik|leer|181|3016|29.400002|23.970018|69.7684|-
+phase|11|blut|ohne|180|3000|0.199840|0.198400|200.0000|-
+phase|12|blut|mit|180|3000|0.200284|0.202843|200.0000|3.3327
+phase|13|blut|ohne|181|3017|0.199840|0.198392|200.0000|-
+phase|14|blut|mit|180|3011|0.200284|0.202853|200.0000|3.3330
+phase|15|blut|ohne|180|3000|0.199840|0.198400|200.0000|-
+phase|16|blut|mit|180|3001|0.200284|0.202844|200.0000|3.3327
+phase|17|blut|ohne|180|3005|0.199840|0.198397|200.0000|-
+phase|18|schall|still|180|3000|0.200156|0.198716|0.0000|-
+phase|19|schall|laut|180|3000|0.203920|0.263681|17.0000|2.0000
+phase|20|schall|taub|180|3000|0.199840|0.198400|17.0000|0.0000
+phase|21|schall|still|180|3000|0.202560|0.201120|0.0000|-
+phase|22|schall|taub|181|3016|0.199840|0.198392|17.0000|0.0000
+phase|23|schall|laut|180|3001|0.206640|0.266401|17.0000|2.0000
+phase|24|schall|still|181|3016|0.202560|0.201112|0.0000|-

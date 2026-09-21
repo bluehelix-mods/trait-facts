@@ -1,0 +1,344 @@
+# Trait Facts Menue-Prueflauf, Mess-Mod 6.40.0, Trait Facts 0.12.8, Spiel 42.20.4 b0bbce05d5
+# klick|art|id|urteil|was; zufall|nr|urteil|code|was; tooltip|liste|id|breite|hoehe|urteil; pruef|name|urteil|was
+wert|mods|6|TraitFacts, TraitFactsMeasure, TraitFactsDemoPack, moreTraitsDefinitive (und 2 Hilfsmods ohne Traits)
+# 25 Berufe, 177 Traits, 100 Zufalls-Builds
+pruef|hooks-laufen|ok|alle Hooks der Charaktererstellung liefen
+pruef|fehler-vor-dem-lauf|ok|nichts abgefangen
+pruef|paket-fassung|ok|mod.info 0.12.8, TF.VERSION 0.12.8
+wert|paket-quelle|workshop-paket|%USERPROFILE%/Zomboid/Workshop/TraitFacts/Contents/mods/TraitFacts/
+pruef|paket-bild-tf_copy|ok|geladen
+pruef|paket-bild-tf_paste|ok|geladen
+pruef|paket-bild-tf_arrow_on|ok|geladen
+pruef|paket-bild-tf_arrow_off|ok|geladen
+pruef|kopfzeile-tfGearButton|FEHL|Knopf fehlt
+pruef|kopfzeile-tfBugButton|FEHL|Knopf fehlt
+pruef|kopfzeile-tfCopyButton|FEHL|Knopf fehlt
+pruef|kopfzeile-tfPasteButton|FEHL|Knopf fehlt
+pruef|hinweis-kopieren|ok|Code TF=dlg1RjWSK, Hinweis ok
+pruef|code-reihenfolge-egal|ok|TF=dlg1RjWSK / TF=dlg1RjWSK
+pruef|hinweis-einfuegen|ok|danach TF=dlg1RjWSK, Hinweis ok
+pruef|hinweis-halber-code|ok|TF=dlg1R: Hinweis warn, Beruf base:fireofficer
+pruef|hinweis-kein-code|ok|Hinweis error, Auswahl unveraendert
+pruef|kein-phantom-mod|ok|der Mod-Speicher bleibt sauber
+pruef|hinweise-ohne-fehler|ok|nichts abgefangen
+pruef|spannen-adrenaline|ok|+13 to +16% und +10 to +14% stehen im Block, Farbe good
+pruef|leichte-kaelte-eine-zeile|ok|"Cannot catch a cold while only mildly cold" steht 1 mal in der Uebersicht
+pruef|optionskarte-colorblind|ok|Haken an: Rahmen 2, Haken aus: Rahmen 1, Karte im Bild
+pruef|optionskarte-showdead|ok|Haken an: Rahmen 2, Haken aus: Rahmen 1, Karte im Bild
+pruef|optionskarte-showexcludes|ok|Haken an: Rahmen 2, Haken aus: Rahmen 1, Karte im Bild
+pruef|optionskarte-ohne-fehler|ok|nichts abgefangen
+klick|beruf|base:unemployed|ok|
+klick|beruf|base:smither|ok|
+klick|beruf|base:burgerflipper|ok|
+klick|beruf|base:burglar|ok|
+klick|beruf|base:carpenter|ok|
+klick|beruf|base:chef|ok|
+klick|beruf|base:constructionworker|ok|
+klick|beruf|base:repairman|ok|
+klick|beruf|base:doctor|ok|
+klick|beruf|base:electrician|ok|
+klick|beruf|base:engineer|ok|
+klick|beruf|base:farmer|ok|
+klick|beruf|base:fireofficer|ok|
+klick|beruf|base:fisherman|ok|
+klick|beruf|base:fitnessinstructor|ok|
+klick|beruf|base:lumberjack|ok|
+klick|beruf|base:mechanics|ok|
+klick|beruf|base:nurse|ok|
+klick|beruf|base:parkranger|ok|
+klick|beruf|base:policeofficer|ok|
+klick|beruf|base:rancher|ok|
+klick|beruf|base:securityguard|ok|
+klick|beruf|base:tailor|ok|
+klick|beruf|base:veteran|ok|
+klick|beruf|base:metalworker|ok|
+klick|trait|toadtraits:preparedammo|ok|
+klick|trait|toadtraits:preparedcamp|ok|
+klick|trait|toadtraits:preparedrepair|ok|
+klick|trait|toadtraits:preparedcar|ok|
+klick|trait|toadtraits:preparedcoordination|ok|
+klick|trait|toadtraits:preparedfood|ok|
+klick|trait|toadtraits:preparedmedical|ok|
+klick|trait|toadtraits:preparedpack|ok|
+klick|trait|toadtraits:preparedweapon|ok|
+klick|trait|base:speeddemon|ok|
+klick|trait|base:artisan|ok|
+klick|trait|base:dextrous|ok|
+klick|trait|base:fastreader|ok|
+klick|trait|base:firstaid|ok|
+klick|trait|base:gardener|ok|
+klick|trait|toadtraits:generator|ok|
+klick|trait|base:inventive|ok|
+klick|trait|base:irongut|ok|
+klick|trait|toadtraits:leadfoot|ok|
+klick|trait|base:lighteater|ok|
+klick|trait|base:lowthirst|ok|
+klick|trait|base:mason|ok|
+klick|trait|base:nutritionist|ok|
+klick|trait|base:outdoorsman|ok|
+klick|trait|toadtraits:quiet|ok|
+klick|trait|toadtraits:swift|ok|
+klick|trait|base:whittler|ok|
+klick|trait|toadtraits:blissful|ok|
+klick|trait|base:nightvision|ok|
+klick|trait|base:crafty|ok|
+klick|trait|toadtraits:flexible|ok|
+klick|trait|toadtraits:noxpsneaky|ok|
+klick|trait|toadtraits:noxpaxe|ok|
+klick|trait|toadtraits:noxpshooter|ok|
+klick|trait|toadtraits:noxptechnician|ok|
+klick|trait|base:cook|ok|
+klick|trait|toadtraits:quickrest|ok|
+klick|trait|toadtraits:scrapper|ok|
+klick|trait|toadtraits:noxpfirstaid|ok|
+klick|trait|toadtraits:noxpmaintenance|ok|
+klick|trait|toadtraits:tavernbrawler|ok|
+klick|trait|toadtraits:vagabond|ok|
+klick|trait|base:mechanics|ok|
+klick|trait|base:needslesssleep|ok|
+klick|trait|base:adrenalinejunkie|ok|
+klick|trait|base:fishing|ok|
+klick|trait|base:baseballplayer|ok|
+klick|trait|base:brave|ok|
+klick|trait|base:eagleeyed|ok|
+klick|trait|toadtraits:gourmand|ok|
+klick|trait|base:graceful|ok|
+klick|trait|toadtraits:grunt|ok|
+klick|trait|base:herbalist|ok|
+klick|trait|toadtraits:idealweight|ok|
+klick|trait|base:inconspicuous|ok|
+klick|trait|toadtraits:lucky|ok|
+klick|trait|toadtraits:natural|ok|
+klick|trait|base:organized|ok|
+klick|trait|base:resilient|ok|
+klick|trait|base:jogger|ok|
+klick|trait|base:tailor|ok|
+klick|trait|toadtraits:thickblood|ok|
+klick|trait|base:tinkerer|ok|
+klick|trait|toadtraits:fitted|ok|
+klick|trait|toadtraits:bouncer|ok|
+klick|trait|toadtraits:expertdriver|ok|
+klick|trait|toadtraits:gymgoer|ok|
+klick|trait|base:gymnast|ok|
+klick|trait|base:hiker|ok|
+klick|trait|toadtraits:martial|ok|
+klick|trait|toadtraits:olympian|ok|
+klick|trait|toadtraits:bladetwirl|ok|
+klick|trait|toadtraits:scrounger|ok|
+klick|trait|base:target_shooter|ok|
+klick|trait|toadtraits:blunttwirl|ok|
+klick|trait|toadtraits:tinkerer|ok|
+klick|trait|toadtraits:antique|ok|
+klick|trait|base:blacksmith|ok|
+klick|trait|base:brawler|ok|
+klick|trait|toadtraits:fast|ok|
+klick|trait|base:fasthealer|ok|
+klick|trait|base:fastlearner|ok|
+klick|trait|base:fit|ok|
+klick|trait|base:formerscout|ok|
+klick|trait|toadtraits:gordanite|ok|
+klick|trait|toadtraits:hardy|ok|
+klick|trait|base:keenhearing|ok|
+klick|trait|toadtraits:restfulsleeper|ok|
+klick|trait|base:stout|ok|
+klick|trait|toadtraits:unwavering|ok|
+klick|trait|toadtraits:batteringram|ok|
+klick|trait|toadtraits:graverobber|ok|
+klick|trait|toadtraits:packmule|ok|
+klick|trait|toadtraits:problade|ok|
+klick|trait|toadtraits:problunt|ok|
+klick|trait|toadtraits:progun|ok|
+klick|trait|toadtraits:prospear|ok|
+klick|trait|toadtraits:actionhero|ok|
+klick|trait|base:wildernessknowledge|ok|
+klick|trait|toadtraits:evasive|ok|
+klick|trait|toadtraits:gunspecialist|ok|
+klick|trait|base:handy|ok|
+klick|trait|base:hunter|ok|
+klick|trait|base:thickskinned|ok|
+klick|trait|toadtraits:wildsman|ok|
+klick|trait|toadtraits:ingenuitive|ok|
+klick|trait|toadtraits:quickworker|ok|
+klick|trait|base:athletic|ok|
+klick|trait|toadtraits:indefatigable|ok|
+klick|trait|toadtraits:secondwind|ok|
+klick|trait|base:strong|ok|
+klick|trait|toadtraits:superimmune|ok|
+klick|trait|toadtraits:speccrafting|ok|
+klick|trait|toadtraits:specaid|ok|
+klick|trait|toadtraits:specfood|ok|
+klick|trait|toadtraits:specguns|ok|
+klick|trait|toadtraits:specmove|ok|
+klick|trait|toadtraits:specweapons|ok|
+klick|trait|toadtraits:terminator|ok|
+klick|trait|base:sundaydriver|ok|
+klick|trait|base:allthumbs|ok|
+klick|trait|base:clumsy|ok|
+klick|trait|base:cowardly|ok|
+klick|trait|base:weightloss|ok|
+klick|trait|base:highthirst|ok|
+klick|trait|base:shortsighted|ok|
+klick|trait|base:weightgain|ok|
+klick|trait|base:slowreader|ok|
+klick|trait|base:weakstomach|ok|
+klick|trait|toadtraits:badteeth|ok|
+klick|trait|base:slowhealer|ok|
+klick|trait|base:smoker|ok|
+klick|trait|base:agoraphobic|ok|
+klick|trait|toadtraits:anemic|ok|
+klick|trait|toadtraits:ascetic|ok|
+klick|trait|base:claustrophobic|ok|
+klick|trait|base:conspicuous|ok|
+klick|trait|toadtraits:depressive|ok|
+klick|trait|base:hardofhearing|ok|
+klick|trait|base:heartyappetite|ok|
+klick|trait|toadtraits:injured|ok|
+klick|trait|toadtraits:paranoia|ok|
+klick|trait|base:pronetoillness|ok|
+klick|trait|toadtraits:selfdestructive|ok|
+klick|trait|base:needsmoresleep|ok|
+klick|trait|toadtraits:unlucky|ok|
+klick|trait|base:hemophobic|ok|
+klick|trait|base:pacifist|ok|
+klick|trait|base:asthmatic|ok|
+klick|trait|toadtraits:poordriver|ok|
+klick|trait|toadtraits:albino|ok|
+klick|trait|toadtraits:antigun|ok|
+klick|trait|toadtraits:deprived|ok|
+klick|trait|base:disorganized|ok|
+klick|trait|toadtraits:noodlelegs|ok|
+klick|trait|base:outofshape|ok|
+klick|trait|base:insomniac|ok|
+klick|trait|base:slowlearner|ok|
+klick|trait|toadtraits:gimp|ok|
+klick|trait|base:feeble|ok|
+klick|trait|toadtraits:fearful|ok|
+klick|trait|toadtraits:packmouse|ok|
+klick|trait|toadtraits:broke|ok|
+klick|trait|base:thinskinned|ok|
+klick|trait|toadtraits:mundane|ok|
+klick|trait|toadtraits:slowworker|ok|
+klick|trait|base:illiterate|ok|
+klick|trait|toadtraits:immunocompromised|ok|
+klick|trait|toadtraits:incomprehensive|ok|
+klick|trait|toadtraits:glassbody|ok|
+klick|trait|base:weak|ok|
+klick|trait|base:unfit|ok|
+klick|trait|toadtraits:butterfingers|ok|
+klick|trait|base:deaf|ok|
+klick|trait|toadtraits:drinker|ok|
+klick|trait|toadtraits:amputee|ok|
+klick|trait|toadtraits:burned|ok|
+zufall|1|ok|TF=JPPgEpKteHgHrjg[moreTraitsDefinitive#3799050151]pk7OyWM0iNl3|
+zufall|2|ok|TF=xu8qTtYdt[moreTraitsDefinitive#3799050151]CLaKfm3fezAvtjGxb3|
+zufall|3|ok|TF=dlgQJWVz5zMQxFb0DGGsLkyD[moreTraitsDefinitive#3799050151]gWk|
+zufall|4|ok|TF=EGK31r1UU[moreTraitsDefinitive#3799050151]jPNiC9TiT1P0sgYxb3|
+zufall|5|ok|TF=fJIQJWZXAxxS[moreTraitsDefinitive#3799050151]lDDpk72YJJcX6Rr|
+zufall|6|ok|TF=UtgXXdM6M[moreTraitsDefinitive#3799050151]OH3lKcPH1OLS7C3Cj8|
+zufall|7|ok|TF=6L2TaB3Ey34t[moreTraitsDefinitive#3799050151]CLauIhMndOtgwI7|
+zufall|8|ok|TF=KjlCeJSSINxH[moreTraitsDefinitive#3799050151]iC9bEYXJ7ieIJcX|
+zufall|9|ok|TF=JPPXXdYdt[moreTraitsDefinitive#3799050151]MndtjGOtghsy7C3RIX|
+zufall|10|ok|TF=HNexFbGsL[moreTraitsDefinitive#3799050151]OH3CLaiC9Nc8ieItdq|
+zufall|11|ok|TF=SHdjbHzMQw3xHgHxxS0DGyep[moreTraitsDefinitive#3799050151]sYv|
+zufall|12|ok|TF=5BiBktYJy[moreTraitsDefinitive#3799050151]1zfPH1XiSngXp2L4dB|
+zufall|13|ok|TF=wM4w3xfOBTSg[moreTraitsDefinitive#3799050151]XiS1q4OtgVN94dB|
+zufall|14|ok|TF=EzBEsokyDOoX[moreTraitsDefinitive#3799050151]5Jopk7Nc8gIntpw|
+zufall|15|ok|TF=dexORpCg4wM4sRW[moreTraitsDefinitive#3799050151]zYr1P05U3RIX|
+zufall|16|ok|TF=dlgtDb[moreTraitsDefinitive#3799050151]sHqTiTOLStfvsYvPEStdq|
+zufall|17|ok|TF=JPP0mPw9OsRW[moreTraitsDefinitive#3799050151]3fezJrOyWRIXW9o|
+zufall|18|ok|TF=KA1ORpKtexxSEso[moreTraitsDefinitive#3799050151]lDDRXm5JoAQz|
+zufall|19|ok|TF=3X5tDbfUy34tTSg[moreTraitsDefinitive#3799050151]MndVN9M0icIM|
+zufall|20|ok|TF=SHd1lstcR6sIWSK[moreTraitsDefinitive#3799050151]pk7gInG0RwI7|
+zufall|21|ok|TF=XQrOAkRRQWSKyepsRW[moreTraitsDefinitive#3799050151]2YJ3feZSy|
+zufall|22|ok|TF=5BiCg4rjgEso[moreTraitsDefinitive#3799050151]pn8iC9KfmhHrp2L|
+zufall|23|ok|TF=G4VLzRjbHxu8[moreTraitsDefinitive#3799050151]FjysYvM0i1bz9OF|
+zufall|24|ok|TF=SHdAeqzMQwM4[moreTraitsDefinitive#3799050151]lDDXJ7ieIOyWjus|
+zufall|25|ok|TF=EGKtDb0mPHgHEsoGsL[moreTraitsDefinitive#3799050151]5JoBndCj8|
+zufall|26|ok|TF=6L2tcR4zQpol1iG[moreTraitsDefinitive#3799050151]Eoq1P0Oi1Rrp|
+zufall|27|ok|TF=XU2AeqXXdtcRDMjpol[moreTraitsDefinitive#3799050151]CLaOyWxb3|
+zufall|28|ok|TF=RH7BktlJk3EyCeJ34txbskyD[moreTraitsDefinitive#3799050151]Nc8|
+zufall|29|ok|TF=yR3ORpZXAaSqxbspkR[moreTraitsDefinitive#3799050151]RXmKfmsYv|
+zufall|30|ok|TF=EzB4V9CeJ4zQ[moreTraitsDefinitive#3799050151]Y37K6ZPESCj87dV|
+zufall|31|ok|TF=wM43Eyrjgx8x[moreTraitsDefinitive#3799050151]3feuIhi53tdq9OF|
+zufall|32|ok|TF=nmFTaBZXAKte1lsFPa6sI[moreTraitsDefinitive#3799050151]Tr5U4F|
+zufall|33|ok|TF=G4VfUyzMQ4zQ[moreTraitsDefinitive#3799050151]KfmXdpieIOyWM0i|
+zufall|34|ok|TF=3X5Bkt0mPxFbrjg[moreTraitsDefinitive#3799050151]sHqOH3ieIcOb|
+zufall|35|ok|TF=nmF3EyfOB7RlrN9[moreTraitsDefinitive#3799050151]1P0FjyhHrtdq|
+zufall|36|ok|TF=yR31RjGsL[moreTraitsDefinitive#3799050151]OH3k7YzYr1P0G0Rhsy|
+zufall|37|ok|TF=dlg3Ey7Rl31rYJy[moreTraitsDefinitive#3799050151]pk7AG47dVwI7|
+zufall|38|ok|TF=dexNk4BktFPa[moreTraitsDefinitive#3799050151]zYr1q4tpwi531bz|
+zufall|39|ok|TF=JPPNk4LzRBDLM6M[moreTraitsDefinitive#3799050151]ieIJcX7dVNl3|
+zufall|40|ok|TF=EzBkn7x8x6sIpkRYJy[moreTraitsDefinitive#3799050151]2YJ7C3m5r|
+zufall|41|ok|TF=dlgVz5lJk[moreTraitsDefinitive#3799050151]y0SHMD3HRzAvBndZSy|
+zufall|42|ok|TF=HNeBDLM6M[moreTraitsDefinitive#3799050151]pn8jPNK6ZhHr6Rrtdq|
+zufall|43|ok|TF=Kjl0mPw3x6sI[moreTraitsDefinitive#3799050151]CLakSSxvjRrpRIX|
+zufall|44|ok|TF=fJI4V9wM4[moreTraitsDefinitive#3799050151]EoqzJrgIn1q4Y37wI7|
+zufall|45|ok|TF=XQrzMQPsI[moreTraitsDefinitive#3799050151]pn8iC9KfmHiSt5Qtdq|
+zufall|46|ok|TF=UtgAeqSSI[moreTraitsDefinitive#3799050151]CLazJrLyYOLSOi1M0i|
+zufall|47|ok|TF=EGKaSqfOB1iGYJy[moreTraitsDefinitive#3799050151]Y37FjycIMtpw|
+zufall|48|ok|TF=Utg4zQ7un[moreTraitsDefinitive#3799050151]bvxk7YzJrOLSFjyJcX|
+zufall|49|ok|TF=fJIfUyxu8SSI1iG[moreTraitsDefinitive#3799050151]uIhgInzAvtpw|
+zufall|50|ok|TF=dlgHgHNxH[moreTraitsDefinitive#3799050151]pn85JotfvOyWp2LNl3|
+zufall|51|ok|TF=qGagEpYzN[moreTraitsDefinitive#3799050151]ngXOyWOtgM0ii53uVE|
+zufall|52|ok|TF=EzBNk46sI[moreTraitsDefinitive#3799050151]OH3CLaU4FHiSuIhtfv|
+zufall|53|ok|TF=3X5tcR34tqTt7un[moreTraitsDefinitive#3799050151]OLShHrJcX7C3|
+zufall|54|ok|TF=KA1fUyKte1UU[moreTraitsDefinitive#3799050151]U4F2YJXdpRIX9OF|
+zufall|55|ok|TF=dlggEpH7AM6Mrjg[moreTraitsDefinitive#3799050151]HMD3fegIncOb|
+zufall|56|ok|TF=wM4rjg[moreTraitsDefinitive#3799050151]bvx1zfKfmEoqngX7dVlL3|
+zufall|57|ok|TF=xu8QJWVz5Kte1iG[moreTraitsDefinitive#3799050151]RXmTiTPES6Rr|
+zufall|58|ok|TF=wM4H7A0mP4zQxxSxu8WSK[moreTraitsDefinitive#3799050151]3HROi1|
+zufall|59|ok|TF=KA1H7ASSIpkR[moreTraitsDefinitive#3799050151]pn8EoqOLS53vcOb|
+zufall|60|ok|TF=dlgYdt[moreTraitsDefinitive#3799050151]81STiTzJrtfvxb3Cj8RIX|
+zufall|61|ok|TF=KA1LSzU1upolPsI[moreTraitsDefinitive#3799050151]ieIngXhHr5U3|
+zufall|62|ok|TF=qGaHgHx8xOoX[moreTraitsDefinitive#3799050151]U4FXdpG0RM0iAQz|
+zufall|63|ok|TF=fJICg41iGYJy[moreTraitsDefinitive#3799050151]HMD1P0G0RbWPAQz|
+zufall|64|ok|TF=EzB0mPKte[moreTraitsDefinitive#3799050151]y0SOH31zfVN9PEStdq|
+zufall|65|ok|TF=dlgORp1RjYzN0DGpkRsD0[moreTraitsDefinitive#3799050151]zAvgWk|
+zufall|66|ok|TF=JPPBkt1UU[moreTraitsDefinitive#3799050151]OH3Eoq3HRY37cOb1bz|
+zufall|67|ok|TF=3X5QJWsD0NxHgHn[moreTraitsDefinitive#3799050151]iC9K6ZsYvtGb|
+zufall|68|ok|TF=JPP1RjBktxu8[moreTraitsDefinitive#3799050151]CLaiC92YJK6Zxb3|
+zufall|69|ok|TF=nmFxxS7RlPsI[moreTraitsDefinitive#3799050151]bvx6Rri53Nl3AQz|
+zufall|70|ok|TF=Puoxu8yep[moreTraitsDefinitive#3799050151]bvxpk7ieI53vtpwlL3|
+zufall|71|ok|TF=yR3Cg4kyD[moreTraitsDefinitive#3799050151]CLaieIFjyK6ZtdqtGb|
+zufall|72|ok|TF=5BiU1uKtepkRsD01iGTSg[moreTraitsDefinitive#3799050151]K6ZuVE|
+zufall|73|ok|TF=G4V4NHBDLGsLrN9[moreTraitsDefinitive#3799050151]OH33fegInY37|
+zufall|74|ok|TF=G4VjbHxFbGsLkyD[moreTraitsDefinitive#3799050151]EoqOtgVN9t5Q|
+zufall|75|ok|TF=3X5qTtYzNw9O[moreTraitsDefinitive#3799050151]pn8bvxOLSOtghsy|
+zufall|76|ok|TF=Utg0mPaAMM6MCg4[moreTraitsDefinitive#3799050151]5JozJrOtgcOb|
+zufall|77|ok|TF=KjlORp1BQ31r[moreTraitsDefinitive#3799050151]5JogInp2LgWkPES|
+zufall|78|ok|TF=RH7Nk41RjGsL1iG[moreTraitsDefinitive#3799050151]bEYG0RcObt5Q|
+zufall|79|ok|TF=UtgZXAaSqpkRNxH[moreTraitsDefinitive#3799050151]1zfzJrgWki53|
+zufall|80|ok|TF=KA1lJkKtesD0[moreTraitsDefinitive#3799050151]OH3kSShsy7dVAQz|
+zufall|81|ok|TF=SHdFPawM4[moreTraitsDefinitive#3799050151]bvxTr5Nc8tfvhHrtjG|
+zufall|82|ok|TF=RH7gEpXXd[moreTraitsDefinitive#3799050151]pk7hHrxb35U3i53m5r|
+zufall|83|ok|TF=G4VxbsEsoYJy[moreTraitsDefinitive#3799050151]pn881SAG4tfvAQz|
+zufall|84|ok|TF=wM4tDbfUyxu8[moreTraitsDefinitive#3799050151]pn8iC9HMDOtg6Rr|
+zufall|85|ok|TF=KjlOAk1Rj3Ey[moreTraitsDefinitive#3799050151]lKcNc8hsytpwwI7|
+zufall|86|ok|TF=nmFtDbHgHSSI6sIpol[moreTraitsDefinitive#3799050151]PESt5Q4dB|
+zufall|87|ok|TF=xu81RjlJk7RlpkRGsL[moreTraitsDefinitive#3799050151]Rrpm5rNl3|
+zufall|88|ok|TF=XQrsRW[moreTraitsDefinitive#3799050151]lDDk7YKfm1P0MnduVElL3|
+zufall|89|ok|TF=XU2H7A1lspol[moreTraitsDefinitive#3799050151]U4FHMD3HRtfvngX|
+zufall|90|ok|TF=PuoZXA7unTSgsRW[moreTraitsDefinitive#3799050151]1zfuIhOLS53v|
+zufall|91|ok|TF=yR3TaBLzRsD0yep[moreTraitsDefinitive#3799050151]KfmEoqt5QbWP|
+zufall|92|ok|TF=XU2OAkCeJw3xDMjrN9[moreTraitsDefinitive#3799050151]zYr3fe53v|
+zufall|93|ok|TF=HNe4V9lJkKte7un[moreTraitsDefinitive#3799050151]zJrOtgsgYCj8|
+zufall|94|ok|TF=wM4QJWORpRRQzMQ4zQw9O1iG[moreTraitsDefinitive#3799050151]HMD|
+zufall|95|ok|TF=KA1tDbxu8GsL[moreTraitsDefinitive#3799050151]y0SHMDgInCj8cIM|
+zufall|96|ok|TF=lj0kn7pkRWSK[moreTraitsDefinitive#3799050151]OH31zf2YJ1bzAQz|
+zufall|97|ok|TF=yR3Cg4HgHsD0OoX[moreTraitsDefinitive#3799050151]OH3lKc1q4hsy|
+zufall|98|ok|TF=yR30mPHgHYzN[moreTraitsDefinitive#3799050151]OH3RXmpk7xvjAQz|
+zufall|99|ok|TF=nmFtcRSSIWSK[moreTraitsDefinitive#3799050151]lDDHiSuIhM0iCj8|
+zufall|100|ok|TF=KjlORpU1u1ls[moreTraitsDefinitive#3799050151]jPNHMDhsyCj8cIM|
+pruef|tooltips-listboxTrait|ok|119 Tooltips, 0 passen nicht in 1920x1080
+pruef|tooltips-listboxBadTrait|ok|58 Tooltips, 0 passen nicht in 1920x1080
+pruef|tooltips-listboxProf|ok|25 Tooltips, 0 passen nicht in 1920x1080
+pruef|controller-fokus|ok|Fokus auf toadtraits:preparedammo: das Panel zeigt seinen Block
+pruef|controller-zurueck|ok|ohne Fokus wieder die Uebersicht
+pruef|controller-ohne-fehler|ok|nichts abgefangen
+wert|hoechster-tooltip|toadtraits:specfood|438x500
+wert|breitester-tooltip|toadtraits:batteringram|883x196
+wert|laengster-build-code|63 Zeichen
+pruef|startskills-spalten|ok|25 Berufe mit Startskills geprueft, bei 0 liegt ein Name ueber der Herkunft
+wert|gekuerzte-skillnamen|0|
+wert|umgebung|sprache=EN|schrift=1|fenster=1920x1080|quelle=workshop-paket
+ende|fertig|202 Klicks, 100 Zufalls-Builds, 329 ok, 4 FEHL

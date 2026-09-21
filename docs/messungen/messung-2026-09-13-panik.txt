@@ -1,0 +1,18 @@
+# Panik im Freien: Agoraphobic, Messung an einer lebenden Figur
+# Mess-Mod 6.22.0
+# Build 42.20
+# Spieltempo 1 (1 = normal); je Phase 2000 ms, Start mit Trait 20, ohne 50
+# erwartet laut Code: Agoraphobic +0.5 je Bild x ThirtyFPS = 15 je Sekunde; ReducePanic fuer alle
+#   -0.06 x ThirtyFPS = -1.8 je Sekunde; netto +13.2 mit, -1.8 ohne, der Trait 15.0
+# je_30fps = Aenderung geteilt durch die Summe von getThirtyFPSMultiplier: 0.44 mit, -0.06 ohne
+
+[ergebnis]
+ergebnis|mit_je_s=13.20|ohne_je_s=-1.80|trait_je_s=15.00|mit_je_30fps=0.4400|ohne_je_30fps=-0.0600|phasen=6|verworfen=0
+
+[phasen] nr|agoraphobic|ticks|ms|von|bis|je_s|je_30fps
+phase|1|1|121|2015|20.00|46.62|13.21|0.4400
+phase|2|0|121|2015|50.00|46.37|-1.80|-0.0600
+phase|3|1|120|2000|20.00|46.40|13.20|0.4400
+phase|4|0|120|2000|50.00|46.40|-1.80|-0.0600
+phase|5|1|120|2001|20.00|46.40|13.19|0.4400
+phase|6|0|120|2000|50.00|46.40|-1.80|-0.0600

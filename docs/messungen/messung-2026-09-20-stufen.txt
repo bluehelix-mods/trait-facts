@@ -1,0 +1,29 @@
+# Stufen-Traits: die Baender von Trait Facts gegen das Spiel
+# Mess-Mod 6.40.1
+# Build 42.20, 20.09.2026
+# je Skill von Stufe 0 aus zehnmal LevelPerk; gelesen, welcher der vier Stufen-Traits danach da ist
+
+[ergebnis]
+ergebnis|werte=20|stimmen=20|weichen_ab=0|nicht_messbar=0
+
+[stufen] stufe|skill|stufe|spiel|trait_facts|urteil
+stufe|strength|1|weak|weak|stimmt
+stufe|strength|2|feeble|feeble|stimmt
+stufe|strength|3|feeble|feeble|stimmt
+stufe|strength|4|feeble|feeble|stimmt
+stufe|strength|5|-|-|stimmt
+stufe|strength|6|stout|stout|stimmt
+stufe|strength|7|stout|stout|stimmt
+stufe|strength|8|stout|stout|stimmt
+stufe|strength|9|strong|strong|stimmt
+stufe|strength|10|strong|strong|stimmt
+stufe|fitness|1|unfit|unfit|stimmt
+stufe|fitness|2|outofshape|outofshape|stimmt
+stufe|fitness|3|outofshape|outofshape|stimmt
+stufe|fitness|4|outofshape|outofshape|stimmt
+stufe|fitness|5|-|-|stimmt
+stufe|fitness|6|fit|fit|stimmt
+stufe|fitness|7|fit|fit|stimmt
+stufe|fitness|8|fit|fit|stimmt
+stufe|fitness|9|athletic|athletic|stimmt
+stufe|fitness|10|athletic|athletic|stimmt

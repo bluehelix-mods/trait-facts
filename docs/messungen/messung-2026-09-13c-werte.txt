@@ -1,0 +1,83 @@
+# Code-Werte: Messung an einer lebenden Figur
+# Mess-Mod 6.24.1
+# Build 42.20
+# je Wert ohne und mit Trait gemessen, faktor = mit/ohne; soll_mod aus TF_Static (fehlt ohne Trait Facts oder ohne Zahl), soll_code aus dem gelesenen Code von 42.20
+# verglichen mit soll_mod, sonst soll_code; Toleranz 0.006, bei Stichproben 5 % (verdorbenes Essen 20 %)
+# Stichproben: je 500 Wunden oder Infektionsdauern, 1000 verdorbene Aepfel
+# Gruppen mit differenz (seit 6.24.0): faktor = mit - ohne, weil ohne Trait nichts passiert; die Notiz sagt es
+
+[ergebnis]
+ergebnis|werte=71|stimmen=71|weichen_ab=0|nicht_messbar=0
+
+[werte] id|trait|ohne|mit|faktor|soll_mod|soll_code|urteil|notiz
+wert|panik|brave|7.0000|2.1000|0.3000|0.3000|0.3000|stimmt
+wert|panik|cowardly|7.0000|14.0000|2.0000|2.0000|2.0000|stimmt
+wert|panik|desensitized|7.0000|0.0000|0.0000|-|0.0000|stimmt
+wert|tempo3|adrenalinejunkie|0.8000|1.0000|1.2500|1.2500|1.2500|stimmt
+wert|tempo4|adrenalinejunkie|0.8000|1.0500|1.3125|-|1.3125|stimmt
+wert|tuer|jogger|0.1000|0.0900|0.9000|0.9000|0.9000|stimmt
+wert|erholung|veryunderweight|1.2000|0.8400|0.7000|0.7000|0.7000|stimmt
+wert|erholung|emaciated|1.2000|0.3600|0.3000|0.3000|0.3000|stimmt
+wert|erholung|overweight|1.2000|0.8400|0.7000|0.7000|0.7000|stimmt
+wert|erholung|obese|1.2000|0.4800|0.4000|0.4000|0.4000|stimmt
+wert|rueckstoss|strong|0.4000|0.5600|1.4000|1.4000|1.4000|stimmt
+wert|rueckstoss|weak|0.4000|0.2400|0.6000|0.6000|0.6000|stimmt
+wert|zielzeit|dextrous|25.0000|20.0000|0.8000|0.8000|0.8000|stimmt
+wert|zielzeit|allthumbs|25.0000|30.0000|1.2000|1.2000|1.2000|stimmt
+wert|zielruhe|marksman|0.5001|0.5501|1.1000|1.1000|1.1000|stimmt
+wert|sicht|eagleeyed|10.0000|12.0000|1.2000|1.2000|1.2000|stimmt
+wert|biss|fasthealer|64.3463|40.1353|0.6237|0.6200|0.6154|stimmt
+wert|biss|slowhealer|64.3463|113.8667|1.7696|1.7700|1.7692|stimmt
+wert|schnitt|fasthealer|15.1072|7.4388|0.4924|-|0.5000|stimmt
+wert|schnitt|slowhealer|15.1072|25.2446|1.6710|-|1.6667|stimmt
+wert|kratzer|fasthealer|10.9646|6.9179|0.6309|-|0.6364|stimmt
+wert|kratzer|slowhealer|10.9646|20.0796|1.8313|-|1.8182|stimmt
+wert|waffenkratzer|fasthealer|7.5364|2.9486|0.3913|-|0.4000|stimmt
+wert|waffenkratzer|slowhealer|7.5364|15.1078|2.0047|-|2.0000|stimmt
+wert|fensterkratzer|fasthealer|15.9575|7.5845|0.4753|-|0.4688|stimmt
+wert|fensterkratzer|slowhealer|15.9575|25.0335|1.5688|-|1.5625|stimmt
+wert|schnittkratzer|fasthealer|-|-|0.4975|0.5000|0.5013|stimmt
+wert|schnittkratzer|slowhealer|-|-|1.7689|1.7600|1.7618|stimmt
+wert|tiefewunde|fasthealer|17.4707|13.0864|0.7490|0.7400|0.7429|stimmt
+wert|tiefewunde|slowhealer|17.4707|25.8868|1.4817|1.4900|1.4857|stimmt
+wert|bruch|fasthealer|10.0000|6.0000|0.6000|0.6000|0.6000|stimmt
+wert|bruch|slowhealer|10.0000|18.0000|1.8000|1.8000|1.8000|stimmt
+wert|gift|irongut|10.0000|5.0000|0.5000|0.5000|0.5000|stimmt
+wert|gift|weakstomach|10.0000|20.0000|2.0000|2.0000|2.0000|stimmt
+wert|verdorben|irongut|0.4030|0.2110|0.5236|0.5000|0.5000|stimmt
+wert|verdorben|weakstomach|0.4030|0.8140|2.0199|2.0000|2.0000|stimmt
+wert|wasser|irongut|10.5000|0.0000|0.0000|0.0000|0.0000|stimmt
+wert|wasser|weakstomach|10.5000|12.6000|1.2000|1.2000|1.2000|stimmt
+wert|kaelteverlauf|resilient|0.0052|0.0042|0.8004|0.8000|0.8000|stimmt
+wert|kaelteverlauf|pronetoillness|0.0052|0.0062|1.2003|1.2000|1.2000|stimmt
+wert|kaelteerholung|resilient|0.0081|0.0122|1.5000|1.5000|1.5000|stimmt
+wert|kaelteerholung|pronetoillness|0.0081|0.0041|0.5000|0.5000|0.5000|stimmt
+wert|zombie|resilient|60.0799|75.0665|1.2494|1.2500|1.2500|stimmt
+wert|zombie|pronetoillness|60.0799|45.3175|0.7543|0.7500|0.7500|stimmt
+wert|lesen|fastreader|79200.0000|55440.0000|0.7000|0.7000|0.7000|stimmt
+wert|lesen|slowreader|79200.0000|102960.0000|1.3000|1.3000|1.3000|stimmt
+wert|forschen|fastlearner|450.0000|315.0000|0.7000|0.7000|0.7000|stimmt
+wert|forschen|slowlearner|450.0000|585.0000|1.3000|1.3000|1.3000|stimmt
+wert|umlagern|dextrous|75.0000|37.5000|0.5000|0.5000|0.5000|stimmt
+wert|umlagern|allthumbs|75.0000|150.0000|2.0000|2.0000|2.0000|stimmt
+wert|bauen|handy|200.0000|150.0000|0.7500|0.7500|0.7500|stimmt
+wert|barrikade|handy|100.0000|80.0000|0.8000|0.8000|0.8000|stimmt
+wert|abbauen|handy|200.0000|180.0000|0.9000|0.9000|0.9000|stimmt
+wert|xp|crafty|20.0000|26.0000|1.3000|1.3000|1.3000|stimmt
+wert|xp|pacifist|20.0000|15.0000|0.7500|0.7500|0.7500|stimmt
+wert|grillfeuer|outdoorsman|0.0033|0.0067|2.0000|2.0000|2.0000|stimmt
+wert|grillbruch|outdoorsman|0.0033|0.0022|0.6667|0.6670|0.6667|stimmt
+wert|lagerfeuer|wildernessknowledge|0.0033|0.0067|2.0000|2.0000|2.0000|stimmt
+wert|lagerfeuer|formerscout|0.0033|0.0067|2.0000|2.0000|2.0000|stimmt
+wert|lagerbruch|wildernessknowledge|0.0033|0.0022|0.6667|0.6670|0.6667|stimmt
+wert|lagerbruch|formerscout|0.0033|0.0022|0.6667|0.6670|0.6667|stimmt
+wert|leiche|brave|0.0080|0.0040|0.4999|0.5000|0.5000|stimmt
+wert|leiche|cowardly|0.0080|0.0160|1.9999|2.0000|2.0000|stimmt
+wert|leiche|desensitized|0.0080|0.0000|0.0000|-|0.0000|stimmt
+wert|blutsache|hemophobic|0.0000|1.0000|1.0000|-|1.0000|stimmt|Differenz mit - ohne
+wert|verbinden|hemophobic|0.0000|50.0000|50.0000|50.0000|50.0000|stimmt|Differenz mit - ohne
+wert|lesenseiten|illiterate|5.0000|0.0000|0.0000|-|0.0000|stimmt
+wert|ei|irongut|15.0000|0.0000|0.0000|-|0.0000|stimmt
+wert|krit|marksman|60.0000|70.0000|10.0000|10.0000|10.0000|stimmt|Differenz mit - ohne
+wert|forschungsstufe|inventive|4.0000|2.0000|-2.0000|-2.0000|-2.0000|stimmt|Differenz mit - ohne
+wert|forschungsstufe|inventiveprof|4.0000|2.0000|-2.0000|-2.0000|-2.0000|stimmt|Differenz mit - ohne

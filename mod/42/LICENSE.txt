@@ -1,0 +1,8 @@
+Trait Facts, a Project Zomboid mod by Bluehelix.
+
+Data and code are licensed under Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International (CC BY-NC-SA 4.0).
+https://creativecommons.org/licenses/by-nc-sa/4.0/
+
+In short: you may copy, change and redistribute this mod or its data, as long as you credit "Trait Facts by Bluehelix", do not use it commercially, and release what you build on it under the same license.
+
+The trait values describe the behaviour of Project Zomboid Build 42.20.4. Project Zomboid is the property of The Indie Stone; this mod is not affiliated with or endorsed by them.

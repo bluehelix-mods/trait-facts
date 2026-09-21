@@ -1,0 +1,60 @@
+# Konfliktkopien eines Cloud-Syncs
+*-DESKTOP-*.*
+*_conflict-*.*
+
+# Editor
+.vscode/*.log
+*.code-workspace
+
+# Lua-LS Cache
+.luals-cache/
+
+# Python-Bytecode der Pruefwerkzeuge
+__pycache__/
+*.pyc
+
+# Oeffentlich ist, was ein Spieler, ein Uebersetzer oder ein Mod-Autor braucht, dazu
+# die Belege: die Mod, das Wiki, die Messprotokolle mit ihrer Datenbank, die
+# Schnittstelle, die Uebersetzungshilfen und die Mess-Mod. Alles andere unter docs/
+# und tools/ ist Arbeitsmaterial (Entwuerfe, Berichte, Mockups, Bau- und
+# Pruefwerkzeuge) und bleibt lokal; seine Geschichte fuehrt ein zweites, rein
+# lokales Git (.git-intern). Darum hier eine Positivliste.
+/README.de.md
+/docs/*
+!/docs/api.md
+!/docs/wiki/
+!/docs/messungen/
+!/docs/uebersetzung/
+!/docs/befunde/
+/docs/befunde/*
+!/docs/befunde/befunde.json
+!/docs/befunde/befunde.en.json
+!/docs/befunde/vanilla-en.json
+!/docs/quellen/
+/docs/quellen/*
+!/docs/quellen/more-traits-fundstellen.md
+!/docs/engine/
+/docs/engine/*
+!/docs/engine/trait_id_cost_name.txt
+/tools/*
+!/tools/uebersetzung-pruefen.py
+!/tools/glossar.py
+!/tools/spielpfad.py
+!/tools/measure-mod/
+!/tools/demo-pack/
+/.git-intern/
+
+# Lokale Einstellungen der Werkzeuge
+.claude/
+
+# Persoenliche Editor-Einstellungen und der lokale Spielpfad
+.luarc.json
+.vscode/
+tools/spielpfad.lokal.txt
+
+# Interne Arbeitsplaene
+docs/superpowers/
+
+# Privat-Filter: die persoenlichen Suchmuster bleiben lokal (siehe tools/privat-pruefen.py)
+tools/privat-muster.lokal.txt
+CLAUDE.local.md

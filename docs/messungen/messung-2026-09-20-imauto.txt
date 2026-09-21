@@ -1,0 +1,34 @@
+# Im Auto: Claustrophobic und Kurzschliessen (Burglar), Messung an einer lebenden Figur
+# Mess-Mod 6.32.0
+# Build 42.20
+# Fahrzeug Base.CarNormal (vom Mod gesetzt); Testauto: bleibt
+# Spieltempo 1 (1 = normal); je Phase 2000 ms, Start mit Trait 20, ohne 50
+# laut Code Claustrophobic: IsoGameCharacter.updateInternal Z. 8202 und 8210-8217, im Fahrzeug n = 60:
+#   0.6 x (1 - 60/70) = 0.0857 je Bild x ThirtyFPS = 2.57 je s; ReducePanic fuer alle -0.06 x ThirtyFPS
+#   (BodyDamage Z. 399-413); netto +0.77 mit, -1.80 ohne; Agoraphobic in allen Phasen ab
+# laut Code Kurzschliessen: ISVehicleMenu.showRadialMenu Z. 109-121; am Steuer, nicht kurzgeschlossen,
+#   Motor aus, Sandbox VehicleEasyUse aus, kein Schluessel; Electricity >= 1 und Mechanics >= 2 oder Burglar
+# gesehen = Scheibe im Radialmenue: angeboten (onHotwire), gesperrt (HotwireSkill), fehlt
+
+[ergebnis]
+ergebnis|werte=3|stimmen=3|weichen_ab=0|nicht_messbar=0|phasen=6|verworfen=0
+
+[werte] wert|id|gemessen|soll_mod|soll_code|urteil|grund
+wert|claustrophobic/panicin|0.0857 je Bild x ThirtyFPS = 2.57 je s|0 bis 18 je s, Fahrzeug = 60 Felder, Messwert im Bereich|0.0857 je Bild x ThirtyFPS = 2.57 je s|stimmt|-
+wert|burglar/hotwire|ohne=gesperrt burglar=angeboten|nur Text: ohne die sonst noetigen Skills|ohne=gesperrt burglar=angeboten|stimmt|-
+wert|burglar/hotwire:schwelle|e1m2=angeboten e0m2=gesperrt e1m1=gesperrt|-|e1m2=angeboten e0m2=gesperrt e1m1=gesperrt|stimmt|-
+
+[faelle] fall|id|burglar|electricity|mechanics|erwartet|gesehen|urteil|grund
+fall|ohne|0|0|0|gesperrt|gesperrt|stimmt|-
+fall|burglar|1|0|0|angeboten|angeboten|stimmt|-
+fall|e1m2|0|1|2|angeboten|angeboten|stimmt|-
+fall|e0m2|0|0|2|gesperrt|gesperrt|stimmt|-
+fall|e1m1|0|1|1|gesperrt|gesperrt|stimmt|-
+
+[phasen] phase|nr|claustrophobic|ticks|ms|von|bis|je_s|je_30fps
+phase|1|1|121|2007|20.00|21.56|0.78|0.0257
+phase|2|0|120|2014|50.00|46.37|-1.80|-0.0600
+phase|3|1|121|2015|20.00|21.56|0.77|0.0257
+phase|4|0|120|2001|50.00|46.40|-1.80|-0.0600
+phase|5|1|120|2001|20.00|21.54|0.77|0.0257
+phase|6|0|121|2015|50.00|46.37|-1.80|-0.0600

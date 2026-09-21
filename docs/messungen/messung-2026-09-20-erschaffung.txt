@@ -1,0 +1,20 @@
+# Erschaffung: Stufen-Traits nach applyTraits gegen die Vorhersage von Trait Facts
+# Mess-Mod 6.40.1
+# Build 42.20, 20.09.2026, Beruf der Testfigur: base:fireofficer
+# je Fall: Stufen auf 0, Traits weg, XP-Boosts wie bei der Erschaffung (setProfessionSkills), dann applyTraits mit den gewaehlten Traits; danach alles zurueck
+
+[ergebnis]
+ergebnis|werte=11|stimmen=11|weichen_ab=0|nicht_messbar=0
+
+[faelle] fall|gewaehlt|fitness|strength|spiel|trait_facts|urteil|grund
+fall|unfit+obese|0|6|stout+unfit|stout+unfit|stimmt|
+fall|unfit|2|6|outofshape+stout|outofshape+stout|stimmt|
+fall|outofshape|4|6|outofshape+stout|outofshape+stout|stimmt|
+fall|fit|8|6|fit+stout|fit+stout|stimmt|
+fall|athletic|10|6|athletic+stout|athletic+stout|stimmt|
+fall|fit+obese|6|6|fit+stout|fit+stout|stimmt|
+fall|feeble|6|4|feeble+fit|feeble+fit|stimmt|
+fall|weak|6|1|fit+weak|fit+weak|stimmt|
+fall|stout|6|8|fit+stout|fit+stout|stimmt|
+fall|strong|6|10|fit+strong|fit+strong|stimmt|
+fall|strong+athletic|10|10|athletic+strong|athletic+strong|stimmt|
