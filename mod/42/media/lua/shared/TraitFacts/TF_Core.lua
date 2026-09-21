@@ -20,7 +20,7 @@ local TF = TraitFacts
 -- Jede Aenderung unter mod/ zaehlt hoch, zusammen mit modversion in
 -- mod.info (check-data, Regeln 21 und 23). Fehler und berichtigte Werte
 -- zaehlen die letzte Stelle, neue Wirkungen oder Funktionen die mittlere.
-TF.VERSION = "0.13.8"
+TF.VERSION = "0.13.9"
 
 --- Build, aus dem die hinterlegten Werte (Schicht 3) stammen.
 -- Steht im Log und im Fehlerbericht; laeuft ein anderer Build, warnt die

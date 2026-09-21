@@ -1,4 +1,7 @@
 {
+  "UI_TF_bug_nocopy": "Copying did not work. Open the pinned thread \"Bug reports\" and write down the versions shown below.",
+  "UI_TF_bug_open": "Open Bug reports",
+  "UI_TF_bug_where": "Your version info is copied. Open the pinned thread \"Bug reports\", paste it with Ctrl+V and add what happened.",
   "UI_TF_build_copied": "Build copied to the clipboard",
   "UI_TF_build_copy": "Copy this build as text (occupation and traits)",
   "UI_TF_build_damaged": "This build code is damaged (characters that do not belong in it). Copy it again.",
@@ -425,8 +428,7 @@
   "UI_TF_note_tripbase": "only when vaulting a fence at a run; base 0, 10 when sprinting, minus your Fitness level",
   "UI_TF_note_windowforced": "locked windows forced from outside, 10%% to 5%%",
   "UI_TF_note_zombieinjury": "from the front against one zombie; from the side or against three it changes nothing",
-  "UI_TF_opt_bug": "Report a bug: opens Trait Facts on the Steam Workshop and copies your version info",
-  "UI_TF_opt_bug_copied": "Version info copied. Paste it into your report.",
+  "UI_TF_opt_bug": "Report a bug: copies your version info and shows where to post it",
   "UI_TF_opt_close": "Close",
   "UI_TF_opt_dead": "Show values that have no effect",
   "UI_TF_opt_dead_tooltip": "Numbers the game code sets but never uses, grey, with the reason. Off: the tooltip leaves them out.",

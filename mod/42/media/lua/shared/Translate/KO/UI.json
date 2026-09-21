@@ -1,4 +1,7 @@
 {
+  "UI_TF_bug_nocopy": "복사하지 못했습니다. 고정된 스레드 \"Bug reports\"를 열고 아래에 표시된 버전을 옮겨 적어 주세요.",
+  "UI_TF_bug_open": "Bug reports 열기",
+  "UI_TF_bug_where": "버전 정보를 복사했습니다. 고정된 스레드 \"Bug reports\"를 열고 Ctrl+V로 붙여넣은 뒤 무슨 일이 있었는지 적어 주세요.",
   "UI_TF_build_copied": "빌드를 클립보드에 복사했습니다",
   "UI_TF_build_copy": "이 빌드를 텍스트로 복사 (직업과 특성)",
   "UI_TF_build_damaged": "이 빌드 코드는 손상되었습니다 (들어갈 수 없는 문자가 있습니다). 다시 복사하세요.",
@@ -425,8 +428,7 @@
   "UI_TF_note_tripbase": "달리며 울타리를 넘을 때만; 기본 0, 전력질주면 10, 체력 레벨만큼 뺌",
   "UI_TF_note_windowforced": "밖에서 억지로 여는 잠긴 창문, 10%%에서 5%%로",
   "UI_TF_note_zombieinjury": "좀비 1마리를 정면으로 상대할 때; 옆에서나 3마리 상대에서는 달라지지 않음",
-  "UI_TF_opt_bug": "버그 신고: 스팀 창작마당의 Trait Facts를 열고 버전 정보를 복사합니다",
-  "UI_TF_opt_bug_copied": "버전 정보를 복사했습니다. 신고에 붙여넣으세요.",
+  "UI_TF_opt_bug": "버그 신고: 버전 정보를 복사하고 어디에 올릴지 알려 줍니다",
   "UI_TF_opt_close": "닫기",
   "UI_TF_opt_dead": "효과 없는 값도 표시",
   "UI_TF_opt_dead_tooltip": "게임 코드가 정하지만 쓰지는 않는 수치를 이유와 함께 회색으로 보여 줍니다. 끄면 툴팁에서 빠집니다.",

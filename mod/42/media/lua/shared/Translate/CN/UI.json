@@ -1,4 +1,7 @@
 {
+  "UI_TF_bug_nocopy": "复制失败. 请打开置顶帖 \"Bug reports\", 并抄下下方显示的版本.",
+  "UI_TF_bug_open": "打开 Bug reports",
+  "UI_TF_bug_where": "你的版本信息已复制. 请打开置顶帖 \"Bug reports\", 用 Ctrl+V 粘贴, 并写明发生了什么.",
   "UI_TF_build_copied": "配点已复制到剪贴板",
   "UI_TF_build_copy": "把此配点复制为文本 (职业和特质)",
   "UI_TF_build_damaged": "此配点代码已损坏 (含有不该出现的字符). 请重新复制.",
@@ -425,8 +428,7 @@
   "UI_TF_note_tripbase": "仅在跑动翻越围栏时, 基础 0, 冲刺时 10, 再减去体格等级",
   "UI_TF_note_windowforced": "从外面撬开锁死的窗户, 从 10%% 降到 5%%",
   "UI_TF_note_zombieinjury": "正面对一个僵尸时, 侧面或对三个僵尸没有变化",
-  "UI_TF_opt_bug": "报告问题: 打开 Trait Facts 的 Steam 创意工坊页面并复制你的版本信息",
-  "UI_TF_opt_bug_copied": "版本信息已复制. 请粘贴到你的报告里.",
+  "UI_TF_opt_bug": "报告问题: 复制你的版本信息并告诉你在哪里发帖",
   "UI_TF_opt_close": "关闭",
   "UI_TF_opt_dead": "显示没有效果的数值",
   "UI_TF_opt_dead_tooltip": "游戏代码设了却从不使用的数字, 灰色显示并附原因. 关掉时工具提示不显示它们.",

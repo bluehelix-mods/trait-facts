@@ -1,47 +1,18 @@
 name: Wrong number
-description: A value that Trait Facts shows for a trait does not match the game.
-title: "Wrong number: "
+description: A number that Trait Facts shows looks wrong.
 labels: ["wrong-number"]
 body:
-  - type: markdown
+  - type: textarea
+    id: what
     attributes:
-      value: |
-        Values are for Build 42.20. The wiki shows where each one comes from: https://bluehelix-mods.github.io/trait-facts/
-
-        Players without a GitHub account can report in the thread "Bug reports" on the Steam Workshop page of Trait Facts.
-  - type: input
-    id: trait
-    attributes:
-      label: Trait
-      description: The name of the trait as the game shows it. For a trait from another mod, name the mod too.
-      placeholder: Strong
-    validations:
-      required: true
-  - type: input
-    id: shown
-    attributes:
-      label: Which number
-      description: The line and the value that Trait Facts shows, in the tooltip or in the overview.
-    validations:
-      required: true
-  - type: input
-    id: instead
-    attributes:
-      label: What it should be
+      label: Which trait and which number
+      description: For example "Strong, carry capacity x1.5, but my character only carries 18".
     validations:
       required: true
   - type: textarea
     id: source
     attributes:
       label: How you know
-      description: Best is the place in the game code (class and method) or a measurement in the game with the steps to repeat it. Name the game version you checked. Do not post a whole console.txt. It contains your Windows user name. Post only the lines that contain TraitFacts.
-    validations:
-      required: true
-  - type: textarea
-    id: report
-    attributes:
-      label: Version details
-      description: Optional. The text that the button "Report a bug" copies to the clipboard.
-      render: text
+      description: Optional. What you saw in the game, or where in the game code it is. The wiki shows where each number comes from, https://bluehelix-mods.github.io/trait-facts/
     validations:
       required: false

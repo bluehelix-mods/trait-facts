@@ -1,4 +1,7 @@
 {
+  "UI_TF_bug_nocopy": "La copia non è riuscita. Apri la discussione fissata \"Bug reports\" e trascrivi le versioni indicate qui sotto.",
+  "UI_TF_bug_open": "Apri Bug reports",
+  "UI_TF_bug_where": "Le informazioni di versione sono copiate. Apri la discussione fissata \"Bug reports\", incollale con Ctrl+V e aggiungi cosa è successo.",
   "UI_TF_build_copied": "Build copiato negli appunti",
   "UI_TF_build_copy": "Copia questo build come testo (occupazione e tratti)",
   "UI_TF_build_damaged": "Questo codice build è danneggiato (contiene caratteri estranei). Copialo di nuovo.",
@@ -425,8 +428,7 @@
   "UI_TF_note_tripbase": "solo scavalcando una recinzione di corsa; di base 0, 10 in scatto, meno il livello di Forma fisica",
   "UI_TF_note_windowforced": "finestre bloccate forzate dall'esterno, dal 10%% al 5%%",
   "UI_TF_note_zombieinjury": "di fronte contro un solo zombi; di lato o contro tre non cambia nulla",
-  "UI_TF_opt_bug": "Segnala un bug: apre Trait Facts sullo Steam Workshop e copia le informazioni di versione",
-  "UI_TF_opt_bug_copied": "Informazioni di versione copiate. Incollale nella segnalazione.",
+  "UI_TF_opt_bug": "Segnala un bug: copia le informazioni di versione e mostra dove pubblicarle",
   "UI_TF_opt_close": "Chiudi",
   "UI_TF_opt_dead": "Mostra i valori senza effetto",
   "UI_TF_opt_dead_tooltip": "Numeri che il codice del gioco imposta ma non usa mai, in grigio, con il motivo. Disattivato: il tooltip li omette.",

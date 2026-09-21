@@ -1,4 +1,7 @@
 {
+  "UI_TF_bug_nocopy": "Kopyalama başarısız oldu. Sabitlenmiş \"Bug reports\" konusunu aç ve aşağıda gösterilen sürümleri not al.",
+  "UI_TF_bug_open": "Bug reports'u aç",
+  "UI_TF_bug_where": "Sürüm bilgilerin kopyalandı. Sabitlenmiş \"Bug reports\" konusunu aç, Ctrl+V ile yapıştır ve ne olduğunu ekle.",
   "UI_TF_build_copied": "Build panoya kopyalandı",
   "UI_TF_build_copy": "Bu build'i metin olarak kopyala (meslek ve özellikler)",
   "UI_TF_build_damaged": "Bu build kodu bozuk (içinde olmaması gereken karakterler var). Yeniden kopyala.",
@@ -425,8 +428,7 @@
   "UI_TF_note_tripbase": "sadece koşarken çitin üstünden atlarken; temel 0, depar atarken 10, eksi Fitness seviyen",
   "UI_TF_note_windowforced": "dışarıdan zorlanan kilitli pencereler, 10%% yerine 5%%",
   "UI_TF_note_zombieinjury": "önden tek zombiye karşı; yandan veya üç zombiye karşı bir şey değiştirmez",
-  "UI_TF_opt_bug": "Hata bildir: Trait Facts'i Steam Atölyesi'nde açar ve sürüm bilgilerini kopyalar",
-  "UI_TF_opt_bug_copied": "Sürüm bilgileri kopyalandı. Hata bildirimine yapıştır.",
+  "UI_TF_opt_bug": "Hata bildir: sürüm bilgilerini kopyalar ve nereye göndereceğini gösterir",
   "UI_TF_opt_close": "Kapat",
   "UI_TF_opt_dead": "Etkisi olmayan değerleri göster",
   "UI_TF_opt_dead_tooltip": "Oyun kodunun belirlediği ama hiç kullanmadığı sayılar, gri, nedeniyle birlikte. Kapalıyken ipucu onları atlar.",

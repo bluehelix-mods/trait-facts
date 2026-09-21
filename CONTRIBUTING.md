@@ -48,24 +48,15 @@ The format, a complete example and the validation rules are in
 [docs/api.md](docs/api.md). Questions go to the thread "Data packs for mod
 authors" on the Workshop page.
 
-## Report a wrong number
+## Report a bug or a wrong number
 
-Use the issue form "Wrong number". Name the trait, the value that Trait Facts
-shows and the value it should be. A report is easiest to check when it comes
-with the place in the game code (class and method) or with a measurement in
-the game and the steps to repeat it. Name the game version you checked.
+Use the issue form "Bug" or "Wrong number". A few sentences are enough: what
+happened, or which trait and which number looks wrong.
 
-The wiki shows where every value comes from, in this order: read live from
-the running game, measured with a test mod, or taken from the game code of
-42.20.4: https://bluehelix-mods.github.io/trait-facts/
-
-## Report a bug
-
-In character creation, press the bug icon in the header of the overview, to
-the right of the gear and the two build buttons (tooltip "Report a bug"). The
-button copies the version details to the clipboard and opens the Workshop
-discussions. Paste the text into your report, either in the thread "Bug
-reports" or in the issue form "Bug".
+The bug icon at the top of the Trait Facts overview copies your version info
+and shows where to post it. Paste it into your report if you can; it is
+optional. The wiki shows where every number comes from:
+https://bluehelix-mods.github.io/trait-facts/
 
 ## License
 

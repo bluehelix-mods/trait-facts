@@ -1,4 +1,7 @@
 {
+  "UI_TF_bug_nocopy": "La copie n'a pas fonctionné. Ouvrez le fil épinglé « Bug reports » et recopiez les versions affichées ci-dessous.",
+  "UI_TF_bug_open": "Ouvrir Bug reports",
+  "UI_TF_bug_where": "Vos informations de version sont copiées. Ouvrez le fil épinglé « Bug reports », collez-les avec Ctrl+V et décrivez ce qui s'est passé.",
   "UI_TF_build_copied": "Build copié dans le presse-papiers",
   "UI_TF_build_copy": "Copier ce build en texte (métier et traits)",
   "UI_TF_build_damaged": "Ce code de build est abîmé (caractères qui n'y ont pas leur place). Copiez-le de nouveau.",
@@ -425,8 +428,7 @@
   "UI_TF_note_tripbase": "seulement en franchissant une clôture en courant ; 0 de base, 10 en sprintant, moins votre niveau de Fitness",
   "UI_TF_note_windowforced": "fenêtres verrouillées forcées de l'extérieur, de 10 %% à 5 %%",
   "UI_TF_note_zombieinjury": "de face contre un zombie ; de côté ou contre trois, cela ne change rien",
-  "UI_TF_opt_bug": "Signaler un bug : ouvre Trait Facts sur le Workshop Steam et copie vos informations de version",
-  "UI_TF_opt_bug_copied": "Informations de version copiées. Collez-les dans votre signalement.",
+  "UI_TF_opt_bug": "Signaler un bug : copie vos informations de version et indique où les publier",
   "UI_TF_opt_close": "Fermer",
   "UI_TF_opt_dead": "Afficher les valeurs sans effet",
   "UI_TF_opt_dead_tooltip": "Les nombres que le code du jeu définit sans jamais s'en servir, en gris, avec la raison. Désactivé : l'infobulle les omet.",

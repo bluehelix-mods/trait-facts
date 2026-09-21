@@ -1212,7 +1212,12 @@ end
 -- fuer Project Zomboid (App 108600): sie findet die Seite, sobald es sie
 -- gibt, und der Knopf bleibt ueberall bedienbar und im Spiel pruefbar
 -- (Wunsch 16.09.2026; bis dahin war er ohne ID grau).
+--- Der angepinnte Thread "Bug reports", sobald es ihn gibt (seine Adresse aus
+-- Steam). Leer heisst: Fehler melden fuehrt auf die Diskussionen der Seite.
+TF.Panel.BUG_THREAD_URL = ""
+
 function TF.Panel.reportUrl(id)
+    if not id and TF.Panel.BUG_THREAD_URL ~= "" then return TF.Panel.BUG_THREAD_URL end
     id = id or TF.Panel.workshopId()
     if not id then
         return "https://steamcommunity.com/workshop/browse/?appid=108600&searchtext=Trait+Facts"
@@ -1264,18 +1269,154 @@ function TF.Panel.reportText()
         .. "the full file shows your Windows user name.\n\nWhat happened:\n"
 end
 
---- Fehler melden: Versionsangaben in die Zwischenablage, dann die
--- Diskussionen oeffnen, im Steam-Overlay oder sonst im Browser, wie Vanilla
--- im Hauptmenue (MainScreen). Ein kurzer Hinweis im Panel sagt, was kopiert
--- wurde (drawTagLayer). Verschickt wird nichts.
-local function reportBug(self)
-    local url = TF.Panel.reportUrl()
-    if not url then return end
-    if Clipboard and Clipboard.setClipboard then
-        TF.safe("bug:clipboard", function() Clipboard.setClipboard(TF.Panel.reportText()) end)
+--- Fehler melden, seit 0.13.9 in zwei Schritten (Rueckmeldung 21.09.2026):
+-- bis dahin kopierte der Knopf und oeffnete sofort das Steam-Overlay, das den
+-- Hinweis "kopiert" verdeckte; man sah nicht, was in der Zwischenablage lag.
+-- Jetzt kopiert der Knopf und zeigt ein Fenster: was kopiert ist, wohin damit,
+-- und einen Knopf, der erst dann die Diskussionen oeffnet. Verschickt wird nichts.
+function TF.Panel.closeReport(screen)
+    local popup = screen and screen.tfReportPopup
+    if not popup then return false end
+    screen.tfReportPopup = nil
+    popup:setVisible(false)
+    if popup.tfTopLevel and popup.removeFromUIManager then
+        popup:removeFromUIManager()
+    elseif screen.removeChild then
+        screen:removeChild(popup)
     end
-    TF.safe("bug:open", TF.Panel.openUrl, url)
-    TF.safe("bug:toast", TF.Panel.showToast, self, TF.fmt.text("UI_TF_opt_bug_copied"), "ok", 4000)
+    return true
+end
+
+function TF.Panel.openReport(screen)
+    local url = TF.Panel.reportUrl()
+    TF.Panel.closeReport(screen)
+    if url then TF.safe("bug:open", TF.Panel.openUrl, url) end
+end
+
+--- Die ersten Zeilen des kopierten Texts, zum Zeigen im Fenster.
+local function reportPreview(text, max)
+    -- Ohne string.gmatch, das gibt es in Kahlua nicht.
+    local out, pos = {}, 1
+    text = text or ""
+    while pos <= #text and #out < max do
+        local stop = string.find(text, "\n", pos, true) or (#text + 1)
+        local line = string.sub(text, pos, stop - 1)
+        if string.find(line, "console.txt", 1, true) then break end
+        if line ~= "" then out[#out + 1] = line end
+        pos = stop + 1
+    end
+    return out
+end
+
+function TF.Panel.showReport(screen)
+    if not (ISPanel and ISButton and screen and screen.addChild) then return nil end
+    TF.Panel.closeReport(screen)
+    local text = TF.Panel.reportText()
+    local copied = false
+    if Clipboard and Clipboard.setClipboard then
+        copied = TF.safe("bug:clipboard", function() Clipboard.setClipboard(text); return true end) == true
+    end
+    local font = UIFont.Small
+    local pad, gap = 14, 8
+    local core = getCore and getCore()
+    local sw = core and core:getScreenWidth() or (screen.getWidth and screen:getWidth()) or 1200
+    local manager = getTextManager and getTextManager()
+    local lh = (manager and manager.getFontHeight and manager:getFontHeight(font)) or 19
+    local BADGE = lh + 4
+    local maxW = math.max(260, math.min(520, sw - 80))
+    local lines = TF.Panel.wrapToast(TF.fmt.text(copied and "UI_TF_bug_where" or "UI_TF_bug_nocopy"), maxW, font)
+    local shown = {}
+    for _, line in ipairs(reportPreview(text, 3)) do
+        for _, part in ipairs(TF.Panel.wrapToast(line, maxW, font)) do shown[#shown + 1] = part end
+    end
+    local textW = 0
+    for _, line in ipairs(lines) do textW = math.max(textW, TF.fmt.measure(line, font)) end
+    for _, line in ipairs(shown) do textW = math.max(textW, TF.fmt.measure(line, font)) end
+    local openText, closeText = TF.fmt.text("UI_TF_bug_open"), TF.fmt.text("UI_TF_opt_close")
+    local openW = TF.fmt.measure(openText, font) + 32
+    local closeW = TF.fmt.measure(closeText, font) + 32
+    local buttonH = lh + 8
+    local w = math.max(pad + BADGE + gap + textW + pad, pad * 2 + openW + closeW + gap)
+    local textH = math.max(BADGE, #lines * lh)
+    local boxY = pad + textH + 10
+    local boxH = #shown * lh + 12
+    local by = boxY + boxH + 12
+    local h = by + buttonH + pad
+    local popup = ISPanel:new(0, 0, w, h)
+    popup:initialise()
+    local o = TF.Panel.statusColor("info")
+    popup.backgroundColor = { r = 0.03, g = 0.03, b = 0.03, a = 1 }
+    popup.borderColor = { r = o[1], g = o[2], b = o[3], a = 1 }
+    local c = (TF.fmt.rgb and TF.fmt.rgb.value) or { 0.85, 0.85, 0.85 }
+    local n = (TF.fmt.rgb and TF.fmt.rgb.note) or { 0.55, 0.55, 0.55 }
+    local baseRender = popup.render
+    popup.render = function(p)
+        if baseRender then baseRender(p) end
+        p:drawRectBorder(1, 1, w - 2, h - 2, 1, o[1], o[2], o[3])
+        TF.Panel.drawBadge(p, pad, pad, BADGE, "info")
+        local textY = pad + ((#lines == 1) and math.floor((BADGE - lh) / 2) or 0)
+        for i, line in ipairs(lines) do
+            p:drawText(line, pad + BADGE + gap, textY + (i - 1) * lh, c[1], c[2], c[3], 1, font)
+        end
+        -- Was in der Zwischenablage liegt, grau in einem Kasten, wie ein Zitat.
+        p:drawRect(pad, boxY, w - 2 * pad, boxH, 1, 0.07, 0.07, 0.07)
+        p:drawRectBorder(pad, boxY, w - 2 * pad, boxH, 1, n[1], n[2], n[3])
+        for i, line in ipairs(shown) do
+            p:drawText(line, pad + 8, boxY + 6 + (i - 1) * lh, n[1], n[2], n[3], 1, font)
+        end
+    end
+    if popup.addToUIManager then
+        popup:addToUIManager()
+        if popup.setAlwaysOnTop then popup:setAlwaysOnTop(true) end
+        popup.tfTopLevel = true
+    else
+        screen:addChild(popup)
+    end
+    local close = ISButton:new(w - pad - closeW, by, closeW, buttonH, closeText, screen,
+        function(target) TF.safe("bug:close", TF.Panel.closeReport, target) end)
+    close:initialise()
+    popup:addChild(close)
+    local open = ISButton:new(w - pad - closeW - gap - openW, by, openW, buttonH, openText, screen,
+        function(target) TF.safe("bug:openreport", TF.Panel.openReport, target) end)
+    open:initialise()
+    local blue = TF.Panel.statusColor("info")
+    open.borderColor = { r = blue[1], g = blue[2], b = blue[3], a = 1 }
+    popup:addChild(open)
+    -- Wo die Hinweise stehen: mittig, im oberen Drittel; geht mit dem Bildschirm weg.
+    local function place(pop)
+        local cw = core and core:getScreenWidth() or sw
+        local ch = core and core:getScreenHeight() or 800
+        local x, y = (cw - w) / 2, math.floor(ch * 0.30)
+        if not pop.tfTopLevel then
+            x = ((screen.getWidth and screen:getWidth()) or cw) / 2 - w / 2
+            y = math.floor(((screen.getHeight and screen:getHeight()) or ch) * 0.30)
+        end
+        pop:setX(math.max(4, math.floor(x)))
+        pop:setY(math.max(4, math.floor(y)))
+    end
+    local basePrerender = popup.prerender
+    popup.prerender = function(pop)
+        local alive = true
+        if pop.tfTopLevel and screen.isReallyVisible then
+            local ok, visible = pcall(function() return screen:isReallyVisible() end)
+            alive = not ok or visible
+        end
+        if not alive then
+            TF.Panel.closeReport(screen)
+            return
+        end
+        TF.safe("bug:place", place, pop)
+        if basePrerender then basePrerender(pop) end
+    end
+    place(popup)
+    if popup.bringToTop then popup:bringToTop() end
+    popup.tfLines, popup.tfShown, popup.tfOpen, popup.tfClose = lines, shown, open, close
+    screen.tfReportPopup = popup
+    return popup
+end
+
+local function reportBug(self)
+    TF.Panel.showReport(self)
 end
 
 local function closeOptions(self)
@@ -1903,6 +2044,7 @@ function TF.Panel.closeOnEscape(screen, key)
     -- Die Rueckfrage vor dem Ersetzen eines Builds: Esc heisst Nein.
     if TF.Build and TF.Build.closeAsk and TF.Build.closeAsk(screen) then return true end
     if TF.Panel.closeFull(screen) then return true end
+    if TF.Panel.closeReport(screen) then return true end
     local popup = screen and screen.tfOptionsPopup
     if not (popup and popup.isVisible and popup:isVisible()) then return false end
     popup:setVisible(false)

@@ -1,57 +1,34 @@
 name: Translation
-description: A translated text is wrong, unclear or does not use the word the game uses.
-title: "Translation: "
+description: A text in your language reads wrong or unclear.
 labels: ["translation"]
 body:
-  - type: markdown
-    attributes:
-      value: |
-        English is the source and German is written by hand. The other ten languages were translated with AI help and checked by machine, but no native speaker has read them yet. Corrections are welcome.
-
-        You can also change `mod/42/media/lua/shared/Translate/<LANG>/UI.json` and open a pull request. The steps are in https://github.com/bluehelix-mods/trait-facts/blob/main/CONTRIBUTING.md
   - type: dropdown
     id: language
     attributes:
       label: Language
       options:
-        - German (DE)
-        - Russian (RU)
-        - Simplified Chinese (CN)
-        - Brazilian Portuguese (PTBR)
-        - Spanish (ES)
-        - French (FR)
-        - Polish (PL)
-        - Korean (KO)
-        - Japanese (JP)
-        - Turkish (TR)
-        - Italian (IT)
-        - English (EN, the source)
-    validations:
-      required: true
-  - type: input
-    id: key
-    attributes:
-      label: Key or English text
-      description: The key from Translate/<LANG>/UI.json (it starts with UI_TF_), or the English text if you do not know the key.
+        - German
+        - Russian
+        - Simplified Chinese
+        - Brazilian Portuguese
+        - Spanish
+        - French
+        - Polish
+        - Korean
+        - Japanese
+        - Turkish
+        - Italian
+        - English
     validations:
       required: true
   - type: textarea
-    id: current
+    id: change
     attributes:
-      label: Current translation
+      label: What should change
+      description: The text as it shows in the game, and how it should read. A screenshot works too.
     validations:
       required: true
-  - type: textarea
-    id: better
+  - type: markdown
     attributes:
-      label: Better translation
-      description: Keep placeholders such as %1 as they are, and write a percent sign as %%.
-    validations:
-      required: true
-  - type: textarea
-    id: why
-    attributes:
-      label: Why
-      description: Optional. For example the word the game itself uses for this skill or moodle.
-    validations:
-      required: false
+      value: |
+        If you prefer to edit the file yourself and open a pull request, CONTRIBUTING.md has the steps.

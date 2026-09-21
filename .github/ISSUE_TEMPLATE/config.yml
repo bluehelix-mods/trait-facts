@@ -4,7 +4,7 @@ contact_links:
   # GitHub nimmt hier nur echte URLs; mit dem Platzhalter waere die ganze Datei ungueltig.
   # - name: "Players: report on the Steam Workshop page"
   #   url: "[WORKSHOP-LINK]"
-  #   about: "Bugs and wrong numbers go to the thread \"Bug reports\" in the Workshop discussions. The bug icon in the game copies the version details and opens the discussions."
+  #   about: "Bugs and wrong numbers go to the thread \"Bug reports\" in the Workshop discussions. No GitHub account needed."
   - name: Where a number comes from
     url: https://bluehelix-mods.github.io/trait-facts/
-    about: The wiki shows the source of every value - read live, measured with a test mod, or taken from the game code.
+    about: The wiki shows where every number comes from and how it was checked.

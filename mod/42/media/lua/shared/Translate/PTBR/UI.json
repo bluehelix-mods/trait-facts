@@ -1,4 +1,7 @@
 {
+  "UI_TF_bug_nocopy": "Não foi possível copiar. Abra o tópico fixado \"Bug reports\" e anote as versões mostradas abaixo.",
+  "UI_TF_bug_open": "Abrir Bug reports",
+  "UI_TF_bug_where": "Os dados da sua versão foram copiados. Abra o tópico fixado \"Bug reports\", cole com Ctrl+V e conte o que aconteceu.",
   "UI_TF_build_copied": "Build copiado para a área de transferência",
   "UI_TF_build_copy": "Copiar este build como texto (profissão e traços)",
   "UI_TF_build_damaged": "Este código de build está danificado (tem caracteres que não pertencem a ele). Copie de novo.",
@@ -425,8 +428,7 @@
   "UI_TF_note_tripbase": "só ao pular uma cerca correndo; base 0, 10 em disparada, menos seu nível de Aptidão Física",
   "UI_TF_note_windowforced": "janelas trancadas forçadas por fora, de 10%% para 5%%",
   "UI_TF_note_zombieinjury": "de frente contra um zumbi; de lado ou contra três não muda nada",
-  "UI_TF_opt_bug": "Relatar um bug: abre o Trait Facts no Steam Workshop e copia os dados da sua versão",
-  "UI_TF_opt_bug_copied": "Dados da versão copiados. Cole no seu relato.",
+  "UI_TF_opt_bug": "Relatar um bug: copia os dados da sua versão e mostra onde postar",
   "UI_TF_opt_close": "Fechar",
   "UI_TF_opt_dead": "Mostrar valores sem efeito",
   "UI_TF_opt_dead_tooltip": "Números que o código do jogo define mas nunca usa, em cinza, com o motivo. Desligado: a dica os deixa de fora.",

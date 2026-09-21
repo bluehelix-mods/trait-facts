@@ -1,40 +1,23 @@
 name: Bug
-description: Something in Trait Facts does not work or looks wrong.
-title: "Bug: "
+description: Something in Trait Facts does not work.
 labels: ["bug"]
 body:
-  - type: markdown
-    attributes:
-      value: |
-        Trait Facts works in character creation of Build 42.20. Players without a GitHub account can report in the thread "Bug reports" on the Steam Workshop page of Trait Facts.
-
-        Do not post a whole console.txt. It contains your Windows user name. Post only the lines that contain TraitFacts.
-  - type: textarea
-    id: report
-    attributes:
-      label: Text from the button "Report a bug"
-      description: In character creation, press the bug icon in the header of the overview, to the right of the gear and the two build buttons. Its tooltip starts with "Report a bug". The button copies the versions, the language and the other trait mods to the clipboard. It also opens the Workshop discussions. Close that page and paste the text here. If the button is missing, write the version of the game and of Trait Facts by hand.
-      render: text
-    validations:
-      required: true
   - type: textarea
     id: happened
     attributes:
       label: What happened
-      description: The steps that lead to it. A screenshot helps.
+      description: A few sentences are enough. A screenshot helps.
     validations:
       required: true
   - type: textarea
-    id: expected
+    id: report
     attributes:
-      label: What you expected
-    validations:
-      required: true
-  - type: textarea
-    id: log
-    attributes:
-      label: Log lines
-      description: Optional. Only the lines from console.txt that contain TraitFacts.
+      label: Version info
+      description: Optional. The bug icon at the top of the Trait Facts overview copies it; paste it here.
       render: text
     validations:
       required: false
+  - type: markdown
+    attributes:
+      value: |
+        Please do not post your whole console.txt: it shows your Windows user name. If you want to add log lines, copy only the ones that contain TraitFacts.

@@ -1,4 +1,7 @@
 {
+  "UI_TF_bug_nocopy": "Kopiowanie się nie udało. Otwórz przypięty wątek „Bug reports” i przepisz wersje podane poniżej.",
+  "UI_TF_bug_open": "Otwórz Bug reports",
+  "UI_TF_bug_where": "Dane twojej wersji są skopiowane. Otwórz przypięty wątek „Bug reports”, wklej je przez Ctrl+V i dopisz, co się stało.",
   "UI_TF_build_copied": "Build skopiowany do schowka",
   "UI_TF_build_copy": "Skopiuj ten build jako tekst (zawód i cechy)",
   "UI_TF_build_damaged": "Ten kod builda jest uszkodzony (znaki, które do niego nie należą). Skopiuj go jeszcze raz.",
@@ -425,8 +428,7 @@
   "UI_TF_note_tripbase": "tylko przy przeskakiwaniu płotu w biegu; podstawa 0, przy sprincie 10, minus poziom Kondycji",
   "UI_TF_note_windowforced": "zablokowane okna wyważane z zewnątrz, z 10%% na 5%%",
   "UI_TF_note_zombieinjury": "od przodu przeciw jednemu zombie; z boku albo przeciw trzem nic nie zmienia",
-  "UI_TF_opt_bug": "Zgłoś błąd: otwiera Trait Facts w Warsztacie Steam i kopiuje dane twojej wersji",
-  "UI_TF_opt_bug_copied": "Dane wersji skopiowane. Wklej je do zgłoszenia.",
+  "UI_TF_opt_bug": "Zgłoś błąd: kopiuje dane twojej wersji i pokazuje, gdzie je wstawić",
   "UI_TF_opt_close": "Zamknij",
   "UI_TF_opt_dead": "Pokaż wartości bez działania",
   "UI_TF_opt_dead_tooltip": "Liczby, które kod gry ustawia, ale których nigdy nie używa, na szaro i z powodem. Wyłączone: podpowiedź je pomija.",

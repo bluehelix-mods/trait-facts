@@ -1,4 +1,7 @@
 {
+  "UI_TF_bug_nocopy": "Kopieren hat nicht geklappt. Öffne den angepinnten Thread \"Bug reports\" und schreib die Versionen unten ab.",
+  "UI_TF_bug_open": "Bug reports öffnen",
+  "UI_TF_bug_where": "Deine Versionsangaben sind kopiert. Öffne den angepinnten Thread \"Bug reports\", füge sie mit Strg+V ein und schreib dazu, was passiert ist.",
   "UI_TF_build_copied": "Build in die Zwischenablage kopiert",
   "UI_TF_build_copy": "Diesen Build als Text kopieren (Beruf und Eigenschaften)",
   "UI_TF_build_damaged": "Dieser Build-Code ist beschädigt (Zeichen, die nicht hineingehören). Bitte neu kopieren.",
@@ -425,8 +428,7 @@
   "UI_TF_note_tripbase": "nur beim Überspringen eines Zauns im Laufen; Basis 0, beim Sprinten 10, minus deine Fitness-Stufe",
   "UI_TF_note_windowforced": "verschlossene Fenster, von außen aufgebrochen, 10 %% auf 5 %%",
   "UI_TF_note_zombieinjury": "von vorn gegen einen Zombie; von der Seite oder gegen drei ändert es nichts",
-  "UI_TF_opt_bug": "Fehler melden: öffnet Trait Facts im Steam-Workshop und kopiert deine Versionsangaben",
-  "UI_TF_opt_bug_copied": "Versionsangaben kopiert. Füge sie in deine Meldung ein.",
+  "UI_TF_opt_bug": "Fehler melden: kopiert deine Versionsangaben und zeigt, wo du sie postest",
   "UI_TF_opt_close": "Schließen",
   "UI_TF_opt_dead": "Wirkungslose Werte anzeigen",
   "UI_TF_opt_dead_tooltip": "Zahlen, die der Spielcode setzt, aber nie nutzt, grau und mit Begründung. Aus: der Tooltip lässt sie weg.",

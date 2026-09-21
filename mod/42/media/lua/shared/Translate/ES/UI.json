@@ -1,4 +1,7 @@
 {
+  "UI_TF_bug_nocopy": "No se ha podido copiar. Abre el hilo fijado \"Bug reports\" y apunta las versiones que se muestran abajo.",
+  "UI_TF_bug_open": "Abrir Bug reports",
+  "UI_TF_bug_where": "Los datos de tu versión están copiados. Abre el hilo fijado \"Bug reports\", pégalos con Ctrl+V y cuenta qué ha pasado.",
   "UI_TF_build_copied": "Build copiado al portapapeles",
   "UI_TF_build_copy": "Copiar este build como texto (profesión y rasgos)",
   "UI_TF_build_damaged": "Este código de build está dañado (tiene caracteres que no le corresponden). Cópialo otra vez.",
@@ -425,8 +428,7 @@
   "UI_TF_note_tripbase": "solo al saltar una valla corriendo; base 0, 10 al esprintar, menos tu nivel de Estado físico",
   "UI_TF_note_windowforced": "ventanas cerradas forzadas desde fuera, del 10%% al 5%%",
   "UI_TF_note_zombieinjury": "de frente contra un zombi; de lado o contra tres no cambia nada",
-  "UI_TF_opt_bug": "Informar de un fallo: abre Trait Facts en el Workshop de Steam y copia los datos de tu versión",
-  "UI_TF_opt_bug_copied": "Datos de versión copiados. Pégalos en tu informe.",
+  "UI_TF_opt_bug": "Informar de un fallo: copia los datos de tu versión y muestra dónde publicarlos",
   "UI_TF_opt_close": "Cerrar",
   "UI_TF_opt_dead": "Mostrar valores sin efecto",
   "UI_TF_opt_dead_tooltip": "Cifras que el código del juego fija pero nunca usa, en gris y con el motivo. Desactivado: el tooltip las deja fuera.",
