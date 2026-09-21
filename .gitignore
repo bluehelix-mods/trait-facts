@@ -25,6 +25,7 @@ __pycache__/
 !/docs/wiki/
 !/docs/messungen/
 !/docs/uebersetzung/
+!/docs/workshop/
 !/docs/befunde/
 /docs/befunde/*
 !/docs/befunde/befunde.json
