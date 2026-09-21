@@ -1280,6 +1280,43 @@ end
 
 local function closeOptions(self)
     if self.tfOptionsPopup then self.tfOptionsPopup:setVisible(false) end
+    if TF.OptionInfo and TF.OptionInfo.hide then TF.OptionInfo.hide() end
+end
+
+--- Bildschirmlage eines Elements; ohne getAbsoluteX (Test) ueber die Eltern.
+local function absRect(el, parent)
+    local x, y
+    if el.getAbsoluteX then
+        x, y = el:getAbsoluteX(), el:getAbsoluteY()
+    else
+        x, y = el:getX(), el:getY()
+        if parent and parent.getAbsoluteX then
+            x, y = x + parent:getAbsoluteX(), y + parent:getAbsoluteY()
+        end
+    end
+    return x, y, el:getWidth(), el:getHeight()
+end
+
+local function hit(el, parent, mx, my)
+    if not el then return false end
+    local x, y, w, h = absRect(el, parent)
+    return mx >= x and my >= y and mx < x + w and my < y + h
+end
+
+--- Ein Klick neben das Zahnrad-Fenster schliesst es (seit 0.13.8, Wunsch vom
+-- 21.09.2026: etwa auf eine leere Stelle der Uebersicht). Gezaehlt wird der
+-- Moment, in dem die linke Taste niedergeht, einmal je Druck. Ein Klick aufs
+-- Zahnrad selbst bleibt dem Zahnrad, das ohnehin umschaltet.
+-- @return boolean  true, wenn das Fenster dabei zugegangen ist
+function TF.Panel.optionsClick(screen, mx, my, down)
+    local popup = screen and screen.tfOptionsPopup
+    if not (popup and popup:isVisible()) then return false end
+    local was = popup.tfMouseWasDown
+    popup.tfMouseWasDown = down == true
+    if down ~= true or was then return false end
+    if hit(popup, screen, mx, my) or hit(screen.tfGearButton, screen, mx, my) then return false end
+    closeOptions(screen)
+    return true
 end
 
 -- Die Checkboxen am Zahnrad, in dieser Reihenfolge; der Index ist der des
@@ -1363,6 +1400,16 @@ local function ensureOptionsPopup(self)
     close:initialise()
     popup:addChild(close)
     popup.tfBox = box
+    -- Klick daneben schliesst (TF.Panel.optionsClick). Nachgesehen wird in jedem
+    -- Bild des offenen Fensters: ein Klick auf die Uebersicht oder eine Liste
+    -- erreicht dieses Fenster sonst nicht, das Element darunter behaelt ihn.
+    local basePrerender = popup.prerender
+    popup.prerender = function(p)
+        if basePrerender then basePrerender(p) end
+        if getMouseX and isMouseButtonDown then
+            TF.safe("options:outside", TF.Panel.optionsClick, self, getMouseX(), getMouseY(), isMouseButtonDown(0))
+        end
+    end
     popup:setVisible(false)
     self.tfOptionsPopup = popup
     return popup
@@ -1373,6 +1420,8 @@ local function toggleOptions(self)
     if not popup then return end
     local show = not popup:isVisible()
     if show then
+        -- Die Taste des Klicks, der das Fenster oeffnet, zaehlt nicht als Klick daneben.
+        popup.tfMouseWasDown = true
         selectOptions(popup.tfBox)
         local gear = self.tfGearButton
         local x = gear:getX()
@@ -1389,6 +1438,39 @@ local function toggleOptions(self)
         popup:setY(math.max(4, y))
     end
     popup:setVisible(show)
+end
+
+--- Nach einem Klick schweigt der Tooltip des Knopfs, bis die Maus ihn verlassen
+-- hat und wieder darauf zeigt (seit 0.13.8, Wunsch vom 21.09.2026: nach dem
+-- Klick aufs Zahnrad lag der Tooltip ueber dem Fenster, das er oeffnet).
+-- Vanilla zeigt ihn in ISButton:updateTooltip, solange die Maus darauf steht.
+function TF.Panel.quietTooltipAfterClick(button)
+    if not button or button.tfQuietTip ~= nil then return end
+    button.tfQuietTip = false
+    local onclick = button.onclick
+    if type(onclick) == "function" then
+        button.onclick = function(target, b, ...)
+            button.tfQuietTip = true
+            return onclick(target, b, ...)
+        end
+    end
+    local base = button.updateTooltip
+    if type(base) ~= "function" then return end
+    button.updateTooltip = function(b)
+        if b.tfQuietTip then
+            local over = b.isMouseOver and b:isMouseOver()
+            if over then
+                local tip = b.tooltipUI
+                if tip and tip.getIsVisible and tip:getIsVisible() then
+                    tip:setVisible(false)
+                    tip:removeFromUIManager()
+                end
+                return
+            end
+            b.tfQuietTip = false
+        end
+        return base(b)
+    end
 end
 
 --- Zahnrad und Fehler melden als echte Knoepfe mit den Symbolen des Spiels.
@@ -1409,6 +1491,7 @@ local function ensureButtons(self)
             end
         end
         if b.setTooltip then b:setTooltip(TF.fmt.text(tooltipKey)) end
+        TF.Panel.quietTooltipAfterClick(b)
         self:addChild(b)
         return b
     end
