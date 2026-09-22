@@ -18,13 +18,15 @@
    Aufbau seit 21.09.2026 (vier Kritiken: Erstbesucher, Aufbau, UI, Modder):
    oben an jedem Wert steht, was ein Spieler braucht (Zahl in Gut/Schlecht-Farbe,
    Wirkung, Stand, Klartext); der Beleg liegt darunter, zugeklappt. --note und
-   --off sind so hell, dass jeder Text AA haelt (5.9 und 4.5 auf dem Streifen). */
+   --off sind so hell, dass jeder Text AA haelt (5.9 und 4.5 auf dem Streifen).
+   Grund, Flaechen, Linien, Blau, Gruen und Rot seit 22.09.2026 wie die CI
+   (docs/veroeffentlichung/ci.html); die Vierecke alle gefuellt. */
 :root{
   color-scheme:dark;
-  --ground:#0a0b0c; --panel:#101214; --raised:#16191c; --stripe:rgba(255,255,255,.05);
-  --rule:#2a2e32; --rule-strong:#666b70;
+  --ground:#0a0a0a; --panel:#101010; --raised:#141414; --stripe:rgba(255,255,255,.05);
+  --rule:#262626; --rule-strong:#666666;
   --label:#ffffff; --value:#d9d9d9; --note:#9a9a9a; --off:#858585;
-  --blue:#73b8ff; --good:#73b87a; --bad:#d18078; --stale:#ffbf4d; --source:#b8a6db;
+  --blue:#73b8ff; --good:#73b87a; --bad:#d17f78; --stale:#ffbf4d; --source:#b8a6db;
   /* Die Spalte der Zahl, gemeinsam fuer Kopf und Belegzeilen: beides beginnt in einer Flucht. */
   --col:10rem;
   /* Hoehe der klebenden Kopfzeile, fuer Seitenleiste und Sprungziele. */
@@ -89,7 +91,7 @@ p{margin:0 0 .8rem;max-width:70ch}
    fuer Screenreader steht der Stand als Text daneben. */
 .dot{width:6px;height:6px;background:var(--off);flex:none}
 .dot.measured{background:var(--good)}
-.dot.code{background:none;border:1px solid var(--blue)}
+.dot.code{background:var(--blue)}
 .dot.dead{background:var(--off)}
 .dot.open{background:var(--stale)}
 .dot.bug{background:var(--bad);margin-left:2px}
