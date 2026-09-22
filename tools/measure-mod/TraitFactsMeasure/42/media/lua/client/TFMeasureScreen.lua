@@ -116,14 +116,25 @@ function M.hover(list, index)
     local item = list and list.items and list.items[index]
     if type(item) ~= "table" then return false end
     if list.ensureVisible then pcall(list.ensureVisible, list, index) end
+    -- Die Lage wird bei jeder Abfrage neu gerechnet: ensureVisible scrollt weich
+    -- ueber mehrere Bilder, ein fester Punkt zeigte danach neben die Zeile
+    -- (erster Workshop-Lauf 22.09.2026: Strong ganz unten, kein Tooltip).
+    M.fakeMouse = { list = list, index = index }
+    getMouseX = function() return M.fakeMouse and M.fakePoint()[1] or M.realMouseX() end
+    getMouseY = function() return M.fakeMouse and M.fakePoint()[2] or M.realMouseY() end
+    return true
+end
+
+--- Bildschirmpunkt in der Mitte der vorgetaeuschten Zeile, beim jetzigen Scroll.
+function M.fakePoint()
+    local list, index = M.fakeMouse.list, M.fakeMouse.index
+    local item = list.items and list.items[index]
     local yScroll = 0
     pcall(function() yScroll = list:getYScroll() end)
-    local x = list:getAbsoluteX() + math.floor(list:getWidth() * 0.3)
-    local y = list:getAbsoluteY() + list:topOfItem(index) + math.floor((item.height or list.itemheight) / 2) + yScroll
-    M.fakeMouse = { x, y }
-    getMouseX = function() return M.fakeMouse and M.fakeMouse[1] or M.realMouseX() end
-    getMouseY = function() return M.fakeMouse and M.fakeMouse[2] or M.realMouseY() end
-    return true
+    local h = (type(item) == "table" and item.height) or list.itemheight or 20
+    local top = list:topOfItem(index)
+    return { list:getAbsoluteX() + math.floor(list:getWidth() * 0.3),
+             list:getAbsoluteY() + top + math.floor(h / 2) + yScroll }
 end
 
 function M.unhover()
@@ -253,8 +264,9 @@ M.WORKSHOP = {
     -- 01 Die Uebersicht mit einem Build, der viele Themen fuellt, aber ohne
     -- Rollbalken in die Spalte passt.
     { name = "uebersicht", run = function(screen)
+        -- Ohne Short Sighted (erster Lauf 22.09.2026: die Spalte lief um ein paar Zeilen ueber).
         return loadBuild(screen, "fireofficer;strong;brave;dextrous;outdoorsman;keenhearing;"
-            .. "smoker;shortsighted;weakstomach")
+            .. "smoker;weakstomach")
     end },
     -- 02 Der Tooltip von Strong mit der grauen Zeile zur Tragkraft: Werte ohne
     -- Wirkung werden fuer die Aufnahme gezeigt und danach wieder wie vorher.
