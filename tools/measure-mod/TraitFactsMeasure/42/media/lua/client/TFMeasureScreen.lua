@@ -264,9 +264,9 @@ M.WORKSHOP = {
     -- 01 Die Uebersicht mit einem Build, der viele Themen fuellt, aber ohne
     -- Rollbalken in die Spalte passt.
     { name = "uebersicht", run = function(screen)
-        -- Ohne Short Sighted (erster Lauf 22.09.2026: die Spalte lief um ein paar Zeilen ueber).
-        return loadBuild(screen, "fireofficer;strong;brave;dextrous;outdoorsman;keenhearing;"
-            .. "smoker;weakstomach")
+        -- Ohne Short Sighted und Keen Hearing (Laeufe 22.09.2026: die Spalte lief
+        -- bei 1920x1080 um ein paar Zeilen ueber).
+        return loadBuild(screen, "fireofficer;strong;brave;dextrous;outdoorsman;smoker;weakstomach")
     end },
     -- 02 Der Tooltip von Strong mit der grauen Zeile zur Tragkraft: Werte ohne
     -- Wirkung werden fuer die Aufnahme gezeigt und danach wieder wie vorher.
