@@ -29,7 +29,7 @@ Im Spiel steht die Fassung in der ersten Zeile des Logs
 | --- | --- |
 | **Num 9** (Nummernblock) | lädt das Mess-Mod neu und schaltet die Tests wieder scharf |
 | **Num 8** (Nummernblock) | öffnet und schließt das Messfenster |
-| **Num 7** (Nummernblock) | in der Charaktererstellung: Bildschirmlauf (mit Strg nur die jetzige Auflösung) |
+| **Num 7** (Nummernblock) | in der Charaktererstellung: Bildschirmlauf (mit Strg nur die jetzige Auflösung, mit Shift die Workshop-Bilder) |
 | **Num 6** (Nummernblock) | in der Charaktererstellung: Menü-Prüflauf (seit 6.36.0) |
 | **Num 5** (Nummernblock) | in der Charaktererstellung: Menü-Prüflauf und danach von selbst der Bildschirmlauf (seit 6.40.0) |
 | **Num 4** (Nummernblock) | im Spiel: Fenster "Nachstellen" (seit 6.41.0). Gibt je Spielfehler die nötigen Gegenstände (Mischflasche mit verseuchtem Wasser und Bleiche, Bretter und Metallplatten samt Brenner und Maske, Äxte, Dosen) und schaltet den zugehörigen Trait an und aus. Gespielt und geschaut wird von Hand, an einer Wegwerf-Figur. Protokoll: `Zomboid/Lua/TraitFacts_nachstellen.txt` |
@@ -448,9 +448,28 @@ Protokoll geschrieben hat, steht in seiner ersten Zeile. Seit 6.31.1 nennt
 eine `entfaellt`-Zeile den Grund des Szenarios selbst („breite Anordnung“ bei
 „allezeigen“) statt pauschal ein fehlendes Trait Facts.
 
-Nicht abgedeckt: Tooltips (sie hängen an der Maus) und die Schriftgrößen 1x bis
-4x (der Wechsel lädt das Lua neu; dafür müsste der Lauf seinen Stand in eine
-Datei legen und danach fortsetzen).
+Nicht abgedeckt: die Schriftgrößen 1x bis 4x (der Wechsel lädt das Lua neu;
+dafür müsste der Lauf seinen Stand in eine Datei legen und danach fortsetzen).
+
+### Workshop-Bilder (seit 6.42.0)
+
+**Shift + Num 7** (ohne Debug-Modus Shift + F7) nimmt in der jetzigen Auflösung
+die Bilder für die Workshop-Seite auf, nach
+`Zomboid/Screenshots/TF_WS_<breite>x<höhe>_<nr>_<name>.png`. Fünf Aufnahmen:
+Übersicht mit einem Build, der die Spalte füllt, ohne zu scrollen; Tooltip von
+Strong mit der grauen Zeile zur Tragkraft; Major Skills mit dem Tooltip, der die
+Rechnung zeigt; Suche nach "panic"; Fenster der fehlenden Mods. Die
+Fortschrittsanzeige bleibt aus, sie stünde sonst im Bild. Ein Lauf dauert rund
+15 Sekunden.
+
+Tooltips ohne Maus: für die Aufnahme liefern `getMouseX` und `getMouseY` die
+Mitte der gewünschten Zeile, danach wieder die echte Maus. Die Lage wird bei
+jeder Abfrage neu gerechnet, weil `ensureVisible` weich über mehrere Bilder
+scrollt (erster Lauf 22.09.2026: Strong stand ganz unten, der Tooltip fehlte).
+Für den Tooltip von Strong schaltet der Lauf "Show values that have no effect"
+kurz ein und stellt die Wahl des Spielers danach zurück. Offene Listen-Tooltips
+stehen als `element|...|tooltip:<liste>|...` im Protokoll; danach schneidet
+`tools/workshop-bilder.py` die Bilder zu, in jeder Auflösung passend.
 
 ### Code-Werte
 
