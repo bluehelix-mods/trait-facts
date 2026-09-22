@@ -17,7 +17,15 @@
 -- Debug-Modus auch F7.
 --   Num 7 / F7           ganzer Lauf, alle Aufloesungen
 --   Strg + Num 7 / F7    nur die jetzige Aufloesung
+--   Shift + Num 7 / F7   Workshop-Bilder (seit 6.42.0): nur die jetzige
+--                        Aufloesung, ohne Fortschrittsanzeige, mit Tooltips;
+--                        Zomboid/Screenshots/TF_WS_<breite>x<hoehe>_<nr>_<name>.png
 --   waehrend des Laufs   dieselbe Taste bricht ab und stellt die Aufloesung zurueck
+--
+-- Die Tooltips der Workshop-Bilder entstehen ohne Maus: fuer die Aufnahme
+-- liefern getMouseX und getMouseY die Mitte der gewuenschten Zeile, danach
+-- wieder die echte Maus. Vanilla fragt beide in ISScrollingListBox:updateTooltip
+-- und ISToolTip:render jedes Bild neu ab.
 --
 -- Die Aufloesung wird im Fenstermodus gewechselt (getCore():
 -- setResolutionAndFullScreen, wie Vanillas Optionsmenue); ein randloses
@@ -54,7 +62,7 @@ function M.fontLabel()
     return groesse .. ", Tooltip " .. tooltip
 end
 
-M.VERSION = "6.41.1"
+M.VERSION = "6.42.0"
 M.LOGFILE = "TraitFacts_screen.txt"
 M.RESTOREFILE = "TraitFacts_screen_restore.txt"
 
@@ -97,7 +105,62 @@ end
 
 -- ---------------------------------------------------------------- Szenarien
 
+-- ---------------------------------------------------------------- Maus fuer Tooltips
+
+--- Die echten Mausfunktionen, einmal gemerkt (auch ueber ein Neuladen).
+M.realMouseX = M.realMouseX or getMouseX
+M.realMouseY = M.realMouseY or getMouseY
+
+--- Setzt die Maus scheinbar auf Zeile `index` der Liste, bis M.unhover().
+function M.hover(list, index)
+    local item = list and list.items and list.items[index]
+    if type(item) ~= "table" then return false end
+    if list.ensureVisible then pcall(list.ensureVisible, list, index) end
+    local yScroll = 0
+    pcall(function() yScroll = list:getYScroll() end)
+    local x = list:getAbsoluteX() + math.floor(list:getWidth() * 0.3)
+    local y = list:getAbsoluteY() + list:topOfItem(index) + math.floor((item.height or list.itemheight) / 2) + yScroll
+    M.fakeMouse = { x, y }
+    getMouseX = function() return M.fakeMouse and M.fakeMouse[1] or M.realMouseX() end
+    getMouseY = function() return M.fakeMouse and M.fakeMouse[2] or M.realMouseY() end
+    return true
+end
+
+function M.unhover()
+    M.fakeMouse = nil
+    getMouseX, getMouseY = M.realMouseX, M.realMouseY
+end
+
+local function traitIndex(list, id)
+    local tf = TFX()
+    for index, item in ipairs((list and list.items) or {}) do
+        local def = item and item.item
+        local got = def and tf and tf.traitId and tf.traitId(def)
+        if got == id then return index end
+    end
+    return nil
+end
+
+--- Zeigt fuer die Aufnahme auch die Werte ohne Wirkung; M.restoreOptions
+-- stellt die Wahl des Spielers danach zurueck.
+local function showDeadForShot()
+    local tf = TFX()
+    if not (tf and tf.Options and tf.Options.showDead and tf.Options.setShowDead) then return end
+    if M.savedShowDead == nil then M.savedShowDead = tf.Options.showDead() == true end
+    tf.Options.setShowDead(true)
+end
+
+function M.restoreOptions()
+    local tf = TFX()
+    if M.savedShowDead ~= nil and tf and tf.Options and tf.Options.setShowDead then
+        tf.Options.setShowDead(M.savedShowDead)
+    end
+    M.savedShowDead = nil
+end
+
 local function closeAll(screen)
+    M.unhover()
+    M.restoreOptions()
     local tf = TFX()
     if tf and tf.Build and tf.Build.closeMissing then pcall(tf.Build.closeMissing, screen) end
     if tf and tf.Panel and tf.Panel.closeFull then pcall(tf.Panel.closeFull, screen) end
@@ -183,6 +246,40 @@ M.SCENARIOS = {
     end },
 }
 
+--- Die Bilder fuer die Workshop-Seite (seit 6.42.0, Wunsch 22.09.2026): jedes
+-- zeigt eine Sache so gross, wie die jetzige Aufloesung es hergibt. Zugeschnitten
+-- und gerahmt werden sie danach mit tools/workshop-bilder.py.
+M.WORKSHOP = {
+    -- 01 Die Uebersicht mit einem Build, der viele Themen fuellt, aber ohne
+    -- Rollbalken in die Spalte passt.
+    { name = "uebersicht", run = function(screen)
+        return loadBuild(screen, "fireofficer;strong;brave;dextrous;outdoorsman;keenhearing;"
+            .. "smoker;shortsighted;weakstomach")
+    end },
+    -- 02 Der Tooltip von Strong mit der grauen Zeile zur Tragkraft: Werte ohne
+    -- Wirkung werden fuer die Aufnahme gezeigt und danach wieder wie vorher.
+    { name = "tooltip-strong", run = function(screen)
+        loadBuild(screen, "fireofficer")
+        showDeadForShot()
+        local tf = TFX()
+        if tf and tf.Options and tf.Options.sync then pcall(tf.Options.sync) end
+        local index = traitIndex(screen.listboxTrait, "base:strong")
+        if not index then return false, "Strong nicht in der Liste" end
+        return M.hover(screen.listboxTrait, index)
+    end },
+    -- 03 Major Skills mit dem Tooltip, der die Rechnung zeigt (Foraging, zwei Quellen).
+    { name = "skills-tooltip", run = function(screen)
+        loadBuild(screen, "parkranger;outdoorsman;herbalist")
+        local list = screen.listboxXpBoost
+        if not (list and list.items and #list.items > 0) then return false, "Major Skills leer" end
+        return M.hover(list, 1)
+    end },
+    -- 04 Die Suche nach "panic".
+    { name = "suche", run = M.SCENARIOS[5].run },
+    -- 05 Build teilen: das Fenster fuer fehlende Mods.
+    { name = "build-code", run = M.SCENARIOS[7].run },
+}
+
 -- ---------------------------------------------------------------- Protokoll
 
 --- Elemente, deren Lage ins Protokoll kommt. `layout = true`: gehoert zur
@@ -264,6 +361,16 @@ function M.record(writer, screen, size, scenario)
                 r.visible and 1 or 0, r.x, r.y, r.w, r.h) .. nl)
         else
             writer:write("element|" .. head .. "|" .. e.key .. "|fehlt" .. nl)
+        end
+    end
+    -- Offene Listen-Tooltips (seit 6.42.0): tools/workshop-bilder.py schneidet
+    -- die Workshop-Bilder danach zu. Kein Pruefwert, nur die Lage.
+    for _, key in ipairs({ "listboxTrait", "listboxBadTrait", "listboxXpBoost" }) do
+        local tip = screen[key] and screen[key].tooltipUI
+        local r = tip and rectOf(tip) or nil
+        if r and r.visible then
+            writer:write(string.format("element|%s|tooltip:%s|sichtbar=1|x=%d|y=%d|w=%d|h=%d", head, key,
+                r.x, r.y, r.w, r.h) .. nl)
         end
     end
 
@@ -579,7 +686,10 @@ end
 -- ---------------------------------------------------------------- Ablauf
 
 --- Startet den Lauf. @param onlyCurrent  nur die jetzige Aufloesung
-function M.start(onlyCurrent)
+-- @param workshop  die Workshop-Bilder statt der Pruefszenarien (immer nur
+-- die jetzige Aufloesung)
+function M.start(onlyCurrent, workshop)
+    if workshop then onlyCurrent = true end
     if M.run then return M.abort("von Hand abgebrochen") end
     if M.restoreIfPending() then return end
     local screen = M.screen()
@@ -603,10 +713,13 @@ function M.start(onlyCurrent)
     writer:write("# Trait Facts Bildschirmlauf, Mess-Mod " .. M.VERSION .. ", Trait Facts "
         .. tostring(TFX() and TFX().VERSION or "fehlt") .. ", Spiel " .. tostring(core:getVersion()) .. "\r\n")
     writer:write("# schritt|element|pruef|wert je Aufloesung und Szenario; Bilder: Zomboid/Screenshots/TF_*.png\r\n")
+    local scenarios = workshop and M.WORKSHOP or M.SCENARIOS
     M.run = { sizes = sizes, sizeIndex = 0, scenarioIndex = 0, phase = "size", due = now(),
               writer = writer, original = original, changed = not onlyCurrent,
+              scenarios = scenarios, workshop = workshop == true,
               shots = 0, passed = 0, failed = 0, skipped = 0 }
-    log("Lauf gestartet: " .. #sizes .. " Aufloesung(en), " .. #M.SCENARIOS .. " Szenarien. Dieselbe Taste bricht ab.")
+    log("Lauf gestartet" .. (workshop and " (Workshop-Bilder)" or "") .. ": " .. #sizes .. " Aufloesung(en), "
+        .. #scenarios .. " Szenarien. Dieselbe Taste bricht ab.")
 end
 
 function M.finish(reason)
@@ -659,7 +772,7 @@ function M.pump()
     if M.wanted then
         local wanted = M.wanted
         M.wanted = nil
-        M.start(wanted.onlyCurrent)
+        M.start(wanted.onlyCurrent, wanted.workshop)
         return
     end
     if M.afterRun and now() >= M.afterRun.due then
@@ -687,7 +800,7 @@ function M.pump()
         run.due = now() + M.WAIT_SETTLE
     elseif run.phase == "setup" then
         run.scenarioIndex = run.scenarioIndex + 1
-        local scenario = M.SCENARIOS[run.scenarioIndex]
+        local scenario = run.scenarios[run.scenarioIndex]
         if not scenario then
             run.phase = "size"
             run.due = now()
@@ -695,9 +808,14 @@ function M.pump()
         end
         closeAll(screen)
         local size = run.sizes[run.sizeIndex]
-        local step = (run.sizeIndex - 1) * #M.SCENARIOS + run.scenarioIndex
-        pcall(M.showProgress, string.format("Measure run %d/%d  %dx%d  %s", step, #run.sizes * #M.SCENARIOS,
-            size[1], size[2], scenario.name))
+        local step = (run.sizeIndex - 1) * #run.scenarios + run.scenarioIndex
+        -- Die Workshop-Bilder laufen ohne Anzeige: sie stuende sonst im Bild.
+        if run.workshop then
+            M.hideProgress()
+        else
+            pcall(M.showProgress, string.format("Measure run %d/%d  %dx%d  %s", step, #run.sizes * #run.scenarios,
+                size[1], size[2], scenario.name))
+        end
         local ok, ready, why = pcall(scenario.run, screen)
         if ok and ready then
             -- Erst zur Ruhe kommen lassen, dann eine Sekunde lang Bilder
@@ -725,7 +843,7 @@ function M.pump()
         run.fpsOwn = (run.frames and elapsed > 0) and math.floor(run.frames * 1000 / elapsed + 0.5) or nil
         run.frames = nil
         local size = run.sizes[run.sizeIndex]
-        local scenario = M.SCENARIOS[run.scenarioIndex]
+        local scenario = run.scenarios[run.scenarioIndex]
         if run.fpsOwn then
             pcall(function()
                 local core = getCore()
@@ -741,8 +859,8 @@ function M.pump()
             pcall(function() run.writer:write("fehler|" .. scenario.name .. "|" .. tostring(passed) .. "\r\n") end)
         end
         local core = getCore()
-        local name = string.format("TF_%dx%d_%02d_%s.png", core:getScreenWidth(), core:getScreenHeight(),
-            run.scenarioIndex, scenario.name)
+        local name = string.format("TF_%s%dx%d_%02d_%s.png", run.workshop and "WS_" or "",
+            core:getScreenWidth(), core:getScreenHeight(), run.scenarioIndex, scenario.name)
         if takeScreenshot then
             pcall(takeScreenshot, name)
             run.shots = run.shots + 1
@@ -760,11 +878,14 @@ function M.key(key)
     if not Keyboard then return end
     local ohneDebug = not (isDebugEnabled and isDebugEnabled())
     if not (key == Keyboard.KEY_NUMPAD7 or (ohneDebug and key == Keyboard.KEY_F7)) then return end
-    local ctrl = false
+    local ctrl, shift = false, false
     pcall(function()
         ctrl = isCtrlKeyDown() and true or false
     end)
-    M.wanted = { onlyCurrent = ctrl }
+    pcall(function()
+        shift = isShiftKeyDown() and true or false
+    end)
+    M.wanted = { onlyCurrent = ctrl, workshop = shift }
 end
 
 -- Genau einmal anmelden; die Huellen schlagen ueber die Tabelle nach, ein
