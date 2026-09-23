@@ -2,9 +2,10 @@
 --
 -- Der Tooltip beantwortet "was tut dieser Trait". Diese Schicht beantwortet
 -- "was tut meine Figur", und das ist nicht dasselbe: die Engine rechnet
--- Faktoren multiplikativ, nicht additiv. Strong, Athletic und Brave ergeben
--- beim Grapple 1.25 x 1.25 x 1.10 = +72 %, nicht +60 %. Athletic und Very High
--- Weight ergeben beim Sprint 1.2 x 0.85 = +2 %, nicht +5 %.
+-- Faktoren multiplikativ, nicht additiv. Resilient und Outdoorsy ergeben bei
+-- der Erkaeltungsgefahr 0.45 x 0.25 = x0.11, also -89 %, nicht -130 %. (Bis
+-- zum Faktensweep 23.09.2026 stand hier Grapple mit +72 % und der Sprint;
+-- beide Werte sind wirkungslos und kommen in keine Summe.)
 --
 -- Die Regeln stammen aus dem Engine-Code, nicht aus der Anschauung
 -- (Nachtrag 4b im Extraktionsbericht):
@@ -21,8 +22,8 @@
 --
 -- Zusammengefasst wird nur, was wirklich dasselbe ist: gleicher Name, gleiche
 -- Einheit, gleiche Fussnote. "XP gain (all Crafting skills)" und "XP gain
--- (melee skills and Aiming)" bleiben deshalb zwei Zeilen, und Outdoorsy am
--- Grill mischt sich nicht mit Bushcrafter am Lagerfeuer.
+-- (melee skills and Aiming)" bleiben deshalb zwei Zeilen, und Outdoorsy an
+-- Grill, Kamin und Ofen mischt sich nicht mit Bushcrafter am Lagerfeuer.
 
 TraitFacts = TraitFacts or {}
 local TF = TraitFacts
@@ -355,8 +356,12 @@ function TF.Summary.direction(text, value, kind)
     elseif kind == "fromto" then
         if type(value) ~= "table" then return nil end
         delta = value[2] - value[1]
-    elseif kind == "pctrange" then
+    elseif kind == "pctrange" or kind == "range" then
         -- Beide Enden auf derselben Seite der Null, sonst gibt es keine Richtung.
+        -- "range" kam bis zum Faktensweep 23.09.2026 hier nicht vor und blieb
+        -- darum immer farblos, auch wo die Richtung eindeutig ist (Gimp -67,5
+        -- bis -22,5 %, Quick Rest 5,5 bis 12 %). Eine Spanne ab 0 ("0 bis
+        -- 60 min") bleibt weiter ohne Richtung.
         if type(value) ~= "table" or type(value[1]) ~= "number" or type(value[2]) ~= "number" then return nil end
         if value[1] * value[2] <= 0 then return nil end
         delta = value[1]
@@ -760,8 +765,36 @@ function TF.Summary.gather(traitDefs, profession)
         end
         local source = label and { name = TF.fmt.plain(label), key = "profession", id = "profession" } or nil
         for _, entry in ipairs(TF.safe("summary:profession", TF.Live.professionEntries, profession) or {}) do
-            found[#found + 1] = { entry = entry, source = source }
+            -- Wie bei den Traits: ein wirkungsloser Wert gehoert nicht in die
+            -- Summe. Betrifft die Dunkelheit der Berufe beim Sammeln, die das
+            -- Spiel nie anwendet (forageSystem.lua:1869, Faktensweep 23.09.2026).
+            if not entry.dead then
+                found[#found + 1] = { entry = entry, source = source }
+            end
         end
+    end
+    -- Athletic ersetzt den Ausdauer-Faktor von High Weight, statt mit ihm zu
+    -- multiplizieren: IsoPlayer.updateEndurance setzt enddelta erst auf 2.9
+    -- (OVERWEIGHT) und ueberschreibt ihn dann mit 0.8 (ATHLETIC). Gemessen am
+    -- 13.09.2026: zusammen 0.5720 wie Athletic allein. Ohne diese Regel zeigte
+    -- die Uebersicht 0.57 x 2.07 = x1.18 (Faktensweep 23.09.2026). Das Paar
+    -- entsteht, wenn das Spiel Athletic aus der Startstufe setzt.
+    local athletic = false
+    for _, item in ipairs(found) do
+        if item.entry.text == "UI_TF_eff_enduranceloss" and item.entry.note == "UI_TF_note_enddelta"
+                and item.source and item.source.key == "athletic" then
+            athletic = true
+        end
+    end
+    if athletic then
+        local kept = {}
+        for _, item in ipairs(found) do
+            local replaced = item.entry.text == "UI_TF_eff_enduranceloss"
+                and item.entry.note == "UI_TF_note_enddelta"
+                and item.source and item.source.key == "overweight"
+            if not replaced then kept[#kept + 1] = item end
+        end
+        found = kept
     end
     return found
 end

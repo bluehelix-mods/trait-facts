@@ -32,7 +32,7 @@
     {
       "id": "strong/carryweight",
       "stand": "wirkungslos",
-      "code": "IsoPlayer-Konstruktoren (Z. 592-600, 656-664) setzen maxWeightDelta; gelesen in BodyDamage.UpdateStrength (Z. 1742-1787)",
+      "code": "IsoPlayer-Konstruktoren (Z. 592-600, 656-664) setzen maxWeightDelta; gelesen in BodyDamage.UpdateStrength (Z. 1731; Delta gelesen in Z. 1785)",
       "berichte": [
         "docs/berichte/2026-09-08-extraktion.md",
         "docs/berichte/2026-09-13-engine-recherche.md",
@@ -47,11 +47,12 @@
     },
     {
       "id": "strong/grapple",
-      "stand": "gemessen",
-      "code": "IsoGameCharacter.calculateGrappleEffectivenessFromTraits (Z. 7917)",
+      "stand": "wirkungslos",
+      "code": "IsoGameCharacter.calculateGrappleEffectivenessFromTraits (Z. 7917-7946); Aufrufer IsoGameCharacter.pickUpCorpse (Z. 7912-7913) und SwipeStatePlayer (Z. 524-530); gelesen nur in BaseGrappleable.Grappled (Z. 75) und IsoDeadBody.Grappled (Z. 1775) als Schwelle unter 0.5",
       "berichte": [
         "docs/berichte/2026-09-08-extraktion.md",
-        "tools/measure-mod/README.md"
+        "tools/measure-mod/README.md",
+        "docs/berichte/2026-09-23-faktensweep.md"
       ],
       "messungen": [
         "messung-2026-09-10.txt",
@@ -59,13 +60,13 @@
         "messung-2026-09-10c.txt",
         "messung-2026-09-13-sprint.txt"
       ],
-      "notiz": "Getter mit Trait an und aus, auf die Nachkommastelle wie im Code.",
-      "methode": "Weltbetreten: calculateGrappleEffectivenessFromTraits() einmal ohne, einmal mit Strong ausgelesen, Wert auf die Nachkommastelle wie im Code verglichen; früher Mess-Mod-Lauf vor der Versionszählung, Traits vorher gesichert und danach zurückgesetzt."
+      "notiz": "Wirkungslos, nachgeprüft am 23.09.2026: Das Spiel prüft den Wert nur gegen ein Minimum von 0,5; darunter wird ein Griff oder das Aufheben einer Leiche abgelehnt. Danach liest ihn niemand mehr, weder beim Greifen noch beim Ziehen. Keine Kombination von Traits kommt so tief: das Spiel hält immer genau einen Gewichts-Trait, der niedrigste Wert ist 0,54 (Emaciated mit Cowardly). Gemessen ist nur, was die Funktion zurückgibt: Getter mit Trait an und aus, auf die Nachkommastelle wie im Code (Spielfehler grapple-schwelle).",
+      "methode": "Weltbetreten: calculateGrappleEffectivenessFromTraits() einmal ohne, einmal mit Strong ausgelesen, Wert auf die Nachkommastelle wie im Code verglichen; frühe Mess-Mod-Läufe vor der Versionszählung (10, 10b, 10c) und ein späterer Weltbetreten-Lauf mit 6.21.0 (13-sprint), Traits vorher gesichert und danach zurückgesetzt."
     },
     {
       "id": "stout/carryweight",
       "stand": "wirkungslos",
-      "code": "IsoPlayer-Konstruktoren (Z. 592-600, 656-664) setzen maxWeightDelta; gelesen in BodyDamage.UpdateStrength (Z. 1742-1787)",
+      "code": "IsoPlayer-Konstruktoren (Z. 592-600, 656-664) setzen maxWeightDelta; gelesen in BodyDamage.UpdateStrength (Z. 1731; Delta gelesen in Z. 1785)",
       "berichte": [
         "docs/berichte/2026-09-08-extraktion.md",
         "docs/berichte/2026-09-13-engine-recherche.md",
@@ -96,7 +97,7 @@
     {
       "id": "weak/carryweight",
       "stand": "wirkungslos",
-      "code": "IsoPlayer-Konstruktoren (Z. 592-600, 656-664) setzen maxWeightDelta; gelesen in BodyDamage.UpdateStrength (Z. 1742-1787)",
+      "code": "IsoPlayer-Konstruktoren (Z. 592-600, 656-664) setzen maxWeightDelta; gelesen in BodyDamage.UpdateStrength (Z. 1731; Delta gelesen in Z. 1785)",
       "berichte": [
         "docs/berichte/2026-09-08-extraktion.md",
         "docs/berichte/2026-09-13-engine-recherche.md",
@@ -112,7 +113,7 @@
     {
       "id": "feeble/carryweight",
       "stand": "wirkungslos",
-      "code": "IsoPlayer-Konstruktoren (Z. 592-600, 656-664) setzen maxWeightDelta; gelesen in BodyDamage.UpdateStrength (Z. 1742-1787)",
+      "code": "IsoPlayer-Konstruktoren (Z. 592-600, 656-664) setzen maxWeightDelta; gelesen in BodyDamage.UpdateStrength (Z. 1731; Delta gelesen in Z. 1785)",
       "berichte": [
         "docs/berichte/2026-09-08-extraktion.md",
         "docs/berichte/2026-09-13-engine-recherche.md",
@@ -127,11 +128,12 @@
     },
     {
       "id": "axeman/chopspeed",
-      "stand": "wirkungslos",
-      "code": "IsoGameCharacter.getChopTreeSpeed (Z. 12388); Fäll-Animation chop_tree.xml (m_SpeedScale)",
+      "stand": "code",
+      "code": "IsoGameCharacter.getChopTreeSpeed (Z. 12388); Fäll-Animation AnimSets/player/actions/chop_tree.xml (m_SpeedScale ChopTreeSpeed, Hieb bei 0.35), Clip Bob_IdleChopDownTree 1.0 s; die Geschwindigkeit liest das Spiel nur beim Start des Animationsknotens (AnimLayer.startLiveNodeTracks, Z. 831)",
       "berichte": [
         "docs/berichte/2026-09-08-extraktion.md",
-        "tools/measure-mod/README.md"
+        "tools/measure-mod/README.md",
+        "docs/berichte/2026-09-23-faktensweep.md"
       ],
       "messungen": [
         "messung-2026-09-10.txt",
@@ -142,7 +144,7 @@
         "messung-2026-09-13b-axt.txt",
         "messung-2026-09-13c-axt.txt"
       ],
-      "notiz": "Der Getter getChopTreeSpeed liefert ohne Ax-pert 0.8 und mit Ax-pert 1.0 (x1.25, gemessen am 10.09.2026 und 13.09.2026). Der Abstand zweier Hiebe beim Fällen ändert sich trotzdem nicht. Gemessen am 13.09.2026 (Axt), drei Läufe, Mittel ohne gegen mit Ax-pert: 1249.8 gegen 1250.0 ms (mit/ohne 1.0002, 12 Hiebe je Fall), 1244.5 gegen 1250.0 ms (1.0044, 8 Abstände je Fall) und 1276.2 gegen 1261.4 ms (0.9883, 8 Abstände je Fall). Im dritten Lauf streuen die Abstände in beiden Fällen, von 1237 bis 1399 ms; der Median liegt bei 1251 ms ohne und 1254 ms mit. Laut Code wäre mit/ohne 0.8 zu erwarten, also rund 1000 ms mit Ax-pert. Kein Lauf zeigt das.",
+      "notiz": "Laut Code +25 %: getChopTreeSpeed liefert mit Ax-pert 1.0 statt 0.8 (gemessen am 10.09.2026 und 13.09.2026), und die Fäll-Animation läuft mit diesem Wert; der Clip dauert 1.0 s, also ein Hieb alle 1.0 s statt alle 1.25 s. Die Messung vom 13.09.2026 kann das nicht entscheiden: in allen drei Läufen lag der Abstand mit und ohne Ax-pert bei rund 1250 ms, also beim Tempo ohne Ax-pert. Das Spiel liest die Geschwindigkeit nur, wenn der Animationsknoten startet, und der Test hat den Trait umgeschaltet, während der Knoten weiterlief (Warteschlange leeren und neu fällen im selben Tick); jede Phase lief so mit dem Tempo der ersten, und die war immer ohne Ax-pert. Eine Figur, die Ax-pert schon beim Start des Fällens hat, ist nie gemessen worden. Die Nachmessung ist geplant (Mess-Mod 6.43.0: Ax-pert vor dem Start gesetzt, zwischen den Phasen eine Pause, bis die Fäll-Animation aus ist). Bis 23.09.2026 stand der Wert als wirkungslos; das war ein Fehlschluss aus dieser Messung.",
       "methode": "Axt: Ax-pert, Mess-Mod 6.18.0 bis 6.21.0 (drei Läufe): Abstand zweier Hiebe in Millisekunden mit und ohne Ax-pert verglichen; im ersten Lauf wechselte der Trait mitten in der Aktion, danach 8 Phasen mit je neuer Aktion, deren erster Hieb als Anlauf nicht zählt."
     },
     {
@@ -151,15 +153,16 @@
       "code": "IsoGameCharacter.calculateCombatSpeed (Z. 8836), CombatManager.pressedAttack (Z. 2660)",
       "berichte": [
         "docs/berichte/2026-09-08-extraktion.md",
-        "tools/measure-mod/README.md"
+        "tools/measure-mod/README.md",
+        "docs/berichte/2026-09-23-faktensweep.md"
       ],
       "messungen": [
         "messung-2026-09-13-axt.txt",
         "messung-2026-09-13b-axt.txt",
         "messung-2026-09-13c-axt.txt"
       ],
-      "notiz": "Schlagdauer mit/ohne 0.79, 0.80, 0.79 in drei Läufen.",
-      "methode": "Axt: Ax-pert, Mess-Mod 6.18.0 bis 6.21.0 (drei Läufe): 20 Schläge in die Luft, Ax-pert alle zwei Schläge im Wechsel, Schwungtakt und -dauer aus OnWeaponSwing und OnPlayerAttackFinished gegen die Werte ohne Trait verglichen."
+      "notiz": "Schlagdauer mit/ohne 0.79, 0.80, 0.79 in drei Läufen, bei Axt-Skill 3. Kein fester Faktor: in calculateCombatSpeed trifft die 0.8 ohne Ax-pert nur den Grundterm (0.8 x BaseSpeed der Waffe); danach kommen ohne Trait-Bezug +0.03 je Waffenstufe, +0.02 je Fitness-Stufe und -0.07 je Stufe Erschöpfung und Überladung dazu, dann ein Zufall von 1.1 bis 1.2 und die Klemme 0.8 bis 1.6. Laut Code für die Axt (BaseSpeed 1.0) rund -18 % bei einer neuen Figur (Axt 0, Fitness 5), -16 % bei Axt 3 und -12 % bei Axt 10 und Fitness 10. Gemessen sind bei Axt 3 aber -20 bis -21 %; die Schlagdauer folgt 1/CombatSpeed also nicht genau, und die Fitness der Testfigur steht nicht im Log. Trait Facts zeigt die gemessenen -20 % für eine neue Figur und nennt in der Fußnote, dass es mit Axt und Fitness weniger wird. Eine Messung bei Axt 10 und Fitness 10 steht aus (nachgeprüft am 23.09.2026).",
+      "methode": "Axt: Ax-pert, Mess-Mod 6.18.0 bis 6.21.0 (drei Läufe): 20 Schläge in die Luft, Ax-pert alle zwei Schläge im Wechsel, Schwungtakt und -dauer aus OnWeaponSwing und OnPlayerAttackFinished gegen die Werte ohne Trait verglichen; Axt-Skill fest auf 3, Fitness nicht mitgeschrieben."
     },
     {
       "id": "axeman/treedamage",
@@ -192,7 +195,7 @@
         "messung-2026-09-13-sprint.txt"
       ],
       "notiz": "Getter mit Trait an und aus, auf die Nachkommastelle wie im Code.",
-      "methode": "Weltbetreten: getTraitDamageDealtReductionModifier() ohne und mit Low Weight ausgelesen, Wert auf die Nachkommastelle wie im Code verglichen; früher Mess-Mod-Lauf vor der Versionszählung, Traits vorher gesichert und danach zurückgesetzt."
+      "methode": "Weltbetreten: getTraitDamageDealtReductionModifier() ohne und mit Low Weight ausgelesen, Wert auf die Nachkommastelle wie im Code verglichen; frühe Mess-Mod-Läufe vor der Versionszählung (10, 10b, 10c) und ein späterer Weltbetreten-Lauf mit 6.21.0 (13-sprint), Traits vorher gesichert und danach zurückgesetzt."
     },
     {
       "id": "veryunderweight/meleedamage",
@@ -209,15 +212,16 @@
         "messung-2026-09-13-sprint.txt"
       ],
       "notiz": "Getter mit Trait an und aus, auf die Nachkommastelle wie im Code.",
-      "methode": "Weltbetreten: getTraitDamageDealtReductionModifier() ohne und mit Very Low Weight ausgelesen, Wert auf die Nachkommastelle wie im Code verglichen; früher Mess-Mod-Lauf vor der Versionszählung, Traits vorher gesichert und danach zurückgesetzt."
+      "methode": "Weltbetreten: getTraitDamageDealtReductionModifier() ohne und mit Very Low Weight ausgelesen, Wert auf die Nachkommastelle wie im Code verglichen; frühe Mess-Mod-Läufe vor der Versionszählung (10, 10b, 10c) und ein späterer Weltbetreten-Lauf mit 6.21.0 (13-sprint), Traits vorher gesichert und danach zurückgesetzt."
     },
     {
       "id": "veryunderweight/grapple",
-      "stand": "gemessen",
-      "code": "IsoGameCharacter.calculateGrappleEffectivenessFromTraits (Z. 7917)",
+      "stand": "wirkungslos",
+      "code": "IsoGameCharacter.calculateGrappleEffectivenessFromTraits (Z. 7917-7946); Aufrufer IsoGameCharacter.pickUpCorpse (Z. 7912-7913) und SwipeStatePlayer (Z. 524-530); gelesen nur in BaseGrappleable.Grappled (Z. 75) und IsoDeadBody.Grappled (Z. 1775) als Schwelle unter 0.5",
       "berichte": [
         "docs/berichte/2026-09-08-extraktion.md",
-        "tools/measure-mod/README.md"
+        "tools/measure-mod/README.md",
+        "docs/berichte/2026-09-23-faktensweep.md"
       ],
       "messungen": [
         "messung-2026-09-10.txt",
@@ -225,13 +229,13 @@
         "messung-2026-09-10c.txt",
         "messung-2026-09-13-sprint.txt"
       ],
-      "notiz": "Getter mit Trait an und aus, auf die Nachkommastelle wie im Code.",
-      "methode": "Weltbetreten: calculateGrappleEffectivenessFromTraits() einmal ohne, einmal mit Very Low Weight ausgelesen, Wert auf die Nachkommastelle wie im Code verglichen; früher Mess-Mod-Lauf vor der Versionszählung, Traits vorher gesichert und danach zurückgesetzt."
+      "notiz": "Wirkungslos, nachgeprüft am 23.09.2026: Das Spiel prüft den Wert nur gegen ein Minimum von 0,5; darunter wird ein Griff oder das Aufheben einer Leiche abgelehnt. Danach liest ihn niemand mehr, weder beim Greifen noch beim Ziehen. Keine Kombination von Traits kommt so tief: das Spiel hält immer genau einen Gewichts-Trait, der niedrigste Wert ist 0,54 (Emaciated mit Cowardly). Gemessen ist nur, was die Funktion zurückgibt: Getter mit Trait an und aus, auf die Nachkommastelle wie im Code (Spielfehler grapple-schwelle).",
+      "methode": "Weltbetreten: calculateGrappleEffectivenessFromTraits() einmal ohne, einmal mit Very Low Weight ausgelesen, Wert auf die Nachkommastelle wie im Code verglichen; frühe Mess-Mod-Läufe vor der Versionszählung (10, 10b, 10c) und ein späterer Weltbetreten-Lauf mit 6.21.0 (13-sprint), Traits vorher gesichert und danach zurückgesetzt."
     },
     {
       "id": "veryunderweight/trip",
       "stand": "gemessen",
-      "code": "ClimbOverFenceState.shouldFallAfterVaultOver (Z. 490; Traits Z. 508-523)",
+      "code": "ClimbOverFenceState.shouldFallAfterVaultOver (Z. 493; Traits Z. 511-526)",
       "berichte": [
         "docs/berichte/2026-09-08-extraktion.md",
         "tools/measure-mod/README.md",
@@ -246,12 +250,12 @@
     {
       "id": "veryunderweight/lungefall",
       "stand": "code",
-      "code": "IsoGameCharacter.attackFromWindowsLunge (Z. 12875; Traits Z. 12900-12915)",
+      "code": "IsoGameCharacter.attackFromWindowsLunge (Z. 12875; Traits Z. 12900-12915; Taumeln und Wurf Z. 12919-12924); ausgelöst nur vom kletternden Zombie: ClimbOverFenceState (Z. 367-371), ClimbThroughWindowState (Z. 290-294), GrappledThrownOutWindowState (Z. 267-271)",
       "berichte": [
         "docs/berichte/2026-09-08-extraktion.md"
       ],
       "messungen": [],
-      "notiz": "Engine-Fehler: Very Low Weight (VERY_UNDERWEIGHT im Spielcode) wird zweimal abgefragt (+20, +10). Nicht gemessen: Der Wurf fällt nur, wenn ein Zombie die Figur beim Klettern greift. Nach jedem Griff sperrt das Spiel den nächsten für rund 7 Sekunden und stößt die Figur um; für einen belastbaren Anteil bräuchte es Hunderte Griffe je Fall.",
+      "notiz": "Engine-Fehler: Very Low Weight (VERY_UNDERWEIGHT im Spielcode) wird zweimal abgefragt (+20, +10). Nicht gemessen: Der Wurf fällt nur, wenn ein Zombie, der gerade über einen Zaun oder durch ein Fenster klettert (oder aus einem geworfen wird), nach einer nahen Figur springt (unter 3,9 Felder, gleiche Etage) und sie mit der Hand trifft; nur mit der Sandbox-Option Zombie Lunge. Jeder Treffer bringt die Figur ins Taumeln, der Wurf entscheidet, ob sie auch stürzt. Danach sperrt das Spiel den nächsten Treffer für rund 7 Sekunden; für einen belastbaren Anteil bräuchte es Hunderte Treffer je Fall.",
       "methode": ""
     },
     {
@@ -314,15 +318,16 @@
         "messung-2026-09-13-sprint.txt"
       ],
       "notiz": "Getter mit Trait an und aus, auf die Nachkommastelle wie im Code.",
-      "methode": "Weltbetreten: getTraitDamageDealtReductionModifier() ohne und mit Emaciated ausgelesen, Wert auf die Nachkommastelle wie im Code verglichen; früher Mess-Mod-Lauf vor der Versionszählung, Traits vorher gesichert und danach zurückgesetzt."
+      "methode": "Weltbetreten: getTraitDamageDealtReductionModifier() ohne und mit Emaciated ausgelesen, Wert auf die Nachkommastelle wie im Code verglichen; frühe Mess-Mod-Läufe vor der Versionszählung (10, 10b, 10c) und ein späterer Weltbetreten-Lauf mit 6.21.0 (13-sprint), Traits vorher gesichert und danach zurückgesetzt."
     },
     {
       "id": "emaciated/grapple",
-      "stand": "gemessen",
-      "code": "IsoGameCharacter.calculateGrappleEffectivenessFromTraits (Z. 7917)",
+      "stand": "wirkungslos",
+      "code": "IsoGameCharacter.calculateGrappleEffectivenessFromTraits (Z. 7917-7946); Aufrufer IsoGameCharacter.pickUpCorpse (Z. 7912-7913) und SwipeStatePlayer (Z. 524-530); gelesen nur in BaseGrappleable.Grappled (Z. 75) und IsoDeadBody.Grappled (Z. 1775) als Schwelle unter 0.5",
       "berichte": [
         "docs/berichte/2026-09-08-extraktion.md",
-        "tools/measure-mod/README.md"
+        "tools/measure-mod/README.md",
+        "docs/berichte/2026-09-23-faktensweep.md"
       ],
       "messungen": [
         "messung-2026-09-10.txt",
@@ -330,8 +335,8 @@
         "messung-2026-09-10c.txt",
         "messung-2026-09-13-sprint.txt"
       ],
-      "notiz": "Getter mit Trait an und aus, auf die Nachkommastelle wie im Code.",
-      "methode": "Weltbetreten: calculateGrappleEffectivenessFromTraits() einmal ohne, einmal mit Emaciated ausgelesen, Wert auf die Nachkommastelle wie im Code verglichen; früher Mess-Mod-Lauf vor der Versionszählung, Traits vorher gesichert und danach zurückgesetzt."
+      "notiz": "Wirkungslos, nachgeprüft am 23.09.2026: Das Spiel prüft den Wert nur gegen ein Minimum von 0,5; darunter wird ein Griff oder das Aufheben einer Leiche abgelehnt. Danach liest ihn niemand mehr, weder beim Greifen noch beim Ziehen. Keine Kombination von Traits kommt so tief: das Spiel hält immer genau einen Gewichts-Trait, der niedrigste Wert ist 0,54 (Emaciated mit Cowardly). Gemessen ist nur, was die Funktion zurückgibt: Getter mit Trait an und aus, auf die Nachkommastelle wie im Code (Spielfehler grapple-schwelle).",
+      "methode": "Weltbetreten: calculateGrappleEffectivenessFromTraits() einmal ohne, einmal mit Emaciated ausgelesen, Wert auf die Nachkommastelle wie im Code verglichen; frühe Mess-Mod-Läufe vor der Versionszählung (10, 10b, 10c) und ein späterer Weltbetreten-Lauf mit 6.21.0 (13-sprint), Traits vorher gesichert und danach zurückgesetzt."
     },
     {
       "id": "emaciated/falldamage",
@@ -380,11 +385,12 @@
     },
     {
       "id": "overweight/grapple",
-      "stand": "gemessen",
-      "code": "IsoGameCharacter.calculateGrappleEffectivenessFromTraits (Z. 7917)",
+      "stand": "wirkungslos",
+      "code": "IsoGameCharacter.calculateGrappleEffectivenessFromTraits (Z. 7917-7946); Aufrufer IsoGameCharacter.pickUpCorpse (Z. 7912-7913) und SwipeStatePlayer (Z. 524-530); gelesen nur in BaseGrappleable.Grappled (Z. 75) und IsoDeadBody.Grappled (Z. 1775) als Schwelle unter 0.5",
       "berichte": [
         "docs/berichte/2026-09-08-extraktion.md",
-        "tools/measure-mod/README.md"
+        "tools/measure-mod/README.md",
+        "docs/berichte/2026-09-23-faktensweep.md"
       ],
       "messungen": [
         "messung-2026-09-10.txt",
@@ -392,8 +398,8 @@
         "messung-2026-09-10c.txt",
         "messung-2026-09-13-sprint.txt"
       ],
-      "notiz": "Getter mit Trait an und aus, auf die Nachkommastelle wie im Code.",
-      "methode": "Weltbetreten: calculateGrappleEffectivenessFromTraits() einmal ohne, einmal mit High Weight ausgelesen, Wert auf die Nachkommastelle wie im Code verglichen; früher Mess-Mod-Lauf vor der Versionszählung, Traits vorher gesichert und danach zurückgesetzt."
+      "notiz": "Wirkungslos, nachgeprüft am 23.09.2026: Das Spiel prüft den Wert nur gegen ein Minimum von 0,5; darunter wird ein Griff oder das Aufheben einer Leiche abgelehnt. Danach liest ihn niemand mehr, weder beim Greifen noch beim Ziehen. Keine Kombination von Traits kommt so tief: das Spiel hält immer genau einen Gewichts-Trait, der niedrigste Wert ist 0,54 (Emaciated mit Cowardly). Gemessen ist nur, was die Funktion zurückgibt: Getter mit Trait an und aus, auf die Nachkommastelle wie im Code (Spielfehler grapple-schwelle).",
+      "methode": "Weltbetreten: calculateGrappleEffectivenessFromTraits() einmal ohne, einmal mit High Weight ausgelesen, Wert auf die Nachkommastelle wie im Code verglichen; frühe Mess-Mod-Läufe vor der Versionszählung (10, 10b, 10c) und ein späterer Weltbetreten-Lauf mit 6.21.0 (13-sprint), Traits vorher gesichert und danach zurückgesetzt."
     },
     {
       "id": "overweight/sprintspeed",
@@ -438,7 +444,7 @@
     {
       "id": "overweight/trip",
       "stand": "gemessen",
-      "code": "ClimbOverFenceState.shouldFallAfterVaultOver (Z. 490; Traits Z. 508-523)",
+      "code": "ClimbOverFenceState.shouldFallAfterVaultOver (Z. 493; Traits Z. 511-526)",
       "berichte": [
         "docs/berichte/2026-09-08-extraktion.md",
         "tools/measure-mod/README.md",
@@ -453,12 +459,12 @@
     {
       "id": "overweight/lungefall",
       "stand": "code",
-      "code": "IsoGameCharacter.attackFromWindowsLunge (Z. 12875; Traits Z. 12900-12915)",
+      "code": "IsoGameCharacter.attackFromWindowsLunge (Z. 12875; Traits Z. 12900-12915; Taumeln und Wurf Z. 12919-12924); ausgelöst nur vom kletternden Zombie: ClimbOverFenceState (Z. 367-371), ClimbThroughWindowState (Z. 290-294), GrappledThrownOutWindowState (Z. 267-271)",
       "berichte": [
         "docs/berichte/2026-09-08-extraktion.md"
       ],
       "messungen": [],
-      "notiz": "Nicht gemessen: Der Wurf fällt nur, wenn ein Zombie die Figur beim Klettern greift. Nach jedem Griff sperrt das Spiel den nächsten für rund 7 Sekunden und stößt die Figur um; für einen belastbaren Anteil bräuchte es Hunderte Griffe je Fall.",
+      "notiz": "Nicht gemessen: Der Wurf fällt nur, wenn ein Zombie, der gerade über einen Zaun oder durch ein Fenster klettert (oder aus einem geworfen wird), nach einer nahen Figur springt (unter 3,9 Felder, gleiche Etage) und sie mit der Hand trifft; nur mit der Sandbox-Option Zombie Lunge. Jeder Treffer bringt die Figur ins Taumeln, der Wurf entscheidet, ob sie auch stürzt. Danach sperrt das Spiel den nächsten Treffer für rund 7 Sekunden; für einen belastbaren Anteil bräuchte es Hunderte Treffer je Fall.",
       "methode": ""
     },
     {
@@ -524,11 +530,12 @@
     },
     {
       "id": "obese/grapple",
-      "stand": "gemessen",
-      "code": "IsoGameCharacter.calculateGrappleEffectivenessFromTraits (Z. 7917)",
+      "stand": "wirkungslos",
+      "code": "IsoGameCharacter.calculateGrappleEffectivenessFromTraits (Z. 7917-7946); Aufrufer IsoGameCharacter.pickUpCorpse (Z. 7912-7913) und SwipeStatePlayer (Z. 524-530); gelesen nur in BaseGrappleable.Grappled (Z. 75) und IsoDeadBody.Grappled (Z. 1775) als Schwelle unter 0.5",
       "berichte": [
         "docs/berichte/2026-09-08-extraktion.md",
-        "tools/measure-mod/README.md"
+        "tools/measure-mod/README.md",
+        "docs/berichte/2026-09-23-faktensweep.md"
       ],
       "messungen": [
         "messung-2026-09-10.txt",
@@ -536,8 +543,8 @@
         "messung-2026-09-10c.txt",
         "messung-2026-09-13-sprint.txt"
       ],
-      "notiz": "Getter mit Trait an und aus, auf die Nachkommastelle wie im Code.",
-      "methode": "Weltbetreten: calculateGrappleEffectivenessFromTraits() einmal ohne, einmal mit Very High Weight ausgelesen, Wert auf die Nachkommastelle wie im Code verglichen; früher Mess-Mod-Lauf vor der Versionszählung, Traits vorher gesichert und danach zurückgesetzt."
+      "notiz": "Wirkungslos, nachgeprüft am 23.09.2026: Das Spiel prüft den Wert nur gegen ein Minimum von 0,5; darunter wird ein Griff oder das Aufheben einer Leiche abgelehnt. Danach liest ihn niemand mehr, weder beim Greifen noch beim Ziehen. Keine Kombination von Traits kommt so tief: das Spiel hält immer genau einen Gewichts-Trait, der niedrigste Wert ist 0,54 (Emaciated mit Cowardly). Gemessen ist nur, was die Funktion zurückgibt: Getter mit Trait an und aus, auf die Nachkommastelle wie im Code (Spielfehler grapple-schwelle).",
+      "methode": "Weltbetreten: calculateGrappleEffectivenessFromTraits() einmal ohne, einmal mit Very High Weight ausgelesen, Wert auf die Nachkommastelle wie im Code verglichen; frühe Mess-Mod-Läufe vor der Versionszählung (10, 10b, 10c) und ein späterer Weltbetreten-Lauf mit 6.21.0 (13-sprint), Traits vorher gesichert und danach zurückgesetzt."
     },
     {
       "id": "obese/sprintspeed",
@@ -582,7 +589,7 @@
     {
       "id": "obese/trip",
       "stand": "gemessen",
-      "code": "ClimbOverFenceState.shouldFallAfterVaultOver (Z. 490; Traits Z. 508-523)",
+      "code": "ClimbOverFenceState.shouldFallAfterVaultOver (Z. 493; Traits Z. 511-526)",
       "berichte": [
         "docs/berichte/2026-09-08-extraktion.md",
         "tools/measure-mod/README.md",
@@ -597,12 +604,12 @@
     {
       "id": "obese/lungefall",
       "stand": "code",
-      "code": "IsoGameCharacter.attackFromWindowsLunge (Z. 12875; Traits Z. 12900-12915)",
+      "code": "IsoGameCharacter.attackFromWindowsLunge (Z. 12875; Traits Z. 12900-12915; Taumeln und Wurf Z. 12919-12924); ausgelöst nur vom kletternden Zombie: ClimbOverFenceState (Z. 367-371), ClimbThroughWindowState (Z. 290-294), GrappledThrownOutWindowState (Z. 267-271)",
       "berichte": [
         "docs/berichte/2026-09-08-extraktion.md"
       ],
       "messungen": [],
-      "notiz": "Nicht gemessen: Der Wurf fällt nur, wenn ein Zombie die Figur beim Klettern greift. Nach jedem Griff sperrt das Spiel den nächsten für rund 7 Sekunden und stößt die Figur um; für einen belastbaren Anteil bräuchte es Hunderte Griffe je Fall.",
+      "notiz": "Nicht gemessen: Der Wurf fällt nur, wenn ein Zombie, der gerade über einen Zaun oder durch ein Fenster klettert (oder aus einem geworfen wird), nach einer nahen Figur springt (unter 3,9 Felder, gleiche Etage) und sie mit der Hand trifft; nur mit der Sandbox-Option Zombie Lunge. Jeder Treffer bringt die Figur ins Taumeln, der Wurf entscheidet, ob sie auch stürzt. Danach sperrt das Spiel den nächsten Treffer für rund 7 Sekunden; für einen belastbaren Anteil bräuchte es Hunderte Treffer je Fall.",
       "methode": ""
     },
     {
@@ -653,14 +660,15 @@
     {
       "id": "thickskinned/zombieinjury",
       "stand": "gemessen",
-      "code": "BodyDamage.AddRandomDamageFromZombie (Z. 1101; Traits Z. 1125-1128)",
+      "code": "BodyDamage.AddRandomDamageFromZombie (Z. 1101; Traits Z. 1125-1130; Richtung Z. 1143-1177; Wurf Z. 1228)",
       "berichte": [
-        "docs/berichte/2026-09-08-extraktion.md"
+        "docs/berichte/2026-09-08-extraktion.md",
+        "docs/berichte/2026-09-23-faktensweep.md"
       ],
       "messungen": [
         "messung-2026-09-20-werte.txt"
       ],
-      "notiz": "Gemessen am 20.09.2026 (Code-Werte): ohne Verletzung ohne Trait 11.1083 %, mit 13.5917 %, Differenz 2.4833 Punkte (laut Code +3, das sind +30 % auf die Grundchance 10), je Fall 12000 Proben.",
+      "notiz": "Gemessen am 20.09.2026 (Code-Werte): ohne Verletzung ohne Trait 11.1083 %, mit 13.5917 %, Differenz 2.4833 Punkte, je Fall 12000 Proben. Laut Code wird der innere Wert 10 zu 13; verletzt wird bei Rand.Next(100) > Wert, ohne Verletzung bleibt man also mit (Wert + 1) %: 11 % auf 14 %, +27 %. Gemessen +22,4 %, im Rahmen der Streuung. Mit Waffenskill (innerer Wert 13 bis 22) +21 bis +29 %, nie +30 %; bis 23.09.2026 zeigte Trait Facts die +30 des inneren Werts.",
       "methode": "Code-Werte, Mess-Mod 6.32.0: BodyDamage.AddRandomDamageFromZombie an einem Stellvertreter außerhalb der Welt, ein Zombie von vorn, keine Waffe (Grundchance 15 - 5); Anteil der Angriffe ohne Verletzung gezählt, ohne und mit Thick-skinned je 12000 Proben über 120 Ticks im Wechsel, Differenz der Anteile mit - ohne."
     },
     {
@@ -677,14 +685,15 @@
     {
       "id": "thinskinned/zombieinjury",
       "stand": "gemessen",
-      "code": "BodyDamage.AddRandomDamageFromZombie (Z. 1101; Traits Z. 1125-1128)",
+      "code": "BodyDamage.AddRandomDamageFromZombie (Z. 1101; Traits Z. 1125-1130; Richtung Z. 1143-1177; Wurf Z. 1228)",
       "berichte": [
-        "docs/berichte/2026-09-08-extraktion.md"
+        "docs/berichte/2026-09-08-extraktion.md",
+        "docs/berichte/2026-09-23-faktensweep.md"
       ],
       "messungen": [
         "messung-2026-09-20-werte.txt"
       ],
-      "notiz": "Gemessen am 20.09.2026 (Code-Werte): ohne Verletzung ohne Trait 11.1083 %, mit 8.0750 %, Differenz -3.0333 Punkte (laut Code -3), je Fall 12000 Proben.",
+      "notiz": "Gemessen am 20.09.2026 (Code-Werte): ohne Verletzung ohne Trait 11.1083 %, mit 8.0750 %, Differenz -3.0333 Punkte, je Fall 12000 Proben. Laut Code wird der innere Wert 10 zu 7 (abgerundet); verletzt wird bei Rand.Next(100) > Wert, ohne Verletzung bleibt man also mit (Wert + 1) %: 11 % auf 8 %, -27 %, gemessen -27,3 %. Mit Waffenskill (innerer Wert 13 bis 22) -21 bis -27 %; bis 23.09.2026 zeigte Trait Facts die -23 aus /1.3 ohne Abrunden.",
       "methode": "Code-Werte, Mess-Mod 6.32.0: BodyDamage.AddRandomDamageFromZombie an einem Stellvertreter außerhalb der Welt, ein Zombie von vorn, keine Waffe (Grundchance 15 - 5); Anteil der Angriffe ohne Verletzung gezählt, ohne und mit Thin-skinned je 12000 Proben über 120 Ticks im Wechsel, Differenz der Anteile mit - ohne."
     },
     {
@@ -755,7 +764,7 @@
       "messungen": [
         "messung-2026-09-13-werte.txt"
       ],
-      "notiz": "Gemessen am 13.09.2026 (Code-Werte): Mittel der vier Wundarten, Faktor 0.4982.",
+      "notiz": "Gemessen am 13.09.2026 (Code-Werte): Mittel der vier Wundarten, Faktor 0.4982. Ausnahme: Schnitte und Kratzer am nackten Fuß setzt IsoPlayer danach fest auf 1 bis 3, ohne Trait (IsoPlayer Z. 7569-7578).",
       "methode": "Code-Werte, Mess-Mod 6.22.0: Mittel aus vier Stichproben zu je 500 Wunden (Schnitt, Kratzer, Waffen- und Fensterkratzer am Unterarm), je Faktor mit/ohne Fast Healer gemittelt; Toleranz 5 %."
     },
     {
@@ -770,7 +779,7 @@
       "messungen": [
         "messung-2026-09-13-werte.txt"
       ],
-      "notiz": "Gemessen am 13.09.2026 (Code-Werte): ohne 17.4936, mit 12.9875, Faktor 0.7424 (Stichprobe).",
+      "notiz": "Gemessen am 13.09.2026 (Code-Werte): ohne 17.4936, mit 12.9875, Faktor 0.7424 (Stichprobe). Ausnahme: die tiefe Wunde nach dem Entfernen einer Kugel (BodyPart.setHaveBullet, Z. 1074-1083) hat eigene Spannen, 17 bis 23 ohne Trait, 12 bis 18 mit Fast Healer, 22 bis 28 mit Slow Healer, also -25 % bzw. +25 %; eine Kugel steckt nur nach Schüssen anderer Figuren.",
       "methode": "Code-Werte, Mess-Mod 6.22.0: Stichprobe aus 500 Aufrufen von BodyPart.generateDeepWound/getDeepWoundTime am Unterarm, Mittel ohne und mit Fast Healer; Faktor mit/ohne, Toleranz 5 %."
     },
     {
@@ -830,7 +839,7 @@
       "messungen": [
         "messung-2026-09-13-werte.txt"
       ],
-      "notiz": "Gemessen am 13.09.2026 (Code-Werte): Mittel der vier Wundarten, Faktor 1.7517.",
+      "notiz": "Gemessen am 13.09.2026 (Code-Werte): Mittel der vier Wundarten, Faktor 1.7517. Ausnahme: Schnitte und Kratzer am nackten Fuß setzt IsoPlayer danach fest auf 1 bis 3, ohne Trait (IsoPlayer Z. 7569-7578).",
       "methode": "Code-Werte, Mess-Mod 6.22.0: Mittel aus vier Stichproben zu je 500 Wunden (Schnitt, Kratzer, Waffen- und Fensterkratzer am Unterarm), je Faktor mit/ohne Slow Healer gemittelt; Toleranz 5 %."
     },
     {
@@ -845,7 +854,7 @@
       "messungen": [
         "messung-2026-09-13-werte.txt"
       ],
-      "notiz": "Gemessen am 13.09.2026 (Code-Werte): ohne 17.4936, mit 25.9510, Faktor 1.4835 (Stichprobe).",
+      "notiz": "Gemessen am 13.09.2026 (Code-Werte): ohne 17.4936, mit 25.9510, Faktor 1.4835 (Stichprobe). Ausnahme: die tiefe Wunde nach dem Entfernen einer Kugel (BodyPart.setHaveBullet, Z. 1074-1083) hat eigene Spannen, 17 bis 23 ohne Trait, 12 bis 18 mit Fast Healer, 22 bis 28 mit Slow Healer, also -25 % bzw. +25 %; eine Kugel steckt nur nach Schüssen anderer Figuren.",
       "methode": "Code-Werte, Mess-Mod 6.22.0: Stichprobe aus 500 Aufrufen von BodyPart.generateDeepWound/getDeepWoundTime am Unterarm, Mittel ohne und mit Slow Healer; Faktor mit/ohne, Toleranz 5 %."
     },
     {
@@ -948,7 +957,7 @@
         "docs/berichte/2026-09-08-extraktion.md"
       ],
       "messungen": [],
-      "notiz": "Nicht gemessen: Die Trefferchance rechnet das Spiel in einer Methode, die die Mess-Mod aus Lua weder aufrufen noch lesen kann. Übrig bliebe die Trefferquote echter Schüsse, und die hängt auch an Rückstoß, Zielzeit und der Bewegung der Zombies.",
+      "notiz": "Nicht gemessen: Die Trefferchance rechnet das Spiel in einer Methode, die die Mess-Mod aus Lua weder aufrufen noch lesen kann. Übrig bliebe die Trefferquote echter Schüsse, und die hängt auch an Rückstoß, Zielzeit und der Bewegung der Zombies. Unter 3,5 Feldern (POINT_BLANK_DISTANCE) teilt das Spiel die ganze Trefferchance samt der +20 durch Abstand/3,5 x 1,1 (CombatManager Z. 2228-2231); nah zählt der Bonus also mehr, meist steht die Chance dort ohnehin bei 100.",
       "methode": ""
     },
     {
@@ -978,7 +987,7 @@
       "messungen": [
         "messung-2026-09-14b-werte.txt"
       ],
-      "notiz": "Gemessen am 14.09.2026 (Code-Werte, Mess-Mod 6.26.5): Kritchance-Verlust je Windstärke ohne 31.8369, mit Marksman 19.1310, Faktor 0.6009 (laut Code 0.6). Aiming 10, Zielverzögerung 40, Ziel 5.3 Felder entfernt, Chance ohne Wind 61. Der Lauf davor mit Aiming 0 hatte bis zur Klemme 10 zu wenig Raum.",
+      "notiz": "Gemessen am 14.09.2026 (Code-Werte, Mess-Mod 6.26.5): Kritchance-Verlust je Windstärke ohne 31.8369, mit Marksman 19.1310, Faktor 0.6009 (laut Code 0.6). Aiming 10, Zielverzögerung 40, Ziel 5.3 Felder entfernt, Chance ohne Wind 61 (der Aufbau steht in der Konsolenausgabe des Laufs, nicht im Bericht). Der Lauf davor mit Aiming 0 hatte bis zur Klemme 10 zu wenig Raum.",
       "methode": "Code-Werte, Mess-Mod 6.26.5: calculateCritChance gegen einen kurz gesetzten Zombie 5 bis 8 Felder entfernt im Freien, Pistole; Aiming und Zielverzögerung so, dass die Chance ohne Wind höchstens 70 ist; Wind über 101 Stufen, Steigung ohne und mit Marksman, Faktor mit/ohne, Toleranz 3 %."
     },
     {
@@ -1014,7 +1023,7 @@
     {
       "id": "dextrous/aimdelay",
       "stand": "gemessen",
-      "code": "IsoGameCharacter.resetAimingDelay (Z. 10036)",
+      "code": "IsoGameCharacter.resetAimingDelay (Z. 10036); nach jedem Schuss CombatManager.setAimingDelay (Z. 3356-3358) ohne Trait",
       "berichte": [
         "docs/berichte/2026-09-08-extraktion.md",
         "docs/berichte/2026-09-13-engine-recherche.md",
@@ -1023,7 +1032,7 @@
       "messungen": [
         "messung-2026-09-13-werte.txt"
       ],
-      "notiz": "Gemessen am 13.09.2026 (Code-Werte): ohne 25.0000, mit 20.0000, Faktor 0.8000.",
+      "notiz": "Gemessen am 13.09.2026 (Code-Werte): ohne 25.0000, mit 20.0000, Faktor 0.8000. Das ist der Startwert beim Anheben der Waffe. Was jeder Schuss danach dazugibt, ist ohne Trait-Faktor und auf die volle Zielzeit der Waffe gedeckelt (aus dem Code). Dextrous behält den Vorsprung nur, bis die Verzögerung 0 oder die Deckelung erreicht.",
       "methode": "Code-Werte, Mess-Mod 6.22.0: IsoGameCharacter.resetAimingDelay an der Figur mit Pistole in der Hand ausgelöst, getAimingDelay gelesen; ohne und mit Dextrous, Faktor mit/ohne, Toleranz 0,006."
     },
     {
@@ -1052,13 +1061,13 @@
       "messungen": [
         "messung-2026-09-20-werte.txt"
       ],
-      "notiz": "Gemessen am 20.09.2026 (Code-Werte): Schnitt ohne 18.8333 %, mit 10.5667 %, Differenz -8.2667 Punkte (laut Code -10), je Fall 3000 Proben.",
+      "notiz": "Gemessen am 20.09.2026 (Code-Werte): Schnitt ohne 18.8333 %, mit 10.5667 %, Differenz -8.2667 Punkte (laut Code -10), je Fall 3000 Proben. Die Zahlen gelten ab Kochen-Stufe 1 und bis Short Blade 3. Bei Short Blade 4 und 5 sind es 15 % ohne Trait, 6,7 % mit Dextrous (Wurf 1 in 30) und 25 % mit Clumsy; ab Short Blade 6 10 %, 6,7 % und 20 %; bei Cooking 0 und Short Blade 0 bis 3 25 %, 15 % und 35 % (aus dem Code, RecipeCodeOnCreate Z. 663-676).",
       "methode": "Code-Werte, Mess-Mod 6.32.0: RecipeCodeOnCreate.openCan an einem Stellvertreter außerhalb der Welt ausgelöst (Küchenmesser, Cooking 1, Short Blade 0); Anteil der Schnitte gezählt, ohne und mit Dextrous je 3000 Proben über 30 Ticks im Wechsel, Differenz der Anteile mit - ohne, Toleranz 4 Punkte."
     },
     {
       "id": "dextrous/climb",
       "stand": "gemessen",
-      "code": "IsoGameCharacter.getClimbingFailChanceFloat (Z. 14718; Traits Z. 14727-14748); verbraucht in ClimbSheetRopeState (Z. 263, Wurf Z. 84)",
+      "code": "IsoGameCharacter.getClimbingFailChanceFloat (Z. 14718; Traits Z. 14727-14748); verbraucht in ClimbSheetRopeState (Z. 263, Wurf Z. 84), ClimbDownSheetRopeState (Z. 130) und an hohen Zäunen in ClimbOverWallState (Z. 296)",
       "berichte": [
         "docs/berichte/2026-09-08-extraktion.md",
         "tools/measure-mod/README.md"
@@ -1101,7 +1110,7 @@
     {
       "id": "allthumbs/craftwalk",
       "stand": "wirkungslos",
-      "code": "client/TimedActions/ISHandcraftAction.lua (Z. 406)",
+      "code": "shared/Entity/TimedActions/ISHandcraftAction.lua (Z. 405-408)",
       "berichte": [
         "docs/berichte/2026-09-08-extraktion.md",
         "tools/measure-mod/README.md",
@@ -1117,7 +1126,7 @@
     {
       "id": "allthumbs/aimdelay",
       "stand": "gemessen",
-      "code": "IsoGameCharacter.resetAimingDelay (Z. 10036)",
+      "code": "IsoGameCharacter.resetAimingDelay (Z. 10036); nach jedem Schuss CombatManager.setAimingDelay (Z. 3356-3358) ohne Trait",
       "berichte": [
         "docs/berichte/2026-09-08-extraktion.md",
         "docs/berichte/2026-09-13-engine-recherche.md",
@@ -1126,7 +1135,7 @@
       "messungen": [
         "messung-2026-09-13-werte.txt"
       ],
-      "notiz": "Gemessen am 13.09.2026 (Code-Werte): ohne 25.0000, mit 30.0000, Faktor 1.2000.",
+      "notiz": "Gemessen am 13.09.2026 (Code-Werte): ohne 25.0000, mit 30.0000, Faktor 1.2000. Das ist der Startwert beim Anheben der Waffe. Was jeder Schuss danach dazugibt, ist ohne Trait-Faktor und auf die volle Zielzeit der Waffe gedeckelt (aus dem Code). Der erste Schuss drückt die +20 % auf höchstens die volle Zielzeit, danach ist der Nachteil weg.",
       "methode": "Code-Werte, Mess-Mod 6.22.0: IsoGameCharacter.resetAimingDelay an der Figur mit Pistole in der Hand ausgelöst, getAimingDelay gelesen; ohne und mit All Thumbs, Faktor mit/ohne, Toleranz 0,006."
     },
     {
@@ -1147,7 +1156,7 @@
     {
       "id": "allthumbs/climb",
       "stand": "gemessen",
-      "code": "IsoGameCharacter.getClimbingFailChanceFloat (Z. 14718; Traits Z. 14727-14748); verbraucht in ClimbSheetRopeState (Z. 263, Wurf Z. 84)",
+      "code": "IsoGameCharacter.getClimbingFailChanceFloat (Z. 14718; Traits Z. 14727-14748); verbraucht in ClimbSheetRopeState (Z. 263, Wurf Z. 84), ClimbDownSheetRopeState (Z. 130) und an hohen Zäunen in ClimbOverWallState (Z. 296)",
       "berichte": [
         "docs/berichte/2026-09-08-extraktion.md",
         "tools/measure-mod/README.md"
@@ -1190,7 +1199,7 @@
     {
       "id": "shortsighted/blur",
       "stand": "gemessen",
-      "code": "IsoGameCharacter.getBlurFactor (Z. 14118)",
+      "code": "IsoGameCharacter.updateVisionEffects (Z. 14112-14116), getBlurFactor (Z. 14118)",
       "berichte": [
         "docs/berichte/2026-09-08-extraktion.md",
         "tools/measure-mod/README.md",
@@ -1248,11 +1257,12 @@
     },
     {
       "id": "brave/grapple",
-      "stand": "gemessen",
-      "code": "IsoGameCharacter.calculateGrappleEffectivenessFromTraits (Z. 7917)",
+      "stand": "wirkungslos",
+      "code": "IsoGameCharacter.calculateGrappleEffectivenessFromTraits (Z. 7917-7946); Aufrufer IsoGameCharacter.pickUpCorpse (Z. 7912-7913) und SwipeStatePlayer (Z. 524-530); gelesen nur in BaseGrappleable.Grappled (Z. 75) und IsoDeadBody.Grappled (Z. 1775) als Schwelle unter 0.5",
       "berichte": [
         "docs/berichte/2026-09-08-extraktion.md",
-        "tools/measure-mod/README.md"
+        "tools/measure-mod/README.md",
+        "docs/berichte/2026-09-23-faktensweep.md"
       ],
       "messungen": [
         "messung-2026-09-10.txt",
@@ -1260,8 +1270,8 @@
         "messung-2026-09-10c.txt",
         "messung-2026-09-13-sprint.txt"
       ],
-      "notiz": "Getter mit Trait an und aus, auf die Nachkommastelle wie im Code.",
-      "methode": "Weltbetreten: calculateGrappleEffectivenessFromTraits() einmal ohne, einmal mit Brave ausgelesen, Wert auf die Nachkommastelle wie im Code verglichen; früher Mess-Mod-Lauf vor der Versionszählung, Traits vorher gesichert und danach zurückgesetzt."
+      "notiz": "Wirkungslos, nachgeprüft am 23.09.2026: Das Spiel prüft den Wert nur gegen ein Minimum von 0,5; darunter wird ein Griff oder das Aufheben einer Leiche abgelehnt. Danach liest ihn niemand mehr, weder beim Greifen noch beim Ziehen. Keine Kombination von Traits kommt so tief: das Spiel hält immer genau einen Gewichts-Trait, der niedrigste Wert ist 0,54 (Emaciated mit Cowardly). Gemessen ist nur, was die Funktion zurückgibt: Getter mit Trait an und aus, auf die Nachkommastelle wie im Code (Spielfehler grapple-schwelle).",
+      "methode": "Weltbetreten: calculateGrappleEffectivenessFromTraits() einmal ohne, einmal mit Brave ausgelesen, Wert auf die Nachkommastelle wie im Code verglichen; frühe Mess-Mod-Läufe vor der Versionszählung (10, 10b, 10c) und ein späterer Weltbetreten-Lauf mit 6.21.0 (13-sprint), Traits vorher gesichert und danach zurückgesetzt."
     },
     {
       "id": "cowardly/panic",
@@ -1295,11 +1305,12 @@
     },
     {
       "id": "cowardly/grapple",
-      "stand": "gemessen",
-      "code": "IsoGameCharacter.calculateGrappleEffectivenessFromTraits (Z. 7917)",
+      "stand": "wirkungslos",
+      "code": "IsoGameCharacter.calculateGrappleEffectivenessFromTraits (Z. 7917-7946); Aufrufer IsoGameCharacter.pickUpCorpse (Z. 7912-7913) und SwipeStatePlayer (Z. 524-530); gelesen nur in BaseGrappleable.Grappled (Z. 75) und IsoDeadBody.Grappled (Z. 1775) als Schwelle unter 0.5",
       "berichte": [
         "docs/berichte/2026-09-08-extraktion.md",
-        "tools/measure-mod/README.md"
+        "tools/measure-mod/README.md",
+        "docs/berichte/2026-09-23-faktensweep.md"
       ],
       "messungen": [
         "messung-2026-09-10.txt",
@@ -1307,13 +1318,13 @@
         "messung-2026-09-10c.txt",
         "messung-2026-09-13-sprint.txt"
       ],
-      "notiz": "Getter mit Trait an und aus, auf die Nachkommastelle wie im Code.",
-      "methode": "Weltbetreten: calculateGrappleEffectivenessFromTraits() einmal ohne, einmal mit Cowardly ausgelesen, Wert auf die Nachkommastelle wie im Code verglichen; früher Mess-Mod-Lauf vor der Versionszählung, Traits vorher gesichert und danach zurückgesetzt."
+      "notiz": "Wirkungslos, nachgeprüft am 23.09.2026: Das Spiel prüft den Wert nur gegen ein Minimum von 0,5; darunter wird ein Griff oder das Aufheben einer Leiche abgelehnt. Danach liest ihn niemand mehr, weder beim Greifen noch beim Ziehen. Keine Kombination von Traits kommt so tief: das Spiel hält immer genau einen Gewichts-Trait, der niedrigste Wert ist 0,54 (Emaciated mit Cowardly). Gemessen ist nur, was die Funktion zurückgibt: Getter mit Trait an und aus, auf die Nachkommastelle wie im Code (Spielfehler grapple-schwelle).",
+      "methode": "Weltbetreten: calculateGrappleEffectivenessFromTraits() einmal ohne, einmal mit Cowardly ausgelesen, Wert auf die Nachkommastelle wie im Code verglichen; frühe Mess-Mod-Läufe vor der Versionszählung (10, 10b, 10c) und ein späterer Weltbetreten-Lauf mit 6.21.0 (13-sprint), Traits vorher gesichert und danach zurückgesetzt."
     },
     {
       "id": "desensitized/panic",
       "stand": "gemessen",
-      "code": "BodyDamage.IncreasePanic (Z. 371-397)",
+      "code": "BodyDamage.IncreasePanic (Z. 371-397); kein Unbehagen durch Kleidung: IsoGameCharacter.updateDiscomfortModifiers (Z. 9031-9046), gelesen in BodyDamage.UpdateDiscomfort (Z. 2794), nur aus dem Code",
       "berichte": [
         "docs/berichte/2026-09-08-extraktion.md",
         "docs/berichte/2026-09-13-engine-recherche.md",
@@ -1328,7 +1339,7 @@
     {
       "id": "desensitized/corpses",
       "stand": "gemessen",
-      "code": "client/TimedActions/ISInventoryTransferAction.lua (Z. 129-136); shared/TimedActions/ISCraftAction.lua (Z. 19-26)",
+      "code": "client/TimedActions/ISInventoryTransferAction.lua (Z. 129-136); shared/TimedActions/ISCraftAction.lua (Z. 19-26) ist in 42.20.4 unerreichbar (Spielfehler leichenstress-craft)",
       "berichte": [
         "docs/berichte/2026-09-08-extraktion.md",
         "tools/measure-mod/README.md"
@@ -1358,7 +1369,7 @@
     {
       "id": "hemophobic/bloodpanic",
       "stand": "gemessen",
-      "code": "IsoGameCharacter.update (Z. 8219-8221)",
+      "code": "IsoGameCharacter.updateInternal (Z. 8219-8221)",
       "berichte": [
         "docs/berichte/2026-09-08-extraktion.md",
         "docs/berichte/2026-09-13-engine-recherche.md"
@@ -1436,13 +1447,13 @@
       "messungen": [
         "messung-2026-09-13-panik.txt"
       ],
-      "notiz": "Gemessen am 13.09.2026: mit Agoraphobic +13,20 je Sekunde, ohne -1,80, die Wirkung 15,00; je Bild 0,44 bzw. -0,06 mal getThirtyFPSMultiplier, genau wie im Code.",
+      "notiz": "Gemessen am 13.09.2026: mit Agoraphobic +13,20 je Sekunde, ohne -1,80, die Wirkung 15,00; je Bild 0,44 bzw. -0,06 mal getThirtyFPSMultiplier, genau wie im Code. Gilt auf jedem Feld ohne Raum (isInARoom), auch im Fahrzeug; anders als bei Claustrophobic fragt der Code kein Fahrzeug ab.",
       "methode": "Panik im Freien, Mess-Mod 6.22.0: Figur im Freien (isInARoom prüft das), God Mode und Mess-Mod-Heilung aus, sechs Phasen zu zwei Sekunden im Wechsel mit und ohne Agoraphobic; Punkte je Sekunde und je Bildratenfaktor verglichen, gestörte Phasen verworfen."
     },
     {
       "id": "claustrophobic/panicin",
       "stand": "gemessen",
-      "code": "IsoGameCharacter.updateInternal (Z. 8211-8217)",
+      "code": "IsoGameCharacter.updateInternal (Z. 8210-8217)",
       "berichte": [
         "docs/berichte/2026-09-08-extraktion.md",
         "docs/berichte/2026-09-13-engine-recherche.md"
@@ -1456,7 +1467,7 @@
     {
       "id": "adrenalinejunkie/panicspeed",
       "stand": "gemessen",
-      "code": "IsoGameCharacter.calculateBaseSpeed (Z. 8754-8761), calculateWalkSpeed (Z. 8983)",
+      "code": "IsoGameCharacter.calculateBaseSpeed (Z. 8754-8797, Adrenaline Junkie Z. 8761-8764), calculateWalkSpeed (Deckel Z. 8985)",
       "berichte": [
         "docs/berichte/2026-09-08-extraktion.md",
         "docs/berichte/2026-09-13-engine-recherche.md",
@@ -1476,7 +1487,7 @@
     {
       "id": "adrenalinejunkie/panicrun",
       "stand": "gemessen",
-      "code": "IsoGameCharacter.calculateWalkSpeed (Z. 9179-9219): Renntempo = (Grundtempo - 0.15) x fullSpeedMod + Sprinting / 20, gedeckelt bei 1.0; das Grundtempo aus calculateBaseSpeed (Z. 8969-8979) trägt den Zuschlag von Adrenaline Junkie",
+      "code": "IsoGameCharacter.calculateWalkSpeed (Z. 8957-9006): Renntempo = (Grundtempo - 0.15) x fullSpeedMod + Sprinting / 20 (Z. 8964-8967), gedeckelt bei 1.0 (Z. 8986); das Grundtempo aus calculateBaseSpeed (Z. 8754-8797) trägt den Zuschlag von Adrenaline Junkie (Z. 8761-8764)",
       "berichte": [
         "tools/measure-mod/README.md"
       ],
@@ -1493,7 +1504,7 @@
     {
       "id": "adrenalinejunkie/panicsprint",
       "stand": "gemessen",
-      "code": "IsoGameCharacter.calculateWalkSpeed (Z. 9179-9219): Renntempo = (Grundtempo - 0.15) x fullSpeedMod + Sprinting / 20, gedeckelt bei 1.0; das Grundtempo aus calculateBaseSpeed (Z. 8969-8979) trägt den Zuschlag von Adrenaline Junkie; beim Sprinten gilt derselbe Wert (runOrSprint, Z. 9219)",
+      "code": "IsoGameCharacter.calculateWalkSpeed (Z. 8957-9006): Renntempo = (Grundtempo - 0.15) x fullSpeedMod + Sprinting / 20 (Z. 8964-8967), gedeckelt bei 1.0 (Z. 8986); das Grundtempo aus calculateBaseSpeed (Z. 8754-8797) trägt den Zuschlag von Adrenaline Junkie (Z. 8761-8764); beim Sprinten gilt derselbe Wert (runOrSprint, Z. 8963 und 9004)",
       "berichte": [
         "tools/measure-mod/README.md"
       ],
@@ -1509,7 +1520,7 @@
     {
       "id": "irongut/poison",
       "stand": "gemessen",
-      "code": "BodyDamage.JustAteFood (Z. 527-539)",
+      "code": "BodyDamage.JustAteFood (Z. 527-539); vom Regen verseuchtes Essen (isTainted, Z. 549-558) fest 20 x Portion, ohne Trait; Erhitzen nimmt die Verseuchung weg (Food Z. 372-373, 474-475)",
       "berichte": [
         "docs/berichte/2026-09-08-extraktion.md",
         "docs/berichte/2026-09-13-engine-recherche.md",
@@ -1518,7 +1529,7 @@
       "messungen": [
         "messung-2026-09-13-werte.txt"
       ],
-      "notiz": "Gemessen am 13.09.2026 (Code-Werte): ohne 10.0000, mit 5.0000, Faktor 0.5000.",
+      "notiz": "Gemessen am 13.09.2026 (Code-Werte): ohne 10.0000, mit 5.0000, Faktor 0.5000. Gilt nur für Essen mit eigenem Gift. Vom Regen verseuchtes Essen gibt fest 20 x Portion Gift, mit und ohne Trait (aus dem Code). Bei Getränken zählt Bleichmittel nur, wenn es den größten Anteil hat (Spielfehler irongut-bleiche).",
       "methode": "Code-Werte, Mess-Mod 6.22.0: BodyDamage.JustAteFood mit einem vergifteten Apfel (Giftstärke 10) an der Figur ausgelöst, die Vergiftung gelesen; ohne und mit Iron Gut, Faktor mit/ohne, Toleranz 0,006."
     },
     {
@@ -1576,7 +1587,7 @@
     {
       "id": "weakstomach/poison",
       "stand": "gemessen",
-      "code": "BodyDamage.JustAteFood (Z. 527-539)",
+      "code": "BodyDamage.JustAteFood (Z. 527-539); vom Regen verseuchtes Essen (isTainted, Z. 549-558) fest 20 x Portion, ohne Trait; Erhitzen nimmt die Verseuchung weg (Food Z. 372-373, 474-475)",
       "berichte": [
         "docs/berichte/2026-09-08-extraktion.md",
         "docs/berichte/2026-09-13-engine-recherche.md",
@@ -1585,7 +1596,7 @@
       "messungen": [
         "messung-2026-09-13-werte.txt"
       ],
-      "notiz": "Gemessen am 13.09.2026 (Code-Werte): ohne 10.0000, mit 20.0000, Faktor 2.0000.",
+      "notiz": "Gemessen am 13.09.2026 (Code-Werte): ohne 10.0000, mit 20.0000, Faktor 2.0000. Gilt nur für Essen mit eigenem Gift. Vom Regen verseuchtes Essen gibt fest 20 x Portion Gift, mit und ohne Trait (aus dem Code).",
       "methode": "Code-Werte, Mess-Mod 6.22.0: BodyDamage.JustAteFood mit einem vergifteten Apfel (Giftstärke 10) an der Figur ausgelöst, die Vergiftung gelesen; ohne und mit Weak Stomach, Faktor mit/ohne, Toleranz 0,006."
     },
     {
@@ -1607,7 +1618,7 @@
         "messung-2026-09-20-werte.txt",
         "messung-2026-09-21-werte.txt"
       ],
-      "notiz": "Gemessen vom 13.09.2026 bis 21.09.2026 (Code-Werte): n = 1000 je Fall, 8 Läufe, Faktor über alle Läufe 1.974, Spanne 1.88 bis 2.10, laut Code 2.00. Anteil der Vergiftungen über alle Läufe: ohne 0.407, mit Weak Stomach 0.803. Faktoren der einzelnen Läufe: 1.9757, 1.8776, 2.0199, 1.8806, 2.0469, 1.8923, 2.1034, 2.0150.",
+      "notiz": "Gemessen vom 13.09.2026 bis 21.09.2026 (Code-Werte): n = 1000 je Fall, 8 Läufe, Faktor über alle Läufe 1.974, Spanne 1.88 bis 2.10, laut Code 2.00. Anteil der Vergiftungen über alle Läufe: ohne 0.407, mit Weak Stomach 0.803. Faktoren der einzelnen Läufe: 1.9757, 1.8776, 2.0199, 1.8806, 2.0469, 1.8923, 2.1034, 2.0150. Die verdoppelte Chance endet bei 100 %: die Grundchance ist (Tage über verdorben, 1 bis 5) / (DaysTotallyRotten - DaysFresh) x 100, und bei den meisten Speisen liegt die Spanne bei 2 bis 4 Tagen; ein bis zwei Tage nach dem Verderben ist die Grundchance dort schon 50 % und mehr, und Weak Stomach ändert nichts mehr. Die Messung lag bei rund 40 %, wo x2 voll gilt (nachgeprüft am 23.09.2026).",
       "methode": "Code-Werte, Mess-Mod 6.22.0 bis 6.40.1 (acht Läufe): je Lauf und Fall 1000 verdorbene Äpfel über BodyDamage.JustAteFood, Anteil der Vergiftungen ohne und mit Weak Stomach; Faktor mit/ohne, Toleranz 20 % je Lauf. Der Faktor über alle Läufe ist die Summe der Vergiftungen mit Trait durch die Summe ohne (6426 / 3256)."
     },
     {
@@ -1815,7 +1826,7 @@
     {
       "id": "outdoorsman/firelight",
       "stand": "gemessen",
-      "code": "shared/TimedActions/ISBBQLightFromKindle.lua (Z. 36-38, 104-106; gesetzt Z. 154): Zündchance 1/150 statt 1/300, nur am Grill",
+      "code": "shared/TimedActions/ISBBQLightFromKindle.lua (Z. 36-38, 104-106; gesetzt Z. 154): Zündchance 1/150 statt 1/300 an Grill, Kamin, Ofen und Feuerschale, nicht am Lagerfeuer (isFireInteractionObject: IsoFireplace oder IsoBarbecue, IsoObject Z. 6214-6215)",
       "berichte": [
         "docs/berichte/2026-09-08-extraktion.md",
         "tools/measure-mod/README.md"
@@ -1823,13 +1834,13 @@
       "messungen": [
         "messung-2026-09-13b-werte.txt"
       ],
-      "notiz": "Gemessen am 13.09.2026 (Code-Werte, Mess-Mod 6.24.0): ISBBQLightFromKindle:update würfelt ZombRand(150) statt 300, x2.0000. Grill.",
+      "notiz": "Gemessen am 13.09.2026 (Code-Werte, Mess-Mod 6.24.0): ISBBQLightFromKindle:update würfelt ZombRand(150) statt 300, x2.0000. Gilt an Grill, Kamin, Ofen und Feuerschale; Lagerfeuer zündet ISLightFromKindle ohne Outdoorsy (nachgeprüft am 23.09.2026).",
       "methode": "Code-Werte, Mess-Mod 6.24.0: ISBBQLightFromKindle:update ohne Warteschlange und mit dem Boden unter der Figur statt eines Grills ausgelöst; ZombRand liefert 1 und schreibt die Grenze mit, nichts zündet. Zündchance 1/Grenze ohne und mit Outdoorsy, Faktor mit/ohne."
     },
     {
       "id": "outdoorsman/kindling",
       "stand": "gemessen",
-      "code": "shared/TimedActions/ISBBQLightFromKindle.lua (Z. 36-38, 104-106; gesetzt Z. 154): Anzünder bricht 1/450 statt 1/300, nur am Grill",
+      "code": "shared/TimedActions/ISBBQLightFromKindle.lua (Z. 36-38, 104-106; gesetzt Z. 154): Anzünder bricht 1/450 statt 1/300 an Grill, Kamin, Ofen und Feuerschale, nicht am Lagerfeuer (isFireInteractionObject: IsoFireplace oder IsoBarbecue, IsoObject Z. 6214-6215)",
       "berichte": [
         "docs/berichte/2026-09-08-extraktion.md",
         "tools/measure-mod/README.md"
@@ -1837,7 +1848,7 @@
       "messungen": [
         "messung-2026-09-13b-werte.txt"
       ],
-      "notiz": "Gemessen am 13.09.2026 (Code-Werte, Mess-Mod 6.24.0): ISBBQLightFromKindle:update würfelt ZombRand(450) statt 300, x0.6667. Grill.",
+      "notiz": "Gemessen am 13.09.2026 (Code-Werte, Mess-Mod 6.24.0): ISBBQLightFromKindle:update würfelt ZombRand(450) statt 300, x0.6667. Gilt an Grill, Kamin, Ofen und Feuerschale; Lagerfeuer zündet ISLightFromKindle ohne Outdoorsy (nachgeprüft am 23.09.2026).",
       "methode": "Code-Werte, Mess-Mod 6.24.0: ISBBQLightFromKindle:update ohne Warteschlange und mit dem Boden unter der Figur statt eines Grills ausgelöst; ZombRand liefert 1 und schreibt die Grenze mit. Zweiter Aufruf: Anzünder bricht, Chance 1/Grenze ohne und mit Outdoorsy, Faktor mit/ohne."
     },
     {
@@ -1855,7 +1866,7 @@
         "messung-2026-09-13-sprint.txt"
       ],
       "notiz": "getTraitWeatherPenaltyModifier 1.5 -> 1.0.",
-      "methode": "Weltbetreten: getTraitWeatherPenaltyModifier() ohne und mit Outdoorsy ausgelesen, Wert auf die Nachkommastelle wie im Code verglichen; früher Mess-Mod-Lauf vor der Versionszählung, Traits vorher gesichert und danach zurückgesetzt."
+      "methode": "Weltbetreten: getTraitWeatherPenaltyModifier() ohne und mit Outdoorsy ausgelesen, Wert auf die Nachkommastelle wie im Code verglichen; frühe Mess-Mod-Läufe vor der Versionszählung (10, 10b, 10c) und ein späterer Weltbetreten-Lauf mit 6.21.0 (13-sprint), Traits vorher gesichert und danach zurückgesetzt."
     },
     {
       "id": "outdoorsman/treescratch",
@@ -1880,7 +1891,7 @@
       "messungen": [
         "messung-2026-09-13-wach.txt"
       ],
-      "notiz": "Gemessen am 13.09.2026 (Wach): Hunger x1.5000, als Rate von ln(1 - Hunger), weil er mit (1 - Hunger) wächst. Satt wächst der Hunger gar nicht, auch nicht mit dem Trait (Spielfehler appetit-satt).",
+      "notiz": "Gemessen am 13.09.2026 (Wach): Hunger x1.5000, als Rate von ln(1 - Hunger), weil er mit (1 - Hunger) wächst. Satt wächst der Hunger nicht, solange die Figur nicht rennt oder kämpft, auch nicht mit dem Trait; beim Rennen oder Kämpfen wächst er satt sogar dreimal so schnell, und der Faktor wirkt (Spielfehler appetit-satt; der Teil beim Rennen und Kämpfen aus dem Code).",
       "methode": "Wach, Mess-Mod 6.23.0: Hungerzuwachs als Rate von ln(1 - Hunger) über Spielzeit gelesen, Phase mit Hearty Appetite gegen das Mittel der Nachbarphasen ohne verglichen, drei Runden im Wechsel, Toleranz 2 %."
     },
     {
@@ -1895,7 +1906,7 @@
       "messungen": [
         "messung-2026-09-13-wach.txt"
       ],
-      "notiz": "Gemessen am 13.09.2026 (Wach): Hunger x0.7500, als Rate von ln(1 - Hunger), weil er mit (1 - Hunger) wächst. Satt wächst der Hunger gar nicht, auch nicht mit dem Trait (Spielfehler appetit-satt).",
+      "notiz": "Gemessen am 13.09.2026 (Wach): Hunger x0.7500, als Rate von ln(1 - Hunger), weil er mit (1 - Hunger) wächst. Satt wächst der Hunger nicht, solange die Figur nicht rennt oder kämpft, auch nicht mit dem Trait; beim Rennen oder Kämpfen wächst er satt sogar dreimal so schnell, und der Faktor wirkt (Spielfehler appetit-satt). Den satten Fall hat die Messung nur mit Hearty Appetite geprüft; für Light Eater folgt er aus demselben Code.",
       "methode": "Wach, Mess-Mod 6.23.0: Hungerzuwachs als Rate von ln(1 - Hunger) über Spielzeit gelesen, Phase mit Light Eater gegen das Mittel der Nachbarphasen ohne verglichen, drei Runden im Wechsel, Toleranz 2 %."
     },
     {
@@ -1994,11 +2005,12 @@
     },
     {
       "id": "athletic/grapple",
-      "stand": "gemessen",
-      "code": "IsoGameCharacter.calculateGrappleEffectivenessFromTraits (Z. 7917)",
+      "stand": "wirkungslos",
+      "code": "IsoGameCharacter.calculateGrappleEffectivenessFromTraits (Z. 7917-7946); Aufrufer IsoGameCharacter.pickUpCorpse (Z. 7912-7913) und SwipeStatePlayer (Z. 524-530); gelesen nur in BaseGrappleable.Grappled (Z. 75) und IsoDeadBody.Grappled (Z. 1775) als Schwelle unter 0.5",
       "berichte": [
         "docs/berichte/2026-09-08-extraktion.md",
-        "tools/measure-mod/README.md"
+        "tools/measure-mod/README.md",
+        "docs/berichte/2026-09-23-faktensweep.md"
       ],
       "messungen": [
         "messung-2026-09-10.txt",
@@ -2006,8 +2018,8 @@
         "messung-2026-09-10c.txt",
         "messung-2026-09-13-sprint.txt"
       ],
-      "notiz": "Getter mit Trait an und aus, auf die Nachkommastelle wie im Code.",
-      "methode": "Weltbetreten: calculateGrappleEffectivenessFromTraits() einmal ohne, einmal mit Athletic ausgelesen, Wert auf die Nachkommastelle wie im Code verglichen; früher Mess-Mod-Lauf vor der Versionszählung, Traits vorher gesichert und danach zurückgesetzt."
+      "notiz": "Wirkungslos, nachgeprüft am 23.09.2026: Das Spiel prüft den Wert nur gegen ein Minimum von 0,5; darunter wird ein Griff oder das Aufheben einer Leiche abgelehnt. Danach liest ihn niemand mehr, weder beim Greifen noch beim Ziehen. Keine Kombination von Traits kommt so tief: das Spiel hält immer genau einen Gewichts-Trait, der niedrigste Wert ist 0,54 (Emaciated mit Cowardly). Gemessen ist nur, was die Funktion zurückgibt: Getter mit Trait an und aus, auf die Nachkommastelle wie im Code (Spielfehler grapple-schwelle).",
+      "methode": "Weltbetreten: calculateGrappleEffectivenessFromTraits() einmal ohne, einmal mit Athletic ausgelesen, Wert auf die Nachkommastelle wie im Code verglichen; frühe Mess-Mod-Läufe vor der Versionszählung (10, 10b, 10c) und ein späterer Weltbetreten-Lauf mit 6.21.0 (13-sprint), Traits vorher gesichert und danach zurückgesetzt."
     },
     {
       "id": "unfit/sprintspeed",
@@ -2058,7 +2070,7 @@
     {
       "id": "asthmatic/enduranceloss",
       "stand": "gemessen",
-      "code": "IsoPlayer.updateEndurance (Z. 3004-3016), 1.0 statt 0.7",
+      "code": "IsoPlayer.updateEndurance (Z. 2984; Asthmatic Z. 3015 beim Rennen, Sprinten und Leichenziehen, Z. 3031 beim Gehen unter Last), 1.0 statt 0.7",
       "berichte": [
         "docs/berichte/2026-09-08-extraktion.md",
         "docs/berichte/2026-09-13-engine-recherche.md",
@@ -2085,16 +2097,17 @@
         "messung-2026-09-10c.txt",
         "messung-2026-09-13-sprint.txt"
       ],
-      "notiz": "getTraitEnduranceLossModifier 1.0 -> 1.2.",
-      "methode": "Weltbetreten: getTraitEnduranceLossModifier() ohne und mit Short of Breath ausgelesen, Wert auf die Nachkommastelle wie im Code verglichen; früher Mess-Mod-Lauf vor der Versionszählung, Traits vorher gesichert und danach zurückgesetzt."
+      "notiz": "getTraitEnduranceLossModifier 1.0 -> 1.2. Gelesen ist nur der Getter, kein echter Schwung. Der Faktor trifft nur die Kosten je Schwung (CombatManager.processWeaponEndurance, Z. 1039-1040, Basis 0.18); was ein Treffer zusätzlich kostet (applyMeleeEnduranceLoss, Z. 3217-3242, Basis 0.28), bleibt gleich, ein voller Treffer kostet insgesamt also rund 8 % mehr (aus dem Code).",
+      "methode": "Weltbetreten: getTraitEnduranceLossModifier() ohne und mit Short of Breath ausgelesen, Wert auf die Nachkommastelle wie im Code verglichen; frühe Mess-Mod-Läufe vor der Versionszählung (10, 10b, 10c) und ein späterer Weltbetreten-Lauf mit 6.21.0 (13-sprint), Traits vorher gesichert und danach zurückgesetzt."
     },
     {
       "id": "speeddemon/grapple",
-      "stand": "gemessen",
-      "code": "IsoGameCharacter.calculateGrappleEffectivenessFromTraits (Z. 7917)",
+      "stand": "wirkungslos",
+      "code": "IsoGameCharacter.calculateGrappleEffectivenessFromTraits (Z. 7917-7946); Aufrufer IsoGameCharacter.pickUpCorpse (Z. 7912-7913) und SwipeStatePlayer (Z. 524-530); gelesen nur in BaseGrappleable.Grappled (Z. 75) und IsoDeadBody.Grappled (Z. 1775) als Schwelle unter 0.5",
       "berichte": [
         "docs/berichte/2026-09-08-extraktion.md",
-        "tools/measure-mod/README.md"
+        "tools/measure-mod/README.md",
+        "docs/berichte/2026-09-23-faktensweep.md"
       ],
       "messungen": [
         "messung-2026-09-10.txt",
@@ -2102,8 +2115,8 @@
         "messung-2026-09-10c.txt",
         "messung-2026-09-13-sprint.txt"
       ],
-      "notiz": "Getter mit Trait an und aus, auf die Nachkommastelle wie im Code.",
-      "methode": "Weltbetreten: calculateGrappleEffectivenessFromTraits() einmal ohne, einmal mit Speed Demon ausgelesen, Wert auf die Nachkommastelle wie im Code verglichen; früher Mess-Mod-Lauf vor der Versionszählung, Traits vorher gesichert und danach zurückgesetzt."
+      "notiz": "Wirkungslos, nachgeprüft am 23.09.2026: Das Spiel prüft den Wert nur gegen ein Minimum von 0,5; darunter wird ein Griff oder das Aufheben einer Leiche abgelehnt. Danach liest ihn niemand mehr, weder beim Greifen noch beim Ziehen. Keine Kombination von Traits kommt so tief: das Spiel hält immer genau einen Gewichts-Trait, der niedrigste Wert ist 0,54 (Emaciated mit Cowardly). Gemessen ist nur, was die Funktion zurückgibt: Getter mit Trait an und aus, auf die Nachkommastelle wie im Code (Spielfehler grapple-schwelle).",
+      "methode": "Weltbetreten: calculateGrappleEffectivenessFromTraits() einmal ohne, einmal mit Speed Demon ausgelesen, Wert auf die Nachkommastelle wie im Code verglichen; frühe Mess-Mod-Läufe vor der Versionszählung (10, 10b, 10c) und ein späterer Weltbetreten-Lauf mit 6.21.0 (13-sprint), Traits vorher gesichert und danach zurückgesetzt."
     },
     {
       "id": "speeddemon/topspeed",
@@ -2138,8 +2151,8 @@
         "messung-2026-09-11e-beschleunigung.txt",
         "messung-2026-09-11f-pickupvan.txt"
       ],
-      "notiz": "Drehzahl rückwärts x2.5 bis x3.4, vorwärts 1.02.",
-      "methode": "Autos (Beschleunigungstest), Mess-Mod 6.11.0 (SportsCar, rückwärts bis 8 km/h) und 6.15.0 (PickUpVan, bis das Tempo steht): Drehzahl (getEngineSpeed) je Tempofenster beim Anfahren aus dem Stand, Speed Demon gegen die Phase ohne Trait, vorwärts und rückwärts getrennt."
+      "notiz": "Drehzahl rückwärts x2.5 bis x3.4, vorwärts 1.02. Zugkraft (getForce) rückwärts x1.076, x1.101 und x1.124 (SportsCar, Anlauf bis 2, 4 und 6 km/h) und x1.112 bis x1.181 (PickUpVan, bis 20 km/h); daher die Fußnote 7,6 bis 18 %. Im ersten Rückwärtslauf am StepVan (Mess-Mod 4.2.0) brauchte die Figur mit Speed Demon 23 und 22 statt 25 bis 26 Ticks von 2 auf 8 km/h (x0.90).",
+      "methode": "Autos (Beschleunigungstest), Mess-Mod 6.11.0 (SportsCar, rückwärts bis 8 km/h; im Kopf des Berichts steht 6.9.1, der Test lief nach einem Neuladen mit F9) und 6.15.0 (PickUpVan, bis das Tempo steht; im Kopf 6.14.0): Drehzahl (getEngineSpeed) und Kraft (getForce) je Tempofenster beim Anfahren aus dem Stand, Speed Demon gegen die Phase ohne Trait, vorwärts und rückwärts getrennt. Dazu der Plateau-Test (Mess-Mod 4.2.0) mit der Zeit rückwärts am StepVan."
     },
     {
       "id": "speeddemon/reversenoise",
@@ -2169,8 +2182,8 @@
         "messung-2026-09-11e-beschleunigung.txt",
         "messung-2026-09-11f-pickupvan.txt"
       ],
-      "notiz": "Gemessen am 11.09.2026, ausgewertet am 13.09.2026: in acht Fenstern im ersten Gang an SportsCar und PickUpVan 0.7500 nach Abzug von Drehzahl und Tempo. Roh stehen 0.761 bis 0.785 im Bericht, weil die Drehzahl mit Trait höher liegt.",
-      "methode": "Autos (Beschleunigungstest), Mess-Mod 6.11.0 (SportsCar, Fenster 10 km/h) und 6.15.0 (PickUpVan, Fenster 5 km/h): Kraft (getForce) je Tempofenster mit Sunday Driver gegen die Phase ohne Trait; am 13.09.2026 um Drehzahl und Tempo bereinigt, acht Fenster im ersten Gang."
+      "notiz": "Gemessen am 11.09.2026, ausgewertet am 13.09.2026: in acht Fenstern im ersten Gang an SportsCar und PickUpVan 0.7500 nach Abzug von Drehzahl und Tempo. Roh stehen 0.761 bis 0.785 im Bericht, weil die Drehzahl mit Trait höher liegt. Knapp über 0.6 x maxSpeed ist die Kraft mit Trait laut Code größer als ohne: der Faktor springt von 0.75 auf 0.75 x (0.15 x maxSpeed + 20) / 20, x1.09 beim PickUpVan (maxSpeed 60), x1.26 bei maxSpeed 90, x1.43 bei 120, und fällt erst ab 0.75 x maxSpeed - 6.7 km/h unter 1 (CarController Z. 663-667). Die Messfenster lösen das nicht auf.",
+      "methode": "Autos (Beschleunigungstest), Mess-Mod 6.11.0 (SportsCar; im Kopf des Berichts steht 6.9.1, der Test lief nach einem Neuladen mit F9, siehe tools/check-data.py Regel 26) und 6.15.0 (PickUpVan; im Kopf 6.14.0, die Rückwärtsfahrt bis das Tempo steht gibt es erst seit 6.15.0): Kraft (getForce) je Tempofenster mit Sunday Driver gegen die Phase ohne Trait; am 13.09.2026 um Drehzahl und Tempo bereinigt, acht Fenster im ersten Gang. Fenster 10 km/h beim SportsCar, 5 km/h beim PickUpVan."
     },
     {
       "id": "sundaydriver/topspeed",
@@ -2202,7 +2215,7 @@
         "messung-2026-09-11f-pickupvan.txt"
       ],
       "notiz": "Gemessen am 11.09.2026, ausgewertet am 13.09.2026: im Fenster 2 bis 4 km/h 0.7000 (SportsCar) und 0.7004 (PickUpVan). Darüber greift die Absenkung bis 10 km/h.",
-      "methode": "Autos (Beschleunigungstest), Mess-Mod 6.11.0 (SportsCar) und 6.15.0 (PickUpVan): Kraft (getForce) rückwärts im Fenster 2 bis 4 km/h mit Sunday Driver gegen die Phase ohne Trait gelesen; darüber senkt der Trait die Kraft schon mit dem Tempo."
+      "methode": "Autos (Beschleunigungstest), Mess-Mod 6.11.0 (SportsCar; im Kopf des Berichts steht 6.9.1, der Test lief nach einem Neuladen mit F9, siehe tools/check-data.py Regel 26) und 6.15.0 (PickUpVan; im Kopf 6.14.0, die Rückwärtsfahrt bis das Tempo steht gibt es erst seit 6.15.0): Kraft (getForce) rückwärts im Fenster 2 bis 4 km/h mit Sunday Driver gegen die Phase ohne Trait gelesen; darüber senkt der Trait die Kraft schon mit dem Tempo."
     },
     {
       "id": "sundaydriver/reversespeed",
@@ -2222,7 +2235,7 @@
     {
       "id": "gymnast/climb",
       "stand": "gemessen",
-      "code": "IsoGameCharacter.getClimbingFailChanceFloat (Z. 14718; Traits Z. 14727-14748); verbraucht in ClimbSheetRopeState (Z. 263, Wurf Z. 84)",
+      "code": "IsoGameCharacter.getClimbingFailChanceFloat (Z. 14718; Traits Z. 14727-14748); verbraucht in ClimbSheetRopeState (Z. 263, Wurf Z. 84), ClimbDownSheetRopeState (Z. 130) und an hohen Zäunen in ClimbOverWallState (Z. 296)",
       "berichte": [
         "docs/berichte/2026-09-08-extraktion.md",
         "tools/measure-mod/README.md"
@@ -2260,13 +2273,13 @@
       "messungen": [
         "messung-2026-09-14-werte.txt"
       ],
-      "notiz": "Gemessen am 14.09.2026 (Code-Werte, Mess-Mod 6.26.2): Radius des Schrittgeräuschs ohne 10.0000, mit 6.0000, Faktor 0.6000.",
+      "notiz": "Gemessen am 14.09.2026 (Code-Werte, Mess-Mod 6.26.2): Radius des Schrittgeräuschs ohne 10.0000, mit 6.0000, Faktor 0.6000. Den Radius, den Zombies hören, rundet das Spiel auf ganze Felder auf (ceil(Lautstärke x 10), Z. 5329); der Test wählte eine Lautstärke mit Radius genau 10. Mit Schuhen im Spiel laut Code: Gehen 7 auf 5, Rennen 11 auf 7, Sprinten 14 auf 9 Felder.",
       "methode": "Code-Werte, Mess-Mod 6.26.2, Spiel mit -debug: DoFootstepSound an der Figur, WorldSound.radius des neuen Geräuschs per Reflection gelesen; unsichtbar aus, Lightfoot und Nimble 0, nicht schleichend, ohne und mit Graceful; Faktor mit/ohne, Toleranz 0,006."
     },
     {
       "id": "graceful/trip",
       "stand": "gemessen",
-      "code": "ClimbOverFenceState.shouldFallAfterVaultOver (Z. 490; Traits Z. 508-523)",
+      "code": "ClimbOverFenceState.shouldFallAfterVaultOver (Z. 493; Traits Z. 511-526)",
       "berichte": [
         "docs/berichte/2026-09-08-extraktion.md",
         "tools/measure-mod/README.md",
@@ -2281,12 +2294,12 @@
     {
       "id": "graceful/lungefall",
       "stand": "code",
-      "code": "IsoGameCharacter.attackFromWindowsLunge (Z. 12875; Traits Z. 12900-12915)",
+      "code": "IsoGameCharacter.attackFromWindowsLunge (Z. 12875; Traits Z. 12900-12915; Taumeln und Wurf Z. 12919-12924); ausgelöst nur vom kletternden Zombie: ClimbOverFenceState (Z. 367-371), ClimbThroughWindowState (Z. 290-294), GrappledThrownOutWindowState (Z. 267-271)",
       "berichte": [
         "docs/berichte/2026-09-08-extraktion.md"
       ],
       "messungen": [],
-      "notiz": "Nicht gemessen: Der Wurf fällt nur, wenn ein Zombie die Figur beim Klettern greift. Nach jedem Griff sperrt das Spiel den nächsten für rund 7 Sekunden und stößt die Figur um; für einen belastbaren Anteil bräuchte es Hunderte Griffe je Fall.",
+      "notiz": "Nicht gemessen: Der Wurf fällt nur, wenn ein Zombie, der gerade über einen Zaun oder durch ein Fenster klettert (oder aus einem geworfen wird), nach einer nahen Figur springt (unter 3,9 Felder, gleiche Etage) und sie mit der Hand trifft; nur mit der Sandbox-Option Zombie Lunge. Jeder Treffer bringt die Figur ins Taumeln, der Wurf entscheidet, ob sie auch stürzt. Danach sperrt das Spiel den nächsten Treffer für rund 7 Sekunden; für einen belastbaren Anteil bräuchte es Hunderte Treffer je Fall.",
       "methode": ""
     },
     {
@@ -2302,13 +2315,13 @@
       "messungen": [
         "messung-2026-09-14-werte.txt"
       ],
-      "notiz": "Gemessen am 14.09.2026 (Code-Werte, Mess-Mod 6.26.2): Radius des Schrittgeräuschs ohne 10.0000, mit 12.0000, Faktor 1.2000.",
+      "notiz": "Gemessen am 14.09.2026 (Code-Werte, Mess-Mod 6.26.2): Radius des Schrittgeräuschs ohne 10.0000, mit 12.0000, Faktor 1.2000. Den Radius, den Zombies hören, rundet das Spiel auf ganze Felder auf (ceil(Lautstärke x 10), Z. 5329); der Test wählte eine Lautstärke mit Radius genau 10. Mit Schuhen im Spiel laut Code: Gehen 7 auf 9, Rennen 11 auf 13 Felder.",
       "methode": "Code-Werte, Mess-Mod 6.26.2, Spiel mit -debug: DoFootstepSound an der Figur, WorldSound.radius des neuen Geräuschs per Reflection gelesen; unsichtbar aus, Lightfoot und Nimble 0, nicht schleichend, ohne und mit Clumsy; Faktor mit/ohne, Toleranz 0,006."
     },
     {
       "id": "clumsy/trip",
       "stand": "gemessen",
-      "code": "ClimbOverFenceState.shouldFallAfterVaultOver (Z. 490; Traits Z. 508-523)",
+      "code": "ClimbOverFenceState.shouldFallAfterVaultOver (Z. 493; Traits Z. 511-526)",
       "berichte": [
         "docs/berichte/2026-09-08-extraktion.md",
         "tools/measure-mod/README.md",
@@ -2323,18 +2336,18 @@
     {
       "id": "clumsy/lungefall",
       "stand": "code",
-      "code": "IsoGameCharacter.attackFromWindowsLunge (Z. 12875; Traits Z. 12900-12915)",
+      "code": "IsoGameCharacter.attackFromWindowsLunge (Z. 12875; Traits Z. 12900-12915; Taumeln und Wurf Z. 12919-12924); ausgelöst nur vom kletternden Zombie: ClimbOverFenceState (Z. 367-371), ClimbThroughWindowState (Z. 290-294), GrappledThrownOutWindowState (Z. 267-271)",
       "berichte": [
         "docs/berichte/2026-09-08-extraktion.md"
       ],
       "messungen": [],
-      "notiz": "Nicht gemessen: Der Wurf fällt nur, wenn ein Zombie die Figur beim Klettern greift. Nach jedem Griff sperrt das Spiel den nächsten für rund 7 Sekunden und stößt die Figur um; für einen belastbaren Anteil bräuchte es Hunderte Griffe je Fall.",
+      "notiz": "Nicht gemessen: Der Wurf fällt nur, wenn ein Zombie, der gerade über einen Zaun oder durch ein Fenster klettert (oder aus einem geworfen wird), nach einer nahen Figur springt (unter 3,9 Felder, gleiche Etage) und sie mit der Hand trifft; nur mit der Sandbox-Option Zombie Lunge. Jeder Treffer bringt die Figur ins Taumeln, der Wurf entscheidet, ob sie auch stürzt. Danach sperrt das Spiel den nächsten Treffer für rund 7 Sekunden; für einen belastbaren Anteil bräuchte es Hunderte Treffer je Fall.",
       "methode": ""
     },
     {
       "id": "clumsy/climb",
       "stand": "gemessen",
-      "code": "IsoGameCharacter.getClimbingFailChanceFloat (Z. 14718; Traits Z. 14727-14748); verbraucht in ClimbSheetRopeState (Z. 263, Wurf Z. 84)",
+      "code": "IsoGameCharacter.getClimbingFailChanceFloat (Z. 14718; Traits Z. 14727-14748); verbraucht in ClimbSheetRopeState (Z. 263, Wurf Z. 84), ClimbDownSheetRopeState (Z. 130) und an hohen Zäunen in ClimbOverWallState (Z. 296)",
       "berichte": [
         "docs/berichte/2026-09-08-extraktion.md",
         "tools/measure-mod/README.md"
@@ -2342,7 +2355,7 @@
       "messungen": [
         "messung-2026-09-13-klettern.txt"
       ],
-      "notiz": "651 Punkte über 21 Fälle, keiner weicht von der Formel ab.",
+      "notiz": "651 Punkte über 21 Fälle, keiner weicht von der Formel ab. Das Spiel würfelt mit der ganzzahligen Wurzel des Werts (Z. 14753): bei einer neuen Figur 20 zu 4, mit Clumsy 10 zu 3; die Chance, an hohen Zäunen zu scheitern, steigt also von 25 % auf 33 %, nicht auf das Doppelte.",
       "methode": "Klettern, Mess-Mod 6.19.0: getClimbingFailChanceFloat in 21 Trait-Fällen gelesen, darunter Clumsy; je Fall Fitness, Strength und Nimble einzeln von 0 bis 10, die anderen auf 0. Der Test vermerkt Abweichungen gegen den Fall ohne Trait, die Formel wurde danach geprüft."
     },
     {
@@ -2356,7 +2369,7 @@
       "messungen": [
         "messung-2026-09-20-werte.txt"
       ],
-      "notiz": "Gemessen am 20.09.2026 (Code-Werte): Schnitt ohne 18.8333 %, mit 29.8000 %, Differenz 10.9667 Punkte (laut Code +10), je Fall 3000 Proben.",
+      "notiz": "Gemessen am 20.09.2026 (Code-Werte): Schnitt ohne 18.8333 %, mit 29.8000 %, Differenz 10.9667 Punkte (laut Code +10), je Fall 3000 Proben. Die Zahlen gelten ab Kochen-Stufe 1 und bis Short Blade 3. Bei Short Blade 4 und 5 sind es 15 % ohne Trait, 6,7 % mit Dextrous (Wurf 1 in 30) und 25 % mit Clumsy; ab Short Blade 6 10 %, 6,7 % und 20 %; bei Cooking 0 und Short Blade 0 bis 3 25 %, 15 % und 35 % (aus dem Code, RecipeCodeOnCreate Z. 663-676).",
       "methode": "Code-Werte, Mess-Mod 6.32.0: RecipeCodeOnCreate.openCan an einem Stellvertreter außerhalb der Welt ausgelöst (Küchenmesser, Cooking 1, Short Blade 0); Anteil der Schnitte gezählt, ohne und mit Clumsy je 3000 Proben über 30 Ticks im Wechsel, Differenz der Anteile mit - ohne, Toleranz 4 Punkte."
     },
     {
@@ -2551,23 +2564,24 @@
         "messung-2026-09-13-sprint.txt"
       ],
       "notiz": "getDetectionRange mit Trait an und aus; der Abstand stimmt, die Basis hängt am Zustand der Figur.",
-      "methode": "Weltbetreten: getDetectionRange() ohne und mit Deaf ausgelesen, Abstand auf die Nachkommastelle wie im Code verglichen; früher Mess-Mod-Lauf vor der Versionszählung, Traits vorher gesichert und danach zurückgesetzt."
+      "methode": "Weltbetreten: getDetectionRange() ohne und mit Deaf ausgelesen, Abstand auf die Nachkommastelle wie im Code verglichen; frühe Mess-Mod-Läufe vor der Versionszählung (10, 10b, 10c) und ein späterer Weltbetreten-Lauf mit 6.21.0 (13-sprint), Traits vorher gesichert und danach zurückgesetzt."
     },
     {
       "id": "deaf/noise",
-      "stand": "code",
-      "code": "IsoGameCharacter.calculateVisibilityData (Z. 15169; noiseDistance Z. 15173-15191), IsoGridSquare.CalcVisibility (Z. 7689; Deaf Z. 7732); nur ServerLOS eines Multiplayer-Servers",
+      "stand": "wirkungslos",
+      "code": "IsoGameCharacter.calculateVisibilityData (Z. 15169; noiseDistance Z. 15173-15191); gelesen nur in IsoGridSquare.CalcVisibility (Z. 7729-7735, Deaf Z. 7732) innerhalb von if (!GameServer.server); einziger Aufrufer ServerLOS (Z. 271, 277), gestartet nur in GameServer.main (Z. 831); LightingJNI.updatePlayer (Z. 481-484) gibt nur Kegel und getDetectionRange weiter",
       "berichte": [
-        "docs/berichte/2026-09-08-extraktion.md"
+        "docs/berichte/2026-09-08-extraktion.md",
+        "docs/berichte/2026-09-23-faktensweep.md"
       ],
       "messungen": [],
-      "notiz": "Nicht gemessen: Die Abfrage von Deaf sitzt in einer Sichtberechnung, die nur ein Multiplayer-Server ausführt. Im Einzelspiel, in dem die Mess-Mod läuft, gibt es keine Wirkung, die man messen könnte.",
+      "notiz": "Wirkungslos, nachgeprüft am 23.09.2026: Die Abfrage von Deaf sitzt in derselben Prüfung wie der Hörradius, in IsoGridSquare.CalcVisibility innerhalb von if (!GameServer.server). Aufgerufen wird sie nur vom ServerLOS-Thread eines Multiplayer-Servers, wo die Prüfung damit abgeschaltet ist. Der Radius wirkt also für keine Figur, und Deaf kann ihm nichts nehmen. Nicht gemessen: im Einzelspiel gibt es nichts zu messen (Spielfehler noisedistance-mp).",
       "methode": ""
     },
     {
       "id": "deaf/sounds",
       "stand": "gemessen",
-      "code": "CharacterSoundEmitter (Z. 90), BaseVehicle (Z. 8460, 8603), IsoGameCharacter.updateStress (Z. 9209, Stress aus Geräuschen)",
+      "code": "IsoGameCharacter.updateStress (Z. 9209, Stress aus Geräuschen, gemessen); Radio (Z. 83) und WaveSignalDevice (Z. 46): kein Radiotext; IsoWaveSignal (Z. 218-222) und ChatElement (Z. 183): Fernsehtext nur, solange man den Fernseher ansieht; AlarmClock (Z. 177) und AlarmClockClothing (Z. 187): Wecker wecken nicht; GameSounds (Z. 333): kein FMOD-Hörer; ParameterDeaf (Z. 21): die Stummschaltung selbst liegt in FMOD; Alarm (Z. 128), Helicopter (Z. 370) und BaseVehicle (Z. 8460) überspringen nur die Musik-Ereignisse",
       "berichte": [
         "docs/berichte/2026-09-08-extraktion.md"
       ],
@@ -2575,7 +2589,7 @@
         "messung-2026-09-20-blut.txt",
         "messung-2026-09-20b-blut.txt"
       ],
-      "notiz": "Gemessen am 20.09.2026 (Blut und Lärm, zweiter Lauf): Stress aus einem Weltgeräusch ohne Deaf 2.0000 je Update und Multiplikator, mit Deaf 0.0000, je zwei Phasen. Belegt ist der Stress, nicht das Hören selbst. Der erste Lauf blieb ohne Ergebnis, weil der Mess-Mod addSound mit einem short rief, das Lua nicht bilden kann.",
+      "notiz": "Gemessen am 20.09.2026 (Blut und Lärm, zweiter Lauf): Stress aus einem Weltgeräusch ohne Deaf 2.0000 je Update und Multiplikator, mit Deaf 0.0000, je zwei Phasen. Gemessen ist der Stress. Dass Radios, Fernseher, Alarme und Hubschrauber nicht zu hören sind und Wecker nicht wecken, steht nur im Code; die Stummschaltung selbst liegt in FMOD und ist aus Java nicht lesbar. Fernsehtext bleibt sichtbar, solange die Figur den Fernseher ansieht. Der erste Lauf blieb ohne Ergebnis, weil der Mess-Mod addSound mit einem short rief, das Lua nicht bilden kann.",
       "methode": "Blut und Lärm, Mess-Mod 6.33.0: je Tick ein Weltgeräusch mit Stress für Menschen auf dem Feld der Figur (WorldSoundManager.addSound mit stressHumans, Radius 3), Phasen im Wechsel ohne und mit Deaf; Stresszuwachs je Update durch StressFromSoundsMultiplier, verglichen mit getStressFromSounds."
     },
     {
@@ -2593,21 +2607,22 @@
         "messung-2026-09-13-sprint.txt"
       ],
       "notiz": "getDetectionRange mit Trait an und aus; der Abstand stimmt, die Basis hängt am Zustand der Figur.",
-      "methode": "Weltbetreten: getDetectionRange() ohne und mit Keen Hearing ausgelesen, Abstand auf die Nachkommastelle wie im Code verglichen; früher Mess-Mod-Lauf vor der Versionszählung, Traits vorher gesichert und danach zurückgesetzt."
+      "methode": "Weltbetreten: getDetectionRange() ohne und mit Keen Hearing ausgelesen, Abstand auf die Nachkommastelle wie im Code verglichen; frühe Mess-Mod-Läufe vor der Versionszählung (10, 10b, 10c) und ein späterer Weltbetreten-Lauf mit 6.21.0 (13-sprint), Traits vorher gesichert und danach zurückgesetzt."
     },
     {
       "id": "keenhearing/noise",
-      "stand": "gemessen",
-      "code": "IsoGameCharacter.calculateVisibilityData (Z. 15169; noiseDistance Z. 15173-15191), IsoGridSquare.CalcVisibility (Z. 7689; Deaf Z. 7732); nur ServerLOS eines Multiplayer-Servers",
+      "stand": "wirkungslos",
+      "code": "IsoGameCharacter.calculateVisibilityData (Z. 15169; noiseDistance Z. 15173-15191); gelesen nur in IsoGridSquare.CalcVisibility (Z. 7729-7735, Deaf Z. 7732) innerhalb von if (!GameServer.server); einziger Aufrufer ServerLOS (Z. 271, 277), gestartet nur in GameServer.main (Z. 831); LightingJNI.updatePlayer (Z. 481-484) gibt nur Kegel und getDetectionRange weiter",
       "berichte": [
         "docs/berichte/2026-09-08-extraktion.md",
         "tools/measure-mod/README.md",
-        "docs/berichte/2026-09-13-messbarkeit.md"
+        "docs/berichte/2026-09-13-messbarkeit.md",
+        "docs/berichte/2026-09-23-faktensweep.md"
       ],
       "messungen": [
         "messung-2026-09-14-werte.txt"
       ],
-      "notiz": "Gemessen am 14.09.2026 (Code-Werte, Mess-Mod 6.26.2): Hörradius ohne 2.0000, mit 5.0000, Differenz 3.0000. Gemessen ist, was die Funktion rechnet. Im Einzelspiel kommt der Wert nie an: die Berechnung läuft nur auf einem Multiplayer-Server (siehe Spielfehler zum Hörradius).",
+      "notiz": "Wirkungslos, nachgeprüft am 23.09.2026: Den Radius liest nur IsoGridSquare.CalcVisibility, und dort steht die Prüfung in if (!GameServer.server). Aufgerufen wird CalcVisibility nur vom ServerLOS-Thread eines Multiplayer-Servers, wo die Prüfung damit abgeschaltet ist; im Einzelspiel und auf dem Client kommt der Wert gar nicht erst an. Gemessen am 14.09.2026 (Code-Werte, Mess-Mod 6.26.2) ist nur, was die Funktion zurückgibt: Hörradius ohne 2.0000, mit 5.0000, Differenz 3.0000 (Spielfehler noisedistance-mp).",
       "methode": "Code-Werte, Mess-Mod 6.26.2, Spiel mit -debug: calculateVisibilityData() an der Figur, Feld noiseDistance per Reflection gelesen und durch getWornItemsHearingMultiplier geteilt, ohne und mit Keen Hearing; Differenz mit - ohne, Toleranz 0,006."
     },
     {
@@ -2625,30 +2640,32 @@
         "messung-2026-09-13-sprint.txt"
       ],
       "notiz": "getDetectionRange mit Trait an und aus; der Abstand stimmt, die Basis hängt am Zustand der Figur.",
-      "methode": "Weltbetreten: getDetectionRange() ohne und mit Hard of Hearing ausgelesen, Abstand auf die Nachkommastelle wie im Code verglichen; früher Mess-Mod-Lauf vor der Versionszählung, Traits vorher gesichert und danach zurückgesetzt."
+      "methode": "Weltbetreten: getDetectionRange() ohne und mit Hard of Hearing ausgelesen, Abstand auf die Nachkommastelle wie im Code verglichen; frühe Mess-Mod-Läufe vor der Versionszählung (10, 10b, 10c) und ein späterer Weltbetreten-Lauf mit 6.21.0 (13-sprint), Traits vorher gesichert und danach zurückgesetzt."
     },
     {
       "id": "hardofhearing/noise",
-      "stand": "gemessen",
-      "code": "IsoGameCharacter.calculateVisibilityData (Z. 15169; noiseDistance Z. 15173-15191), IsoGridSquare.CalcVisibility (Z. 7689; Deaf Z. 7732); nur ServerLOS eines Multiplayer-Servers",
+      "stand": "wirkungslos",
+      "code": "IsoGameCharacter.calculateVisibilityData (Z. 15169; noiseDistance Z. 15173-15191); gelesen nur in IsoGridSquare.CalcVisibility (Z. 7729-7735, Deaf Z. 7732) innerhalb von if (!GameServer.server); einziger Aufrufer ServerLOS (Z. 271, 277), gestartet nur in GameServer.main (Z. 831); LightingJNI.updatePlayer (Z. 481-484) gibt nur Kegel und getDetectionRange weiter",
       "berichte": [
         "docs/berichte/2026-09-08-extraktion.md",
         "tools/measure-mod/README.md",
-        "docs/berichte/2026-09-13-messbarkeit.md"
+        "docs/berichte/2026-09-13-messbarkeit.md",
+        "docs/berichte/2026-09-23-faktensweep.md"
       ],
       "messungen": [
         "messung-2026-09-14-werte.txt"
       ],
-      "notiz": "Gemessen am 14.09.2026 (Code-Werte, Mess-Mod 6.26.2): Hörradius ohne 2.0000, mit 1.0000, Differenz -1.0000. Gemessen ist, was die Funktion rechnet. Im Einzelspiel kommt der Wert nie an: die Berechnung läuft nur auf einem Multiplayer-Server (siehe Spielfehler zum Hörradius).",
+      "notiz": "Wirkungslos, nachgeprüft am 23.09.2026: Den Radius liest nur IsoGridSquare.CalcVisibility, und dort steht die Prüfung in if (!GameServer.server). Aufgerufen wird CalcVisibility nur vom ServerLOS-Thread eines Multiplayer-Servers, wo die Prüfung damit abgeschaltet ist; im Einzelspiel und auf dem Client kommt der Wert gar nicht erst an. Gemessen am 14.09.2026 (Code-Werte, Mess-Mod 6.26.2) ist nur, was die Funktion zurückgibt: Hörradius ohne 2.0000, mit 1.0000, Differenz -1.0000 (Spielfehler noisedistance-mp).",
       "methode": "Code-Werte, Mess-Mod 6.26.2, Spiel mit -debug: calculateVisibilityData() an der Figur, Feld noiseDistance per Reflection gelesen und durch getWornItemsHearingMultiplier geteilt, ohne und mit Hard of Hearing; Differenz mit - ohne, Toleranz 0,006."
     },
     {
       "id": "hardofhearing/hearing",
       "stand": "gemessen",
-      "code": "IsoGameCharacter.getHearDistanceModifier (Z. 13934); Leser AlarmClock, AlarmClockClothing, FMOD",
+      "code": "IsoGameCharacter.getHearDistanceModifier (Z. 13934); im Einzelspiel lesen ihn nur AlarmClock (Z. 181) und AlarmClockClothing (Z. 191); FMODParameterUtils.getClosestListener (Z. 40) und ParameterFirearmInside.getClosestListener (Z. 77) wählen damit nur bei mehreren lokalen Spielern (Splitscreen) den Hörer; der gedämpfte Klang kommt aus ParameterHardOfHearing (Z. 22), nur an oder aus",
       "berichte": [
         "docs/berichte/2026-09-08-extraktion.md",
-        "tools/measure-mod/README.md"
+        "tools/measure-mod/README.md",
+        "docs/berichte/2026-09-23-faktensweep.md"
       ],
       "messungen": [
         "messung-2026-09-10.txt",
@@ -2656,8 +2673,8 @@
         "messung-2026-09-10c.txt",
         "messung-2026-09-13-sprint.txt"
       ],
-      "notiz": "getHearDistanceModifier 1.0 -> 4.5.",
-      "methode": "Weltbetreten: getHearDistanceModifier() ohne und mit Hard of Hearing ausgelesen, Wert auf die Nachkommastelle wie im Code verglichen; früher Mess-Mod-Lauf vor der Versionszählung, Traits vorher gesichert und danach zurückgesetzt."
+      "notiz": "getHearDistanceModifier 1.0 -> 4.5. Im Spiel heißt das: ein Wecker weckt die Figur erst aus 1/4.5 seiner Reichweite. Die Dämpfung der Geräusche ist ein eigener Schalter ohne die 4.5 (nachgeprüft am 23.09.2026).",
+      "methode": "Weltbetreten: getHearDistanceModifier() ohne und mit Hard of Hearing ausgelesen, Wert auf die Nachkommastelle wie im Code verglichen; frühe Mess-Mod-Läufe vor der Versionszählung (10, 10b, 10c) und ein späterer Weltbetreten-Lauf mit 6.21.0 (13-sprint), Traits vorher gesichert und danach zurückgesetzt."
     },
     {
       "id": "eagleeyed/lightcone",
@@ -2748,7 +2765,7 @@
     {
       "id": "smoker/nicotine",
       "stand": "gemessen",
-      "code": "BodyDamage (Z. 765, 886, 1719), RecipeCodeOnEat (Z. 29)",
+      "code": "BodyDamage (Z. 765; Z. 886-905: Husten alle 43200 bis 129600 Spielsekunden ohne Erkältung, auch beim Rauchen; Z. 1719: Entzug), RecipeCodeOnEat (Z. 29)",
       "berichte": [
         "docs/berichte/2026-09-08-extraktion.md",
         "tools/measure-mod/README.md",
@@ -2757,7 +2774,7 @@
       "messungen": [
         "messung-2026-09-14-werte.txt"
       ],
-      "notiz": "Gemessen am 14.09.2026 (Code-Werte, Mess-Mod 6.26.2): beim Rauchen Stress ohne 0.0000, mit -0.0500, Differenz -0.0500; Unzufriedenheit ohne 0.0000, mit -0.0500, Differenz -0.0500 (beides laut Code stressChange der Zigarette); Übelkeit ohne 14.0000, mit 0.0000, Faktor 0.0000.",
+      "notiz": "Gemessen am 14.09.2026 (Code-Werte, Mess-Mod 6.26.2): beim Rauchen Stress ohne 0.0000, mit -0.0500, Differenz -0.0500; Unzufriedenheit ohne 0.0000, mit -0.0500, Differenz -0.0500 (beides laut Code stressChange der Zigarette); Übelkeit ohne 14.0000, mit 0.0000, Faktor 0.0000. Nicht gemessen, aus dem Code: der Husten alle 12 bis 36 Spielstunden kommt unabhängig vom Rauchen, solange die Figur nicht erkältet ist, und Zombies hören ihn.",
       "methode": "Code-Werte, Mess-Mod 6.26.2: RecipeCodeOnEat.consumeNicotine mit einer erzeugten Zigarette ohne Husten an der Figur, Stress, Unzufriedenheit und Übelkeit vor und nach dem Aufruf gelesen, ohne und mit Smoker; Differenz mit - ohne, Toleranz 0,006, Werte danach zurück."
     },
     {
@@ -2818,7 +2835,7 @@
         "messung-2026-09-13-werte.txt",
         "messung-2026-09-21-nachstellen.txt"
       ],
-      "notiz": "Gemessen am 13.09.2026 (Code-Werte): ohne 200.0000, mit 150.0000, Faktor 0.7500. Im Spiel nachgestellt am 21.09.2026: eine Bretter-Barrikade über das Baumenü setzt 200 an, mit Handy 150, bei Carpentry 1.",
+      "notiz": "Gemessen am 13.09.2026 (Code-Werte): ohne 200.0000, mit 150.0000, Faktor 0.7500. Im Spiel nachgestellt am 21.09.2026: eine Bretter-Barrikade über das Baumenü setzt 200 an, mit Handy 150, bei Carpentry 1. Handy zieht fest 50 Zeiteinheiten ab, ohne Untergrenze (ISBuildAction Z. 268-270): Bauten mit Rezeptzeit 50, etwa die Hälfte des Baumenüs samt aller Möbel, landen bei 0 und sind im ersten Tick fertig (aus dem Code, nicht im Spiel nachgebaut). Auf einem MP-Server rechnet der Server die Dauer selbst (BuildAction.getDuration, Z. 91-102: 200 - 5 x Carpentry, Handy -50), dort -25 bis -33 %; nicht auf einem Server geprüft.",
       "methode": "Code-Werte, Mess-Mod 6.22.0: ISBuildAction:new an der Figur bei einer Basiszeit von 200 gebaut, maxTime gelesen; ohne und mit Handy, Faktor mit/ohne, Toleranz 0,006."
     },
     {
@@ -2867,7 +2884,7 @@
     {
       "id": "illiterate/reading",
       "stand": "gemessen",
-      "code": "shared/TimedActions/ISReadABook.lua (Z. 129); client/ISUI/ISInventoryPaneContextMenu.lua (Z. 549, 588, 1043-1089, 2815); client/ISUI/Maps/ISWorldMapSymbols.lua (Z. 1312)",
+      "code": "shared/TimedActions/ISReadABook.lua (Z. 129); client/ISUI/ISInventoryPaneContextMenu.lua (Z. 549 Medienbeschriftung, Z. 588 Notizbuch, 1043-1089, 2815); client/ISUI/Maps/ISWorldMapSymbols.lua (Z. 1367-1373: Kartennotizen setzen und ändern gesperrt; bestehende Beschriftungen bleiben lesbar)",
       "berichte": [
         "docs/berichte/2026-09-08-extraktion.md",
         "tools/measure-mod/README.md"
@@ -2977,7 +2994,7 @@
     {
       "id": "burglar/climb",
       "stand": "gemessen",
-      "code": "IsoGameCharacter.getClimbingFailChanceFloat (Z. 14718; Traits Z. 14727-14748); verbraucht in ClimbSheetRopeState (Z. 263, Wurf Z. 84)",
+      "code": "IsoGameCharacter.getClimbingFailChanceFloat (Z. 14718; Traits Z. 14727-14748); verbraucht in ClimbSheetRopeState (Z. 263, Wurf Z. 84), ClimbDownSheetRopeState (Z. 130) und an hohen Zäunen in ClimbOverWallState (Z. 296)",
       "berichte": [
         "docs/berichte/2026-09-08-extraktion.md",
         "tools/measure-mod/README.md"
@@ -3067,7 +3084,7 @@
       "id": "zaun-veryunderweight",
       "titel": "Very Low Weight beim Zaun doppelt abgefragt",
       "folge": "Beim Stolpern über einen Zaun bekommt Very Low Weight +30 statt +20, Low Weight bekommt gar nichts. Gemeint war vermutlich einmal Low Weight (UNDERWEIGHT im Spielcode). Gemessen am 14.09.2026 (Code-Werte, Mess-Mod 6.26.2) bei Fitness 0: ohne Trait 9.9333 % gestolpert, mit Very Low Weight 39.6333 % (Differenz 29.7000 Punkte, laut Code +30), mit Low Weight 9.1667 % (Differenz -0.7667 Punkte, laut Code 0), je Fall 3000 Proben über 70 Ticks.",
-      "code": "ClimbOverFenceState.shouldFallAfterVaultOver (Z. 490; VERY_UNDERWEIGHT in Z. 514 und 517); im Constant Pool kein eigenes UNDERWEIGHT",
+      "code": "ClimbOverFenceState.shouldFallAfterVaultOver (Z. 493; VERY_UNDERWEIGHT in Z. 517 und 520); im Constant Pool kein eigenes UNDERWEIGHT",
       "stand": "gemessen",
       "umgang": "fussnote",
       "traits": [
@@ -3090,8 +3107,8 @@
     },
     {
       "id": "lunge-veryunderweight",
-      "titel": "Very Low Weight beim Sturz durch Zombie-Griff doppelt",
-      "folge": "Greift ein Zombie beim Klettern nach dem Bein, bekommt Very Low Weight wieder +30 statt +20.",
+      "titel": "Very Low Weight beim Sturz durch einen springenden Zombie doppelt",
+      "folge": "Springt ein Zombie beim Klettern über einen Zaun oder durch ein Fenster eine nahe Figur an und trifft, bekommt Very Low Weight wieder +30 statt +20 auf die Sturzchance.",
       "code": "IsoGameCharacter.attackFromWindowsLunge (Z. 12875; VERY_UNDERWEIGHT in Z. 12906 und 12909)",
       "stand": "code",
       "umgang": "fussnote",
@@ -3109,14 +3126,16 @@
     {
       "id": "metallbarrikade",
       "titel": "Die alte Barrikaden-Aktion rechnet Metall mit der Zeit für Bretter, im Spiel erreicht sie aber niemand",
-      "folge": "ISBarricadeAction:new ruft getDuration auf, bevor es isMetal setzt. Metall bekäme dort 100 - 5 x Carpentry (Handy -20) statt 170 - 5 x MetalWelding. Gemessen am 13.09.2026 (Code-Werte) an der Aktion selbst: Metall ohne Trait 100, mit Handy 80. Nachgeprüft am 21.09.2026 im Spielcode von 42.20.4: diese Aktion ruft nur noch die Testdatei des Spiels auf (client/Tests/TimedActionsTests.lua). Spieler verbarrikadieren über das Baumenü (ISWorldObjectContextMenu.onBarricade, ISBuildIsoEntity). Dort haben Bretter und Metallplatte dieselbe Zeit von 200 (entity_barricade_planks.txt und entity_barricade_metalsheet.txt), Handy zieht wie bei jedem Bau 50 ab (ISBuildAction:new). Dass beide gleich lange dauern, ist im Spiel also Absicht und kein Fehler; der Fehler sitzt in Code, den kein Spieler erreicht. Bis 21.09.2026 stand dieser Eintrag hier als Fehler im Spiel, das war falsch. Im Spiel nachgestellt am 21.09.2026 über das Baumenü: Bretter und Metallplatte setzen beide 200 an, mit Handy beide 150 (Carpentry 1, MetalWelding 3).",
+      "folge": "ISBarricadeAction:new ruft getDuration auf, bevor es isMetal setzt. Metall bekäme dort 100 - 5 x Carpentry (Handy -20) statt 170 - 5 x MetalWelding (ein MP-Server rechnet die Dauer über NetTimedAction.getDuration nach new() neu, dort wäre es richtig). Gemessen am 13.09.2026 (Code-Werte) an der Aktion selbst: Metall ohne Trait 100, mit Handy 80. Nachgeprüft am 21.09.2026 im Spielcode von 42.20.4: diese Aktion ruft nur noch die Testdatei des Spiels auf (client/Tests/TimedActionsTests.lua). Spieler verbarrikadieren über das Baumenü (ISWorldObjectContextMenu.onBarricade, ISBuildIsoEntity). Dort haben Bretter und Metallplatte dieselbe Zeit von 200 (entity_barricade_planks.txt und entity_barricade_metalsheet.txt), Handy zieht wie bei jedem Bau 50 ab (ISBuildAction:new). Dass beide gleich lange dauern, ist im Spiel also Absicht und kein Fehler; der Fehler sitzt in Code, den kein Spieler erreicht. Bis 21.09.2026 stand dieser Eintrag hier als Fehler im Spiel, das war falsch. Im Spiel nachgestellt am 21.09.2026 über das Baumenü: Bretter und Metallplatte setzen beide 200 an, mit Handy beide 150 (Carpentry 1, MetalWelding 3). Der Stand bleibt code: der direkte Aufruf bestätigt die Rechnung, im Spiel erreicht diesen Code aber niemand.",
       "code": "shared/TimedActions/ISBarricadeAction.lua (Z. 191-194)",
       "stand": "code",
-      "umgang": "nicht gezeigt",
+      "umgang": "ausgegraut",
       "traits": [
         "handy"
       ],
-      "werte": [],
+      "werte": [
+        "handy/barricade"
+      ],
       "berichte": [
         "docs/berichte/2026-09-13-engine-recherche.md",
         "tools/measure-mod/README.md"
@@ -3130,7 +3149,7 @@
     {
       "id": "leichenstress-craft",
       "titel": "Die alte Craft-Aktion vergleicht ein Objekt mit einem Text, im Spiel erreicht sie aber niemand",
-      "folge": "In ISCraftAction:update prüft die Bedingung getContainer():getType() == \"inventoryfemale\" oder getContainer() == \"inventorymale\". Der zweite Vergleich stellt ein Objekt einem Text gegenüber und ist nie wahr: Stress und Unglück gäbe es dort nur bei weiblichen Leichen. Gemessen am 13.09.2026 (Code-Werte) an der Aktion selbst: weiblich Unzufriedenheit 0.008 je Update, Brave x0.5, Cowardly x2, Desensitized 0; männlich 0. Nachgeprüft am 21.09.2026 im Spielcode von 42.20.4: ISCraftAction entsteht nur in ISInventoryPaneContextMenu.OnCraft, und das verlangt ein Rezept alter Art. In media/scripts gibt es kein einziges mehr, nur noch craftRecipe; gecraftet wird über OnNewCraft und die Handwerks-Oberfläche. Beim Craften entsteht also gar kein Leichenstress, weder bei männlichen noch bei weiblichen Leichen. Stress und Unglück gibt es nur beim Herausnehmen aus einer Leiche (ISInventoryTransferAction), und das ist gemessen und stimmt. Bis 21.09.2026 stand dieser Eintrag hier als Fehler im Spiel, das war falsch.",
+      "folge": "In ISCraftAction:update prüft die Bedingung getContainer():getType() == \"inventoryfemale\" oder getContainer() == \"inventorymale\". Der zweite Vergleich stellt ein Objekt einem Text gegenüber und ist nie wahr: Stress und Unglück gäbe es dort nur bei weiblichen Leichen. Gemessen am 13.09.2026 (Code-Werte) an der Aktion selbst: weiblich Unzufriedenheit 0.008 je Update, Brave x0.5, Cowardly x2, Desensitized 0; männlich 0. Nachgeprüft am 21.09.2026 im Spielcode von 42.20.4: ISCraftAction entsteht nur in ISInventoryPaneContextMenu.OnCraft, und das verlangt ein Rezept alter Art. In media/scripts gibt es kein einziges mehr, nur noch craftRecipe; gecraftet wird über OnNewCraft und die Handwerks-Oberfläche. Beim Craften entsteht also gar kein Leichenstress, weder bei männlichen noch bei weiblichen Leichen. Außerhalb des Craftens zählt nur das Herausnehmen aus einer Leiche (ISInventoryTransferAction), und das gibt nur Unzufriedenheit, keinen Stress; das ist gemessen und stimmt. Bis 21.09.2026 stand dieser Eintrag hier als Fehler im Spiel, das war falsch.",
       "code": "shared/TimedActions/ISCraftAction.lua (Z. 19-26, Vergleich in Z. 20)",
       "stand": "code",
       "umgang": "nicht gezeigt",
@@ -3235,50 +3254,23 @@
       "methode": "Sprint, Mess-Mod 6.21.0 (vierter Lauf): Strecke je Tick beim Sprinten (Alt-Taste) gemessen, Athletic und Unfit je drei Phasen im Wechsel, erste Phase als Warmlauf verworfen, Faktor gegen die Nachweisgrenze der Streuung geprüft."
     },
     {
-      "id": "faelltempo-axeman",
-      "titel": "Fälltempo von Ax-pert (+25 %)",
-      "folge": "getChopTreeSpeed liefert mit Ax-pert 1.0 und ohne 0.8 (x1.25). Das Fällen wird trotzdem nicht schneller: in drei Läufen lag der Abstand zweier Hiebe mit Ax-pert im Mittel bei 1250.0, 1250.0 und 1261.4 ms, ohne bei 1249.8, 1244.5 und 1276.2 ms (mit/ohne 1.0002, 1.0044 und 0.9883; laut Code wäre 0.8 zu erwarten). Der Axtschwung (-20 %) wirkt dagegen.",
-      "code": "IsoGameCharacter.getChopTreeSpeed (Z. 12388)",
-      "stand": "gemessen",
-      "umgang": "ausgegraut",
-      "traits": [
-        "axeman"
-      ],
-      "werte": [
-        "axeman/chopspeed"
-      ],
-      "berichte": [
-        "tools/measure-mod/README.md"
-      ],
-      "messungen": [
-        "messung-2026-09-10.txt",
-        "messung-2026-09-13-sprint.txt",
-        "messung-2026-09-13-axt.txt",
-        "messung-2026-09-13b-axt.txt",
-        "messung-2026-09-13c-axt.txt"
-      ],
-      "methode": "Axt: Ax-pert, Mess-Mod 6.18.0 bis 6.21.0 (drei Läufe): Abstand zweier Hiebe in Millisekunden mit und ohne Ax-pert verglichen; im ersten Lauf wechselte der Trait mitten in der Aktion, danach 8 Phasen mit je neuer Aktion, deren erster Hieb als Anlauf nicht zählt."
-    },
-    {
       "id": "speedmod-axeman",
       "titel": "Ax-pert x0.95 in HandWeapon.getSpeedMod",
-      "folge": "Die Methode hat keinen Aufrufer.",
+      "folge": "Die Methode hat keinen Aufrufer, die x0.95 wirkt also nie. Ax-pert beschleunigt den Axtschwung auf einem anderen Weg (IsoGameCharacter.calculateCombatSpeed); das zeigt Trait Facts als gemessene Axt-Schwungzeit.",
       "code": "HandWeapon.getSpeedMod (Z. 496; Ax-pert Z. 533), ohne Aufrufer",
       "stand": "code",
       "umgang": "nicht gezeigt",
       "traits": [
         "axeman"
       ],
-      "werte": [
-        "axeman/axeswing"
-      ],
+      "werte": [],
       "berichte": [
         "mod/42/media/lua/shared/TraitFacts/TF_Static.lua"
       ]
     },
     {
       "id": "handy-haltbarkeit",
-      "titel": "Handy +100 Lebenspunkte für gebaute Wände",
+      "titel": "Handy +100 Lebenspunkte für Gebautes",
       "folge": "Nur über ISBuildIsoEntity:getHealth ohne Aufrufer und über Altklassen erreichbar, die das Baumenü nicht mehr erzeugt.",
       "code": "server/BuildingObjects/ISBuildUtil.lua: getWoodHealth (Z. 39, Handy Z. 48-49); ISBuildIsoEntity:getHealth (Z. 38-43) ohne Aufrufer",
       "stand": "code",
@@ -3314,12 +3306,12 @@
         "messung-2026-09-11e-beschleunigung.txt",
         "messung-2026-09-11f-pickupvan.txt"
       ],
-      "methode": "Autos (Beschleunigungstest), Mess-Mod 6.11.0 (SportsCar) und 6.15.0 (PickUpVan): Drehzahl (getEngineSpeed) je Tempofenster beim Anfahren aus dem Stand mit Speed Demon gegen die Phase ohne Trait verglichen, vorwärts und rückwärts getrennt."
+      "methode": "Autos (Beschleunigungstest), Mess-Mod 6.11.0 (SportsCar; im Kopf des Berichts steht 6.9.1, der Test lief nach einem Neuladen mit F9, siehe tools/check-data.py Regel 26) und 6.15.0 (PickUpVan; im Kopf 6.14.0, die Rückwärtsfahrt bis das Tempo steht gibt es erst seit 6.15.0): Drehzahl (getEngineSpeed) je Tempofenster beim Anfahren aus dem Stand mit Speed Demon gegen die Phase ohne Trait verglichen, vorwärts und rückwärts getrennt."
     },
     {
       "id": "adrenaline-movespeed",
       "titel": "Adrenaline Junkie x1.1 in getMoveSpeed",
-      "folge": "Gelesen nur von getPathSpeed, und das benutzt keine andere Klasse. Gemessen am 20.09.2026 (Adrenalin, zwei Läufe): getMoveSpeed liefert mit dem Trait x1.1000, die Strecke der gehenden Figur folgt dem nicht: x1.08, nicht x1.25 x 1.1 = x1.375.",
+      "folge": "Gelesen nur von getPathSpeed, und das benutzt keine andere Klasse. getMoveSpeed liefert x1.1 nur bei extremer Panik (Stufe 4). Gemessen am 20. und 21.09.2026 an der gehenden Figur: auf Stufe 3 (Strong Panic) bleibt getMoveSpeed bei x1.0, WalkSpeed ist auf beiden Stufen bei 1.0 gedeckelt, und die Strecke mit Trait ist auf beiden Stufen gleich (Stufe 4 gegen Stufe 3: x1.080 gegen x1.080, x1.084 gegen x1.082, x1.082 gegen x1.082). Die x1.1 trägt also nichts bei. Das gilt für das Gehen; beim Rennen und Sprinten unterscheidet sich WalkSpeed zwischen den Stufen, dort taugen die Läufe nicht als Gegenprobe.",
       "code": "IsoPlayer.getMoveSpeed (Z. 1662)",
       "stand": "gemessen",
       "umgang": "nicht gezeigt",
@@ -3331,12 +3323,16 @@
       ],
       "berichte": [
         "mod/42/media/lua/shared/TraitFacts/TF_Static.lua",
-        "docs/berichte/2026-09-13-engine-recherche.md"
+        "docs/berichte/2026-09-13-engine-recherche.md",
+        "docs/berichte/2026-09-23-faktensweep.md"
       ],
-      "methode": "Adrenalin, Mess-Mod 6.32.0: Panik auf Stufe 4 gehalten, die Figur geht geradeaus; neun Phasen zu 300 Ticks im Wechsel ohne und mit Adrenaline Junkie; je Phase WalkSpeed, getMoveSpeed und die Strecke je Tick durch den Multiplier.",
+      "methode": "Adrenalin, Mess-Mod 6.32.0 bis 6.41.0: die Figur geht geradeaus, Panik auf Stufe 4 gehalten (neun Phasen) und ab 6.33.0 auch auf Stufe 3 (fünf Phasen), je 300 Ticks im Wechsel ohne und mit Adrenaline Junkie; je Phase WalkSpeed, getMoveSpeed und die Strecke je Tick durch den Multiplier.",
       "messungen": [
         "messung-2026-09-20-adrenalin.txt",
-        "messung-2026-09-20b-adrenalin.txt"
+        "messung-2026-09-20b-adrenalin.txt",
+        "messung-2026-09-20c-adrenalin.txt",
+        "messung-2026-09-20d-adrenalin.txt",
+        "messung-2026-09-21-adrenalin.txt"
       ]
     },
     {
@@ -3360,9 +3356,9 @@
     },
     {
       "id": "appetit-satt",
-      "titel": "Hearty Appetite und Light Eater wirken nicht, solange die Figur satt ist",
-      "folge": "Mit der Stimmung satt (FOOD_EATEN > 0) wächst der Hunger für jede Figur gar nicht, und der Appetit-Faktor bleibt ohne Wirkung. Gemessen am 13.09.2026: 0,0000 je Stunde ohne und mit Hearty Appetite, sonst 0,0308.",
-      "code": "IsoGameCharacter (Z. 9158-9159)",
+      "titel": "Hearty Appetite und Light Eater wirken nicht, solange die Figur satt ist und weder rennt noch kämpft",
+      "folge": "Mit der Stimmung satt (FOOD_EATEN > 0) wächst der Hunger nicht, solange die Figur steht, geht, sprintet oder schläft: der Grundwert dafür ist 0 (HungerIncreaseWhenWellFed), und der Appetit-Faktor wird dort gar nicht angewendet. Rennt die Figur (nicht Sprinten) oder greift sie an, schubst, stampft, packt zu oder hebt eine Leiche auf, wächst der Hunger weiter, und zwar satt dreimal so schnell wie nicht satt (HungerIncreaseWhenExercise gegen dessen Drittel, 0.0000192 gegen 0.0000064 je Schritt vor Sandbox-, Zeit- und Trait-Faktoren); dort wirken Hearty Appetite (x1.5) und Light Eater (x0.75). Ob das Drittel im Übungszweig Absicht ist, sagt der Code nicht. Gemessen am 13.09.2026 im Stehen: 0,0000 je Stunde ohne und mit Hearty Appetite, sonst 0,0308. Light Eater und der Teil beim Rennen und Kämpfen stammen aus dem Code, nicht aus der Messung.",
+      "code": "IsoGameCharacter.updateStats_Awake (Z. 9149-9159); IsoPlayer.updateStats_Sleeping (Z. 2923-2927); shared/defines.lua (Z. 14-16)",
       "stand": "gemessen",
       "umgang": "fehlt",
       "traits": [
@@ -3375,17 +3371,18 @@
       ],
       "berichte": [
         "docs/berichte/2026-09-13-engine-recherche.md",
-        "tools/measure-mod/README.md"
+        "tools/measure-mod/README.md",
+        "docs/berichte/2026-09-23-faktensweep.md"
       ],
       "messungen": [
         "messung-2026-09-13-wach.txt"
       ],
-      "methode": "Wach, Mess-Mod 6.23.0: Hungerzuwachs bei künstlich gehaltener Sattheit (healthFromFoodTimer über setHealthFromFoodTimer oben gehalten) ohne und mit Hearty Appetite verglichen, beide praktisch ohne Zuwachs."
+      "methode": "Wach, Mess-Mod 6.23.0: Hungerzuwachs bei künstlich gehaltener Sattheit (healthFromFoodTimer über setHealthFromFoodTimer oben gehalten) ohne und mit Hearty Appetite verglichen, beide praktisch ohne Zuwachs; beide Phasen im Stehen."
     },
     {
       "id": "irongut-bleiche",
       "titel": "Iron Gut nullt das Gift eines Schlucks mit verseuchtem Wasser, auch wenn Bleiche beigemischt ist",
-      "folge": "Reine Bleiche vergiftet mit Iron Gut genauso wie ohne: sie tötet. Nur wenn Bleichmittel im selben Behälter wie verseuchtes Wasser liegt, nullt Iron Gut das Gift des ganzen Schlucks. Gemessen am 14.09.2026 (Code-Werte, Mess-Mod 6.26.2): 0.5 l verseuchtes Wasser mit 0.1 l Bleiche gibt ohne Trait 57.7500 Gift, mit Iron Gut 0.0000 (Faktor 0.0000); in der Gegenprobe mit reiner Bleiche (0.1 l) ohne und mit Iron Gut je 70.0000 (Faktor 1.0000). Im Spiel nachgestellt am 21.09.2026, God Mode aus, die Mischungen von Hand umgefüllt: eine Figur mit Iron Gut trank eine Flasche aus rund 1 % verseuchtem Wasser und 99 % Bleiche ohne Schaden. Dieselbe Mischung mit 1 % sauberem Wasser vergiftete sie, und reine Bleiche hatte eine Figur mit Iron Gut am selben Tag getötet. Es genügt also eine Spur verseuchtes Wasser im Behälter, sauberes Wasser genügt nicht.",
+      "folge": "Reine Bleiche vergiftet mit Iron Gut genauso wie ohne: sie tötet. Nur wenn Bleichmittel im selben Behälter wie verseuchtes Wasser liegt, nullt Iron Gut das Gift des ganzen Schlucks. Gemessen am 14.09.2026 (Code-Werte, Mess-Mod 6.26.2): 0.5 l verseuchtes Wasser mit 0.1 l Bleiche gibt ohne Trait 57.7500 Gift, mit Iron Gut 0.0000 (Faktor 0.0000); in der Gegenprobe mit reiner Bleiche (0.1 l) ohne und mit Iron Gut je 70.0000 (Faktor 1.0000). Im Spiel nachgestellt am 21.09.2026, God Mode aus, die Mischungen von Hand umgefüllt: eine Figur mit Iron Gut trank eine Flasche aus rund 1 % verseuchtem Wasser und 99 % Bleiche ohne Schaden. Dieselbe Mischung mit 1 % sauberem Wasser vergiftete sie, und reine Bleiche hatte eine Figur mit Iron Gut am selben Tag getötet. Es genügt also eine Spur verseuchtes Wasser im Behälter; sauberes Wasser nullt das Gift nicht. Ob das Bleichmittel zählt, entscheidet aber der größte Anteil im Behälter (getPrimaryFluid, IsoGameCharacter Z. 5480): machen sauberes Wasser oder ein anderes Getränk den größten Teil aus, halbiert Iron Gut das Gift des Schlucks samt Bleiche (x0.5); das steht im Code und ist nicht gemessen.",
       "code": "IsoGameCharacter.DrinkFluid (Z. 5500-5506)",
       "stand": "gemessen",
       "umgang": "fussnote",
@@ -3409,31 +3406,30 @@
     },
     {
       "id": "noisedistance-mp",
-      "titel": "Hörradius (noiseDistance) wirkt nur auf Multiplayer-Servern",
-      "folge": "calculateVisibilityData und IsoGridSquare.CalcVisibility ruft nur der ServerLOS-Thread; im Einzelspiel kommt der Wert nicht an. Gilt auch für die +0.2 von Eagle Eyed im Sichtkegel.",
-      "code": "IsoGameCharacter.calculateVisibilityData (Z. 15169-15194), IsoGridSquare.CalcVisibility (Z. 7689)",
+      "titel": "Hörradius (noiseDistance) wirkt nie",
+      "folge": "Den Radius rechnet calculateVisibilityData (Basis 2, Keen Hearing +3, Hard of Hearing -1), gelesen wird er nur in IsoGridSquare.CalcVisibility. Beide ruft nur der ServerLOS-Thread (ServerLOS Z. 271 und 277), und den startet allein GameServer.main (Z. 831) auf einem Multiplayer-Server. Genau dort überspringt CalcVisibility die Prüfung auf den Radius und auf Deaf, denn sie steht in if (!GameServer.server) (Z. 7729-7735). Im Einzelspiel und auf dem Client gibt LightingJNI.updatePlayer (Z. 481-484) nur den Sichtkegel und getDetectionRange an die Wahrnehmung weiter. Der Radius wird also berechnet und in keiner Spielart gelesen. Bis 23.09.2026 stand hier, er wirke nur auf Multiplayer-Servern, das war falsch. Nebenbei: die +0.2 von Eagle Eyed im Kegel derselben Berechnung wirkt auf dem Server, denn den Kegel liest CalcVisibility außerhalb der Abfrage (Z. 7737); Trait Facts zeigt sie nicht, und mit dem Sichtfeld von +36° hat sie nichts zu tun.",
+      "code": "IsoGridSquare.CalcVisibility (Z. 7729-7735, Prüfung in if (!GameServer.server)); ServerLOS (Z. 271, 277) als einziger Aufrufer, gestartet nur in GameServer.main (Z. 831, server = true in Z. 408); IsoGameCharacter.calculateVisibilityData (Z. 15169-15194); LightingJNI.updatePlayer (Z. 481-484)",
       "stand": "code",
-      "umgang": "fussnote",
+      "umgang": "ausgegraut",
       "traits": [
         "keenhearing",
         "hardofhearing",
-        "deaf",
-        "eagleeyed"
+        "deaf"
       ],
       "werte": [
         "keenhearing/noise",
         "hardofhearing/noise",
-        "deaf/noise",
-        "eagleeyed/lightcone"
+        "deaf/noise"
       ],
       "berichte": [
-        "mod/42/media/lua/shared/TraitFacts/TF_Static.lua"
+        "mod/42/media/lua/shared/TraitFacts/TF_Static.lua",
+        "docs/berichte/2026-09-23-faktensweep.md"
       ]
     },
     {
       "id": "unfallbruch",
       "titel": "Knochenbrüche bei Autounfällen umgehen Fast und Slow Healer",
-      "folge": "IsoPlayer und BaseVehicle rufen generateFracture direkt, ohne Trait-Abfrage. Gemessen am 14.09.2026 (Code-Werte, Mess-Mod 6.26.2): mittlere Bruchzeit ohne Trait 37.6784, mit Fast Healer 35.1779 (Faktor 0.9336), mit Slow Healer 40.9039 (Faktor 1.0856), je Fall 1200 Proben über 72 Ticks; laut Code 0.9202 und 1.0798, allein über den Schaden, statt 0.6 und 1.8 aus generateFractureNew.",
+      "folge": "IsoPlayer und BaseVehicle rufen generateFracture direkt, ohne Trait-Abfrage. Gemessen am 14.09.2026 (Code-Werte, Mess-Mod 6.26.2): mittlere Bruchzeit ohne Trait 37.6784, mit Fast Healer 35.1779 (Faktor 0.9336), mit Slow Healer 40.9039 (Faktor 1.0856), je Fall 1200 Proben über 72 Ticks, gemessen beim Angefahrenwerden (IsoPlayer.applyDamageFromVehicleHit); laut Code 0.9202 und 1.0798, allein über den Schaden, statt 0.6 und 1.8 aus generateFractureNew. Beim Unfall am Steuer (BaseVehicle Z. 8531) fehlt der Trait-Faktor ebenso, dort gilt aber eine eigene Bruchregel (Schaden über 50, Wurf 1 in 10) und Zeitformel; dieser Weg ist nicht gemessen.",
       "code": "IsoPlayer (Z. 1984-1990) und BaseVehicle (Z. 8532) rufen BodyPart.generateFracture (Z. 818) direkt; nur die Stürze (IsoGameCharacter Z. 2139, 2151) gehen über generateFractureNew (Z. 828)",
       "stand": "gemessen",
       "umgang": "fussnote",
@@ -3476,6 +3472,54 @@
       "methode": "Code-Werte, Mess-Mod 6.32.0: Haut in kleinen Schritten nur bis delta 0,12 bis 0,2 gekühlt, dann wie bei der Erkältung setCatchACold(0), UpdateWetness, getCatchACold; ohne Trait, mit Resilient und mit Outdoorsy.",
       "messungen": [
         "messung-2026-09-20-werte.txt"
+      ]
+    },
+    {
+      "id": "grapple-schwelle",
+      "titel": "Die Grapple-Faktoren der Traits prüft das Spiel nur gegen 0,5, und so tief kommt keine Figur",
+      "folge": "calculateGrappleEffectivenessFromTraits multipliziert Strong x1.25, Athletic x1.25, Speed Demon x1.15, Brave x1.1, High Weight x1.1, Very High Weight x1.05, Cowardly x0.9, Very Low Weight x0.8 und Emaciated x0.6 auf 1.0. Die beiden Aufrufer (Leiche aufheben und Greifen im Kampf) reichen das Ergebnis an Grappled weiter, und dort steht es nur in der Abfrage unter 0,5: dann wird der Griff abgelehnt. Danach liest den Wert niemand mehr, weder für das Greifen noch für das Ziehen. Unter 0,5 kommt keine Figur, denn das Spiel hält immer genau einen Gewichts-Trait (Nutrition.applyTraitFromWeight); der niedrigste Wert ist 0,54 mit Emaciated und Cowardly. Erst Emaciated und Very Low Weight zugleich (0,48), was nur Debug-Werkzeuge oder Mods erzeugen, bekämen einen Griff abgelehnt. Die Getter-Messungen vom 10.09.2026 zeigen nur die Rückgabewerte.",
+      "code": "IsoGameCharacter.calculateGrappleEffectivenessFromTraits (Z. 7917-7946); BaseGrappleable.Grappled (Z. 70-94, Schwelle Z. 75); IsoDeadBody.Grappled (Z. 1770-1799, Schwelle Z. 1775); Aufrufer IsoGameCharacter.pickUpCorpse (Z. 7912-7913) und SwipeStatePlayer (Z. 524-530); Nutrition.applyTraitFromWeight (Z. 203-224)",
+      "stand": "code",
+      "umgang": "ausgegraut",
+      "traits": [
+        "strong",
+        "athletic",
+        "speeddemon",
+        "brave",
+        "cowardly",
+        "overweight",
+        "obese",
+        "veryunderweight",
+        "emaciated"
+      ],
+      "werte": [
+        "strong/grapple",
+        "athletic/grapple",
+        "speeddemon/grapple",
+        "brave/grapple",
+        "cowardly/grapple",
+        "overweight/grapple",
+        "obese/grapple",
+        "veryunderweight/grapple",
+        "emaciated/grapple"
+      ],
+      "berichte": [
+        "docs/berichte/2026-09-23-faktensweep.md",
+        "mod/42/media/lua/shared/TraitFacts/TF_Static.lua"
+      ]
+    },
+    {
+      "id": "sammeln-dunkelheit-beruf",
+      "titel": "Die Berufe verringern die Dunkelheitsstrafe beim Sammeln nie",
+      "folge": "getDarknessEffectReduction schlägt die Berufsdefinition mit dem CharacterProfession-Objekt nach statt mit seinem Namen. Die Tabelle ist nach Namen angelegt, der Treffer bleibt also immer leer, und es zählt nur der Anteil der Traits (etwa Outdoorsy -5 %). Betroffen sind Park Ranger, Veteran, Lumberjack und Burglar (-15 %), Farmer, Fisherman, Security Guard, Police Officer und Fire Officer (-10 %) und Unemployed (-5 %). Die Schwesterfunktionen für Wetter, Sichtradius und Kategorien nehmen :getName() und wirken. Auch der Sammel-Tooltip des Spiels (ISZoneDisplay) liest dieselbe Funktion und nennt nur den Anteil der Traits. Trait Facts lässt die Berufszeile aus der Übersicht und der Summe.",
+      "code": "shared/Foraging/forageSystem.lua (Z. 1869, ohne :getName(); Wetter Z. 1820, Sichtradius Z. 1910 und Kategorien Z. 1711 mit :getName()); Tabelle nach Namen: forageSkills.lua (Z. 5), addSkillDef (Z. 1629)",
+      "stand": "code",
+      "umgang": "nicht gezeigt",
+      "traits": [],
+      "werte": [],
+      "berichte": [
+        "docs/berichte/2026-09-23-faktensweep.md",
+        "mod/42/media/lua/client/TraitFacts/TF_Live.lua"
       ]
     }
   ],
@@ -3658,7 +3702,7 @@
       "datei": "messung-2026-09-13-wach.txt",
       "test": "Wach",
       "fassung": "6.23.0",
-      "inhalt": "15 Phasen: Wakeful x0,7015, Sleepyhead x1,30, High Thirst x2,00, Low Thirst x0,50, Hearty Appetite x1,50, Light Eater x0,75; satt wächst der Hunger ohne und mit Hearty Appetite nicht."
+      "inhalt": "15 Phasen: Wakeful x0,7015, Sleepyhead x1,30, High Thirst x2,00, Low Thirst x0,50, Hearty Appetite x1,50, Light Eater x0,75; satt wächst der Hunger im Stehen ohne und mit Hearty Appetite nicht."
     },
     {
       "datei": "messung-2026-09-13-schlaf.txt",
@@ -3700,7 +3744,7 @@
       "datei": "messung-2026-09-13d-werte.txt",
       "test": "Code-Werte",
       "fassung": "6.25.0",
-      "inhalt": "Vierter Lauf, Mess-Mod 6.25.0: alle 78 Werte stimmen, darunter die Spielfehler metallbarrikade (ohne Trait 100 wie Bretter, mit Handy 80) und leichenstress-craft (weibliche Leiche Brave x0,5, Cowardly x2, männliche 0)."
+      "inhalt": "Vierter Lauf, Mess-Mod 6.25.0: alle 78 Werte stimmen, darunter die Code-Eigenheiten in der alten Barrikaden-Aktion (Metall ohne Trait 100 wie Bretter, mit Handy 80) und in der alten Craft-Aktion (weibliche Leiche Brave x0,5, Cowardly x2, männliche 0); beide Aktionen erreicht im Spiel von 42.20.4 niemand."
     },
     {
       "datei": "messung-2026-09-14-werte.txt",

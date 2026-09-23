@@ -14,6 +14,21 @@
 -- auch mit One Use wieder auf). More Traits wurde am 17. und 18.09.2026 aktualisiert,
 -- ohne dass sich MTModVersion aenderte; die Versionsangabe taugt nicht als Warnung.
 --
+-- Faktensweep 23.09.2026 (docs/berichte/2026-09-23-faktensweep.md): der
+-- Zusatzschaden der Kampf-Traits ist kein Prozent auf den Nahkampfschaden,
+-- sondern ein Anteil am Schadenswurf, den OnWeaponHitCharacter vor allen
+-- Multiplikatoren des Spiels uebergibt (IsoGameCharacter.java:5705 gegen
+-- processHitDamage :5758ff und hitConsequences :5817); MT.KillZombie zieht ihn
+-- direkt mit setHealth ab (MT.lua:271-276). Ein normaler Nahkampftreffer nimmt
+-- nur 1.5 x (0.3 + 0.1 x Stufe) x 0.15 dieses Wurfs, also etwa 7 bis 44 %.
+-- Eigene Zeile "Zusatzschaden je Treffer" mit Einheit "% des Schadenswurfs"
+-- und dem Vergleich als condition. Dazu: die Krit-Wuerfe der Mod sind eigene
+-- Wuerfe auf ihren Zusatzschaden, Mundane laesst dem Spiel mindestens 10 von
+-- 100, Action Hero hat keine Obergrenze, Lead Foot ist x2.4 bis x3.25, Pack
+-- Mule und Pack Mouse aendern die Basis, die Staerke vervielfacht, und rund
+-- dreissig Fussnoten waren ungenau. Einzelheiten je Zeile in der Fundstellen-
+-- Datei, Abschnitt "Faktensweep 23.09.2026".
+--
 -- Herkunft der Zahlen: Lesung des Lua-Codes der Mod am 16. und 19.09.2026,
 -- Fassung 42.20 (MTModVersion in MT.lua). Kein version-Feld: die mod.info von
 -- More Traits Definitive fuehrt kein modversion, ein Abgleich ueber
@@ -40,6 +55,33 @@
 -- * Was im Code steht, aber nie greift: die Ausdauer- und Stresswerte von
 --   Gourmand (tote Variablen), SuperImmuneFirstInfectionBonus und
 --   QuickSuperImmune (nie geschrieben), die Scrounger-Hervorhebung.
+-- * Battering Ram, Geistermodus beim Sprinten (MT_Combat.lua:486-490, :571
+--   setGhostMode): das setzt die Cheat-Flagge INVISIBLE, und PlayerCheats
+--   nimmt sie nur im Mehrspieler oder mit -debug an (isCheatAllowed). Im
+--   Einzelspieler wirkt es nicht; im Mehrspieler verlieren Zombies dich als
+--   Ziel, und andere Spieler sehen dich nicht. Das Paket beschreibt das
+--   Einzelspiel (Faktensweep 23.09.2026).
+-- * Unwavering, Verletzungen bremsen weniger (MT_Combat.lua:633-667: +30/+30/
+--   +60/+60 auf die Speed-Modifier je Koerperteil): BodyDamage speichert die
+--   Modifier nicht, das Flag in modData bleibt aber gesetzt, also ist es nach
+--   dem ersten Laden weg. Dazu eine eigene Biss-Animation (MT_State.lua:201-208),
+--   die keine Zahl hat.
+-- * Alcoholic, was am Bildtakt haengt (MT_Alcohol.lua:28-77): ab Trunkenheit 10
+--   Wut und Stress je Bild auf 0, betrunken Muedigkeit -0.01 auf 6 von 31
+--   Bildern, im Verlangen ab 36 Stunden Schmerz je Bild und Wut und Stress
+--   nach oben.
+-- * Expert Driver und Student Driver, Nebenwirkungen (MT_World.lua:202-214):
+--   Motorqualitaet x2/x0.5, Offroad-Wert x2/x0.5 auf dem Fahrzeug-Script, also
+--   fuer jedes Auto dieses Modells, Tempomat x2/x0.66, und die Lautstaerke:
+--   setEngineFeature schreibt sie durch einen Setter, der sie jedes Mal mit
+--   0.37 multipliziert (VehicleEngine.java:90-93), am Ende x0.09 und x0.56;
+--   das Auto von Student Driver wird also leiser, nicht lauter, bis
+--   updatePartStats sie vom Auspuff neu setzt. Zu verwickelt fuer eine Zeile,
+--   und keine davon zeigt das Spiel selbst als Wert.
+-- * Made of Glass, die Kette: der Bezugswert ist der zwischengespeicherte
+--   Gesamtwert (getOverallBodyHealth vor calculateOverallHealth), der eigene
+--   Zusatzschaden zaehlt beim naechsten Ereignis also wieder als Verlust. Nur
+--   aus dem Code gelesen, nicht gemessen; die Fussnote nennt es nicht.
 --
 -- Gym-Goer steht mit dem, was der Code tut (+10 % XP beim Training), nicht
 -- mit dem, was die Beschreibung verspricht ("doppelt so wirksam").
@@ -57,30 +99,52 @@ local rows = {}
 -- Fussnote: MT_Combat wuerfelt die 33 nur, wenn die Waffe zur Klasse des
 -- Traits passt. Mit gemeinsamer Fussnote fielen die Zeilen in einen Eimer,
 -- und die Uebersicht zeigte 68, 102 oder 136 "von 100" (Audit 20.09.2026).
+--
+-- Zusatzschaden (Faktensweep 23.09.2026): bis 0.13.9 standen die Pro-Traits,
+-- Tavern Brawler, Martial und Unwavering als "Nahkampfschaden +12 %" auf der
+-- Vanilla-Zeile, die Puny und Weak als echten Faktor fuehren; die Uebersicht
+-- haette 1.12 mit deren Faktor multipliziert. Tatsaechlich zieht die Mod
+-- x % des Schadenswurfs aus OnWeaponHitCharacter direkt ab, an allen
+-- Multiplikatoren des Spiels vorbei (Kopf der Datei). Darum eine eigene
+-- Zeile, kind flat (mehrere solche Treffer addieren sich wirklich), Einheit
+-- "% des Schadenswurfs", und der Vergleich mit einem normalen Treffer als
+-- condition: er erklaert den Wert und schraenkt nichts ein. Martial fehlt
+-- dort mit Absicht: ein Schubser im Stehen macht im Spiel gar keinen Schaden
+-- (IsoGameCharacter.java:5700-5702 bIgnoreDamage), der Vergleich passt nicht.
+--
+-- Die Krit-Wuerfe der Mod (MT_Combat.lua:57-61, :176-177, :288-292) setzen nie
+-- den kritischen Treffer des Spiels, sie vervielfachen nur den eigenen
+-- Zusatzschaden (x2, x5, x4). Eigene Schluessel je Faktor statt der
+-- Vanilla-Zeile "Kritische Trefferchance" von Marksman.
+
+local ROLL = "UI_TF_note_mt_rollcompare"
 
 rows["toadtraits:problade"] = {
-    { id = "mtdamage", kind = "pct",  value = 12, text = "UI_TF_eff_meleedamage",
-      note = "UI_TF_note_mt_bladeonly" },
-    { id = "mtcrit",   kind = "flat", value = 6,  text = "UI_TF_eff_critchance",
-      unit = "UI_TF_unit_of100", note = "UI_TF_note_mt_critblade" },
+    -- MT_Combat.lua:6 (nur Zombies), :22 (nicht mit Mundane), :61 damage x 1.2 x 0.1
+    { id = "mtdamage", kind = "flat", value = 12, text = "UI_TF_eff_mt_extradamage",
+      unit = "UI_TF_unit_mt_ofroll", note = "UI_TF_note_mt_bladeonly", condition = ROLL,
+      better = "up", group = "combat" },
+    { id = "mtcrit",   kind = "flat", value = 6,  text = "UI_TF_eff_mt_bonuscrit2",
+      unit = "UI_TF_unit_of100", note = "UI_TF_note_mt_critblade",
+      better = "up", group = "combat" },
     { id = "mtrepair", kind = "flat", value = 34, text = "UI_TF_eff_mt_weaponrepair",
       unit = "UI_TF_unit_of100", note = "UI_TF_note_mt_repairblade",
       better = "up", group = "combat" },
 }
 
 rows["toadtraits:problunt"] = {
-    { id = "mtdamage", kind = "pct",  value = 12, text = "UI_TF_eff_meleedamage",
-      note = "UI_TF_note_mt_bluntonly" },
-    { id = "mtcrit",   kind = "flat", value = 6,  text = "UI_TF_eff_critchance",
+    { id = "mtdamage", kind = "flat", value = 12, text = "UI_TF_eff_mt_extradamage",
+      unit = "UI_TF_unit_mt_ofroll", note = "UI_TF_note_mt_bluntonly", condition = ROLL },
+    { id = "mtcrit",   kind = "flat", value = 6,  text = "UI_TF_eff_mt_bonuscrit2",
       unit = "UI_TF_unit_of100", note = "UI_TF_note_mt_critblunt" },
     { id = "mtrepair", kind = "flat", value = 34, text = "UI_TF_eff_mt_weaponrepair",
       unit = "UI_TF_unit_of100", note = "UI_TF_note_mt_repairblunt" },
 }
 
 rows["toadtraits:prospear"] = {
-    { id = "mtdamage", kind = "pct",  value = 12, text = "UI_TF_eff_meleedamage",
-      note = "UI_TF_note_mt_spearonly" },
-    { id = "mtcrit",   kind = "flat", value = 6,  text = "UI_TF_eff_critchance",
+    { id = "mtdamage", kind = "flat", value = 12, text = "UI_TF_eff_mt_extradamage",
+      unit = "UI_TF_unit_mt_ofroll", note = "UI_TF_note_mt_spearonly", condition = ROLL },
+    { id = "mtcrit",   kind = "flat", value = 6,  text = "UI_TF_eff_mt_bonuscrit2",
       unit = "UI_TF_unit_of100", note = "UI_TF_note_mt_critspear" },
     { id = "mtrepair", kind = "flat", value = 34, text = "UI_TF_eff_mt_weaponrepair",
       unit = "UI_TF_unit_of100", note = "UI_TF_note_mt_repairspear" },
@@ -95,42 +159,65 @@ rows["toadtraits:progun"] = {
 }
 
 rows["toadtraits:tavernbrawler"] = {
-    { id = "mtdamage", kind = "pct",  value = 10, text = "UI_TF_eff_meleedamage",
-      note = "UI_TF_note_mt_improvised" },
+    -- MT_Combat.lua:95-115: damage x 1 x 0.1, Mundane schaltet es nicht ab
+    { id = "mtdamage", kind = "flat", value = 10, text = "UI_TF_eff_mt_extradamage",
+      unit = "UI_TF_unit_mt_ofroll", note = "UI_TF_note_mt_improvised", condition = ROLL },
     { id = "mtrepair", kind = "flat", value = 51, text = "UI_TF_eff_mt_weaponrepair",
       unit = "UI_TF_unit_of100", note = "UI_TF_note_mt_improvrepair" },
 }
 
+-- Action Hero (MT_Combat.lua:134-182): damage x 0.5 x Multiplikator x 0.1, der
+-- Multiplikator beginnt bei 0.1 und waechst je gesehenem Zombie um 1.0 (unter 2
+-- Feldern), 0.4 (unter 5) oder 0.2 (unter 10), ohne Obergrenze. Bis 0.13.9 eine
+-- Spanne 0.5 bis 25.5, als waere 25.5 das Hoechste; jetzt der Grundwert mit der
+-- Staffel in der Fussnote. Kein Nahkampf-Test: gilt auch fuer Schusswaffen.
 rows["toadtraits:actionhero"] = {
-    { id = "mtcrowd", kind = "range", value = { 0.5, 25.5 }, text = "UI_TF_eff_mt_crowdbonus",
-      unit = "UI_TF_unit_pct", note = "UI_TF_note_mt_crowd",
+    { id = "mtcrowd", kind = "flat", value = 0.5, text = "UI_TF_eff_mt_crowdbonus",
+      unit = "UI_TF_unit_mt_ofroll", note = "UI_TF_note_mt_crowd", condition = ROLL,
       better = "up", group = "combat" },
-    { id = "mtcrit",  kind = "flat", value = 11, text = "UI_TF_eff_critchance",
-      unit = "UI_TF_unit_of100", note = "UI_TF_note_mt_critcrowd" },
+    { id = "mtcrit",  kind = "flat", value = 11, text = "UI_TF_eff_mt_bonuscrit5",
+      unit = "UI_TF_unit_of100", note = "UI_TF_note_mt_critcrowd",
+      better = "up", group = "combat" },
 }
 
 rows["toadtraits:martial"] = {
-    { id = "mtdamage", kind = "pct",  value = 10, text = "UI_TF_eff_meleedamage",
-      note = "UI_TF_note_mt_barehands" },
-    { id = "mtcrit",   kind = "flat", value = 6,  text = "UI_TF_eff_critchance",
-      unit = "UI_TF_unit_of100", note = "UI_TF_note_mt_critbare" },
+    -- MT_Combat.lua:264-295: damage x 0.1 x Ausdauerfaktor x MartialScaling/100
+    { id = "mtdamage", kind = "flat", value = 10, text = "UI_TF_eff_mt_extradamage",
+      unit = "UI_TF_unit_mt_ofroll", note = "UI_TF_note_mt_barehands" },
+    { id = "mtcrit",   kind = "flat", value = 6,  text = "UI_TF_eff_mt_bonuscrit4",
+      unit = "UI_TF_unit_of100", note = "UI_TF_note_mt_critbare",
+      better = "up", group = "combat" },
 }
 
 rows["toadtraits:unwavering"] = {
-    { id = "mtdamage", kind = "pct", value = 125, text = "UI_TF_eff_meleedamage",
-      note = "UI_TF_note_mt_unwavering" },
+    -- MT_Combat.lua:210-246: damage x 1.25/1.5/2.0 ohne Faktor 0.1, jede Waffe
+    { id = "mtdamage", kind = "flat", value = 125, text = "UI_TF_eff_mt_extradamage",
+      unit = "UI_TF_unit_mt_ofroll", note = "UI_TF_note_mt_unwavering", condition = ROLL },
 }
 
+-- Mundane (MT_Combat.lua:184-208) setzt nur den Grundwert der Waffe auf 1. Das
+-- Spiel rechnet darauf 3 je Waffenskill-Stufe und klemmt auf 10 bis 90
+-- (IsoPlayer.java:3672, :3689), von hinten kommen 5 dazu (CombatManager.java:
+-- 2754), ein Close Kill von hinten ist immer kritisch (:2765-2768). Der Wurf
+-- faellt vor OnWeaponHitCharacter, also gilt die 1 erst ab dem zweiten
+-- Treffer. Dazu schaltet Mundane die drei Pro-Traits ganz ab (:22) und die
+-- Krit-Wuerfe von Action Hero und Martial (:176, :290).
 rows["toadtraits:mundane"] = {
     { id = "mtcritfix", kind = "info", text = "UI_TF_eff_mt_critfixed",
-      better = "down", group = "combat" },
+      note = "UI_TF_note_mt_critfixed", better = "down", group = "combat" },
+    { id = "mtproff",   kind = "info", text = "UI_TF_eff_mt_mundaneoff",
+      note = "UI_TF_note_mt_mundaneoff", better = "down", group = "combat" },
 }
 
+-- Terminator und Anti-Gun aendern MaxRange (Trefferreichweite), nicht
+-- MaxSightRange, das Eagle Eyed vergroessert (MT_Combat.lua:443, :450 gegen
+-- HandWeapon.java:813-817 und :1488-1492). Bis 0.13.9 unter "Visier-Reichweite".
 rows["toadtraits:terminator"] = {
     { id = "mtgundmg", kind = "pct",  value = 25,  text = "UI_TF_eff_mt_gundamage",
       note = "UI_TF_note_mt_terminator", better = "up", group = "combat" },
-    { id = "mtrange",  kind = "flat", value = 5,   text = "UI_TF_eff_weaponsight",
-      unit = "UI_TF_unit_tiles", note = "UI_TF_note_mt_terminator" },
+    { id = "mtrange",  kind = "flat", value = 5,   text = "UI_TF_eff_mt_gunrange",
+      unit = "UI_TF_unit_tiles", note = "UI_TF_note_mt_terminator",
+      better = "up", group = "combat" },
     { id = "mtjam",    kind = "mult", value = 0.5, text = "UI_TF_eff_mt_jamchance",
       better = "down", group = "combat" },
     { id = "mtaim",    kind = "mult", value = 2,   text = "UI_TF_eff_aimdelay" },
@@ -142,7 +229,7 @@ rows["toadtraits:terminator"] = {
 }
 
 rows["toadtraits:antigun"] = {
-    { id = "mtrange", kind = "flat", value = -5,  text = "UI_TF_eff_weaponsight",
+    { id = "mtrange", kind = "flat", value = -5,  text = "UI_TF_eff_mt_gunrange",
       unit = "UI_TF_unit_tiles", note = "UI_TF_note_mt_rangefloor" },
     { id = "mtaim",   kind = "mult", value = 0.8, text = "UI_TF_eff_aimdelay" },
     { id = "mtmood",  kind = "flat", value = 0.6, text = "UI_TF_eff_mt_unhappyaim",
@@ -152,9 +239,11 @@ rows["toadtraits:antigun"] = {
       note = "UI_TF_note_mt_aimxp" },
 }
 
+-- Battering Ram: der Geistermodus beim Sprinten fehlt mit Absicht (Kopf der
+-- Datei). Die Fussnote nennt den Zusatzschaden mit Martial (MT_Combat.lua:537-556).
 rows["toadtraits:batteringram"] = {
     { id = "mtram",    kind = "info", text = "UI_TF_eff_mt_rammed",
-      better = "up", group = "combat" },
+      note = "UI_TF_note_mt_rammartial", better = "up", group = "combat" },
     { id = "mtramend", kind = "range", value = { 1, 10 }, text = "UI_TF_eff_mt_ramendurance",
       unit = "UI_TF_unit_pct", note = "UI_TF_note_mt_ramend",
       better = "down", group = "combat" },
@@ -168,42 +257,59 @@ rows["toadtraits:gordanite"] = {
 rows["toadtraits:amputee"] = {
     { id = "mthands", kind = "info", text = "UI_TF_eff_mt_notwohand",
       better = "down", group = "combat" },
+    -- MT_Combat.lua:669-694: alle 31 Bilder RestoreToFullHealth, Bisse eingeschlossen
     { id = "mtarm",   kind = "info", text = "UI_TF_eff_mt_armheals",
-      better = "up", group = "health" },
+      note = "UI_TF_note_mt_arm", better = "up", group = "health" },
 }
 
+-- Burned: die Option Fire Aversion sperrt nur die Feuer-Aktionen
+-- (MT_BurnWard.lua:4, :101-113); das Verbot von Molotow und Flammenfallen in der
+-- Haupthand gilt immer (MT_Combat.lua:722-737, nur OnEquipPrimary). Bis 0.13.9 eine Zeile mit der
+-- Fussnote, die Option schalte alles ab.
 rows["toadtraits:burned"] = {
     { id = "mtfire",   kind = "info", text = "UI_TF_eff_mt_nofire",
       note = "UI_TF_note_mt_firetoggle", better = "down", group = "crafting" },
+    { id = "mtmolotov", kind = "info", text = "UI_TF_eff_mt_nomolotov",
+      better = "down", group = "combat" },
     { id = "mtinjury", kind = "info", text = "UI_TF_eff_mt_startinjury",
       note = "UI_TF_note_mt_inj_burned", better = "down", group = "health" },
 }
 
+-- Lead Foot (MT_World.lua:256): Trittkraft x 2 + 1. Normale Schuhe haben 1.0
+-- (Clothing.java:75), also x3; die schwersten Stiefel 2.5, also x2.4; Hausschuhe
+-- und Flip-Flops 0.8, also x3.25. Bis 0.13.9 stand x2, das bei keinem Schuh gilt.
 rows["toadtraits:leadfoot"] = {
-    { id = "mtstomp", kind = "mult", value = 2, text = "UI_TF_eff_mt_stomp",
+    { id = "mtstomp", kind = "pctrange", value = { 140, 225 }, text = "UI_TF_eff_mt_stomp",
       note = "UI_TF_note_mt_stomp", better = "up", group = "combat" },
 }
 
 -- Bewegung und Tragen ----------------------------------------------------
 
+-- Fast und Gimp als pctrange (seit dem Faktensweep 23.09.2026): so tragen
+-- beide Enden ihr Vorzeichen, und die Spanne bekommt ihre Farbe.
 rows["toadtraits:fast"] = {
-    { id = "mtmove", kind = "range", value = { 25, 75 }, text = "UI_TF_eff_mt_movedist",
-      unit = "UI_TF_unit_pct", note = "UI_TF_note_mt_movedist",
-      better = "up", group = "movement" },
+    { id = "mtmove", kind = "pctrange", value = { 25, 75 }, text = "UI_TF_eff_mt_movedist",
+      note = "UI_TF_note_mt_movedist", better = "up", group = "movement" },
 }
 
 rows["toadtraits:gimp"] = {
-    { id = "mtmove", kind = "range", value = { -67.5, -22.5 }, text = "UI_TF_eff_mt_movedist",
-      unit = "UI_TF_unit_pct", note = "UI_TF_note_mt_movedistgimp" },
+    { id = "mtmove", kind = "pctrange", value = { -67.5, -22.5 }, text = "UI_TF_eff_mt_movedist",
+      note = "UI_TF_note_mt_movedistgimp" },
 }
 
+-- Pack Mule und Pack Mouse setzen die Basis (MT_Weight.lua:7, :9, :13, :18),
+-- das Spiel multipliziert sie mit dem Staerke-Faktor 0.8 bis 2.5
+-- (BodyDamage.java:1779, IsoGameCharacter.java:4372-4405). Bis 0.13.9 stand
+-- +2 und -2 auf "Tragekapazitaet", das gilt nur bei Staerke 0 bis 2. Jetzt die
+-- wirkliche Aenderung ueber alle Staerke-Stufen: Pack Mule +2 bis +10,
+-- Pack Mouse -2 bis -5 (Staerke 5: 17 statt 12 und 9 statt 12).
 rows["toadtraits:packmule"] = {
-    { id = "mtcarry", kind = "flat", value = 2, text = "UI_TF_eff_carry",
+    { id = "mtcarry", kind = "range", value = { 2, 10 }, text = "UI_TF_eff_carry",
       note = "UI_TF_note_mt_carrymule" },
 }
 
 rows["toadtraits:packmouse"] = {
-    { id = "mtcarry", kind = "flat", value = -2, text = "UI_TF_eff_carry",
+    { id = "mtcarry", kind = "range", value = { -5, -2 }, text = "UI_TF_eff_carry",
       note = "UI_TF_note_mt_carrymouse" },
 }
 
@@ -238,10 +344,13 @@ rows["toadtraits:idealweight"] = {
       note = "UI_TF_note_mt_calories", better = "open", group = "food" },
 }
 
+-- better "open": seit dem Faktensweep 23.09.2026 faerbt die Uebersicht auch
+-- kind range. Mit "down" stuenden die Fiebertage rot, obwohl sie an die Stelle
+-- der Zombifizierung treten; gut oder schlecht ist hier keine Frage der Zahl.
 rows["toadtraits:superimmune"] = {
     { id = "mtfever", kind = "range", value = { 10, 30 }, text = "UI_TF_eff_mt_feverdays",
       unit = "UI_TF_unit_days", note = "UI_TF_note_mt_fever",
-      better = "down", group = "health" },
+      better = "open", group = "health" },
 }
 
 rows["toadtraits:immunocompromised"] = {
@@ -397,11 +506,15 @@ rows["toadtraits:fearful"] = {
       note = "UI_TF_note_mt_scream", better = "down", group = "mind" },
 }
 
+-- Alcoholic, Gift (MT_Alcohol.lua:154-191): gesetzt, nicht addiert, auf Stunden
+-- ohne Drink / 5; fruehestens bei Stunde 73 (EveryHours zaehlt erst hoch,
+-- MT_Tick.lua:127-128), also 14.6, danach alle 12 bis 23 Stunden neu. Bis
+-- 0.13.9 stand 14 (Faktensweep 23.09.2026).
 rows["toadtraits:drinker"] = {
     { id = "mtcrave",  kind = "flat", value = 7,  text = "UI_TF_eff_mt_drinkneed",
       unit = "UI_TF_unit_of100", note = "UI_TF_note_mt_drink",
       better = "down", group = "mind" },
-    { id = "mtpoison", kind = "flat", value = 14, text = "UI_TF_eff_poison",
+    { id = "mtpoison", kind = "flat", value = 14.6, text = "UI_TF_eff_poison",
       unit = "UI_TF_unit_points", note = "UI_TF_note_mt_poison" },
     { id = "mtgear",   kind = "info", text = "UI_TF_eff_mt_startgear",
       note = "UI_TF_note_mt_gear_drinker", better = "up", group = "crafting" },
@@ -468,8 +581,10 @@ rows["toadtraits:butterfingers"] = {
 
 -- Bouncer (MT_State.lua:515-551): erst ab dem dritten Zombie innerhalb von
 -- 1.75 Feldern, und nur dieser eine taumelt (setStaggerBack, dann break); die
--- Beschreibung nennt zwei und "sie". 5 von 100 je Wurf, danach 60 Bilder Pause;
--- alle drei Werte sind Sandbox-Optionen.
+-- Beschreibung nennt zwei und "sie". 6 von 101 je Bild und Zombie ab dem
+-- dritten, danach 60 Bilder Pause; alle drei Werte sind Sandbox-Optionen.
+-- Bei 60 Bildern je Sekunde trifft der Wurf fast immer binnen einer Sekunde
+-- (1 - 0.94^60 = 97 %); die Fussnote sagt darum "je Bild", ohne Zahl je Sekunde.
 rows["toadtraits:bouncer"] = {
     { id = "mtbounce", kind = "info", text = "UI_TF_eff_mt_bounce",
       note = "UI_TF_note_mt_bounce", better = "up", group = "combat" },
@@ -506,9 +621,13 @@ rows["toadtraits:wildsman"] = {
 
 -- Handwerk und Start -----------------------------------------------------
 
+-- Ingenuitive (MT_Creation.lua:246-282) laeuft ueber getAllCraftRecipes, die
+-- geschweissten Bauten stecken als CraftRecipe-Komponente in Entities und
+-- fehlen dort (ScriptManager.java:985-986 gegen :876). Fussnote seit dem
+-- Faktensweep 23.09.2026.
 rows["toadtraits:ingenuitive"] = {
     { id = "mtrecipes", kind = "info", text = "UI_TF_eff_mt_allrecipes",
-      better = "up", group = "crafting" },
+      note = "UI_TF_note_mt_allrecipes", better = "up", group = "crafting" },
 }
 
 rows["toadtraits:quickworker"] = {
@@ -545,15 +664,22 @@ rows["toadtraits:deprived"] = {
 }
 
 -- Fahrzeuge --------------------------------------------------------------
+--
+-- Die Mod setzt die Werte einmal je Auto und merkt sich das in sState, das mit
+-- dem Auto gespeichert wird (MT_World.lua:200-216). Die Motorkraft haelt,
+-- weil das Spiel sie mitspeichert. Die Bremskraft setzt updatePartStats bei
+-- jedem Verschleiss eines Teils und beim Laden neu (BaseVehicle.java:8205),
+-- die Hoechstgeschwindigkeit createPhysics beim Laden (:878). Eigene Fussnote
+-- fuer diese zwei Zeilen seit dem Faktensweep 23.09.2026.
 
 rows["toadtraits:expertdriver"] = {
     -- MT_World.lua:202: setEngineFeature(Qualitaet x2, Lautstaerke x0.25, Kraft x6).
     { id = "mtengine", kind = "mult", value = 6,    text = "UI_TF_eff_engineforce",
       note = "UI_TF_note_mt_driver" },
     { id = "mtspeed",  kind = "mult", value = 1.25, text = "UI_TF_eff_topspeed",
-      note = "UI_TF_note_mt_driver" },
+      note = "UI_TF_note_mt_driverfade" },
     { id = "mtbrake",  kind = "mult", value = 2,    text = "UI_TF_eff_mt_braking",
-      note = "UI_TF_note_mt_driver", better = "up", group = "vehicles" },
+      note = "UI_TF_note_mt_driverfade", better = "up", group = "vehicles" },
 }
 
 rows["toadtraits:poordriver"] = {
@@ -561,9 +687,9 @@ rows["toadtraits:poordriver"] = {
     { id = "mtengine", kind = "mult", value = 0.5,  text = "UI_TF_eff_engineforce",
       note = "UI_TF_note_mt_driver" },
     { id = "mtspeed",  kind = "mult", value = 0.75, text = "UI_TF_eff_topspeed",
-      note = "UI_TF_note_mt_driver" },
+      note = "UI_TF_note_mt_driverfade" },
     { id = "mtbrake",  kind = "mult", value = 0.5,  text = "UI_TF_eff_mt_braking",
-      note = "UI_TF_note_mt_driver" },
+      note = "UI_TF_note_mt_driverfade" },
 }
 
 -- better und group gelten fuer einen Schluessel, nicht fuer eine Zeile. Sie

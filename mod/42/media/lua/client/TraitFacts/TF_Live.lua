@@ -629,7 +629,19 @@ function TF.Live.professionEntries(profDef)
         add("forageRadius", "UI_TF_live_sight", "flat", forage.visionBonus,
             "UI_TF_unit_tiles", "UI_TF_live_sight_note", "forageradius")
         add("forageWeather", "UI_TF_live_weather", "pct", -(forage.weatherEffect or 0))
+        -- Die Dunkelheit des Berufs wendet das Spiel nie an: getDarknessEffect-
+        -- Reduction (forageSystem.lua:1869) schlaegt skillDefs.occupation mit dem
+        -- CharacterProfession-Objekt nach statt mit :getName(), findet also nie
+        -- etwas; die Geschwister fuer Wetter (Z. 1820), Sichtradius (Z. 1910) und
+        -- Kategorien (Z. 1711) nehmen den Namen und wirken. Darum dead mit
+        -- Fussnote, und die Uebersicht laesst die Zeile aus der Summe
+        -- (Faktensweep 23.09.2026, Spielfehler sammeln-dunkelheit-beruf).
         add("forageDarkness", "UI_TF_live_darkness", "pct", -(forage.darknessEffect or 0))
+        local last = out[#out]
+        if last and last.id == "forageDarkness" then
+            last.dead = true
+            last.note = "UI_TF_note_deadforageprof"
+        end
         if type(forage.specialisations) == "table" then
             for name, bonus in pairs(forage.specialisations) do
                 if type(bonus) == "number" and bonus ~= 0 then

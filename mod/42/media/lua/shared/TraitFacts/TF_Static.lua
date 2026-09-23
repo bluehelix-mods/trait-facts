@@ -28,9 +28,12 @@ TF.Static = TF.Static or {}
 --
 -- Messstand 10.09.2026 (tools/measure-mod, an einer blanken Figur im Spiel):
 -- 19 Werte wurden gegen die laufende Engine gemessen, alle 19 stimmen auf die
--- Nachkommastelle. Bestaetigt sind damit die neun Grapple-Faktoren, die drei
--- Nahkampfschaeden, die drei Erkennungsradien, Hoerweite x4.5, Faellgeschwin-
--- digkeit +25 %, Wetterstrafe x0.667 und der Ausdauerverlust von Asthmatic.
+-- Nachkommastelle. Bestaetigt sind damit die Rueckgabewerte der neun
+-- Grapple-Faktoren, der drei Nahkampfschaeden, der drei Erkennungsradien,
+-- Hoerweite x4.5, Faellgeschwindigkeit +25 %, Wetterstrafe x0.667 und der
+-- Ausdauerverlust von Asthmatic. Ein Getter zeigt nur, was er liefert, nicht,
+-- ob jemand den Wert liest: die neun Grapple-Faktoren sind seit dem
+-- Faktensweep 23.09.2026 dead (siehe "Grapple" weiter unten).
 -- Die Messung schaltet je Trait einzeln zu und liest den Wert; die Berichte
 -- liegen als docs/messungen/messung-2026-09-10*.txt im Repo. Der dritte Lauf hat dazu
 -- die Behaelterkapazitaet bestaetigt (Schultasche 15: Organized 19,
@@ -53,7 +56,16 @@ TF.Static = TF.Static or {}
 -- Stufe im Kletterlauf) waren gelesen, bevor das Spiel nachrechnete; mit God
 -- Mode rechnet es gar nicht nach (BodyDamage.Update kehrt vorher zurueck).
 -- Grapple: IsoGameCharacter.calculateGrappleEffectivenessFromTraits(),
--- multiplikativ auf Basis 1.0.
+-- multiplikativ auf Basis 1.0. Seit dem Faktensweep 23.09.2026 dead, alle neun
+-- Zeilen (Strong, Athletic, Speed Demon, Brave, Cowardly und die vier
+-- Gewichts-Traits): die zwei Aufrufer (IsoGameCharacter.pickUpCorpse Z.
+-- 7912-7913, SwipeStatePlayer Z. 524-530) reichen den Wert an Grappled
+-- weiter, und dort liest ihn nur die Schwelle `< 0.5f` (BaseGrappleable Z. 75,
+-- IsoDeadBody Z. 1775), danach niemand mehr. Unter 0.5 kommt keine
+-- Kombination: das Spiel haelt genau einen Gewichts-Trait
+-- (Nutrition.applyTraitFromWeight), das Minimum ist Emaciated x Cowardly =
+-- 0.54. Die Getter-Messungen vom 10.09.2026 bleiben als Rueckgabewert
+-- stehen. Spielfehler grapple-schwelle.
 
 TF.Static["strong"] = {
     -- Startstufe und Stufen-Satz: TF.Live.entries (getXpBoosts, seit 0.1.15).
@@ -62,7 +74,7 @@ TF.Static["strong"] = {
     { id = "carryweight", kind = "mult", value = 1.5,  text = "UI_TF_eff_carry",
       dead = true, note = "UI_TF_note_deadcarry" },
     { id = "grapple",     kind = "mult", value = 1.25, text = "UI_TF_eff_grapple",
-      probe = "grapple" },
+      dead = true, note = "UI_TF_note_deadgrapple" },
 }
 
 TF.Static["stout"] = {
@@ -89,29 +101,43 @@ TF.Static["feeble"] = {
 }
 
 -- Ax-pert: getChopTreeSpeed() liefert 1.0 statt 0.8, im Getter +25 % (Probe
--- chopTreeSpeed). Beim Faellen kommt davon nichts an: der Takt blieb in zwei
--- Laeufen bei 1250 ms je Hieb, mit und ohne Ax-pert, einmal mitten in der
--- Aktion umgeschaltet (Mess-Mod 6.18.0), einmal mit neuer Aktion je Phase
--- (6.19.0, 16 Abstaende; docs/messungen/messung-2026-09-13b-axt.txt). Die
--- Faell-Animation fuehrt ChopTreeSpeed zwar als m_SpeedScale, ihr Tempo
--- aendert sich trotzdem nicht. Also dead. Baeume fallen mit Ax-pert dennoch
--- schneller, ueber den Schaden je Hieb (treedamage, x 1.5).
+-- chopTreeSpeed). Die Faell-Animation (AnimSets/player/actions/chop_tree.xml)
+-- fuehrt ChopTreeSpeed als m_SpeedScale, der Clip dauert 1.0 s, der Hieb
+-- faellt bei 0.35: mit Ax-pert ein Hieb je 1.0 s, ohne je 1.25 s, x1.25.
+-- Bis 0.13.9 stand die Zeile als dead, weil der Takt am 13.09.2026 in drei
+-- Laeufen mit und ohne Ax-pert bei 1250 ms blieb. Das war ein Artefakt des
+-- Tests (Faktensweep 23.09.2026): das Spiel liest die Geschwindigkeit nur,
+-- wenn der Animationsknoten startet (AnimLayer.startLiveNodeTracks), und der
+-- Test schaltete den Trait um, waehrend der Knoten weiterlief (clear und
+-- doChopTree im selben Tick); jede Phase lief so mit dem Tempo der ersten,
+-- und die war immer ohne Ax-pert. Eine Figur, die Ax-pert schon beim Start
+-- des Faellens hat, ist nie gemessen worden. Darum jetzt Stand code; die
+-- Nachmessung mit dem Trait vor dem Start ist geplant (Mess-Mod 6.43.0).
 -- Der Baumschaden steigt auf x 1.5, nur fuer Waffen der Kategorie AXE;
 -- gemessen am 13.09.2026: 35 -> 53 je Hieb, 1.50 ueber 24 Hiebe.
 -- Axt-Schwungzeit: dieselbe 0.8 bremst ohne Ax-pert jeden Schlag mit einer
 -- Axt. calculateCombatSpeed (IsoGameCharacter:8836) multipliziert bei Aexten
 -- mit getChopTreeSpeed(), und CombatManager.pressedAttack (:2660) macht daraus
--- CombatSpeed, das Tempo der Schwung-Animation. Mit Ax-pert dauert ein Schlag
--- also x 0.8, -20 %. Gemessen am 13.09.2026 (docs/messungen/
--- messung-2026-09-13-axt.txt): Schlagdauer mit/ohne 0.788, Takt 0.792; die
--- Streuung kommt aus Rand.Next(1.1, 1.2) im selben Rechenweg. Bis 0.1.23 stand
--- hier -5 %, wirkungslos: die x 0.95 in HandWeapon.getSpeedMod hat wirklich
--- keinen Aufrufer, aber sie ist nicht der Weg, auf dem Ax-pert wirkt.
+-- CombatSpeed, das Tempo der Schwung-Animation. Die 0.8 trifft aber nur den
+-- Grundterm 0.8 x BaseSpeed; danach kommen ohne Trait-Bezug +0.03 je
+-- Waffenstufe, +0.02 je Fitness-Stufe und -0.07 je Stufe Erschoepfung und
+-- Ueberladung dazu, dann Rand.Next(1.1, 1.2) und die Klemme 0.8 bis 1.6.
+-- Laut Code also kein fester Faktor: rund -18 % bei einer neuen Figur (Axt 0,
+-- Fitness 5), -16 % bei Axt 3, -12 % bei Axt 10 und Fitness 10 (Faktensweep
+-- 23.09.2026; bis dahin stand hier "ein Schlag dauert also x 0.8").
+-- Gemessen am 13.09.2026 (docs/messungen/messung-2026-09-13-axt.txt, Axt-Skill
+-- fest auf 3, Fitness nicht mitgeschrieben): Schlagdauer mit/ohne 0.788, Takt
+-- 0.792, also -20 %; das ist mehr, als das lineare Modell bei Axt 3 erwartet,
+-- die Schlagdauer folgt 1/CombatSpeed also nicht genau. Die Zeile zeigt die
+-- gemessenen -20 % fuer eine neue Figur, die Fussnote die Spanne. Bis 0.1.23
+-- stand hier -5 %, wirkungslos: die x 0.95 in HandWeapon.getSpeedMod hat
+-- wirklich keinen Aufrufer (Spielfehler speedmod-axeman), aber sie ist nicht
+-- der Weg, auf dem Ax-pert wirkt.
 TF.Static["axeman"] = {
     { id = "chopspeed",  kind = "pct", value = 25,  text = "UI_TF_eff_chopspeed",
-      probe = "chopTreeSpeed", dead = true, note = "UI_TF_note_deadspeed" },
+      probe = "chopTreeSpeed", note = "UI_TF_note_chophit" },
     { id = "axeswing",   kind = "pct", value = -20, text = "UI_TF_eff_axeswing",
-      note = "UI_TF_note_axeonly" },
+      note = "UI_TF_note_axeswing" },
     { id = "treedamage", kind = "pct", value = 50,  text = "UI_TF_eff_treedamage",
       note = "UI_TF_note_axeonly" },
 }
@@ -135,9 +161,12 @@ TF.Static["underweight"] = {
 -- Fitness x 2 + Strength x 2 + Nimble x 2, bei einer neuen Figur 20.
 -- getClimbRopeSpeed nimmt max(Strength, Fitness) und rechnet die Trait-Stufen
 -- dazu; die Stufe bestimmt das Klettertempo.
--- IsoGameCharacter.attackFromWindowsLunge: greift ein Zombie beim Klettern
--- ueber einen Zaun, durch ein Fenster oder beim Hinauswerfen nach dem Bein,
--- entscheidet ein eigener Wurf ueber den Sturz. Basis 30 von 100, dazu
+-- IsoGameCharacter.attackFromWindowsLunge: springt ein Zombie, der gerade
+-- ueber einen Zaun oder durch ein Fenster klettert (oder aus einem geworfen
+-- wird), eine nahe Figur an und trifft, geraet sie ins Taumeln, und ein
+-- eigener Wurf entscheidet, ob sie auch stuerzt (Faktensweep 23.09.2026:
+-- klettern tut der Zombie, nicht die Figur). Nur mit der Sandbox-Option
+-- Zombie Lunge (Standard an). Basis 30 von 100, dazu
 -- Betrunken x3, Muede x3 und Schwere Last x5 je Moodle-Stufe sowie
 -- Unterkoerper-Schmerz ueber 20 geteilt durch 10; abgezogen werden Fitness x2
 -- und Nimble x1, das Ergebnis nie unter 5. Das ist ein anderer Wurf als die
@@ -152,7 +181,7 @@ TF.Static["veryunderweight"] = {
     { id = "meleedamage",  kind = "pct",  value = -40,  text = "UI_TF_eff_meleedamage",
       probe = "damageDealt" },
     { id = "grapple",      kind = "mult", value = 0.8,  text = "UI_TF_eff_grapple",
-      probe = "grapple" },
+      dead = true, note = "UI_TF_note_deadgrapple" },
     { id = "trip",         kind = "flat", value = 30,   text = "UI_TF_eff_trip",
       unit = "UI_TF_unit_of100", note = "UI_TF_note_tripbase",
       hint = "UI_TF_note_enginebug" },
@@ -171,7 +200,7 @@ TF.Static["emaciated"] = {
     { id = "meleedamage",  kind = "pct",  value = -60,  text = "UI_TF_eff_meleedamage",
       probe = "damageDealt" },
     { id = "grapple",      kind = "mult", value = 0.6,  text = "UI_TF_eff_grapple",
-      probe = "grapple" },
+      dead = true, note = "UI_TF_note_deadgrapple" },
     { id = "falldamage",   kind = "pct",  value = 40,   text = "UI_TF_eff_falldamage" },
     { id = "fallinjury",   kind = "flat", value = 20,   text = "UI_TF_eff_fallinjury",
       unit = "UI_TF_unit_of100", note = "UI_TF_note_fallinjurybase" },
@@ -180,7 +209,7 @@ TF.Static["emaciated"] = {
 
 TF.Static["overweight"] = {
     { id = "grapple",       kind = "mult", value = 1.1,  text = "UI_TF_eff_grapple",
-      probe = "grapple" },
+      dead = true, note = "UI_TF_note_deadgrapple" },
     -- Sprint-Faktor 0.99, wirkungslos wie bei den anderen vier (Kommentar
     -- "Zum dead an sprintspeed"). Fehlte bis 0.1.7 (Bugjagd 10.09.2026, Fund 12).
     { id = "sprintspeed",   kind = "pct",  value = -1,   text = "UI_TF_eff_sprintspeed",
@@ -220,7 +249,7 @@ TF.Static["overweight"] = {
 
 TF.Static["obese"] = {
     { id = "grapple",       kind = "mult", value = 1.05, text = "UI_TF_eff_grapple",
-      probe = "grapple" },
+      dead = true, note = "UI_TF_note_deadgrapple" },
     { id = "sprintspeed",   kind = "pct",  value = -15,  text = "UI_TF_eff_sprintspeed",
       dead = true, note = "UI_TF_note_deadspeed" },
     { id = "climb",         kind = "flat", value = -25,  text = "UI_TF_eff_climb",
@@ -245,18 +274,25 @@ TF.Static["obese"] = {
 -- Der Kratzer-Wurf laeuft ueber Rand.NextBool(n) mit Wahrscheinlichkeit 1/n:
 -- 1/6 normal, mit Thick-skinned 1/13, mit Thin-skinned 1/3.
 -- BodyDamage.AddRandomDamageFromZombie: der Faktor trifft die Zwischensumme
--- 15 + Waffenskill - 10 je weiterem Angreifer, vor den Abzuegen fuer Angriffe
--- von der Seite (-15) und von hinten (-30) und mit Abrunden. Von vorn gegen
--- einen Zombie also rund 16 % auf 20 %; von der Seite oder gegen drei liegt
--- die Summe schon bei 0, dann aendert der Trait nichts (Audit 12.09.2026).
+-- 15 + getMeleeCombatMod - 10 je weiterem Angreifer (unbewaffnet 15 - 5 = 10),
+-- mit Abrunden, vor den Abzuegen fuer Angriffe von hinten (-15) und von der
+-- Seite (-30; Rear Vulnerability Hoch, der Standard). Verletzt wird bei
+-- Rand.Next(100) > Summe, ohne Verletzung bleibt man also mit (Summe + 1) %.
+-- Von vorn gegen einen Zombie unbewaffnet 10 -> 13 (Thick) bzw. 7 (Thin),
+-- 11 % -> 14 % bzw. 8 %, je +27 % und -27 %; mit Waffenskill (Summe 13 bis
+-- 22) +21 bis +29 % und -21 bis -27 %. Die frueheren +30 / -23 waren die
+-- Faktoren x1.3 und /1.3 auf den inneren Wert (Faktensweep 23.09.2026; bis
+-- dahin stand hier auch Seite und hinten vertauscht und "16 % auf 20 %", das
+-- ist Summe 15). Von der Seite oder gegen drei liegt die Summe schon bei 0,
+-- dann aendert der Trait nichts; von hinten nur mit geuebter Waffe.
 TF.Static["thickskinned"] = {
-    { id = "zombieinjury", kind = "pct", value = 30,  text = "UI_TF_eff_zombieinjury",
+    { id = "zombieinjury", kind = "pct", value = 27,  text = "UI_TF_eff_zombieinjury",
       note = "UI_TF_note_zombieinjury" },
     { id = "treescratch",  kind = "pct", value = -54, text = "UI_TF_eff_treescratch" },
 }
 
 TF.Static["thinskinned"] = {
-    { id = "zombieinjury", kind = "pct", value = -23,  text = "UI_TF_eff_zombieinjury",
+    { id = "zombieinjury", kind = "pct", value = -27,  text = "UI_TF_eff_zombieinjury",
       note = "UI_TF_note_zombieinjury" },
     { id = "treescratch",  kind = "pct", value = 100,  text = "UI_TF_eff_treescratch" },
 }
@@ -272,7 +308,9 @@ TF.Static["thinskinned"] = {
 -- Der Bruchfaktor sitzt in BodyPart.generateFractureNew, und diese Methode
 -- rufen nur die beiden Sturzstellen in IsoGameCharacter. Fahrzeugunfaelle
 -- (IsoPlayer, BaseVehicle) rufen generateFracture direkt, ohne Trait-Abfrage;
--- dort wirkt der Trait nur indirekt ueber den kleineren Unfallschaden.
+-- dort wirkt der Trait nur ueber den Unfallschaden, Fast Healer x0.8 (kleiner),
+-- Slow Healer x1.2 (groesser). Die Fussnote sagt beides; bis 0.13.9 nannte
+-- sie nur den kleineren Schaden, auch bei Slow Healer (Faktensweep 23.09.2026).
 TF.Static["fasthealer"] = {
     { id = "fracture",  kind = "mult", value = 0.6, text = "UI_TF_eff_fracture",
       note = "UI_TF_note_fracturefall" },
@@ -359,18 +397,27 @@ TF.Static["marksman"] = {
       note = "UI_TF_note_aimsteady" },
 }
 
+-- aimdelay: resetAimingDelay setzt den Startwert beim Anheben der Waffe auf
+-- aimingTime x0.8 (Dextrous) bzw. x1.2 (All Thumbs). Was jeder Schuss danach
+-- dazugibt (CombatManager Z. 3355-3358), ist fuer alle gleich und auf die volle
+-- aimingTime gedeckelt, ohne Trait-Faktor. Darum die Fussnote (Faktensweep
+-- 23.09.2026).
 TF.Static["dextrous"] = {
     { id = "transfer", kind = "mult", value = 0.5,  text = "UI_TF_eff_transfer" },
-    { id = "aimdelay", kind = "mult", value = 0.8,  text = "UI_TF_eff_aimdelay" },
+    { id = "aimdelay", kind = "mult", value = 0.8,  text = "UI_TF_eff_aimdelay",
+      note = "UI_TF_note_aimdelay" },
     -- HandWeapon.checkUnJam: Fehlchance 8 - 0.5 x Aiming + 3 je Moodle-Stufe
     -- (Panik, Stress, Betrunken), Dextrous -2, All Thumbs +2, mindestens 1;
     -- Loesechance = 100 % minus das, minus Waffenschaden. Bei Aiming 0 und
     -- ruhig also 92 %, mit Dextrous 94 %, mit All Thumbs 90 %.
     { id = "jam",      kind = "fromto", value = { 92, 94 }, text = "UI_TF_eff_jam",
       note = "UI_TF_note_aiming0" },
-    -- RecipeCodeOnCreate.openCan: Zaehler 3 (+1 bei Cooking 0), Dextrous -2,
-    -- Clumsy +2, Wurf Rand.Next(20) <= Zaehler. Ab Cooking 1 also 20 %,
-    -- mit Dextrous 10 %, mit Clumsy 30 %.
+    -- RecipeCodeOnCreate.openCan: Zaehler 3, Dextrous -2, Clumsy +2, dann
+    -- eine else-if-Kette: Short Blade ueber 5 -2, ueber 3 -1, sonst Cooking 0
+    -- +1; unter 1 wird der Zaehler 1 und der Wurf Rand.Next(30). Wurf
+    -- Rand.Next(20) <= Zaehler. Ab Cooking 1 und bis Short Blade 3 also 20 %,
+    -- mit Dextrous 10 %, mit Clumsy 30 % (Faktensweep 23.09.2026: die
+    -- Short-Blade-Bedingung fehlte in der Fussnote).
     { id = "canwound", kind = "fromto", value = { 20, 10 }, text = "UI_TF_eff_canwound",
       note = "UI_TF_note_cooking1" },
     { id = "climb",    kind = "flat", value = 4,    text = "UI_TF_eff_climb",
@@ -393,7 +440,8 @@ TF.Static["allthumbs"] = {
     -- aendert hier nichts. Darum seit 0.1.29 dead.
     { id = "craftwalk", kind = "info", text = "UI_TF_eff_craftwalk",
       dead = true, note = "UI_TF_note_deadcraftwalk" },
-    { id = "aimdelay", kind = "mult", value = 1.2,  text = "UI_TF_eff_aimdelay" },
+    { id = "aimdelay", kind = "mult", value = 1.2,  text = "UI_TF_eff_aimdelay",
+      note = "UI_TF_note_aimdelay" },
     { id = "jam",      kind = "fromto", value = { 92, 90 }, text = "UI_TF_eff_jam",
       note = "UI_TF_note_aiming0" },
     { id = "climb",    kind = "flat", value = -4,   text = "UI_TF_eff_climb",
@@ -426,7 +474,7 @@ TF.Static["brave"] = {
       note = "UI_TF_note_panicseen" },
     { id = "corpsestress", kind = "mult", value = 0.5, text = "UI_TF_eff_corpsestress" },
     { id = "grapple", kind = "mult", value = 1.1, text = "UI_TF_eff_grapple",
-      probe = "grapple" },
+      dead = true, note = "UI_TF_note_deadgrapple" },
 }
 
 TF.Static["cowardly"] = {
@@ -434,7 +482,7 @@ TF.Static["cowardly"] = {
       note = "UI_TF_note_panicseen" },
     { id = "corpsestress", kind = "mult", value = 2.0, text = "UI_TF_eff_corpsestress" },
     { id = "grapple", kind = "mult", value = 0.9, text = "UI_TF_eff_grapple",
-      probe = "grapple" },
+      dead = true, note = "UI_TF_note_deadgrapple" },
 }
 
 TF.Static["desensitized"] = {
@@ -471,10 +519,14 @@ TF.Static["hemophobic"] = {
       note = "UI_TF_note_bloodstress" },
     -- Eine zweite Stelle, am 13.09.2026 bei der Fundstellen-Suche fuer die
     -- Befund-Datenbank gefunden: beim Umlagern
-    -- (client/TimedActions/ISInventoryTransferAction.lua:139-144) und beim
-    -- Craften (shared/TimedActions/ISCraftAction.lua:28-32) gibt jeder
+    -- (client/TimedActions/ISInventoryTransferAction.lua:139-144) gibt jeder
     -- Aktionstick getBloodLevelAdjustedLow() x Multiplier / 10000 Stress,
     -- solange der Gegenstand Blut traegt. Unabhaengig vom Blut an der Figur.
+    -- Die gleiche Abfrage in shared/TimedActions/ISCraftAction.lua:28-32 ist
+    -- in 42.20.4 unerreichbar: ISCraftAction braucht ein Rezept alter Art, und
+    -- davon gibt es keines mehr; ISHandcraftAction fragt HEMOPHOBIC nicht ab
+    -- (Spielfehler leichenstress-craft). Darum sagt die Zeile seit dem
+    -- Faktensweep 23.09.2026 nur noch "umlagern", nicht mehr "craften".
     { id = "blooditems", kind = "info", text = "UI_TF_eff_blooditems",
       note = "UI_TF_note_blooditems" },
 }
@@ -483,6 +535,9 @@ TF.Static["hemophobic"] = {
 -- getThirtyFPSMultiplier, also je echter Sekunde x 30 unabhaengig von der
 -- Bildrate: 15 Punkte je Sekunde im Freien, bis 18 in winzigen Raeumen. Zum
 -- Vergleich baut BodyDamage.ReducePanic 0.06 x 30 = 1.8 je Sekunde ab.
+-- "Im Freien" heisst: das Feld liegt in keinem Raum (updateInternal Z. 8207,
+-- !isInARoom), ohne Abfrage auf ein Fahrzeug; im Auto draussen gilt es also
+-- auch (Faktensweep 23.09.2026, darum "auch im Fahrzeug" in der Zeile).
 TF.Static["agoraphobic"] = {
     { id = "panicout", kind = "flat", value = 15, text = "UI_TF_eff_panicout",
       unit = "UI_TF_unit_panicsec", note = "UI_TF_note_panicdecay" },
@@ -544,6 +599,14 @@ TF.Static["adrenalinejunkie"] = {
 -- Krankheit, Nahrung, Gift (Bericht "Krankheit, Nahrung, Gift")
 -- ---------------------------------------------------------------------------
 
+-- poison: BodyDamage.JustAteFood halbiert (Iron Gut) bzw. verdoppelt (Weak
+-- Stomach) nur das eigene Gift eines Essens (getPoisonPower > 0). Vom Regen
+-- verseuchtes Essen (isTainted, Z. 549-558) gibt fest 20 x Portion Gift, ohne
+-- Trait-Abfrage; Erhitzen nimmt die Verseuchung weg (Food Z. 372-373,
+-- 474-475). Bei Getraenken zaehlt das Bleichmittel nur, wenn es den groessten
+-- Anteil hat (IsoGameCharacter.DrinkFluid Z. 5480: getPrimaryFluid); mit
+-- mehr sauberem Wasser halbiert Iron Gut auch das Bleichgift. Beides seit
+-- dem Faktensweep 23.09.2026 in den Fussnoten.
 TF.Static["irongut"] = {
     { id = "poison",   kind = "mult", value = 0.5, text = "UI_TF_eff_poison",
       note = "UI_TF_note_notbleach" },
@@ -567,9 +630,17 @@ TF.Static["irongut"] = {
 }
 
 TF.Static["weakstomach"] = {
-    { id = "poison",   kind = "mult", value = 2.0, text = "UI_TF_eff_poison" },
+    { id = "poison",   kind = "mult", value = 2.0, text = "UI_TF_eff_poison",
+      note = "UI_TF_note_nottainted" },
+    -- Die verdoppelte Chance geht in Rand.Next(100) < Chance und ist damit bei
+    -- 100 % am Ende. Die Grundchance ist (Tage ueber verdorben, 1 bis 5) /
+    -- (DaysTotallyRotten - DaysFresh) x 100; bei den meisten Speisen liegt die
+    -- Spanne bei 2 bis 4 Tagen, dort ist die Grundchance ein bis zwei Tage nach
+    -- dem Verderben schon 50 % und mehr, und Weak Stomach aendert nichts mehr.
+    -- Eigene Fussnote, Iron Gut behaelt spoiledonly: dessen x0.5 gilt immer
+    -- (Faktensweep 23.09.2026).
     { id = "foodsick", kind = "mult", value = 2.0, text = "UI_TF_eff_foodsick",
-      note = "UI_TF_note_spoiledonly" },
+      note = "UI_TF_note_spoiledcap" },
     -- IsoGameCharacter.DrinkFluid(FluidContainer, float, boolean), Z. 5507-5509:
     -- poisonModified = isTaintedWater ? *1.2f : *2.0f. Der Faktor 0.75 davor
     -- gilt fuer jeden Charakter und faellt beim Vergleich mit/ohne Trait
@@ -686,10 +757,13 @@ TF.Static["weightloss"] = {
 -- die Aufruferliste braucht und nicht nur die Fundstelle (Lehre aus Handys
 -- Bauwerks-Gesundheit). Drei Sprintlaeufe an einer lebenden Figur, je Phase
 -- 100 sprintende Ticks, Trait an und aus im Wechsel, Ausdauer gehalten:
--- Athletic 0.9966 und 0.9940, Unfit 1.0073 und 0.9878; nur die ruckelfreien
--- Phasen gepaart 1.0007 und 0.9993. Ein Faktor 1.2 waere um das
--- Zweihundertfache der Streuung danebengelegen. Berichte in
--- docs/messungen/messung-2026-09-10{d,e,f}-sprint.txt.
+-- Athletic 1.0495, 0.9966 und 0.9940, Unfit 1.0112, 1.0082 und 0.9878 (Lauf d
+-- ohne Aufwaermen und ohne Streuungsschaetzung; bis zum Faktensweep 23.09.2026
+-- stand hier 1.0073 statt 1.0082 und ein gepaartes 1.0007 / 0.9993, das kein
+-- Bericht enthaelt). Massgeblich ist der Lauf vom 13.09.2026
+-- (docs/messungen/messung-2026-09-13-sprint.txt): Athletic 1.0012, Unfit
+-- 0.9988. Ein Faktor 1.2 laege weit ausserhalb jeder dieser Streuungen.
+-- Berichte in docs/messungen/messung-2026-09-10{d,e,f}-sprint.txt.
 TF.Static["athletic"] = {
     -- Startstufe und Stufen-Satz: TF.Live.entries (getXpBoosts, seit 0.1.15).
     { id = "sprintspeed",  kind = "pct",  value = 20,  text = "UI_TF_eff_sprintspeed",
@@ -697,7 +771,7 @@ TF.Static["athletic"] = {
     { id = "enduranceloss", kind = "mult", value = 0.57, text = "UI_TF_eff_enduranceloss",
       note = "UI_TF_note_enddelta", case = "UI_TF_note_enddelta" },
     { id = "grapple",      kind = "mult", value = 1.25, text = "UI_TF_eff_grapple",
-      probe = "grapple" },
+      dead = true, note = "UI_TF_note_deadgrapple" },
 }
 
 TF.Static["unfit"] = {
@@ -731,11 +805,15 @@ TF.Static["jogger"] = {
 
 -- Registry-Name ASTHMATIC, im Spiel "Short of Breath". 1.0 statt 0.7 beim
 -- Laufen und Tragen sind +42,9 %; beim Schwingen sind es getrennte +20 %.
+-- Die +20 % treffen nur die Kosten je Schwung (CombatManager.processWeapon-
+-- Endurance, Z. 1039-1040, Basis 0.18); was ein Treffer zusaetzlich kostet
+-- (applyMeleeEnduranceLoss, Z. 3217-3242, Basis 0.28), kennt keinen Trait.
+-- Ein voller Treffer kostet also insgesamt rund +8 % (Faktensweep 23.09.2026).
 TF.Static["asthmatic"] = {
     { id = "enduranceloss", kind = "pct", value = 43, text = "UI_TF_eff_enduranceloss",
       note = "UI_TF_note_enddelta", case = "UI_TF_note_enddelta" },
     { id = "swingendurance", kind = "pct", value = 20, text = "UI_TF_eff_swingendurance",
-      probe = "enduranceLoss" },
+      probe = "enduranceLoss", note = "UI_TF_note_swingonly" },
 }
 
 -- CarController.control_ForwardNew, Z. 669-673: die Motorkraft faellt erst
@@ -777,7 +855,7 @@ TF.Static["asthmatic"] = {
 -- SportsCar und CarRacecar (120), die Polizeiwagen (100).
 TF.Static["speeddemon"] = {
     { id = "grapple",  kind = "mult", value = 1.15, text = "UI_TF_eff_grapple",
-      probe = "grapple" },
+      dead = true, note = "UI_TF_note_deadgrapple" },
     { id = "topspeed", kind = "pct",  value = 11,   text = "UI_TF_eff_topspeed",
       note = "UI_TF_note_topspeedcap" },
     -- Der addEngineSpeed-Term rechnet mit 0.06 statt 0.02, also Faktor 3 auf
@@ -801,9 +879,12 @@ TF.Static["speeddemon"] = {
     --
     --   engineForce = -enginePower * (0.75 + Drehzahl / 24000)
     --
-    -- Aus dreifacher Drehzahl werden so 1.076 bis 1.124 an Kraft. Gerechnet
+    -- Aus dreifacher Drehzahl werden so 1.076 bis 1.124 an Kraft (SportsCar,
+    -- bis 8 km/h) und 1.112 bis 1.181 (PickUpVan, bis 20 km/h). Gerechnet
     -- und gemessen weichen um hoechstens 0,25 % voneinander ab. In der Zeit
     -- sind es 11 statt 12 Ticks, also rund 8 % schneller rueckwaerts anfahren.
+    -- Die Fussnote nennt darum 7.6 bis 18 % (bis zum Faktensweep 23.09.2026
+    -- 10 bis 18 %, die 10 hatte keine Quelle).
     --
     -- Eine "mal 3" ohne diese Fussnote laese sich als dreifache
     -- Beschleunigung, und das waere die vierte falsche Fahrzeugzahl gewesen.
@@ -962,16 +1043,29 @@ TF.Static["nightowl"] = {
 --                       die Pruefung gar nicht erst (`&& !hasTrait(DEAF)`),
 --                       die Basis faellt also ersatzlos weg - im Ergebnis -2.
 --
--- noiseDistance rechnen calculateVisibilityData und IsoGridSquare.CalcVisibility,
--- und beide ruft nur der ServerLOS-Thread, der allein auf einem Multiplayer-
--- Server laeuft. Im Einzelspiel und auf dem Client sieht die Figur ueber
--- LightingJNI.playerSet, wo nur Kegel und getDetectionRange ankommen. Darum
--- sagt die Fussnote "nur auf Multiplayer-Servern" (Audit 12.09.2026).
+-- noiseDistance rechnet calculateVisibilityData, und gelesen wird er an genau
+-- einer Stelle, in IsoGridSquare.CalcVisibility (Z. 7729-7735). Beide ruft nur
+-- der ServerLOS-Thread (ServerLOS Z. 271, 277), den allein GameServer.main
+-- startet (Z. 831, dort server = true in Z. 408). Und in CalcVisibility steht
+-- die Pruefung samt Deaf-Abfrage in `if (!GameServer.server)`: auf dem Server,
+-- der sie als einziger ausfuehrt, faellt sie weg. Im Einzelspiel und auf dem
+-- Client sieht die Figur ueber LightingJNI.playerSet (updatePlayer Z.
+-- 481-484); von den Hoerradien kommt dort nur getDetectionRange an, dazu
+-- Kegel, Muedigkeit und das Short-Sighted-Flag. Der Radius wird also
+-- berechnet und nie gelesen, in keiner Spielart. Seit dem Faktensweep
+-- 23.09.2026 dead; bis dahin sagte die Fussnote "nur auf Multiplayer-Servern"
+-- (Audit 12.09.2026), und das hatte die Server-Abfrage uebersehen.
+-- Spielfehler noisedistance-mp.
 TF.Static["deaf"] = {
     { id = "detection", kind = "flat", value = -1.5, text = "UI_TF_eff_detection",
       unit = "UI_TF_unit_tiles", note = "UI_TF_note_detectionbase" },
     { id = "noise",     kind = "flat", value = -2.0, text = "UI_TF_eff_noiseradius",
-      unit = "UI_TF_unit_tiles", note = "UI_TF_note_noisedeaf" },
+      unit = "UI_TF_unit_tiles", dead = true, note = "UI_TF_note_noisedeaf" },
+    -- Gemessen ist der Stress: Weltgeraeusche geben einer tauben Figur keinen
+    -- (IsoGameCharacter.updateStress Z. 9209). Nicht hoeren, Wecker und
+    -- Radiotext stehen im Code (Radio, WaveSignalDevice, AlarmClock); den Ton
+    -- selbst stellt FMOD ueber ParameterDeaf stumm, das ist aus Java nicht
+    -- lesbar. Text seit dem Faktensweep 23.09.2026 mit dem Stress vorn.
     { id = "sounds",    kind = "info", text = "UI_TF_eff_nosounds" },
 }
 
@@ -979,18 +1073,22 @@ TF.Static["keenhearing"] = {
     { id = "detection", kind = "flat", value = 3.0, text = "UI_TF_eff_detection",
       unit = "UI_TF_unit_tiles", note = "UI_TF_note_detectionbase" },
     { id = "noise",     kind = "flat", value = 3.0, text = "UI_TF_eff_noiseradius",
-      unit = "UI_TF_unit_tiles", note = "UI_TF_note_noisebase" },
+      unit = "UI_TF_unit_tiles", dead = true, note = "UI_TF_note_noisebase" },
 }
 
 TF.Static["hardofhearing"] = {
     { id = "detection", kind = "flat", value = -1.0, text = "UI_TF_eff_detection",
       unit = "UI_TF_unit_tiles", note = "UI_TF_note_detectionbase" },
     { id = "noise",     kind = "flat", value = -1.0, text = "UI_TF_eff_noiseradius",
-      unit = "UI_TF_unit_tiles", note = "UI_TF_note_noisebase" },
-    -- getHearDistanceModifier lesen nur AlarmClock, AlarmClockClothing und
-    -- zwei FMOD-Parameter: ein Wecker weckt erst aus 1/4.5 seiner Reichweite,
-    -- und Geraeusche klingen gedaempft. Ein allgemeiner Hoerradius haengt
-    -- nicht daran (Audit 12.09.2026).
+      unit = "UI_TF_unit_tiles", dead = true, note = "UI_TF_note_noisebase" },
+    -- getHearDistanceModifier (x4.5) lesen im Einzelspiel nur AlarmClock
+    -- (Z. 181) und AlarmClockClothing (Z. 191): ein Wecker weckt erst aus
+    -- 1/4.5 seiner Reichweite. FMODParameterUtils.getClosestListener und
+    -- ParameterFirearmInside kehren bei einem einzigen Spieler vorher zurueck
+    -- und waehlen damit nur bei mehreren lokalen Spielern den Hoerer, ohne die
+    -- Lautstaerke zu aendern. Den gedaempften Klang setzt ParameterHardOfHearing,
+    -- nur an oder aus, ohne die 4.5. Bis zum Faktensweep 23.09.2026 hiess die
+    -- Zeile "Geraeusche wirken weiter weg", die Fussnote nannte die Daempfung.
     { id = "hearing",   kind = "mult", value = 4.5,  text = "UI_TF_eff_hearing",
       probe = "hearDistance", note = "UI_TF_note_hearingalarm" },
 }
@@ -1007,7 +1105,10 @@ TF.Static["hardofhearing"] = {
 --
 -- Die +0.2 in calculateVisibilityData, die bis 0.1.22 hier als
 -- tageszeitunabhaengig stand, rechnet nur der ServerLOS-Thread eines
--- Multiplayer-Servers (Audit 12.09.2026).
+-- Multiplayer-Servers (Audit 12.09.2026); dort wirkt sie, denn der Kegel wird
+-- in CalcVisibility ausserhalb der Server-Abfrage gelesen (Z. 7737). Trait
+-- Facts zeigt sie nicht; mit dem Hoerradius (Spielfehler noisedistance-mp)
+-- hat die +36-Grad-Zeile nichts zu tun (Faktensweep 23.09.2026).
 TF.Static["eagleeyed"] = {
     { id = "lightcone",   kind = "flat", value = 36, unit = "UI_TF_sym_deg",
       text = "UI_TF_eff_lightcone", note = "UI_TF_note_conedeg" },
@@ -1095,6 +1196,13 @@ TF.Static["handy"] = {
     -- (Waende 200), Handy zieht fest 50 ab. -25 % gilt fuer Waende auf jeder
     -- Carpentry-Stufe; kurze Rezepte verlieren anteilig mehr, lange weniger
     -- (Audit 12.09.2026). 200 - 5 x Carpentry gilt nur noch in den Altklassen.
+    -- ISBuildAction.lua Z. 268-270 zieht ohne Untergrenze ab: Rezepte mit Zeit
+    -- 50 (etwa die Haelfte des Baumenues, alle Moebel) landen bei 0, und
+    -- BaseAction.finished ist dann im ersten Tick wahr, der Bau geht sofort.
+    -- Nur aus dem Code gelesen, nicht im Spiel nachgebaut. Auf einem
+    -- MP-Server rechnet der Server die Dauer selbst (BuildAction.getDuration:
+    -- 200 - 5 x Carpentry, Handy -50), dort -25 bis -33 % (Faktensweep
+    -- 23.09.2026).
     { id = "buildtime",   kind = "pct",  value = -25, text = "UI_TF_eff_buildtime",
       note = "UI_TF_note_buildflat" },
     -- buildUtil.getWoodHealth: Carpentry x 50, mit Handy + 100. Gelesen nur
