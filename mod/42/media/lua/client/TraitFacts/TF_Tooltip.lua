@@ -60,6 +60,11 @@ local COLOR_NOTE   = " <RGB:0.55,0.55,0.55> "
 -- Name und Fussnote stehen in derselben Spalte hintereinander, und ein
 -- Helligkeitsunterschied allein trennt sie zu schwach.
 local COLOR_SOURCE = " <RGB:0.72,0.65,0.86> "
+-- Der Trenner " U+00B7 " zwischen den Teilen einer Fussnote (Entscheidung
+-- 24.09.2026, docs/fussnoten-regeln.md): das Blau der Themen-Ueberschriften
+-- der Uebersicht (TF_Panel, COLOR_HEADER), damit er aus dem Grau der
+-- Fussnote heraussticht. In einer wirkungslosen Zeile bleibt er grau.
+local COLOR_SEP    = " <RGB:0.45,0.72,1.0> "
 
 -- Die drei Farben, die etwas bewerten, je Farbschema (Mod-Option seit 0.4.0,
 -- TF_Options). Rich-Text-Tag und dieselbe Farbe als Zahlen.
@@ -100,7 +105,7 @@ local COLOR_BAD   = SCHEMES.standard.rich.bad
 -- dem Farbnamen "tag:XYZ" (TF.fmt.tagKey, TF.fmt.paint; Entscheidung
 -- 14.09.2026, Mockup trait-auswahl-mod-farben). TF.fmt.columns beginnt ein
 -- Segment bei jedem Namenswechsel; mit eigenem Namen steht das Kuerzel immer
--- als eigenes Segment, auch direkt vor einer Fussnote ("DEMO; melee only"),
+-- als eigenes Segment, auch direkt vor einer Fussnote ("DEMO U+00B7 melee only"),
 -- und TF.Panel.tagBoxes findet es (Abschlussreview 14.09.2026, Fund 1).
 -- `tag` bleibt das Grau fuer ein Kuerzel ohne Farbe (nie belegt).
 --
@@ -109,7 +114,8 @@ local COLOR_BAD   = SCHEMES.standard.rich.bad
 -- fuer etwas, das fehlt, und soll nicht als Inhalt gelesen werden.
 TF.fmt.palette = { label = COLOR_LABEL, value = COLOR_VALUE, note = COLOR_NOTE,
                    good = COLOR_GOOD, bad = COLOR_BAD, stale = COLOR_STALE,
-                   source = COLOR_SOURCE, tag = COLOR_NOTE, ghost = " <RGB:0.40,0.40,0.40> " }
+                   source = COLOR_SOURCE, tag = COLOR_NOTE, ghost = " <RGB:0.40,0.40,0.40> ",
+                   sep = COLOR_SEP }
 
 -- Dieselben Farben als Zahlen, fuer Stellen, die selbst zeichnen statt Rich
 -- Text zu setzen: die Startskill-Liste (TF_XpColumns). `off` ist der graue
@@ -118,7 +124,8 @@ TF.fmt.rgb = { label = { 1.0, 1.0, 1.0 }, value = { 0.85, 0.85, 0.85 },
                note = { 0.55, 0.55, 0.55 }, tag = { 0.55, 0.55, 0.55 },
                source = { 0.72, 0.65, 0.86 },
                good = { 0.45, 0.72, 0.48 }, bad = { 0.82, 0.50, 0.47 },
-               off = { 0.42, 0.42, 0.42 }, stale = { 1.0, 0.75, 0.3 }, ghost = { 0.40, 0.40, 0.40 } }
+               off = { 0.42, 0.42, 0.42 }, stale = { 1.0, 0.75, 0.3 }, ghost = { 0.40, 0.40, 0.40 },
+               sep = { 0.45, 0.72, 1.0 } }
 
 --- Das Farbschema, das gerade gilt (TF.fmt.useScheme).
 TF.fmt.scheme = "standard"
@@ -303,10 +310,15 @@ local function row(spalten, font, zeile)
                            { text = zeile.tag, color = TF.fmt.tagKey(zeile.tag) } },
                   x = spalten.label.x, width = spalten.label.width }
     end
-    local note = { text = zeile.note or "", color = zeile.noteColor or "note",
+    -- Die Trenner " U+00B7 " der Fussnote: blau in einer Zeile, die wirkt, in
+    -- einer wirkungslosen im Grau der Zeile (false = Farbe des Laufs), nie
+    -- heller als sie (Entscheidung 24.09.2026).
+    local sepColor = "sep"
+    if zeile.dead then sepColor = false end
+    local note = { text = zeile.note or "", color = zeile.noteColor or "note", sepColor = sepColor,
                    x = spalten.note.x, width = spalten.note.width }
     if zeile.noteRuns then
-        note = { runs = zeile.noteRuns, x = spalten.note.x, width = spalten.note.width }
+        note = { runs = zeile.noteRuns, sepColor = sepColor, x = spalten.note.x, width = spalten.note.width }
     end
     return TF.fmt.columns({
         { text = zeile.vorn, color = zeile.farbe, align = "right",
@@ -510,11 +522,14 @@ local function build(traitDef, key, font, view)
                     -- "moeglicherweise veraltet", Fassung und installierte
                     -- Fassung stehen einmal oben (Layout A+). Die eigene
                     -- Fussnote der Zeile bleibt leise dahinter stehen, wie im
-                    -- Mockup ("may be outdated; example value").
+                    -- Mockup ("may be outdated; example value"). Seit
+                    -- 24.09.2026 mit dem Trenner " U+00B7 " statt ";": er haengt
+                    -- in cellWords am Hinweis und steht blau dazwischen.
                     farbe = "stale"
                     local short = TF.fmt.text("UI_TF_ext_stale_short")
                     if note then
-                        noteRuns = { { text = short .. ";", color = "stale" }, { text = note, color = "note" } }
+                        noteRuns = { { text = short, color = "stale" },
+                                     { text = TF.fmt.sep() .. " " .. note, color = "note" } }
                     else
                         note, noteColor = short, "stale"
                     end

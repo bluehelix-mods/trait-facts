@@ -180,10 +180,100 @@ end
 -- ueberlebt das nicht; dafuer gibt es das Tag <SPACE>, das den Cursor um
 -- eine Leerzeichenbreite vorrueckt.
 local SPACE = " <SPACE> "
+TF.fmt.SPACE = SPACE
+
+-- ---------------------------------------------------------------------------
+-- Trenner in Fussnoten
+-- ---------------------------------------------------------------------------
+--
+-- Entscheidung 24.09.2026 (docs/fussnoten-regeln.md): die Teile einer
+-- Fussnote stehen mit " U+00B7 " (Mittelpunkt mit Leerzeichen) hintereinander,
+-- nicht mehr mit "; ". Der Punkt soll auffallen: in einer Zeile, die wirkt,
+-- steht er im Blau der Themen-Ueberschriften (Palettenname "sep",
+-- TF_Tooltip), in einer wirkungslosen im Grau der Zeile, nie heller als sie.
+-- Gefaerbt wird am fertigen Text: auch der Punkt, den eine Uebersetzung
+-- selbst zwischen ihre Teile setzt, bekommt die Farbe, nicht nur der, den
+-- der Code beim Zusammensetzen einfuegt.
+
+--- Ersatz, falls die Uebersetzung den Punkt nicht liefert.
+local SEP_FALLBACK = "-"
+local sepMark = nil
+
+--- Der Mittelpunkt selbst, ohne Leerzeichen.
+--
+-- Sonderzeichen stehen nie im Lua-Quelltext (das Gradzeichen kam so im
+-- Spiel falsch an, siehe TF.fmt.unit). Der Punkt kommt darum aus der
+-- Uebersetzung: UI_TF_search_why ist "U+00B7 %1", in jeder Sprache gleich
+-- (tools/uebersetzung-pruefen.py, SELBE_TEXTE), das Zeichen vor dem ersten
+-- Leerzeichen. So ist es im Spiel ein Java-Zeichen und im Test dieselben
+-- zwei UTF-8-Bytes wie in jeder Fussnote; ein Vergleich mit dem Text der
+-- Fussnoten stimmt in beiden Welten. Gemerkt wird nur ein Treffer: vor dem
+-- Laden der Uebersetzung gilt der Ersatz, danach der Punkt.
+function TF.fmt.sep()
+    if sepMark then return sepMark end
+    local raw = getTextOrNull and getTextOrNull("UI_TF_search_why")
+    if type(raw) == "string" then
+        local cut = string.find(raw, " ", 1, true)
+        local mark = cut and string.sub(raw, 1, cut - 1) or nil
+        if mark and mark ~= "" and not string.find(mark, "%", 1, true) then
+            sepMark = mark
+            return mark
+        end
+    end
+    return SEP_FALLBACK
+end
+
+--- Haengt `b` mit " U+00B7 " an `a`; ist einer der beiden leer, bleibt der andere.
+function TF.fmt.sepJoin(a, b)
+    if a == nil or a == "" then return b end
+    if b == nil or b == "" then return a end
+    return a .. " " .. TF.fmt.sep() .. " " .. b
+end
+
+--- Die Farbe der Trenner in einem Teil oder Lauf.
+-- `sepColor` am Lauf (oder, fuer TF.fmt.columns, an der Zelle): ein
+-- Palettenname, oder false fuer "die Farbe des Laufs" (wirkungslose
+-- Zeilen). Ohne Angabe bekommt ein Lauf in der Farbe der Fussnote ("note")
+-- das Blau, jeder andere behaelt seine Farbe.
+local function sepColorOf(run, cell)
+    local color = run.sepColor
+    if color == nil and cell then color = cell.sepColor end
+    if color == false then return run.color end
+    if color ~= nil then return color end
+    if run.color == "note" then return "sep" end
+    return run.color
+end
+
+--- Faerbt jeden Trenner " U+00B7 " in `text` fuer den durchlaufenden Satz.
+-- Vor dem Punkt beginnt ein Segment in `sepColor`, danach eines in
+-- `backColor`; die Leerzeichen um den Punkt frisst das Panel nach einem
+-- Farbtag, <SPACE> ersetzt sie. Ohne eigene Farbe bleibt der Text, wie er
+-- ist. Den Umbruch rechnet hier das Panel selbst; ein Punkt kann dort am
+-- Zeilenanfang landen (nur im durchlaufenden Satz, der Spaltensatz
+-- verhindert das, siehe cellWords).
+local function paintSeps(text, palette, sepColor, backColor)
+    if not palette or type(text) ~= "string" then return text end
+    local sepTag, back = TF.fmt.paint(palette, sepColor), TF.fmt.paint(palette, backColor)
+    if sepTag == "" or back == "" or sepTag == back then return text end
+    local mark = TF.fmt.sep()
+    local needle = " " .. mark .. " "
+    local out, start = {}, 1
+    while true do
+        local at = string.find(text, needle, start, true)
+        if not at then break end
+        out[#out + 1] = string.sub(text, start, at - 1)
+        out[#out + 1] = sepTag .. SPACE .. mark .. back .. SPACE
+        start = at + #needle
+    end
+    if start == 1 then return text end
+    out[#out + 1] = string.sub(text, start)
+    return table.concat(out, "")
+end
 
 --- Fuegt Teile zu einer Zeile, jeder Teil in seiner Farbe.
 -- @param parts  Liste von { text = string, color = Farbname }; Farbname ist
---               ein Palettenname oder "tag:XYZ" (TF.fmt.tagKey)
+--               ein Palettenname oder "tag:XYZ" (TF.fmt.tagKey). Optional
+--               `sepColor` fuer die Trenner " U+00B7 " im Text (sepColorOf)
 -- @param palette  optional, sonst TF.fmt.palette
 local function joinParts(parts, palette)
     palette = palette or TF.fmt.palette
@@ -195,11 +285,12 @@ local function joinParts(parts, palette)
     local out = {}
     for index, part in ipairs(parts) do
         local tag = TF.fmt.paint(palette, part.color)
+        local text = paintSeps(part.text, palette, sepColorOf(part), part.color)
         if index > 1 then
             -- Nach einem Farbtag faellt das Leerzeichen weg; SPACE ersetzt es.
-            out[#out + 1] = (tag ~= "" and (tag .. SPACE) or " ") .. part.text
+            out[#out + 1] = (tag ~= "" and (tag .. SPACE) or " ") .. text
         else
-            out[#out + 1] = tag .. part.text
+            out[#out + 1] = tag .. text
         end
     end
     return table.concat(out, "")
@@ -212,7 +303,9 @@ TF.fmt.join = joinParts
 --- Eine Zeile "Bezeichnung: Wert (Fussnote)" mit Farben je Teil.
 -- `value` und `note` duerfen nil sein.
 -- @param valueColor  optional, ersetzt "value" als Farbe des Werts
-function TF.fmt.line(label, value, note, palette, valueColor)
+-- @param sepColor    optional, Farbe der Trenner in der Fussnote; false
+--                    laesst sie im Grau der Fussnote (wirkungslose Zeile)
+function TF.fmt.line(label, value, note, palette, valueColor, sepColor)
     local parts = {}
     if value ~= nil and value ~= "" then
         parts[#parts + 1] = { text = label .. ":", color = "label" }
@@ -221,7 +314,7 @@ function TF.fmt.line(label, value, note, palette, valueColor)
         parts[#parts + 1] = { text = label, color = "label" }
     end
     if note and note ~= "" then
-        parts[#parts + 1] = { text = "(" .. note .. ")", color = "note" }
+        parts[#parts + 1] = { text = "(" .. note .. ")", color = "note", sepColor = sepColor }
     end
     return joinParts(parts, palette)
 end
@@ -268,10 +361,10 @@ function TF.fmt.parts(entry)
     -- bleibt anders als `hint` auch in der Summe stehen (TF.Summary.merge).
     -- Ueber die Feldnamen laufen, nicht ueber { entry.hint, entry.condition }:
     -- ipairs endet am ersten nil, ohne hint kaeme die condition nie an.
+    -- Getrennt mit " U+00B7 " (Entscheidung 24.09.2026, bis 0.14.4 "; ").
     for _, field in ipairs({ "hint", "condition" }) do
         if entry[field] then
-            local text = TF.fmt.text(entry[field])
-            note = (note and (note .. "; " .. text)) or text
+            note = TF.fmt.sepJoin(note, TF.fmt.text(entry[field]))
         end
     end
     -- `dead = true`: die Zahl steht so in der Engine, erreicht dort aber
@@ -292,8 +385,10 @@ end
 function TF.fmt.entry(entry, palette)
     local teile = TF.fmt.parts(entry)
     if not teile then return nil end
-    local valueColor = teile.dead and "note" or nil
-    return TF.fmt.line(teile.label, teile.value, teile.note, palette, valueColor)
+    local valueColor, sepColor = nil, nil
+    -- Wirkungslos: Wert und Trenner im Grau der Fussnote.
+    if teile.dead then valueColor, sepColor = "note", false end
+    return TF.fmt.line(teile.label, teile.value, teile.note, palette, valueColor, sepColor)
 end
 
 
@@ -431,18 +526,41 @@ end
 -- `tail` eines Laufs (ein Satzzeichen dahinter) haengt fuer den Umbruch am
 -- letzten Wort, damit es nie allein an einen Zeilenanfang rutscht; gesetzt
 -- wird es in TF.fmt.columns als eigenes Segment.
-local function cellWords(cell)
+--
+-- Ebenso der Trenner " U+00B7 " (TF.fmt.sep, seit 24.09.2026): ein Wort, das
+-- nur aus dem Punkt besteht, haengt am Wort davor, auch ueber die Grenze
+-- zweier Laeufe ("Dextrous" U+00B7 "Fussnote" in der Uebersicht). So steht er
+-- nach einem Umbruch am Zeilenende, nie allein am Anfang der naechsten
+-- Zeile. Gemessen wird "Wort U+00B7" mit echtem Leerzeichen (`text`), gesetzt
+-- `body` und dahinter `sep` in `sepColor`. Bekommt der Punkt ein eigenes
+-- Segment, kostet das zwei <SPACE> statt zweier Leerzeichen, je 2 px mehr
+-- (Vanilla processCommand: Leerzeichenbreite + 2); `extra` traegt sie in
+-- die Messung (wrapWords), damit der Punkt die Breite nicht sprengt.
+local function cellWords(cell, palette)
     local out = {}
-    local runs = cell.runs or { { text = cell.text or "", color = cell.color } }
+    local mark = TF.fmt.sep()
+    local runs = cell.runs or { { text = cell.text or "", color = cell.color, sepColor = cell.sepColor } }
     for _, run in ipairs(runs) do
         local list = words(run.text or "")
         for index, word in ipairs(list) do
-            local item = { text = word, color = run.color }
-            if index == #list and type(run.tail) == "string" and run.tail ~= "" then
-                item.text, item.tail = word .. run.tail, run.tail
-                item.tailColor = run.tailColor or run.color
+            local prev = out[#out]
+            if word == mark and prev and not prev.sep then
+                local color = sepColorOf(run, cell)
+                prev.body = prev.body or prev.text
+                prev.text = prev.body .. " " .. word
+                prev.sep, prev.sepColor = word, color
+                local before = prev.tailColor or prev.color
+                if color ~= before and TF.fmt.paint(palette, color) ~= "" then prev.extra = 4 end
+            else
+                local item = { text = word, color = run.color }
+                -- Ein Punkt ganz vorn in der Zelle hat kein Wort davor.
+                if word == mark then item.color = sepColorOf(run, cell) end
+                if index == #list and type(run.tail) == "string" and run.tail ~= "" then
+                    item.text, item.tail = word .. run.tail, run.tail
+                    item.tailColor = run.tailColor or run.color
+                end
+                out[#out + 1] = item
             end
-            out[#out + 1] = item
         end
     end
     return out
@@ -490,6 +608,20 @@ end
 -- hinter dem ein angehaengtes "-" noch passt. Passt nicht einmal ein Zeichen,
 -- geht ein ganzes Zeichen allein, damit die Schleife weiterkommt.
 local function splitWord(word, width, font)
+    -- Passt das Wort allein, bleibt es ganz, samt tail und Trenner. Bis
+    -- 0.14.4 kam es hier als neue Tabelle ohne tail heraus.
+    if TF.fmt.measure(word.text, font) + (word.extra or 0) <= width then return { word } end
+    -- Ein angehaengter Trenner (cellWords) bleibt am letzten Stueck; jedes
+    -- Stueck laesst ihm Platz, das kostet hoechstens einen Schnitt mehr.
+    if word.sep then
+        local reserve = TF.fmt.measure(" " .. word.sep, font) + (word.extra or 0)
+        local body = { text = word.body or word.text, color = word.color }
+        local pieces = splitWord(body, width - reserve, font)
+        local last = pieces[#pieces]
+        last.body, last.sep, last.sepColor, last.extra = last.text, word.sep, word.sepColor, word.extra
+        last.text = last.text .. " " .. word.sep
+        return pieces
+    end
     local pieces, rest, guard = {}, word.text, 0
     while #rest > 1 and TF.fmt.measure(rest, font) > width and guard < 200 do
         guard = guard + 1
@@ -527,18 +659,21 @@ end
 -- (`or #current == 0`). Jetzt wird es zerlegt; alles andere bleibt, wie es war.
 local function wrapWords(list, width, font)
     if #list == 0 then return { {} } end
-    local lines, current, text = {}, {}, ""
+    -- `extra`: Pixel, die das Panel ueber die Messung des Textes hinaus
+    -- braucht (Trenner mit eigenem Segment, siehe cellWords).
+    local lines, current, text, extra = {}, {}, "", 0
     for _, word in ipairs(list) do
         local probe = (text == "") and word.text or (text .. " " .. word.text)
-        if TF.fmt.measure(probe, font) <= width then
+        local plus = word.extra or 0
+        if TF.fmt.measure(probe, font) + extra + plus <= width then
             current[#current + 1] = word
-            text = probe
+            text, extra = probe, extra + plus
         else
             if #current > 0 then lines[#lines + 1] = current end
             local pieces = splitWord(word, width, font)
             for i = 1, #pieces - 1 do lines[#lines + 1] = { pieces[i] } end
             local last = pieces[#pieces]
-            current, text = { last }, last.text
+            current, text, extra = { last }, last.text, last.extra or 0
         end
     end
     if #current > 0 then lines[#lines + 1] = current end
@@ -553,7 +688,10 @@ end
 --               die Zelle rechtsbuendig an ihre Kante x + width - SAFETY.
 --               Ein Lauf darf `tail` (Satzzeichen) und `tailColor`
 --               (Palettenname) tragen: umgebrochen mit dem letzten Wort,
---               gesetzt als eigenes Segment eine <SPACE>-Breite dahinter
+--               gesetzt als eigenes Segment eine <SPACE>-Breite dahinter.
+--               `sepColor` an Zelle oder Lauf: Farbe der Trenner " U+00B7 "
+--               (Palettenname, false = Farbe des Laufs; ohne Angabe Blau
+--               in Laeufen der Farbe "note", siehe sepColorOf)
 -- @param palette  optional, sonst TF.fmt.palette
 -- @param font     optional, Schrift fuer die Messung (siehe TF.fmt.measure)
 -- @return string  eine oder mehrere Zeilen, mit <LINE> verbunden
@@ -578,7 +716,7 @@ function TF.fmt.columns(cells, palette, font)
     local gebrochen, hoehe = {}, 0
     for index, cell in ipairs(cells) do
         local breite = (cell.width or 9999) - TF.fmt.SAFETY
-        gebrochen[index] = wrapWords(cellWords(cell), breite, font)
+        gebrochen[index] = wrapWords(cellWords(cell, palette), breite, font)
         if #gebrochen[index] > hoehe then hoehe = #gebrochen[index] end
     end
 
@@ -644,14 +782,27 @@ function TF.fmt.columns(cells, palette, font)
                     -- tail teilen sein Segment (", Vehicle Knowledge").
                     -- Ohne Farbe fuer den tail bleibt das Wort ganz.
                     local tail = word.tail
+                    -- Ohne angehaengten Trenner (cellWords) ist body der Text.
+                    local body = word.body or word.text
                     if tail and TF.fmt.paint(palette, word.tailColor) ~= ""
-                            and #word.text > #tail and string.sub(word.text, -#tail) == tail then
-                        offen[#offen + 1] = string.sub(word.text, 1, #word.text - #tail)
+                            and #body > #tail and string.sub(body, -#tail) == tail then
+                        offen[#offen + 1] = string.sub(body, 1, #body - #tail)
                         schliessen()
                         farbe = word.tailColor
                         offen[#offen + 1] = tail
                     else
-                        offen[#offen + 1] = word.text
+                        offen[#offen + 1] = body
+                    end
+                    -- Der Trenner: in eigener Farbe ein eigenes Segment nach
+                    -- einem <SPACE>, das folgende Wort beginnt wieder eines.
+                    -- In derselben Farbe (wirkungslose Zeile) oder ohne
+                    -- Palette bleibt er im Segment, mit einem Leerzeichen.
+                    if word.sep then
+                        if word.sepColor ~= farbe and TF.fmt.paint(palette, word.sepColor) ~= "" then
+                            schliessen()
+                            farbe = word.sepColor
+                        end
+                        offen[#offen + 1] = word.sep
                     end
                 end
                 schliessen()

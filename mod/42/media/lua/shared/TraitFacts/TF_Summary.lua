@@ -546,7 +546,8 @@ TF.Summary.FREE_SIGN = {
 -- Segment nach einem <SPACE> (im Spiel 5 px rechts): im Segment "TOC," lag
 -- die rechte Rahmenlinie des Kaestchens auf dem Komma (Befund im Spiel
 -- 14.09.2026). Nach dem letzten Kuerzel steht das <SPACE> am Ende; was
--- folgt, ";" vor der Fussnote oder ")" aus TF.fmt.line, beginnt dort.
+-- folgt, ")" aus TF.fmt.line, beginnt dort. Vor dem Trenner zur Fussnote
+-- nimmt TF.Summary.build es wieder weg (seit 24.09.2026).
 function TF.Summary.sourceText(sources, palette)
     local out = {}
     for index, source in ipairs(sources) do
@@ -1327,7 +1328,6 @@ function TF.Summary.build(traitDefs, width, profession)
 
         if not drop then
             local palette = TF.fmt.palette
-            local back = (palette and palette.note) or ""
             for _, source in ipairs(bucket.sources or {}) do
                 if source.id then shownIds[source.id] = true end
             end
@@ -1359,19 +1359,25 @@ function TF.Summary.build(traitDefs, width, profession)
             -- TF.fmt.columns davor und danach ein neues Segment, und
             -- TF.Panel.tagBoxes findet das Kuerzel. Mit "note" klebte die
             -- Fussnote daran ("TOC; may be outdated", Abschlussreview
-            -- 14.09.2026, Fund 1). Das Semikolon oder Komma haengt am
-            -- vorigen Namen, sonst stuende im Umbruch ein Leerzeichen davor.
-            -- Hinter einem Kuerzel ist es dessen tail: es bricht mit ihm um,
-            -- steht aber als eigenes Segment eine <SPACE>-Breite rechts, in
-            -- der Farbe der Namen wie in der Startskill-Liste. Im Segment
-            -- "TOC," lag die rechte Rahmenlinie des Kaestchens auf dem Komma,
-            -- und es war im Spiel nicht zu sehen (Befund 14.09.2026).
+            -- 14.09.2026, Fund 1). Das Komma haengt am vorigen Namen, sonst
+            -- stuende im Umbruch ein Leerzeichen davor. Hinter einem Kuerzel
+            -- ist es dessen tail: es bricht mit ihm um, steht aber als
+            -- eigenes Segment eine <SPACE>-Breite rechts, in der Farbe der
+            -- Namen wie in der Startskill-Liste. Im Segment "TOC," lag die
+            -- rechte Rahmenlinie des Kaestchens auf dem Komma, und es war im
+            -- Spiel nicht zu sehen (Befund 14.09.2026).
+            --
+            -- Namen und Fussnote trennt seit 24.09.2026 der Trenner " U+00B7 "
+            -- (TF.fmt.sep, bis 0.14.4 ein ";" am letzten Namen), ebenso die
+            -- Zusatzangaben untereinander. Er steht vorn im Lauf der
+            -- Fussnote; TF.fmt.columns haengt ihn fuer den Umbruch an den
+            -- letzten Namen und setzt ihn blau (Palettenname "sep").
+            local mark = TF.fmt.sep()
             local runs = nil
             if spalten then
                 runs = {}
                 for index, source in ipairs(bucket.sources) do
-                    local last = index == #bucket.sources
-                    local sep = last and (#zusatz > 0 and ";" or "") or ","
+                    local sep = (index == #bucket.sources) and "" or ","
                     if source.tag then
                         runs[#runs + 1] = { text = source.name, color = "source" }
                         runs[#runs + 1] = { text = source.tag, color = TF.fmt.tagKey(source.tag),
@@ -1381,13 +1387,22 @@ function TF.Summary.build(traitDefs, width, profession)
                     end
                 end
                 if #zusatz > 0 then
-                    runs[#runs + 1] = { text = table.concat(zusatz, "; "), color = "note" }
+                    runs[#runs + 1] = { text = mark .. " " .. table.concat(zusatz, " " .. mark .. " "),
+                                        color = "note", sepColor = "sep" }
                 end
             end
 
+            -- Durchlaufend: TF.fmt.line faerbt die Trenner (TF_Format,
+            -- paintSeps) und kehrt danach zur Farbe der Fussnote zurueck;
+            -- darum steht hier kein eigenes Farbtag mehr. Ein <SPACE> am
+            -- Ende (hinter einem Kuerzel) faellt weg, sonst stuende der
+            -- Punkt eine Leerzeichenbreite zu weit rechts.
             local note = TF.Summary.sourceText(bucket.sources, palette)
-            for _, own in ipairs(zusatz) do
-                note = (note ~= "" and (note .. back .. "; " .. own)) or own
+            if #zusatz > 0 then
+                if #note >= #SPACE and string.sub(note, -#SPACE) == SPACE then
+                    note = string.sub(note, 1, #note - #SPACE)
+                end
+                note = TF.fmt.sepJoin(note, table.concat(zusatz, " " .. mark .. " "))
             end
             -- Was die Engine deckelt, deckeln wir auch.
             local shown = bucket.value
