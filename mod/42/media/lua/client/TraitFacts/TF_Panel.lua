@@ -468,13 +468,17 @@ function TF.Panel.legendLines()
           text = TF.fmt.text("UI_TF_legend_gain"), color = "value" },
         { sample = TF.fmt.text("UI_TF_sym_lose"), sampleColor = "bad",
           text = TF.fmt.text("UI_TF_legend_lose"), color = "value" },
-        -- Ohne Richtung: eine Zahl in der Farbe des Textes. Bis 0.12.12 stand
-        -- hier das Zeichen fuer eine Aussage ohne Richtung; die gibt es in den
-        -- eigenen Daten, im More-Traits-Paket und bei den live gelesenen Werten
-        -- nicht mehr (nachgezaehlt 21.09.2026), wohl aber Zahlen ohne Richtung:
-        -- Sleep length, Calories needed to gain weight. Die Legende zeigt, was
-        -- man wirklich sieht; das Zeichen kann nur noch ein fremdes Paket bringen.
+        -- Ohne Richtung: eine Zahl in der Farbe des Textes (Sleep length,
+        -- Calories needed to gain weight) und, fuer eine Aussage ohne Zahl,
+        -- das neutrale Zeichen. Das Zeichen fehlte von 0.12.12 bis 0.14.1, weil
+        -- es in den eigenen Daten keine solche Aussage mehr gab (nachgezaehlt
+        -- 21.09.2026). Seit 0.14.1 ist Smoker eine, seit dem Faktensweep 3
+        -- (23.09.2026) auch Scrapper und Wildsman im More-Traits-Paket, und die
+        -- wirkungslose All-Thumbs-Zeile traegt es statt des Verlustzeichens.
+        -- Derselbe Text fuer beide Zeilen, keine neue Uebersetzung.
         { sample = value("pct", 18), sampleColor = "value",
+          text = TF.fmt.text("UI_TF_legend_open"), color = "value" },
+        { sample = TF.fmt.text("UI_TF_sym_open"), sampleColor = "value",
           text = TF.fmt.text("UI_TF_legend_open"), color = "value" },
         { sample = value("mult", 1.5), sampleColor = "note", text = TF.fmt.text("UI_TF_legend_dead"), color = "value" },
         { sample = value("pct", -50), sampleColor = "stale", text = TF.fmt.text("UI_TF_legend_stale"), color = "value" },

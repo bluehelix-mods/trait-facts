@@ -486,6 +486,11 @@ local function build(traitDef, key, font, view)
             -- Wirkungslos (siehe TF.fmt.parts): die Zahl steht in der leisen
             -- Farbe der Fussnote, nicht gruen oder rot - sie tut ja nichts.
             if teile.dead then farbe = "note" end
+            -- Eine wirkungslose Aussage ohne Zahl bekommt das neutrale Zeichen:
+            -- ein graues Verlustzeichen hiesse noch immer "schadet", obwohl die
+            -- Zeile unter "wirkt nicht" steht (All Thumbs, Faktensweep 3,
+            -- 23.09.2026). teile.value ist bei kind info nil.
+            if teile.dead and not teile.value then vorn = TF.fmt.text("UI_TF_sym_open") end
             if stale then
                 -- Der Hinweis verdraengt Fussnote und Randbemerkung des
                 -- Eintrags: die Abweichung ist wichtiger. Wert und Hinweis

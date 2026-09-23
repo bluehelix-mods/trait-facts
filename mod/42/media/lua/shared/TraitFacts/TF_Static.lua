@@ -42,10 +42,16 @@ TF.Static = TF.Static or {}
 
 -- Knockback: IsoGameCharacter.processHitDamage(), hitForce x 1.4 / x 0.6,
 -- jeweils nur wenn !weapon.isRanged(). Gemessen ist der Getter. Verbraucht
--- wird hitForce im Einzelspiel nur als Schwelle: die Taumel-Animation des
+-- wird hitForce im Einzelspiel vor allem als Schwelle: die Taumel-Animation des
 -- Zombies waehlt ueber 0.4 den langen Stoss-Taumel (Zombie_ShoveStagger_2m,
 -- AnimSets/zombie/staggerback/defaultStaggerBack.xml), darunter den kurzen
--- (GeneralStagger.xml, smallFromFront.xml). StaggerBack gibt es nur ohne
+-- (GeneralStagger.xml, smallFromFront.xml). Von hinten spielen beide Zweige
+-- denselben Clip (smallFromBehind.xml erbt Zombie_PushedFwd_FromBehind von
+-- fromBehind.xml), dort sieht man keinen Unterschied; darum sagt die Fussnote
+-- seit dem Faktensweep 3 (23.09.2026) "von vorn oder von der Seite".
+-- StaggerBackState.getMaxStaggerTime liest hitForce ausserdem als 35 x Kraft,
+-- geklemmt auf 20 bis 30 (Z. 57-65); bei Stosskraeften um 0.4 bis 0.56 greift
+-- die Untergrenze 20, also ohne Wirkung. StaggerBack gibt es nur ohne
 -- ZombieHitReaction (CombatManager Z. 2410-2416), und jede Nahkampf-
 -- Schwunganimation setzt eine; es bleiben also die Stoesse. Die zur Kraft
 -- proportionale Schubstrecke (calcHitDir, Z. 13628-13643) ruft nur
@@ -192,10 +198,21 @@ TF.Static["underweight"] = {
 -- (+20, dann +10), gemeint war vermutlich UNDERWEIGHT. Effektiv +30.
 -- Der Wurf ist Rand.Next(100) < Zaehler - Fitness (Z. 529): ein negativer
 -- Zaehler wirkt wie 0. Im Laufen ohne Moodles liegt die Basis schon ab
--- Fitness 1 unter 0 und schluckt einen Teil der Trait-Punkte. Die Gewichts-
--- Traits senken dazu die Start-Fitness (XPBoosts Fitness -1 bzw. -2). Neue
--- Figur, Laufen/Sprinten: ohne Trait 0/5 %, High Weight 6/16 %, Very High
--- Weight 17/27 %, Very Low Weight 27/37 %, Graceful 0/0 %, Clumsy 5/15 %.
+-- Fitness 1 unter 0 und schluckt einen Teil der Trait-Punkte. Die
+-- Gewichts-Traits senken die Fitness nur, wenn sie bei der Erschaffung
+-- vergeben werden (XPBoosts wirken nur in applyTraits). Das gibt es nur fuer
+-- High Weight, ueber Slow Metabolism (GrantedTraits, Fitness 4). Very High
+-- Weight, Very Low Weight und Emaciated sind IsProfessionTrait mit Kosten 0
+-- bzw. -10, in der Charaktererstellung nicht waehlbar, und nichts vergibt
+-- sie; sie kommen nur im Spiel ueber Nutrition.applyTraitFromWeight, und die
+-- Fitness bleibt (Faktensweep 3, 23.09.2026; bis dahin rechneten die hints
+-- mit einer neuen Figur mit Fitness 3, die es nicht gibt). Laufen/Sprinten:
+-- ohne Trait 0/5 %, High Weight (neue Figur, Fitness 4) 6/16 %, Very High
+-- Weight bei Fitness 5 15/25 %, Very Low Weight bei Fitness 5 25/35 %,
+-- Graceful 0/0 %, Clumsy 5/15 %.
+-- Der Zaehler steigt je Stufe des Erschoepfungs-Moodles (MoodleType.ENDURANCE,
+-- im Spiel "Ausser Atem" und schlimmer) um 10, nicht mit Muedigkeit; ab Stufe
+-- 3 ist isRunning() falsch und der Wurf im Laufen entfaellt (Faktensweep 3).
 -- Die Beispiele stehen je Trait als hint, damit die Uebersicht die Punkte
 -- mehrerer Traits weiter in einer Zeile summiert (Faktensweep 2, 23.09.2026).
 --
@@ -220,8 +237,9 @@ TF.Static["underweight"] = {
 -- wird), eine nahe Figur an und trifft, geraet sie ins Taumeln, und ein
 -- eigener Wurf entscheidet, ob sie auch stuerzt (Faktensweep 23.09.2026:
 -- klettern tut der Zombie, nicht die Figur). Nur mit der Sandbox-Option
--- Zombie Lunge (Standard an). Basis 30 von 100, dazu
--- Betrunken x3, Muede x3 und Schwere Last x5 je Moodle-Stufe sowie
+-- Zombie Lunge (Standard an, in der Voreinstellung Rising aus). Basis 30 von
+-- 100, dazu Betrunken x3, Erschoepfung (Endurance-Moodle, bis zum
+-- Faktensweep 3 stand hier "Muede") x3 und Schwere Last x5 je Moodle-Stufe sowie
 -- Unterkoerper-Schmerz ueber 20 geteilt durch 10; abgezogen werden Fitness x2
 -- und Nimble x1, das Ergebnis nie unter 5. Das ist ein anderer Wurf als die
 -- Stolperchance aus ClimbOverFenceState, darum eine eigene Zeile.
@@ -236,6 +254,15 @@ TF.Static["underweight"] = {
 -- das Inventar fast voll ist, minus 1,5 je Fitness-Stufe ueber 4 und je
 -- Nimble-Stufe. Der Bruchwurf ist Rand.Next(100) < Schwelle, der Wundwurf
 -- laeuft mit Schwelle + 10 nur, wenn der Bruchwurf danebenging.
+-- Faktensweep 3 (23.09.2026), beides in der Fussnote: ab etwa drei
+-- Stockwerken liegt die Schwelle schon ohne Trait ueber 100 (Fitness 5: 34,
+-- 71, 108 fuer 1, 2, 3 Stockwerke), dann ist der Bruch ohnehin sicher. Mit
+-- der Sandbox-Option Bone Fracture aus (Voreinstellung Rising) scheitert der
+-- Bruchwurf immer (Z. 2137, 2149), und die Punkte heben nur die tiefe Wunde.
+-- Lunge: Very Low Weight und Very High Weight gibt es nur im Spiel (siehe
+-- Stolpern), bei Fitness 5 also 50 bzw. 10 statt 20, das deckt die Fussnote
+-- "neue Figur 20" mit dem Wert ab. High Weight ueber Slow Metabolism hat
+-- Fitness 4: 30 - 8 - 5 = 17 statt 20, dafuer der hint lungehigh.
 TF.Static["veryunderweight"] = {
     { id = "meleedamage",  kind = "pct",  value = -40,  text = "UI_TF_eff_meleedamage",
       probe = "damageDealt", note = "UI_TF_note_meleeswings" },
@@ -290,7 +317,14 @@ TF.Static["overweight"] = {
     -- Seit dem Faktensweep 2 (23.09.2026) je Trait eine Fussnote mit dem
     -- Ergebnis an hohen Zaeunen: eine neue Figur mit High Weight hat Fitness 4
     -- (XPBoosts Fitness=-1), also 18 - 15 = 3, Wurzel 1, und scheitert immer;
-    -- mit Very High Weight (Fitness 3) 16 - 25, Wurzel 0, rund 94 %.
+    -- Very High Weight gibt es nur im Spiel, die Fitness bleibt (4 oder 5):
+    -- 18 oder 20 - 25, auf 0 gekappt, Wurzel 0, rund 94 % (bis zum
+    -- Faktensweep 3, 23.09.2026, stand hier "Fitness 3").
+    -- Mit der Sandbox-Option Easy Climbing (Voreinstellung Rising) gelingt
+    -- jedes Klettern ohne Wurf, der Seil-Sturzwurf faellt weg und die
+    -- Wegfindung fuehrt immer ueber hohe Zaeune (ClimbOverWallState Z. 292-294,
+    -- ClimbSheetRopeState Z. 93, ClimbDownSheetRopeState Z. 83,
+    -- PathFindRequest Z. 77); die Fussnoten sagen es seit dem Faktensweep 3.
     { id = "climb",         kind = "flat", value = -15,  text = "UI_TF_eff_climb",
       unit = "UI_TF_unit_points", note = "UI_TF_note_climbweight" },
     -- getClimbRopeSpeed zieht das Gewicht nur im Zweig !down ab, also nur
@@ -306,7 +340,8 @@ TF.Static["overweight"] = {
       unit = "UI_TF_unit_of100", note = "UI_TF_note_tripbase",
       hint = "UI_TF_note_triphigh" },
     { id = "lungefall",     kind = "flat", value = -5,   text = "UI_TF_eff_lungefall",
-      unit = "UI_TF_unit_of100", note = "UI_TF_note_lungebase" },
+      unit = "UI_TF_unit_of100", note = "UI_TF_note_lungebase",
+      hint = "UI_TF_note_lungehigh" },
     { id = "falldamage",    kind = "pct",  value = 20,   text = "UI_TF_eff_falldamage" },
     { id = "fallinjury",    kind = "flat", value = 10,   text = "UI_TF_eff_fallinjury",
       unit = "UI_TF_unit_of100", note = "UI_TF_note_fallinjurybase" },
@@ -379,14 +414,36 @@ TF.Static["thinskinned"] = {
 --                tiefe Wunde 26/17.5 = +49 %
 -- Der Bruchfaktor sitzt in BodyPart.generateFractureNew, und diese Methode
 -- rufen nur die beiden Sturzstellen in IsoGameCharacter. Fahrzeugunfaelle
--- (IsoPlayer, BaseVehicle) rufen generateFracture direkt, ohne Trait-Abfrage;
--- dort wirkt der Trait nur ueber den Unfallschaden, Fast Healer x0.8 (kleiner),
--- Slow Healer x1.2 (groesser). Die Fussnote sagt beides; bis 0.13.9 nannte
--- sie nur den kleineren Schaden, auch bei Slow Healer (Faktensweep 23.09.2026).
+-- (IsoPlayer, BaseVehicle) rufen generateFracture direkt, ohne den
+-- Bruchzeit-Faktor 0.6 / 1.8; dort wirkt der Trait nur ueber den
+-- Unfallschaden, Fast Healer x0.8 (kleiner), Slow Healer x1.2 (groesser), und
+-- der entscheidet ueber Bruchchance und Bruchzeit. Die Fussnote sagt beides;
+-- bis 0.13.9 nannte sie nur den kleineren Schaden, auch bei Slow Healer
+-- (Faktensweep 23.09.2026). Mit der Sandbox-Option Bone Fracture aus
+-- (Voreinstellung Rising) gibt es gar keine Brueche (BodyPart Z. 818-821,
+-- IsoGameCharacter Z. 2137 und 2149); seit dem Faktensweep 3 (23.09.2026) in
+-- der Fussnote.
+-- Tiefe Wunde (Faktensweep 3): der Trait setzt nur die Startzeit. Naehen
+-- (ISStitch.lua Z. 108 -> BodyPart.setStitched, Z. 876-881) setzt
+-- deepWoundTime auf 0, danach heilt die Naht ueber stitchTime ohne Trait;
+-- ohne Verband bleibt die Zeit bei 3 stehen (Z. 358-363). Die -26 / +49 %
+-- gelten also nur, solange die Wunde verbunden und nicht genaeht ist; eigene
+-- Fussnote deepstitch statt midpoint. Blutung, Schmerz und Hinken leiten
+-- sich aus den Wundzeiten ab (generateBleeding Z. 1780-1793, getPain Z.
+-- 904-921), die cutspread-Fussnoten sagen es.
+-- Fahrzeug (Faktensweep 3): angefahren werden macht im Standard keinen
+-- Schaden, DamageToPlayerFromHitByACar steht in jeder Voreinstellung auf
+-- Keine (SandboxOptions Z. 185, Multiplikator 0, IsoPlayer Z. 1964-1966). Im
+-- Standard gilt der Faktor bei Unfaellen im Wagen (BaseVehicle Z. 8510-8513,
+-- PlayerDamageFromCrash an). Darum heisst die Zeile "Verletzung bei
+-- Fahrzeugunfaellen", das Angefahrenwerden steht in der Fussnote vehhit, und
+-- der Stand ist code: gemessen war nur der Weg beim Angefahrenwerden mit der
+-- Option auf Normal.
 TF.Static["fasthealer"] = {
     { id = "fracture",  kind = "mult", value = 0.6, text = "UI_TF_eff_fracture",
       note = "UI_TF_note_fracturefall" },
-    { id = "vehdamage", kind = "mult", value = 0.8, text = "UI_TF_eff_vehdamage" },
+    { id = "vehdamage", kind = "mult", value = 0.8, text = "UI_TF_eff_vehdamage",
+      note = "UI_TF_note_vehhit" },
     { id = "bitewound", kind = "pct", value = -38, text = "UI_TF_eff_bitewound",
       note = "UI_TF_note_midpoint" },
     -- Hinter "Schnitte und Kratzer" stehen in BodyPart vier Generatoren mit
@@ -401,13 +458,14 @@ TF.Static["fasthealer"] = {
     { id = "cutwound",  kind = "pct", value = -50, text = "UI_TF_eff_cutwound",
       note = "UI_TF_note_cutspread_fast" },
     { id = "deepwound", kind = "pct", value = -26, text = "UI_TF_eff_deepwound",
-      note = "UI_TF_note_midpoint" },
+      note = "UI_TF_note_deepstitch" },
 }
 
 TF.Static["slowhealer"] = {
     { id = "fracture",  kind = "mult", value = 1.8, text = "UI_TF_eff_fracture",
       note = "UI_TF_note_fracturefall" },
-    { id = "vehdamage", kind = "mult", value = 1.2, text = "UI_TF_eff_vehdamage" },
+    { id = "vehdamage", kind = "mult", value = 1.2, text = "UI_TF_eff_vehdamage",
+      note = "UI_TF_note_vehhit" },
     { id = "bitewound", kind = "pct", value = 77, text = "UI_TF_eff_bitewound",
       note = "UI_TF_note_midpoint" },
     -- Slow Healer: +67 %, +82 %, +100 % und +56 % je Generator (Fund 13),
@@ -416,7 +474,7 @@ TF.Static["slowhealer"] = {
     { id = "cutwound",  kind = "pct", value = 76, text = "UI_TF_eff_cutwound",
       note = "UI_TF_note_cutspread_slow" },
     { id = "deepwound", kind = "pct", value = 49, text = "UI_TF_eff_deepwound",
-      note = "UI_TF_note_midpoint" },
+      note = "UI_TF_note_deepstitch" },
 }
 
 -- ---------------------------------------------------------------------------
@@ -498,7 +556,7 @@ TF.Static["dextrous"] = {
       note = "UI_TF_note_cooking1" },
     { id = "climb",    kind = "flat", value = 4,    text = "UI_TF_eff_climb",
       unit = "UI_TF_unit_points", note = "UI_TF_note_climbbase",
-      hint = "UI_TF_note_climbalone" },
+      hint = "UI_TF_note_climbdextrous" },
     -- getClimbRopeSpeed: All Thumbs --effectiveStrength, Dextrous ++, im
     -- selben if-else. Die Sonde dazu gab es schon, benutzt hat sie niemand.
     { id = "climbstrength", kind = "flat", value = 1, text = "UI_TF_eff_climbstrength",
@@ -544,13 +602,22 @@ TF.Static["shortsighted"] = {
 -- Panik, Stress, Furcht (Bericht "Panik, Stress, Furcht")
 -- ---------------------------------------------------------------------------
 
+-- Leichen und blutige Gegenstaende (Faktensweep 3, 23.09.2026): die
+-- Unzufriedenheit und der Stress beim Umlagern stehen nur in
+-- client/TimedActions/ISInventoryTransferAction.lua:update (Z. 129-144), als
+-- blosses stats:add ohne Senden. Im Multiplayer laedt der Server kein
+-- client-Lua, die Uebertragung laeuft dort als Java-Transaction ohne diese
+-- Werte, und der Server ueberschreibt die Werte des Clients jede Sekunde
+-- (PlayerStatsPacket, Stats.load). Darum die condition sponlyclient; aus dem
+-- Code geschlossen, im Multiplayer nicht gemessen.
 TF.Static["brave"] = {
     -- Nur die Panik aus BodyDamage.IncreasePanic, also beim Anblick neuer
     -- Zombies; Agoraphobic, Claustrophobic, Blutungen und Fear of Blood
     -- schreiben direkt auf den Wert (Audit 12.09.2026).
     { id = "panic",   kind = "pct",  value = -70, text = "UI_TF_eff_panic",
       note = "UI_TF_note_panicseen" },
-    { id = "corpsestress", kind = "mult", value = 0.5, text = "UI_TF_eff_corpsestress" },
+    { id = "corpsestress", kind = "mult", value = 0.5, text = "UI_TF_eff_corpsestress",
+      condition = "UI_TF_note_sponlyclient" },
     { id = "grapple", kind = "mult", value = 1.1, text = "UI_TF_eff_grapple",
       dead = true, note = "UI_TF_note_deadgrapple" },
 }
@@ -558,18 +625,23 @@ TF.Static["brave"] = {
 TF.Static["cowardly"] = {
     { id = "panic",   kind = "pct",  value = 100, text = "UI_TF_eff_panic",
       note = "UI_TF_note_panicseen" },
-    { id = "corpsestress", kind = "mult", value = 2.0, text = "UI_TF_eff_corpsestress" },
+    { id = "corpsestress", kind = "mult", value = 2.0, text = "UI_TF_eff_corpsestress",
+      condition = "UI_TF_note_sponlyclient" },
     { id = "grapple", kind = "mult", value = 0.9, text = "UI_TF_eff_grapple",
       dead = true, note = "UI_TF_note_deadgrapple" },
 }
 
 TF.Static["desensitized"] = {
     { id = "panic",     kind = "info", text = "UI_TF_eff_nopanic" },
-    { id = "corpses",   kind = "info", text = "UI_TF_eff_nocorpsestress" },
+    { id = "corpses",   kind = "info", text = "UI_TF_eff_nocorpsestress",
+      condition = "UI_TF_note_sponlyclient" },
     -- SleepingEvent.checkNightmare: Rand.Next(100) < 5, mit Desensitized 10,
-    -- einmal je Schlaf ab drei Stunden.
+    -- einmal je Schlaf ab drei Stunden. Nur im Einzelspiel (Faktensweep 3,
+    -- 23.09.2026): checkNightmare kehrt auf dem Client zurueck (Z. 186-188),
+    -- und setPlayerFallAsleep ruft im Multiplayer niemand
+    -- (ISWorldObjectContextMenu.lua Z. 1114-1121 kehrt vorher zurueck).
     { id = "nightmare", kind = "fromto", value = { 5, 10 }, text = "UI_TF_eff_nightmare",
-      note = "UI_TF_note_nostress" },
+      note = "UI_TF_note_nostress", condition = "UI_TF_note_sponlysleep" },
 }
 
 -- Registry-Name HEMOPHOBIC, im Spiel "Fear of Blood". Die +50 (stats:add
@@ -579,8 +651,14 @@ TF.Static["desensitized"] = {
 --     ISComfreyCataplasm, ISGarlicCataplasm, ISPlantainCataplasm
 --   immer, ohne jede Bedingung: ISStitch (naehen und Naht entfernen),
 --     ISCleanBurn (Verbrennung auswaschen), ISRemoveBullet, ISRemoveGlass
--- Darum heisst die Zeile "Verletzung" und nicht "blutende Wunde": eine
--- Verbrennung auszuwaschen ist keine Wunde und blutet nicht.
+-- Darum hiess die Zeile "Verletzung" und nicht "blutende Wunde": eine
+-- Verbrennung auszuwaschen ist keine Wunde und blutet nicht. Seit dem
+-- Faktensweep 3 (23.09.2026) nennt sie die vier Aktionen ohne Bedingung
+-- einzeln: Desinfizieren (ISDisinfect), Schienen (ISSplint) und Binden
+-- reinigen (ISCleanBandage) fragen HEMOPHOBIC gar nicht ab, "beim Behandeln
+-- einer Verletzung" versprach dort Panik. Die Abfrage in ISApplyBandage steht
+-- vor der Verzweigung auf doIt (Z. 105 gegen 111), gilt also auch beim
+-- Abnehmen einer Binde; ISStitch ebenso beim Faedenziehen (Z. 94 gegen 108).
 TF.Static["hemophobic"] = {
     { id = "bloodpanic", kind = "mult", value = 2.0, text = "UI_TF_eff_bloodpanic" },
     { id = "treatpanic", kind = "flat", value = 50, text = "UI_TF_eff_treatpanic",
@@ -606,7 +684,7 @@ TF.Static["hemophobic"] = {
     -- (Spielfehler leichenstress-craft). Darum sagt die Zeile seit dem
     -- Faktensweep 23.09.2026 nur noch "umlagern", nicht mehr "craften".
     { id = "blooditems", kind = "info", text = "UI_TF_eff_blooditems",
-      note = "UI_TF_note_blooditems" },
+      note = "UI_TF_note_blooditems", condition = "UI_TF_note_sponlyclient" },
 }
 
 -- IsoGameCharacter.update: 0.5 bzw. 0.6 x (1 - Raumgroesse/70) je Frame, mit
@@ -696,6 +774,13 @@ TF.Static["irongut"] = {
     -- (2 x ...). Die Zeile heisst darum seit dem Faktensweep 2 (23.09.2026)
     -- "Chance auf die schwere Dosis". Erwartetes Gift 2 + 3c: bei c = 40 %
     -- mit Iron Gut rund -20 %, mit Weak Stomach rund +40 %.
+    -- Die Grundchance (int)(Tage verdorben / Spanne x 100), Tage bis 5
+    -- gedeckelt, ist selbst nicht auf 100 gedeckelt (Z. 616-619). Iron Gut
+    -- halbiert sie ganzzahlig, gewuerfelt wird Rand.Next(100) < Chance: der
+    -- wirksame Faktor ist min(b/2, 100) / min(b, 100), also x0.5 nur bis b =
+    -- 100, ab b = 200 gar nichts mehr. Bei den 205 Speisen mit Spanne 2
+    -- (etwa Kohl, offene Dosen) ist das nach 4 Tagen verdorben so weit
+    -- (Faktensweep 3, 23.09.2026, seitdem in der Fussnote).
     { id = "foodsick", kind = "mult", value = 0.5, text = "UI_TF_eff_foodsick",
       note = "UI_TF_note_spoiledonly" },
     -- IsoGameCharacter.DrinkFluid(FluidContainer, float, boolean), Z. 5496-5506:
@@ -720,8 +805,10 @@ TF.Static["weakstomach"] = {
     -- (DaysTotallyRotten - DaysFresh) x 100; bei den meisten Speisen liegt die
     -- Spanne bei 2 bis 4 Tagen, dort ist die Grundchance ein bis zwei Tage nach
     -- dem Verderben schon 50 % und mehr, und Weak Stomach aendert nichts mehr.
-    -- Eigene Fussnote, Iron Gut behaelt spoiledonly: dessen x0.5 gilt immer
-    -- (Faktensweep 23.09.2026).
+    -- Eigene Fussnote, Iron Gut behaelt spoiledonly (Faktensweep 23.09.2026).
+    -- Bis zum Faktensweep 3 stand hier "dessen x0.5 gilt immer"; das war
+    -- falsch, auch Iron Gut laeuft bei langer Verderbnis in den Deckel (siehe
+    -- oben bei Iron Gut).
     { id = "foodsick", kind = "mult", value = 2.0, text = "UI_TF_eff_foodsick",
       note = "UI_TF_note_spoiledcap" },
     -- IsoGameCharacter.DrinkFluid(FluidContainer, float, boolean), Z. 5507-5509:
@@ -736,8 +823,16 @@ TF.Static["weakstomach"] = {
 -- kleinere, sondern gar keine Erkaeltungsgefahr (Spielfehler
 -- erkaeltung-schwelle, gemessen mit den Code-Werten). Eine eigene Zeile ohne
 -- Zahl; beide Traits tragen denselben Text, die Uebersicht nennt sie in einer Zeile.
+-- cold (Faktensweep 3, 23.09.2026): kein Wuerfelwurf. Der Faktor skaliert,
+-- wie schnell sich catchACold fuellt, solange delta ueber 0,1 liegt
+-- (BodyDamage Z. 733-743); bei 100 beginnt die Erkaeltung ohne Wurf (Z.
+-- 744-749), sonst sinkt der Zaehler je Update fest um 0,175 ohne Multiplier
+-- (Z. 751-756), voll ist er nach rund 570 Updates leer. Darum heisst die
+-- Zeile "Erkaeltungsaufbau bei Kaelte" statt "Chance, sich zu erkaelten",
+-- mit der Fussnote coldmeter; die Faktoren bleiben.
 TF.Static["resilient"] = {
-    { id = "cold",          kind = "mult", value = 0.45, text = "UI_TF_eff_cold" },
+    { id = "cold",          kind = "mult", value = 0.45, text = "UI_TF_eff_cold",
+      note = "UI_TF_note_coldmeter" },
     { id = "coldmild",      kind = "info", text = "UI_TF_eff_coldmild", note = "UI_TF_note_gamequirk" },
     { id = "coldprogress",  kind = "mult", value = 0.8,  text = "UI_TF_eff_coldprogress" },
     { id = "coldrecovery",  kind = "mult", value = 1.5,  text = "UI_TF_eff_coldrecovery" },
@@ -746,7 +841,8 @@ TF.Static["resilient"] = {
 }
 
 TF.Static["pronetoillness"] = {
-    { id = "cold",          kind = "mult", value = 1.7,  text = "UI_TF_eff_cold" },
+    { id = "cold",          kind = "mult", value = 1.7,  text = "UI_TF_eff_cold",
+      note = "UI_TF_note_coldmeter" },
     { id = "coldprogress",  kind = "mult", value = 1.2,  text = "UI_TF_eff_coldprogress" },
     { id = "coldrecovery",  kind = "mult", value = 0.5,  text = "UI_TF_eff_coldrecovery" },
     { id = "corpsesick",    kind = "mult", value = 1.25, text = "UI_TF_eff_corpsesick" },
@@ -755,7 +851,8 @@ TF.Static["pronetoillness"] = {
 
 -- Registry-Name OUTDOORSMAN, im Spiel "Outdoorsy".
 TF.Static["outdoorsman"] = {
-    { id = "cold",         kind = "mult", value = 0.25, text = "UI_TF_eff_cold" },
+    { id = "cold",         kind = "mult", value = 0.25, text = "UI_TF_eff_cold",
+      note = "UI_TF_note_coldmeter" },
     { id = "coldmild",     kind = "info", text = "UI_TF_eff_coldmild", note = "UI_TF_note_gamequirk" },
     -- Je Versuch statt je Wurf (Faktensweep 2, 23.09.2026): ISBBQLightFromKindle
     -- wuerfelt ab 20 % Fortschritt jeden Tick erst Zuenden (1/300, mit Trait
@@ -764,7 +861,10 @@ TF.Static["outdoorsman"] = {
     -- ist. Das ist ein Wettlauf: je Versuch brennt es ohne Trait in 300/599 =
     -- 50 %, mit Trait in 450/599 = 75 %, der Stock bricht in 50 % bzw. 25 %.
     -- Also x1.5 und x0.5 je Versuch; bis dahin standen hier die Wurffaktoren
-    -- x2.0 und x0.667. Die Zeit bis zum Feuer halbiert sich.
+    -- x2.0 und x0.667. Nur die Wuerfelphase halbiert sich (300 -> 150 Ticks);
+    -- jeder Versuch laeuft vorher 20 % seiner Dauer ohne Wurf (300 von 1500
+    -- Einheiten), bei 2,0 statt 1,33 Versuchen sind es rund 0,6 der Zeit
+    -- (Faktensweep 3, 23.09.2026; bis dahin stand hier "halbiert sich").
     { id = "firelight",    kind = "mult", value = 1.5,   text = "UI_TF_eff_firelight",
       note = "UI_TF_note_bbqonly", case = "UI_TF_note_bbqonly",
       hint = "UI_TF_note_firelightrace" },
@@ -896,7 +996,13 @@ TF.Static["outofshape"] = {
 -- Aufrufer: IsoDoor, OpenWindowState, CloseWindowState. Trotz des Namens hat
 -- der Trait also nichts mit Laufen zu tun. Aufruferliste am 10.09.2026 mit
 -- tools/jar-callers.py (Methodref-Eintraege aller 23740 Klassen) und einem
--- grep ueber media/lua bestaetigt.
+-- grep ueber media/lua bestaetigt. Bei den Fenstern ruft nur onAttemptFinished
+-- exert, und das loest nur die Animation "trying" aus, im Ausgang struggle:
+-- beim Oeffnen ein dauerhaft verriegeltes oder ein verriegeltes Fenster von
+-- aussen (OpenWindowState Z. 127-131), beim Schliessen ein dauerhaft
+-- verriegeltes oder eins, durch das jemand klettert (CloseWindowState Z.
+-- 117-121). Normales Oeffnen und Schliessen kostet keine Ausdauer; die
+-- Fussnote sagt es seit dem Faktensweep 3 (23.09.2026).
 TF.Static["jogger"] = {
     { id = "enduranceloss", kind = "pct", value = -10, text = "UI_TF_eff_enduranceloss",
       note = "UI_TF_note_doorswindows", case = "UI_TF_note_doorswindows" },
@@ -952,6 +1058,16 @@ TF.Static["asthmatic"] = {
 -- Wen es trifft: wer ohne Trait schon an der Schranke faehrt, gewinnt nichts.
 -- Das sind die schnellen Wagen ab etwa 95 Skriptpunkten - CarLuxury (105),
 -- SportsCar und CarRacecar (120), die Polizeiwagen (100).
+--
+-- Multiplayer (Faktensweep 3, 23.09.2026), auch beim Hosten: der Client
+-- rechnet mit dem Tempo mal Lerp(1, 120 / Tempolimit, (v / Limit)^2)
+-- (CarController Z. 130-136, BaseVehicle.getFakeSpeedModifier) und schaltet
+-- die Kraft ab echtem Tempolimit ab (Z. 681-683, Standard 70). Aus der
+-- Plateau-Regel folgen auf Standard-Servern rund +5 bis +7 % bei gewoehnlichen
+-- Wagen, nichts bei schnellen; Sunday Driver rund -12 %, Sportwagen -4 %.
+-- Nur gerechnet, im Multiplayer nicht gemessen; die Fussnoten sagen es
+-- vorsichtig. Bis dahin hiess es "Server begrenzen standardmaessig auf 70",
+-- das war das echte Tempo, der Tacho zeigt dort 120.
 TF.Static["speeddemon"] = {
     { id = "grapple",  kind = "mult", value = 1.15, text = "UI_TF_eff_grapple",
       dead = true, note = "UI_TF_note_deadgrapple" },
@@ -1036,21 +1152,35 @@ TF.Static["speeddemon"] = {
 -- Schranke von 122.4 km/h faehrt (SportsCar), verliert rund 10 %.
 -- Rueckwaerts sind es 10 statt 27 km/h, bei jedem Wagen gleich, weil
 -- maxSpeedReverse in keinem Fahrzeugskript ueberschrieben ist.
+-- Die -30 % Rueckwaertskraft gelten nur bis etwa 3,3 km/h; darueber sinkt
+-- der Faktor linear bis 0 bei 10 km/h (0,63 bei 4, 0,42 bei 6, 0,21 bei 8
+-- km/h). Gemessen ist nur das Fenster 2 bis 4 km/h; seit dem Faktensweep 3
+-- (23.09.2026) nennt die Fussnote reverseforcesunday die Grenze.
 TF.Static["sundaydriver"] = {
     { id = "engineforce",  kind = "pct", value = -25, text = "UI_TF_eff_engineforce",
       note = "UI_TF_note_forcesunday" },
     { id = "topspeed",     kind = "pct", value = -19, text = "UI_TF_eff_topspeed",
       note = "UI_TF_note_topspeedsunday" },
-    { id = "reverseforce", kind = "pct", value = -30, text = "UI_TF_eff_reverseforce" },
+    { id = "reverseforce", kind = "pct", value = -30, text = "UI_TF_eff_reverseforce",
+      note = "UI_TF_note_reverseforcesunday" },
     { id = "reversespeed", kind = "pct", value = -63, text = "UI_TF_eff_reversespeed",
       note = "UI_TF_note_reversespeedsunday" },
 }
 
 -- Gymnast bringt Nimble +1 mit (XPBoosts), also 22 + 4 = 26, Wurzel 5: eine
--- neue Figur scheitert an hohen Zaeunen mit 20 statt 25 %. Dextrous, Burglar
--- und All Thumbs allein aendern bei 20 nichts (24 und 16 bleiben Wurzel 4),
--- darum je ein hint; die gemeinsame Fussnote bleibt, damit die Uebersicht
--- die Punkte weiter summiert (Faktensweep 2, 23.09.2026).
+-- neue Figur scheitert an hohen Zaeunen mit 20 statt 25 %. Dextrous und All
+-- Thumbs allein aendern bei 20 nichts (24 und 16 bleiben Wurzel 4), darum je
+-- ein hint; die gemeinsame Fussnote bleibt, damit die Uebersicht die Punkte
+-- weiter summiert (Faktensweep 2, 23.09.2026).
+-- Faktensweep 3 (23.09.2026): Burglar gibt es nur ueber den Beruf Burglar,
+-- der Nimble 2 mitbringt (character_professions.txt Z. 3-11). Jeder Burglar
+-- startet also bei 24 (Wurzel 4), mit dem Trait 28 (Wurzel 5): 20 statt 25 %.
+-- Bis dahin stand Burglar hier in der Liste "aendert allein nichts"; eigener
+-- hint climbburglar. Die Berufe mit Fitness-, Strength- oder Nimble-Bonus
+-- (Farmer, Firefighter, Lumberjack, Nurse, Police Officer, Rancher: 22 bzw.
+-- 24) steigen mit Dextrous auf 26 bzw. 28, also Wurzel 5; eigener hint
+-- climbdextrous. All Thumbs aendert nur beim Fitness Instructor etwas (28 ->
+-- 24, Wurzel 5 -> 4), das sagt climbalone.
 TF.Static["gymnast"] = {
     { id = "climb",         kind = "flat", value = 4, text = "UI_TF_eff_climb",
       unit = "UI_TF_unit_points", note = "UI_TF_note_climbbase",
@@ -1063,8 +1193,13 @@ TF.Static["gymnast"] = {
 -- Lautstaerke vor den Trait-Faktoren (parameterVolume, Z. 5306/5325); was
 -- der Spieler hoert, bleibt gleich. Der Faktor trifft nur den Radius, den
 -- Zombies hoeren: ceil(Lautstaerke x 10), drinnen halbiert und abgeschnitten.
--- Mit Schuhen draussen, Schleichen/Gehen/Laufen/Sprinten: ohne 4/7/11/14,
--- Graceful 2/5/7/9, Clumsy 4/9/13/17 Felder. Bis zum Faktensweep 2
+-- Mit Schuhen draussen bei Fertigkeit 0, Schleichen/Gehen/Laufen/Sprinten:
+-- ohne 4/7/11/14, Graceful 3/5/7/9, Clumsy 5/9/13/17 Felder (draussen;
+-- drinnen (int)(x0.5): 2/3/5/7, 1/2/3/4, 2/4/6/8). Bis zum Faktensweep 3
+-- (23.09.2026) stand hier Graceful 2 und Clumsy 4 beim Schleichen und in der
+-- Fussnote "beim Schleichen keine Aenderung": das liess den Faktor 1.2 in
+-- getSneakSpotMod aus (0.95 x 1.2 bei Sneak 0). Seitdem nennen die Fussnoten
+-- auch "draussen" und "drinnen etwa die Haelfte". Bis zum Faktensweep 2
 -- (23.09.2026) hiess die Zeile "Schrittlautstaerke", ohne Fussnote.
 TF.Static["graceful"] = {
     { id = "footsteps", kind = "pct",  value = -40, text = "UI_TF_eff_footsteps",
@@ -1110,6 +1245,15 @@ TF.Static["clumsy"] = {
 -- Der Schlaf laeuft in zwei Abschnitten: ueber Muedigkeit 0.3 baut er in
 -- 5 Stunden 0.7 Punkte ab, darunter in 7 Stunden die restlichen 0.3; von
 -- ganz muede bis ganz erholt sind das 12 Stunden Basis.
+-- Multiplayer (Faktensweep 3, 23.09.2026), auch beim Hosten: SleepAllowed und
+-- SleepNeeded sind standardmaessig aus (ServerOptions Z. 107-108), dann
+-- haelt der Server die Muedigkeit auf 0 und bietet keinen Schlaf an. Vanilla
+-- blendet Wakeful, Sleepyhead und Restless Sleeper dann aus
+-- (CharacterCreationProfession.lua Z. 888-892), Night Owl und Hard of
+-- Hearing nicht; deren Schlafzeilen tragen die condition mpsleep. Die
+-- Einschlafverzoegerung und der Albtraum laufen im Multiplayer auch mit
+-- Schlaf nie (setPlayerFallAsleep wird dort nicht gerufen,
+-- ISWorldObjectContextMenu.lua Z. 1114-1121), darum condition sponlysleep.
 TF.Static["needslesssleep"] = {
     { id = "tiredness",     kind = "pct", value = -30, text = "UI_TF_eff_tiredness" },
     { id = "sleeprecovery", kind = "pct", value = 33,  text = "UI_TF_eff_sleeprecovery" },
@@ -1134,8 +1278,14 @@ TF.Static["insomniac"] = {
     -- darunter gewuerfelt. Night Owl halbiert also auch diese Spanne - die
     -- Uebersicht verrechnet das (TF.Summary, scaleRanges), der Tooltip
     -- nennt nur den eigenen Wert.
+    -- Die 0 bis 60 gelten im normalen Bett ohne Schmerz, Stress und
+    -- Schlaftabletten: Bett und Stress multiplizieren beide Faelle, Schmerz
+    -- gibt 1 + 0,2 je Stufe Stunden dazu, dann greift der Deckel 2,0; mit
+    -- Tabletten 0,1 fuer alle (SleepingEvent Z. 144-182). Seit dem
+    -- Faktensweep 3 (23.09.2026) in der Fussnote.
     { id = "fallasleep",    kind = "range", value = { 0, 60 }, text = "UI_TF_eff_fallasleep",
-      unit = "UI_TF_unit_minutes", note = "UI_TF_note_fallasleepbase" },
+      unit = "UI_TF_unit_minutes", note = "UI_TF_note_fallasleepbase",
+      condition = "UI_TF_note_sponlysleep" },
 }
 
 -- SleepingEvent.doDelayToSleep (Z. 144-182): Night Owl halbiert vor dem
@@ -1144,9 +1294,10 @@ TF.Static["insomniac"] = {
 -- weniger als die Haelfte, mit Tabletten nichts. Fussnote seit dem
 -- Faktensweep 2 (23.09.2026).
 TF.Static["nightowl"] = {
-    { id = "sleeprecovery", kind = "pct", value = 40,  text = "UI_TF_eff_sleeprecovery" },
+    { id = "sleeprecovery", kind = "pct", value = 40,  text = "UI_TF_eff_sleeprecovery",
+      condition = "UI_TF_note_mpsleep" },
     { id = "fallasleep",    kind = "pct", value = -50, text = "UI_TF_eff_fallasleep",
-      note = "UI_TF_note_nightowlcap" },
+      note = "UI_TF_note_nightowlcap", condition = "UI_TF_note_sponlysleep" },
 }
 
 -- ---------------------------------------------------------------------------
@@ -1216,8 +1367,11 @@ TF.Static["hardofhearing"] = {
     -- 4.5 zaehlt nur fuer einen abgelegten Wecker weiter als Radius / 4.5
     -- (Wecker 15 -> 3,3 Felder, Uhr 7 -> 1,6). Die Probe hearDistance stand
     -- hier ohne Eintrag in TF.Probes und lief nie (Faktensweep 2, 23.09.2026).
+    -- Wecker wirken nur im Schlaf; auf Standard-Servern schlaeft niemand
+    -- (siehe Schlaf), darum seit dem Faktensweep 3 (23.09.2026) die condition
+    -- mpsleep. Der Wecker selbst laeuft im Multiplayer beim Client.
     { id = "hearing",   kind = "mult", value = 4.5,  text = "UI_TF_eff_hearing",
-      note = "UI_TF_note_hearingalarm" },
+      note = "UI_TF_note_hearingalarm", condition = "UI_TF_note_mpsleep" },
 }
 
 -- Sichtfeld: im Einzelspiel und auf dem Client kommt der Kegel aus
@@ -1290,6 +1444,14 @@ TF.Static["conspicuous"] = {
 
 -- Smoker wirkt in BodyDamage (Nikotinentzug, Erkaeltungslogik) und in
 -- RecipeCodeOnEat. Die Zahlen stehen im jeweiligen Item, nicht im Trait.
+-- Faktensweep 3 (23.09.2026): consumeNicotineLogic (Z. 21-44) gibt Rauchern
+-- den stressChange des Items auf STRESS (0 bis 1) und auf UNHAPPINESS (0 bis
+-- 100); die -0,05 einer Zigarette sind dort nicht spuerbar, darum sagt die
+-- Zeile nicht mehr "senkt Unzufriedenheit". Den stressChange bekommt ueber
+-- Eat (IsoGameCharacter Z. 5382, BodyDamage Z. 514) jeder, Raucher also
+-- doppelt; dazu beendet Rauchen den Nikotinentzug. Husten je Rauchen:
+-- Raucher 1 zu 2 (InverseCoughProbabilitySmoker), Nichtraucher 1 zu 4 bis 1
+-- zu 10, Kautabak nie.
 TF.Static["smoker"] = {
     { id = "nicotine", kind = "info", text = "UI_TF_eff_smoker" },
 }
@@ -1310,6 +1472,14 @@ TF.Static["organized"] = {
       note = "UI_TF_note_container_more" },
 }
 
+-- ingredients: ISCraftingUI.ReturnItemToContainer kehrt bei Disorganized
+-- sofort zurueck (Z. 13-15). Es traegt nicht nur uebrige Zutaten zurueck,
+-- sondern alles, was aus Taschen oder Behaeltern geholt wurde: Werkzeug beim
+-- Handwerk, Essen und Feuerzeug beim Essen und Rauchen, Feuerzeug und Stock
+-- am Lagerfeuer (ISWidgetHandCraftControl, ISInventoryPaneContextMenu,
+-- ISCampingMenu). Beim Trinken aus einer Flasche laeuft das Zuruecklegen fuer
+-- niemanden (onDrinkForThirst reicht die undefinierte Variable item), darum
+-- nennt die Zeile das Trinken nicht (Faktensweep 3, 23.09.2026).
 TF.Static["disorganized"] = {
     { id = "container",   kind = "pct", value = -30, text = "UI_TF_eff_container",
       note = "UI_TF_note_container_less" },
@@ -1367,6 +1537,14 @@ TF.Static["handy"] = {
       note = "UI_TF_note_carp0" },
 }
 
+-- Illiterate: Menue und Doppelklick sperren Buecher, Notizen und
+-- Medienbeschriftungen (ISInventoryPaneContextMenu Z. 1054, 2815;
+-- ISInventoryPane Z. 1102), die Kartennotizen (ISWorldMapSymbols Z.
+-- 1367-1373), die Naehrwerte auf Packungen (Food.DoTooltip Z. 1363-1391) und
+-- das Rezept in Reichweite (ItemContainer.hasRecipe Z. 3446-3453, ausser mit
+-- dem Tag PictureBook). Seit dem Faktensweep 3 (23.09.2026) Stand code: die
+-- Messung vom 13.09.2026 traf ISReadABook.checkLevel, das eine Figur mit
+-- Illiterate im Spiel nie erreicht.
 TF.Static["illiterate"] = {
     { id = "reading", kind = "info", text = "UI_TF_eff_illiterate" },
 }
@@ -1423,7 +1601,7 @@ TF.Static["burglar"] = {
     { id = "hotwire",    kind = "info", text = "UI_TF_eff_hotwire" },
     { id = "climb",      kind = "flat", value = 4,   text = "UI_TF_eff_climb",
       unit = "UI_TF_unit_points", note = "UI_TF_note_climbbase",
-      hint = "UI_TF_note_climbalone" },
+      hint = "UI_TF_note_climbburglar" },
     { id = "climbstrength", kind = "flat", value = 1, text = "UI_TF_eff_climbstrength",
       unit = "UI_TF_unit_levels", note = "UI_TF_note_climbstrengthbase" },
 }
@@ -1438,13 +1616,18 @@ TF.Static["burglar"] = {
 -- zombie/scripting/entity/components/crafting/CraftRecipe:
 --   validateHasAutoLearnAnySkill und validateHasAutoLearnAllSkill: --level,
 --     danach max(1, level)
---   Forschungsstufe: level -= 2
+--   Forschungsstufe: level -= 2, danach normalizeSkillLevel auf 0 bis 10
+--     (Z. 1232-1242); unter 1 ist jedes Rezept erforschbar (Z. 1304-1307)
 -- Beide Fassungen des Traits, die kaufbare und die des Berufs, wirken gleich.
+-- Die Untergrenzen stehen seit dem Faktensweep 3 (23.09.2026) in den
+-- Fussnoten: eine Lernstufe 1 bleibt 1 (19 von rund 375 Anforderungen in
+-- media/scripts), eine Forschungsstufe 1 sinkt nur auf 0 (rund ein Viertel
+-- der erforschbaren Rezepte).
 TF.Static["inventive"] = {
     { id = "autolearn", kind = "flat", value = -1, text = "UI_TF_eff_autolearn",
-      unit = "UI_TF_unit_levels" },
+      unit = "UI_TF_unit_levels", note = "UI_TF_note_autolearnfloor" },
     { id = "research",  kind = "flat", value = -2, text = "UI_TF_eff_research",
-      unit = "UI_TF_unit_levels" },
+      unit = "UI_TF_unit_levels", note = "UI_TF_note_researchfloor" },
 }
 -- Die Berufsfassung wirkt identisch, isInventive() prueft beide.
 TF.Static["inventiveprof"] = TF.Static["inventive"]

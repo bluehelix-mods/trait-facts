@@ -1,7 +1,11 @@
 --- Trait Facts - die Startskill-Liste.
 --
--- Vanilla zeigt in dieser Liste rechts "+ 75%", "+ 100%" oder "+ 125%". Diese
--- Zahlen stehen in keinem Verhaeltnis zu dem, was die Engine rechnet.
+-- Vanilla zeigt in dieser Liste rechts "+ 75%", "+ 100%" oder "+ 125%"
+-- (CharacterCreationProfession.lua:944-949). Als Prozentpunkte auf 0.25
+-- gelesen ergeben sie 1.0 / 1.25 / 1.5: Stufe 1 stimmt, Stufe 2 und 3 rechnet
+-- die Engine mit 1.33 / 1.66, also etwas mehr. Verschwiegen wird die Basis
+-- 0.25 fuer jeden Skill ohne Boost; bis 0.14.1 stand hier, die Zahlen
+-- stuenden in keinem Verhaeltnis zur Engine (Faktensweep 3, 23.09.2026).
 --
 -- IsoGameCharacter$XP.AddXP, Build 42.20.4, sinngemaess: der Faktor ist bei
 -- Boost-Stufe 1 gleich 1.0, bei Stufe 2 gleich 1.33 und bei Stufe 3 gleich
@@ -55,7 +59,11 @@ local NL = " <LINE> "
 -- die Behauptung "1.0 / 1.25 / 1.5" nachgesehen): Boost 2 -> `ldc 1.33`
 -- (Offset 438), Boost >= 3 -> `ldc 1.66` (Offset 482), beide nur ohne
 -- isSkillExcludedFromSpeedIncrease; ohne Boost `ldc 0.25` (Offset 507).
--- Vanillas "+ 75/100/125 %" in derselben Liste passt zu keiner der beiden.
+-- Vanillas "+ 75/100/125 %" in derselben Liste passt als Prozentpunkte auf
+-- 0.25 genau zu "1.0 / 1.25 / 1.5", nicht zur Engine (siehe Kopf).
+-- Das Verhaeltnis mult/base gilt gegenueber demselben Skill ohne Boost:
+-- Fast/Slow Learner, Crafty, Reluctant Fighter und die Sandbox-Faktoren
+-- treffen beide Seiten gleich, ein anderer Skill kann anders liegen.
 local LADDER = { [0] = 0.25, [1] = 1.0, [2] = 1.33, [3] = 1.66 }
 
 --- Multiplikator eines Skills ohne jeden Boost.

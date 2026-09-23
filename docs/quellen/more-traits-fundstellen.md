@@ -1,6 +1,6 @@
 # More Traits Definitive: Fundstellen je Zeile des Datenpakets
 
-Stand 21.09.2026, nachgetragen nach den beiden Faktensweeps vom 23.09.2026
+Stand 21.09.2026, nachgetragen nach den drei Faktensweeps vom 23.09.2026
 (Abschnitte unten). Geprüft wurde jede Zeile von
 `mod/42/media/lua/shared/TraitFacts/packs/TF_Pack_MoreTraits.lua` gegen den
 installierten Code von More Traits Definitive (Workshop 3799050151). Die Zahlen
@@ -22,7 +22,9 @@ aufgerufen (verdrahtet in `Tick:153-163`, Erschaffung in
 
 Chancen: `ZombRand(0,101) <= N` ergibt (N+1) von 101. Das Paket schreibt N+1.
 
-Nicht geprüft: die Mehrspieler-Pfade in `server/MT_ServerCommands.lua`. Ob das
+Nicht geprüft: die Mehrspieler-Pfade in `server/MT_ServerCommands.lua`, bis auf
+die drei, die der Faktensweep 3 gelesen hat (Battering Ram, Indefatigable,
+Restful Sleeper, siehe dort). Ob das
 `damage`-Argument von OnWeaponHitCharacter der wirklich abgezogenen Gesundheit
 entspricht, ist seit dem Faktensweep 23.09.2026 entschieden: nein, siehe dort.
 
@@ -151,7 +153,8 @@ Anmutig, Tollpatschig) und ihren deutschen Optionsnamen.
 ### Absichtlich nicht als Zeile
 
 Im Kopf des Pakets unter "Was hier absichtlich fehlt", mit Grund: der
-Geistermodus von Battering Ram (nur Mehrspieler), die Speed-Modifier und die
+Geistermodus von Battering Ram (nur Mehrspieler; seit dem Faktensweep 3 nennt
+ihn die Fußnote der Ram-Zeile, eine eigene Zeile hat er weiter nicht), die Speed-Modifier und die
 Biss-Animation von Unwavering (nach dem ersten Laden weg), die
 bildtaktgebundenen Nebenwirkungen von Alcoholic, die Nebenwirkungen der
 Fahrer-Traits (Qualität, Offroad je Modell, Tempomat, Lautstärke, die bei
@@ -190,6 +193,48 @@ Offen, im Spiel zu messen: Lead Foot und Terminator nach dem Laden, der
 Kratzer bei Immunocompromised, der Mundane-Handler bei stumpfen Klingen
 (Messvorschläge im Bericht, Abschnitt "Messen").
 
+## Faktensweep 3, 23.09.2026
+
+Grundlage: `docs/berichte/2026-09-23-faktensweep-3.md` (Pakete mtd-a, mtd-b,
+xp-columns, directions, verify-r2-summary und die More-Traits-Funde aus
+multiplayer). Jeder Fund ist noch einmal gegen den Code der Mod und das
+dekompilierte Spiel (42.20.4) gelesen; weiter alles aus dem Code, nicht
+gemessen. Das Paket hat weiter 133 Zeilen für 93 Traits der Mod; neu sind nur
+Texte, eine Fußnote und eine condition.
+
+| Trait / Zeile | bis 0.14.1 | jetzt | Fundstelle |
+| --- | --- | --- | --- |
+| fitted / mtcloths | "Kleidung bremst Bewegung und Angriffe nicht mehr", Gruppe Bewegung | "Kleidung bremst Angriffe nicht mehr", Gruppe Kampf, Fußnote: den Renngeschwindigkeit-Modifikator aus dem Tooltip wendet das Spiel nie an. Die Mod setzt RunSpeedModifier der Kleidung auf 1.0, aber den liest nur `calcRunSpeedModByClothing`, und das ruft in 42.20.4 niemand auf (Quelltext und Bytecode); `updateSpeedModifiers` setzt die Laufgeschwindigkeit auf 1.0 und senkt sie nur ohne oder mit kaputten Schuhen. Der Angriff ist echt: CombatSpeedModifier geht über `updateSpeedModifiers` in `calculateCombatSpeed`. Nach dem Laden kommt die Wirkung wieder: `onCreatePlayer` löscht sState jedes getragenen Stücks, ClothingUpdate setzt Gewicht und Angriffswert neu (ein Prüfer hielt sie für verloren) | S/MT_World.lua:262-316; S/MT_Creation.lua:405-421; IsoGameCharacter.java:8799-8817 (ohne Aufrufer), :9008-9029, :8847; Clothing.java:330-342 (nur Tooltip) |
+| noodlelegs / mttripskill | "Chance, zu stolpern" x0,67 in Grün (Richtung von der Sprint-Zeile geerbt) | eigener Text "Chance, zu stolpern, verglichen mit Stufe 0", neutral: die Zeile vergleicht den Trait mit sich selbst, ohne Trait stolpert niemand. BETTER hängt am Text, darum ein eigener Schlüssel | S/MT_Combat.lua:587-631; DEF:500-505 (Kosten -6) |
+| scrapper, wildsman / mtrecipes | ×××× (schadet) | ···· (neutral): gegenüber "ohne Trait" fehlt nichts, nur ein Versprechen der Beschreibung | DEF:822-831, :1047-1056 |
+| specfood / mtxp | gemeinsame Fußnote "jeder Skill außerhalb dieser Spezialisierung" | eigene Fußnote: auch Spurensuche, Tierpflege und Schlachten verlieren 75 %. Die Liste nennt an sechster Stelle `Perks.Foraging`, das es nicht gibt (der Skill heißt PlantScavenging); Perks ist eine Kahlua-Tabelle, der Eintrag also nil, und `ipairs` bricht dort ab. Der Trait boostet die drei selbst mit +4. Fehler der Mod | S/MT_XP.lua:15-25, :74, :86-101; PerkFactory.java:95, :320; CustomPerks.java:63; DEF:910 |
+| gymgoer / mtxp | +10 % für Fitness und Stärke | Stärke +15 % bei Proteinen über 50 und unter 300, +7 % unter -300: der Bonus geht über `MT.AddXP` (doXPBoost false) noch einmal durch AddXP, und der Protein-Faktor steht dort vor dem doXPBoost-Block, auf einem Betrag, der ihn schon enthält. Fitness bleibt bei +10 % | S/MT_XP.lua:134-138; S/MT.lua:85-86; IsoGameCharacter.java:15500-15508, :15622 |
+| Pro-Traits, Tavern Brawler, Action Hero, Unwavering / Vergleich (rollcompare) | 7 bis 29 % (Skill 0 bis 10) | 7 bis 27 %, 29 % nur mit Äxten: `getWeaponLevel` setzt bei der Axt die Stufe gleich dem Skill, jede andere Kategorie beginnt bei -1 und addiert den Skill. Gesamtspanne 2 bis 81 % (Äxte 88 %) | IsoGameCharacter.java:10113-10150; CombatManager.java:3202-3205 |
+| unwavering / mtdamage, actionhero / mtcrowd | nur der Nahkampf-Vergleich | dazu der Schuss: kein x0,15 (nur Nahkampf), modDelta fest 1 (Schrotflinten mit RangeFalloff 2), Waffenstufe 0 (keine Nahkampf-Kategorie), also 45 % des Wurfs von vorn, 67,5 % von hinten oder der Seite, Schrotflinten 90 und 135 %, bei jeder Stufe Zielen | CombatManager.java:831-833, :3195-3199; IsoGameCharacter.java:10113-10150; weapon.txt RangeFalloff |
+| gourmand, ascetic / mtcook | als bleibende Wirkung | einmal je Stück gesetzt, nach dem Laden weg: minutesToCook und minutesToBurn stehen nicht in Food.save, Item.java setzt beim Laden den Script-Wert, iFoodStage = 1 in modData verhindert das Neusetzen. Hunger, Unglück, Langeweile und Durst bleiben (gespeichert) | S/MT_Nutrition.lua:20, :54-69, :137-151; Food.java:825-989; Item.java:1559-1561 |
+| glassbody / mtglass | "wann immer du Gesundheit verlierst" | "wenn du Schaden nimmst"; gewürfelt nur bei OnPlayerGetDamage (Blutung, Feuer, Sturz, Waffen- und Autotreffer, Hunger, Durst, Krankheit). Ein einfacher Zombiekratzer löst kein Ereignis aus und zählt erst beim nächsten | S/MT_State.lua:3-84, :86, :211-213; Tick:77-79, :160; BodyDamage.java:1274-1275 |
+| albino / mtsun, badteeth / mteat | 40 und 25 Punkte ohne Einordnung | Fußnote: das ist der Schmerz am Kopf; der Schmerz der Figur steigt langsam auf das 0,8-Fache (Kopf painModifier 0,8), also 32 und 20 beim normalen Verletzungsgrad | S/MT_World.lua:42, :62; server/MT_EatFood.lua:25-26; BodyPartType.java:24; BodyDamage.java:1995-2006; BodyPart.java:933-946 |
+| immunocompromised / mtwound | "je Wunde, bis 10" | dazu: hat eine Wunde 10 erreicht, wachsen die Wunden danach in der Körperreihenfolge auch nicht mehr (`return` statt `continue` in der Schleife) | S/MT_State.lua:693-703 |
+| gordanite / mtcrowbar | ohne Zeitpunkt | gesetzt beim Ausrüsten; nach einem Stufenaufstieg oder dem Laden neu ausrüsten (HandWeapon.save speichert nur min/max Schaden, Laden löst OnEquipPrimary nicht aus) | S/MT_Weapons.lua:49-111; S/MT_Combat.lua:740-748; HandWeapon.java:1244ff |
+| quickworker, slowworker / mtaction | nur das Umlagern als Ausnahme | dazu: ein gehaltenes Stück an Gürtel oder Halfter zurückstecken behält seine Zeit, nur die Animation ändert sich. `:new` ruft adjustMaxTime für animSpeed, die Mod setzt dabei mtQuickSlowApplied, und `create` bekommt maxTime unverändert zurück (auch ohne die Abzüge des Spiels für Unglück, Rausch und Handschmerz). Anhängen und Abnehmen an der Schnellleiste (maxTime -1) ändern sich richtig über animSpeed | client/MT/MT_QuickSlowWorker.lua:9-19; TimedActions/MT_QuickSlowWorker.lua:32-40; Spiel ISUnequipAction.lua:170-189, ISBaseTimedAction.lua:78-79 |
+| indefatigable / mtlast | "unter 15 Gesundheit oder beim Zu-Boden-Ziehen" | im Mehrspieler, auch als Host, unter 25 und nie beim Zu-Boden-Ziehen: `isClient() and 25 or 15`, das Zu-Boden-Ziehen nur `not isClient()`; OnPlayerUpdate läuft nur beim Client | S/MT_Indefatigable.lua:15, :17, :37; Tick:36, :153; IsoPlayer.java:2160-2190 |
+| batteringram / mtram | Geistermodus nur im Kopf des Pakets | Fußnote: im Mehrspieler, auch als Host, beim Sprinten ohne Knochenbruch für Zombies und andere Spieler unsichtbar (setGhostMode, der Server setzt es mit) | S/MT_Combat.lua:474-490, :566-585; server/MT_ServerCommands.lua:473-480; PlayerCheats.java:33-35 |
+| restfulsleeper / mtsleep | ohne Mehrspieler-Hinweis | condition "im Multiplayer nur, wenn der Server Schlafen erlaubt" wie bei Night Owl und Hard of Hearing: SleepAllowed und SleepNeeded sind aus, der Server hält die Müdigkeit auf 0 | S/MT_Rest.lua:78; ServerOptions.java:107-108; IsoGameCharacter.java:9100-9102 |
+| base:tailor, base:smoker / mtgear | Kommentar "aus onNewGame :445" | :448 (`giveStarterItems`), :445 ist die playerdata-Prüfung | S/MT_Creation.lua:439-450 |
+
+Nicht als Zeile, nur hier: mit der Sandbox-Option Luck Impact 0 stolpert eine
+Figur mit Noodle Legs und Lucky oder Unlucky beim Rennen und Sprinten bei jedem
+Bild. `tripChance` wird mit 1,05 x 0 bzw. 0,95 x 0 multipliziert, und
+`ZombRand(0, 0)` ist 0, also immer unter 101. Nur in der Sitzung, in der die
+Figur erschaffen wurde; nach dem Laden setzt S/MT.lua:10 luckimpact auf 1,0
+(S/MT_Combat.lua:612-623; S/MT_Creation.lua:293-295). Nicht gemessen.
+
+Offen, im Spiel zu messen: `print(Perks.Foraging)` (erwartet nil) und XP für
+Schlachten mit Specialization: Food; Stärke-XP mit Gym Goer bei Proteinen 0
+und 100; wann der Angriffswert von Fitted nach dem Anziehen greift
+(updateSpeedModifiers läuft im Einzelspiel über OnClothingUpdated); Gourmand
+nach dem Laden (minutesToCook).
+
 ## Fundstelle je Zeile
 
 Kampf
@@ -211,7 +256,7 @@ Kampf
 - terminator / mtpanic: S/MT_Combat.lua:415-417, :429; je Spielminute, Tick:107
 - terminator / mtlevels: S/MT_Creation.lua:398-402
 - antigun / mtrange: S/MT_Combat.lua:450; mtaim :449; mtmood :419-421, :435; mtxp S/MT_XP.lua:92-94
-- batteringram / mtram: S/MT_Combat.lua:486, :496-532, Martial :537-556; SBX:93-97; mtramend :513-514, :534-535
+- batteringram / mtram: S/MT_Combat.lua:486, :496-532, Martial :537-556, Geistermodus :486-490, :566-585 und server/MT_ServerCommands.lua:473-480; SBX:93-97; mtramend :513-514, :534-535
 - gordanite / mtcrowbar: S/MT_Weapons.lua:73-103; Auslöser S/MT_Combat.lua:740-748; SBX:85
 - amputee / mthands: S/MT_Combat.lua:715-720, :751-762; mtarm :679-694
 - burned / mtfire: media/lua/shared/TimedActions/MT_BurnWard.lua:1-15, :101-113; SBX:283
@@ -224,7 +269,7 @@ Bewegung und Tragen
 - gimp / mtmove: S/MT_World.lua:146-153, :169-171; SBX:319/324/329
 - packmule / mtcarry: S/MT_Weight.lua:7, :13; SBX:160
 - packmouse / mtcarry: S/MT_Weight.lua:9, :13; SBX:165
-- fitted / mtclothw: S/MT_World.lua:308-311; mtcloths :294-307
+- fitted / mtclothw: S/MT_World.lua:308-311; mtcloths :294-307 (nur der Angriffswert wirkt: IsoGameCharacter.java:9016-9017, :8847; RunSpeedModifier der Kleidung liest nur das nie aufgerufene calcRunSpeedModByClothing :8799-8817); nach dem Laden neu gesetzt über S/MT_Creation.lua:414-421
 
 Gesundheit
 - evasive / mtdodge: S/MT_State.lua:116-119; SBX:100
@@ -238,9 +283,9 @@ Gesundheit
 - badteeth / mteat: media/lua/server/MT_EatFood.lua:25-26; zweite Quelle S/MT_State.lua:420-456, Tick:43
 - hardy / mtreserve: S/MT_State.lua:472-475, :480-495; S/MT.lua:32-33; SBX:235
 - secondwind / mtwind: S/MT_Rest.lua:12, :21, :30-33, :50; Aufladen :57-72; SBX:230
-- indefatigable / mtlast: S/MT_Indefatigable.lua:9, :15-17, :27-35, :46-55, :61-76, :84-86; Aufladen :89-116 (x2 nach geheilter Infektion, x2 nach Zu-Boden-Ziehen, :96-104); SBX:75/80
+- indefatigable / mtlast: S/MT_Indefatigable.lua:9, :15-17 (Mehrspieler 25, Zu-Boden-Ziehen nur ohne isClient), :27-35, :37, :46-55, :61-76, :84-86; Aufladen :89-116 (x2 nach geheilter Infektion, x2 nach Zu-Boden-Ziehen, :96-104); SBX:75/80
 - quickrest / mtrest: S/MT_Rest.lua:161, :164, :168
-- restfulsleeper / mtsleep: S/MT_Rest.lua:90-96; Aufwachen :114-115
+- restfulsleeper / mtsleep: S/MT_Rest.lua:90-96; nur im Schlaf :78; Aufwachen :114-115
 - albino / mtsun: S/MT_World.lua:74-81, :42, :51
 - injured / mtinjury: S/MT_Creation.lua:306-342; SBX:15
 - broke / mtinjury: S/MT_Creation.lua:344-353
@@ -264,12 +309,12 @@ Psyche
 - drinker / mtcrave: S/MT_Alcohol.lua:109-136; SBX:35; mtpoison :154-191; SBX:40; mtgear S/MT_Creation.lua:217-219; SBX:20
 
 Lernen
-- specweapons, specfood, specguns, specmove, speccrafting, specaid / mtxp: S/MT_XP.lua:5-42, :61-66, :86-89, :97; SBX:45
-- gymgoer / mtxp: S/MT_XP.lua:125-138; SBX:65; mtstiff :144-222; SBX:70
+- specweapons, specfood, specguns, specmove, speccrafting, specaid / mtxp: S/MT_XP.lua:5-42, :61-66, :86-89, :97; SBX:45; specfood bricht bei :21 (Perks.Foraging, nil) ab, ipairs :74
+- gymgoer / mtxp: S/MT_XP.lua:125-138; SBX:65; Protein-Faktor auf dem Bonus IsoGameCharacter.java:15500-15508; mtstiff :144-222; SBX:70
 - noxpshooter / mtlevels: S/MT_Creation.lua:371-373; noxptechnician :375-378; noxpfirstaid :380-382; noxpaxe :384-387; noxpmaintenance :389-391; noxpsneaky :393-396
 
 An den Bildtakt gebunden
-- noodlelegs / mttrip, mttripsprint, mttripskill: S/MT_Combat.lua:596-623
+- noodlelegs / mttrip, mttripsprint, mttripskill: S/MT_Combat.lua:596-623 (Luck Impact 0: :612-617 mit S/MT_Creation.lua:293-295)
 - butterfingers / mtdrop: S/MT_State.lua:216-256 (je Spielminute, Tick:100); SBX:115
 - bouncer / mtbounce: S/MT_State.lua:515-551; SBX:50/55/60
 - blissful / mtbliss: S/MT_State.lua:384-418

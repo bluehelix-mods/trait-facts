@@ -364,10 +364,15 @@ function TF.Summary.direction(text, value, kind)
         -- "range" kam bis zum Faktensweep 23.09.2026 hier nicht vor und blieb
         -- darum immer farblos, auch wo die Richtung eindeutig ist (Gimp -67,5
         -- bis -22,5 %, Quick Rest 5,5 bis 12 %). Eine Spanne ab 0 ("0 bis
-        -- 60 min") bleibt weiter ohne Richtung.
+        -- 60 min") zaehlt nach dem Ende, das nicht 0 ist: die beiden, die es
+        -- gibt (Claustrophobic 0 bis 18 Panik je s, Restless Sleeper 0 bis 60
+        -- min), sind reine Lasten, und die Legende nennt die neutrale Farbe
+        -- "fuer sich weder gut noch schlecht". Bis 0.14.1 blieben sie farblos
+        -- (Faktensweep 3, 23.09.2026). Nur Enden mit verschiedenem Vorzeichen
+        -- haben keine Richtung; beide 0 ergibt delta 0 und damit auch keine.
         if type(value) ~= "table" or type(value[1]) ~= "number" or type(value[2]) ~= "number" then return nil end
-        if value[1] * value[2] <= 0 then return nil end
-        delta = value[1]
+        if value[1] * value[2] < 0 then return nil end
+        delta = (value[1] ~= 0) and value[1] or value[2]
     elseif type(value) == "number" then
         delta = value
     else
@@ -455,9 +460,20 @@ TF.Summary.ADDPCT = {
 -- sie gilt. Der enge Beitrag allein entfaellt: sobald der breite Trait dabei
 -- ist, gibt es keinen Skill, auf dem der enge allein wirkt.
 --
--- Kombinierbar sind laut Registry nur Fast Learner oder Slow Learner mit
--- Reluctant Fighter; Fast Learner, Slow Learner und Crafty schliessen einander
--- aus. Deshalb reicht der paarweise Vergleich.
+-- In Vanilla kombinierbar sind laut Registry nur Fast Learner oder Slow
+-- Learner mit Reluctant Fighter; Fast Learner, Slow Learner und Crafty
+-- schliessen einander aus. Fuer Vanilla reicht darum der paarweise Vergleich.
+-- Mit More Traits kommen die Spezialisierungen und Anti-Gun dazu: sie
+-- schliessen nur einander aus, Specialization: Guns dazu Anti-Gun
+-- (ToadTraits.txt:887-947, :53), und lassen sich mit
+-- Fast/Slow Learner, Crafty und Reluctant Fighter waehlen. Die Faktoren
+-- multiplizieren sich: das Spiel rechnet die Vanilla-Faktoren in AddXP, das
+-- Ereignis AddXP traegt den fertigen Betrag (IsoGameCharacter.java:15622),
+-- und MT zieht davon 75 % bzw. 25 % mit doXPBoost false ab (MT_XP.lua:86-101,
+-- MT.lua:85-86); die Abzuege der Mod zusammen hoechstens 95 %. Fast Learner
+-- ausserhalb der Spezialisierung also 1.3 x 0.25 = 0.325. Die Paketzeilen
+-- tragen keinen scope, die Uebersicht zeigt sie getrennt, jede fuer sich
+-- richtig; den kombinierten Fall zeigt sie nicht (Faktensweep 3, 23.09.2026).
 TF.Summary.OVERLAP = {
     { broad = "xpmost",         narrow = "xpcombat",
       both = "UI_TF_note_combatskills", rest = "UI_TF_case_otherskills" },
@@ -1138,11 +1154,17 @@ end
 
 --- Die 3-Kachel-Untergrenze beim Sammeln (Faktensweep 2, 23.09.2026).
 --
--- ISBaseIcon rechnet 3 + 0.5 x Stufe + Trait- und Berufsbonus und klemmt
--- danach auf mindestens 3 Kacheln (ISBaseIcon.lua:318-331, der Ring im
--- Suchmodus ebenso, ISSearchManager.lua:1022-1052). Ein Abzug kostet also
--- nur, was ueber 3 liegt: bei Nahrungssuche 0 nichts, je Stufe eine halbe
--- Kachel mehr. TF.Live gibt jedem negativen Radius die Bedingung mit; sie
+-- Zwei Radien, beide mit Untergrenze 3 (Faktensweep 3, 23.09.2026; bis
+-- 0.14.1 stand hier fuer beide "je Stufe eine halbe Kachel"). Der Suchradius
+-- im Suchmodus (ISSearchManager.lua:1016-1052, im Spiel "Search Radius"):
+-- 3 + Bonus + 0.7 x Stufe, geklemmt auf mindestens 3; ein Abzug kostet bei
+-- Nahrungssuche 0 nichts und je Stufe 0,7 Kacheln mehr, bis er ganz wirkt
+-- (Short Sighted und Agoraphobic ab Stufe 3). Das Entdecken eines
+-- Gegenstands (ISBaseIcon.lua:318-376): 3 + 0.5 x Stufe + Bonus, geklemmt
+-- auf mindestens 3, dann x (Stufe + 1)/10 und x (ln Gewicht + 0.5)
+-- (forageSystem.lua:1773-1779), danach wieder mindestens 3 x visionBonus.
+-- Bei leichten Gegenstaenden liegt das oft auch auf hoher Stufe auf der
+-- Untergrenze. TF.Live gibt jedem negativen Radius die Bedingung mit; sie
 -- gilt aber nur, solange auch die Zeile negativ ist. In einer Summe mit
 -- positiven Radien (Agoraphobic mit Eagle Eyed) faellt sie weg, und in der
 -- Schnittmenge einer Ueberschneidung (ohne Brille) kommt sie dazu, wenn die

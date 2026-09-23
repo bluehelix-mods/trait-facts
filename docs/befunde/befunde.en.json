@@ -2,9 +2,9 @@
  "findings": {
   "strong/knockback": {
    "code": "IsoGameCharacter.processHitDamage (lines 5773-5777), melee only; read in single player only as the 0.4 threshold of the stagger animation (AnimSets/zombie/staggerback/defaultStaggerBack.xml against GeneralStagger.xml and smallFromFront.xml), and only without a ZombieHitReaction (CombatManager lines 2410-2416), so on shoves",
-   "note": "Measured on 2026-09-13 (code values): without 0.4000, with 0.5600, factor 1.4000. What was measured is the getter getHitForce, not a push distance. In single player hitForce is only read as a threshold: above 0.4 the zombie plays the long shove stagger (Zombie_ShoveStagger_2m), below it the short one. Only a hit without a ZombieHitReaction takes this path, and every melee swing animation sets one; that leaves shoves. The push distance proportional to the force (calcHitDir, lines 13628-13643) is only called by HitReactionNetworkAI in multiplayer. So since fact sweep 2 (2026-09-23) the row says \"Hit force\" instead of \"Knockback\", with the threshold in the note; \"measured\" covers the hit force factor, how often a shove with Strong crosses the threshold is not measured.",
+   "note": "Measured on 2026-09-13 (code values): without 0.4000, with 0.5600, factor 1.4000. What was measured is the getter getHitForce, not a push distance. In single player hitForce is only read as a threshold: above 0.4 the zombie plays the long shove stagger (Zombie_ShoveStagger_2m), below it the short one. Only a hit without a ZombieHitReaction takes this path, and every melee swing animation sets one; that leaves shoves. The push distance proportional to the force (calcHitDir, lines 13628-13643) is only called by HitReactionNetworkAI in multiplayer. So since fact sweep 2 (2026-09-23) the row says \"Hit force\" instead of \"Knockback\", with the threshold in the note; \"measured\" covers the hit force factor, how often a shove with Strong crosses the threshold is not measured. From behind both branches play the same clip (smallFromBehind.xml inherits Zombie_PushedFwd_FromBehind from fromBehind.xml), so the threshold is not visible there; since fact sweep 3 (2026-09-23) the note says \"from the front or side\". StaggerBackState.getMaxStaggerTime also reads hitForce as 35 x force, clamped to 20 through 30 (lines 57-65); at shove forces around 0.4 to 0.56 the floor of 20 applies, so without effect.",
    "method": "Code values, measure mod 6.22.0: IsoGameCharacter.processHitDamage triggered with a spawned baseball bat, the character hits itself, then getHitForce read; without and with Strong, factor with/without, tolerance 0.006.",
-   "src": "e512e30042"
+   "src": "3d8dc0f5dc"
   },
   "strong/carryweight": {
    "code": "IsoPlayer constructors (lines 592-600, 656-664) set maxWeightDelta; read in BodyDamage.UpdateStrength (line 1731; delta read in line 1785)",
@@ -26,9 +26,9 @@
   },
   "weak/knockback": {
    "code": "IsoGameCharacter.processHitDamage (lines 5773-5777), melee only; read in single player only as the 0.4 threshold of the stagger animation (AnimSets/zombie/staggerback/defaultStaggerBack.xml against GeneralStagger.xml and smallFromFront.xml), and only without a ZombieHitReaction (CombatManager lines 2410-2416), so on shoves",
-   "note": "Measured on 2026-09-13 (code values): without 0.4000, with 0.2400, factor 0.6000. What was measured is the getter getHitForce, not a push distance. In single player hitForce is only read as a threshold: above 0.4 the zombie plays the long shove stagger (Zombie_ShoveStagger_2m), below it the short one. Only a hit without a ZombieHitReaction takes this path, and every melee swing animation sets one; that leaves shoves. The push distance proportional to the force (calcHitDir, lines 13628-13643) is only called by HitReactionNetworkAI in multiplayer. So since fact sweep 2 (2026-09-23) the row says \"Hit force\" instead of \"Knockback\", with the threshold in the note; \"measured\" covers the hit force factor, how often a shove with Puny crosses the threshold is not measured.",
+   "note": "Measured on 2026-09-13 (code values): without 0.4000, with 0.2400, factor 0.6000. What was measured is the getter getHitForce, not a push distance. In single player hitForce is only read as a threshold: above 0.4 the zombie plays the long shove stagger (Zombie_ShoveStagger_2m), below it the short one. Only a hit without a ZombieHitReaction takes this path, and every melee swing animation sets one; that leaves shoves. The push distance proportional to the force (calcHitDir, lines 13628-13643) is only called by HitReactionNetworkAI in multiplayer. So since fact sweep 2 (2026-09-23) the row says \"Hit force\" instead of \"Knockback\", with the threshold in the note; \"measured\" covers the hit force factor, how often a shove with Puny crosses the threshold is not measured. From behind both branches play the same clip (smallFromBehind.xml inherits Zombie_PushedFwd_FromBehind from fromBehind.xml), so the threshold is not visible there; since fact sweep 3 (2026-09-23) the note says \"from the front or side\". StaggerBackState.getMaxStaggerTime also reads hitForce as 35 x force, clamped to 20 through 30 (lines 57-65); at shove forces around 0.4 to 0.56 the floor of 20 applies, so without effect.",
    "method": "Code values, measure mod 6.22.0: IsoGameCharacter.processHitDamage triggered with a spawned baseball bat, the character hits itself, then getHitForce read; without and with Puny, factor with/without, tolerance 0.006.",
-   "src": "6c1d001654"
+   "src": "6ec53fca64"
   },
   "weak/carryweight": {
    "code": "IsoPlayer constructors (lines 592-600, 656-664) set maxWeightDelta; read in BodyDamage.UpdateStrength (line 1731; delta read in line 1785)",
@@ -80,21 +80,21 @@
   },
   "veryunderweight/trip": {
    "code": "ClimbOverFenceState.shouldFallAfterVaultOver (line 493; traits lines 511-528; roll against the counter minus Fitness line 529)",
-   "note": "Measured on 2026-09-14 (code values, measure mod 6.26.2): tripped without 9.9333%, with 39.6333%, difference 29.7000 points, 3000 samples per case over 70 ticks. According to the code +30, because Very Low Weight (VERY_UNDERWEIGHT in the game code) is checked twice (+20 and +10, see the game bug on the Very Low Weight double check when climbing fences). The roll is Rand.Next(100) < counter - Fitness (line 529): a negative counter acts as 0. The measurement ran sprinting at Fitness 0, where the full value applies; at a run the base is below 0 from Fitness 1 on and absorbs part of the points. The weight traits also lower starting Fitness. Per code new character with Very Low Weight (Fitness 3): 27% at a run, 37% sprinting, instead of 0% and 5%; the note gives it since fact sweep 2 (2026-09-23).",
+   "note": "Measured on 2026-09-14 (code values, measure mod 6.26.2): tripped without 9.9333%, with 39.6333%, difference 29.7000 points, 3000 samples per case over 70 ticks. According to the code +30, because Very Low Weight (VERY_UNDERWEIGHT in the game code) is checked twice (+20 and +10, see the game bug on the Very Low Weight double check when climbing fences). The roll is Rand.Next(100) < counter - Fitness (line 529): a negative counter acts as 0. The measurement ran sprinting at Fitness 0, where the full value applies; at a run the base is below 0 from Fitness 1 on and absorbs part of the points. Very Low Weight comes only from losing weight in play (Nutrition.applyTraitFromWeight above 50 up to 65 kg; IsProfessionTrait = true, cost 0, not selectable at character creation, and Fast Metabolism grants only Low Weight); the Fitness -2 from XPBoosts applies only in applyTraits at creation. Per code at Fitness 5: 25% at a run, 35% sprinting; counted once (+20) it would be 15% and 25%, without the trait 0% and 5%. The note gives this since fact sweep 3 (2026-09-23); before, it assumed a new character with Fitness 3, which cannot exist.",
    "method": "Code values, measure mod 6.26.2: ClimbOverFenceState.enter triggered with VaultOverSprint on the standing character, Fitness 0; \"fall\" outcome counted, without and with Very Low Weight, 3000 samples each alternating over several ticks, difference of shares with minus without, tolerance 4 points.",
-   "src": "f13db7c2f0"
+   "src": "66dd5c20e4"
   },
   "veryunderweight/lungefall": {
    "code": "IsoGameCharacter.attackFromWindowsLunge (line 12875; traits lines 12900-12915; stagger and roll lines 12919-12924); triggered only by the climbing zombie: ClimbOverFenceState (lines 367-371), ClimbThroughWindowState (lines 290-294), GrappledThrownOutWindowState (lines 267-271)",
-   "note": "Engine bug: Very Low Weight (VERY_UNDERWEIGHT in the game code) is checked twice (+20, +10). Not measured: the roll only happens when a zombie that is climbing over a fence or through a window (or is being thrown out of one) lunges at a character close by (under 3.9 tiles, same floor) and its hand hits; only with the sandbox option Zombie Lunge. Every hit makes the character stagger; the roll decides whether it also falls. After a hit the game blocks the next one for about 7 seconds, so a reliable share would need hundreds of hits per case.",
+   "note": "Engine bug: Very Low Weight (VERY_UNDERWEIGHT in the game code) is checked twice (+20, +10). Not measured: the roll only happens when a zombie that is climbing over a fence or through a window (or is being thrown out of one) lunges at a character close by (under 3.9 tiles, same floor) and its hand hits; only with the sandbox option Zombie Lunge (on by default, off in the Rising preset). Every hit makes the character stagger; the roll decides whether it also falls. After a hit the game blocks the next one for about 7 seconds, so a reliable share would need hundreds of hits per case. Very Low Weight comes only from losing weight in play, and Fitness stays: at Fitness 5 that is 50 instead of 20 (fact sweep 3, 2026-09-23).",
    "method": "",
-   "src": "94ea3ef472"
+   "src": "16672e1233"
   },
   "veryunderweight/fallinjury": {
    "code": "IsoGameCharacter.handleLandingImpact (line 2056): injury roll lines 2121-2140, weight traits lines 2127-2130",
-   "note": "Measured on 2026-09-14 (code values, measure mod 6.26.2): share of fractures among the injured samples without 31.7273%, with 42.7469%, difference 11.0196 points (according to the code +10; without the trait the code gives 32%, with the trait 42%: PZMath.lerpFunc_EaseOutQuad computes x squared, the names are swapped in the game, so rand = (int)(0.6 x 55) = 32; the test plan had expected 52%), 4000 samples per case over 163 ticks. The measurement counts fractures among the injured samples, which is exactly the row's value. Whether a fall injures at all is decided before that by Rand.Next(100) < damage (line 2119); the damage depends on fall height and inventory load (empty inventory: no damage) and rises with the same trait (row falldamage). If the fracture roll misses, the game rolls a deep wound at threshold + 10, and that also gets likelier. Since fact sweep 2 (2026-09-23) the row says \"Chance of a fracture when a fall injures you\" instead of \"Fracture or deep wound after a fall\".",
+   "note": "Measured on 2026-09-14 (code values, measure mod 6.26.2): share of fractures among the injured samples without 31.7273%, with 42.7469%, difference 11.0196 points (according to the code +10; without the trait the code gives 32%, with the trait 42%: PZMath.lerpFunc_EaseOutQuad computes x squared, the names are swapped in the game, so rand = (int)(0.6 x 55) = 32; the test plan had expected 52%), 4000 samples per case over 163 ticks. The measurement counts fractures among the injured samples, which is exactly the row's value. Whether a fall injures at all is decided before that by Rand.Next(100) < damage (line 2119); the damage depends on fall height and inventory load (empty inventory: no damage) and rises with the same trait (row falldamage). If the fracture roll misses, the game rolls a deep wound at threshold + 10, and that also gets likelier. Since fact sweep 2 (2026-09-23) the row says \"Chance of a fracture when a fall injures you\" instead of \"Fracture or deep wound after a fall\". From about three floors the threshold is above 100 even without the trait (Fitness 5, Nimble 0: 34 for one, 71 for two, 108 for three floors), so a fracture is certain anyway and the trait changes nothing. With the sandbox option Bone Fracture off (off in the Rising preset) the fracture roll always fails (lines 2137, 2149), and the points only raise the chance of a deep wound. The note gives both since fact sweep 3 (2026-09-23).",
    "method": "Code values, measure mod 6.26.2: IsoGameCharacter.DoLand(3.0) as with fall damage (God Mode on, invisible off, Fitness and Nimble 0), without and with Very Low Weight the same 4000 samples per case; share of fractures among the injuries, difference with minus without, tolerance 6 points.",
-   "src": "cc61e7a07c"
+   "src": "6a561375b0"
   },
   "veryunderweight/falldamage": {
    "code": "IsoGameCharacter.handleLandingImpact (line 2056): healthReduction x1.4 or x1.2 in lines 2083-2086",
@@ -128,9 +128,9 @@
   },
   "emaciated/fallinjury": {
    "code": "IsoGameCharacter.handleLandingImpact (line 2056): injury roll lines 2121-2140, weight traits lines 2127-2130",
-   "note": "Measured on 2026-09-14 (code values, measure mod 6.26.2): share of fractures among the injured samples without 31.7273%, with 52.6826%, difference 20.9553 points (according to the code +20; without the trait the code gives 32%, with the trait 52%: PZMath.lerpFunc_EaseOutQuad computes x squared, the names are swapped in the game, so rand = (int)(0.6 x 55) = 32; the test plan had expected 52%), 4000 samples per case over 163 ticks. The measurement counts fractures among the injured samples, which is exactly the row's value. Whether a fall injures at all is decided before that by Rand.Next(100) < damage (line 2119); the damage depends on fall height and inventory load (empty inventory: no damage) and rises with the same trait (row falldamage). If the fracture roll misses, the game rolls a deep wound at threshold + 10, and that also gets likelier. Since fact sweep 2 (2026-09-23) the row says \"Chance of a fracture when a fall injures you\" instead of \"Fracture or deep wound after a fall\".",
+   "note": "Measured on 2026-09-14 (code values, measure mod 6.26.2): share of fractures among the injured samples without 31.7273%, with 52.6826%, difference 20.9553 points (according to the code +20; without the trait the code gives 32%, with the trait 52%: PZMath.lerpFunc_EaseOutQuad computes x squared, the names are swapped in the game, so rand = (int)(0.6 x 55) = 32; the test plan had expected 52%), 4000 samples per case over 163 ticks. The measurement counts fractures among the injured samples, which is exactly the row's value. Whether a fall injures at all is decided before that by Rand.Next(100) < damage (line 2119); the damage depends on fall height and inventory load (empty inventory: no damage) and rises with the same trait (row falldamage). If the fracture roll misses, the game rolls a deep wound at threshold + 10, and that also gets likelier. Since fact sweep 2 (2026-09-23) the row says \"Chance of a fracture when a fall injures you\" instead of \"Fracture or deep wound after a fall\". From about three floors the threshold is above 100 even without the trait (Fitness 5, Nimble 0: 34 for one, 71 for two, 108 for three floors), so a fracture is certain anyway and the trait changes nothing. With the sandbox option Bone Fracture off (off in the Rising preset) the fracture roll always fails (lines 2137, 2149), and the points only raise the chance of a deep wound. The note gives both since fact sweep 3 (2026-09-23).",
    "method": "Code values, measure mod 6.26.2: IsoGameCharacter.DoLand(3.0) as with fall damage (God Mode on, invisible off, Fitness and Nimble 0), without and with Emaciated the same 4000 samples per case; share of fractures among the injuries, difference with minus without, tolerance 6 points.",
-   "src": "edb7e45dab"
+   "src": "3795cb448e"
   },
   "emaciated/enduranceregen": {
    "code": "IsoGameCharacter.getRecoveryMod (lines 4309-4356)",
@@ -152,9 +152,9 @@
   },
   "overweight/climb": {
    "code": "IsoGameCharacter.getClimbingFailChanceFloat (line 14718; traits lines 14727-14748); consumed mainly on tall fences in ClimbOverWallState (lines 296-311), also in ClimbSheetRopeState (line 263, roll line 84) and ClimbDownSheetRopeState (line 130)",
-   "note": "651 points across 21 cases, none deviates from the formula. On tall fences the character fails with 1 in the root of the score (ClimbOverWallState lines 296-311). A new character with High Weight has Fitness 4 (XPBoosts Fitness=-1), so 8 + 10 - 15 = 3, root 1: Rand.NextBool(1) is always true, so it fails every time instead of 25% without the trait (see the game bug on a climbing score of one); pathfinding still routes over tall fences (PathFindRequest line 77, score from 1). Someone who only gets High Weight in play and keeps Fitness 5 ends at 5, root 2, 50%. On sheet ropes the fall roll only opens after (root + 1) x 100 x rope speed floors of continuous climbing (ClimbSheetRopeState lines 76, 83, 261-266; down x300, ClimbDownSheetRopeState lines 128-134), 40 floors for a new character; at double game speed and above the whole-number multiplier divides the threshold. Since fact sweep 2 (2026-09-23) the row names only tall fences.",
+   "note": "651 points across 21 cases, none deviates from the formula. On tall fences the character fails with 1 in the root of the score (ClimbOverWallState lines 296-311). A new character with High Weight has Fitness 4 (XPBoosts Fitness=-1), so 8 + 10 - 15 = 3, root 1: Rand.NextBool(1) is always true, so it fails every time instead of 25% without the trait (see the game bug on a climbing score of one); pathfinding still routes over tall fences (PathFindRequest line 77, score from 1). Someone who only gets High Weight in play and keeps Fitness 5 ends at 5, root 2, 50%. On sheet ropes the fall roll only opens after (root + 1) x 100 x rope speed floors of continuous climbing (ClimbSheetRopeState lines 76, 83, 261-266; down x300, ClimbDownSheetRopeState lines 128-134), 40 floors for a new character; at double game speed and above the whole-number multiplier divides the threshold. Since fact sweep 2 (2026-09-23) the row names only tall fences. With the sandbox option Easy Climbing (on in the Rising preset) every climb succeeds without a roll, the sheet-rope fall roll is skipped, and pathfinding always routes over tall fences (ClimbOverWallState lines 292-294, ClimbSheetRopeState line 93, ClimbDownSheetRopeState line 83, PathFindRequest line 77); the note says so since fact sweep 3 (2026-09-23).",
    "method": "Climbing, measure mod 6.19.0: getClimbingFailChanceFloat read across 21 trait cases, including High Weight; for each case Fitness, Strength and Nimble individually from 0 to 10, the others at 0. The test notes deviations against the case without the trait, the formula was then checked.",
-   "src": "db4ce795f4"
+   "src": "48ba3f5d1c"
   },
   "overweight/climbstrength": {
    "code": "IsoGameCharacter.getClimbRopeSpeed (line 14799; traits lines 14803-14817); read in ClimbSheetRopeState (lines 71, 116)",
@@ -170,9 +170,9 @@
   },
   "overweight/lungefall": {
    "code": "IsoGameCharacter.attackFromWindowsLunge (line 12875; traits lines 12900-12915; stagger and roll lines 12919-12924); triggered only by the climbing zombie: ClimbOverFenceState (lines 367-371), ClimbThroughWindowState (lines 290-294), GrappledThrownOutWindowState (lines 267-271)",
-   "note": "Not measured: the roll only happens when a zombie that is climbing over a fence or through a window (or is being thrown out of one) lunges at a character close by (under 3.9 tiles, same floor) and its hand hits; only with the sandbox option Zombie Lunge. Every hit makes the character stagger; the roll decides whether it also falls. After a hit the game blocks the next one for about 7 seconds, so a reliable share would need hundreds of hits per case.",
+   "note": "Not measured: the roll only happens when a zombie that is climbing over a fence or through a window (or is being thrown out of one) lunges at a character close by (under 3.9 tiles, same floor) and its hand hits; only with the sandbox option Zombie Lunge (on by default, off in the Rising preset). Every hit makes the character stagger; the roll decides whether it also falls. After a hit the game blocks the next one for about 7 seconds, so a reliable share would need hundreds of hits per case. A new character with High Weight (from Slow Metabolism, XPBoosts Fitness=-1) has Fitness 4: 30 - 8 - 5 = 17 instead of 20, so the trait protects by 3 points, not 5; the hint says so since fact sweep 3 (2026-09-23).",
    "method": "",
-   "src": "b9aaaa3ac2"
+   "src": "8588fa9d60"
   },
   "overweight/falldamage": {
    "code": "IsoGameCharacter.handleLandingImpact (line 2056): healthReduction x1.4 or x1.2 in lines 2083-2086",
@@ -182,9 +182,9 @@
   },
   "overweight/fallinjury": {
    "code": "IsoGameCharacter.handleLandingImpact (line 2056): injury roll lines 2121-2140, weight traits lines 2127-2130",
-   "note": "Measured on 2026-09-14 (code values, measure mod 6.26.2): share of fractures among the injured samples without 31.7273%, with 42.3871%, difference 10.6599 points (according to the code +10; without the trait the code gives 32%, with the trait 42%: PZMath.lerpFunc_EaseOutQuad computes x squared, the names are swapped in the game, so rand = (int)(0.6 x 55) = 32; the test plan had expected 52%), 4000 samples per case over 163 ticks. The measurement counts fractures among the injured samples, which is exactly the row's value. Whether a fall injures at all is decided before that by Rand.Next(100) < damage (line 2119); the damage depends on fall height and inventory load (empty inventory: no damage) and rises with the same trait (row falldamage). If the fracture roll misses, the game rolls a deep wound at threshold + 10, and that also gets likelier. Since fact sweep 2 (2026-09-23) the row says \"Chance of a fracture when a fall injures you\" instead of \"Fracture or deep wound after a fall\".",
+   "note": "Measured on 2026-09-14 (code values, measure mod 6.26.2): share of fractures among the injured samples without 31.7273%, with 42.3871%, difference 10.6599 points (according to the code +10; without the trait the code gives 32%, with the trait 42%: PZMath.lerpFunc_EaseOutQuad computes x squared, the names are swapped in the game, so rand = (int)(0.6 x 55) = 32; the test plan had expected 52%), 4000 samples per case over 163 ticks. The measurement counts fractures among the injured samples, which is exactly the row's value. Whether a fall injures at all is decided before that by Rand.Next(100) < damage (line 2119); the damage depends on fall height and inventory load (empty inventory: no damage) and rises with the same trait (row falldamage). If the fracture roll misses, the game rolls a deep wound at threshold + 10, and that also gets likelier. Since fact sweep 2 (2026-09-23) the row says \"Chance of a fracture when a fall injures you\" instead of \"Fracture or deep wound after a fall\". From about three floors the threshold is above 100 even without the trait (Fitness 5, Nimble 0: 34 for one, 71 for two, 108 for three floors), so a fracture is certain anyway and the trait changes nothing. With the sandbox option Bone Fracture off (off in the Rising preset) the fracture roll always fails (lines 2137, 2149), and the points only raise the chance of a deep wound. The note gives both since fact sweep 3 (2026-09-23).",
    "method": "Code values, measure mod 6.26.2: IsoGameCharacter.DoLand(3.0) as with fall damage (God Mode on, invisible off, Fitness and Nimble 0), without and with High Weight the same 4000 samples per case; share of fractures among the injuries, difference with minus without, tolerance 6 points.",
-   "src": "1fba468db9"
+   "src": "ca5117fe28"
   },
   "overweight/enduranceloss": {
    "code": "IsoPlayer.updateEndurance (lines 3004-3016), enddelta",
@@ -212,27 +212,27 @@
   },
   "obese/climb": {
    "code": "IsoGameCharacter.getClimbingFailChanceFloat (line 14718; traits lines 14727-14748); consumed mainly on tall fences in ClimbOverWallState (lines 296-311), also in ClimbSheetRopeState (line 263, roll line 84) and ClimbDownSheetRopeState (line 130)",
-   "note": "651 points across 21 cases, none deviates from the formula. On tall fences the character fails with 1 in the root of the score (ClimbOverWallState lines 296-311). A new character with Very High Weight has Fitness 3 (XPBoosts Fitness=-2), so 6 + 10 - 25, clamped to 0: at root 0 it only succeeds with Rand.Next(100) <= Strength, 6% at Strength 5, never with a heavy load, and pathfinding no longer routes over tall fences (PathFindRequest line 77). On sheet ropes the fall roll only opens after (root + 1) x 100 x rope speed floors of continuous climbing (ClimbSheetRopeState lines 76, 83, 261-266; down x300, ClimbDownSheetRopeState lines 128-134), 40 floors for a new character, 3.5 with Very High Weight (root 0, rope level 3); at double game speed and above the whole-number multiplier divides the threshold. Since fact sweep 2 (2026-09-23) the row names only tall fences.",
+   "note": "651 points across 21 cases, none deviates from the formula. On tall fences the character fails with 1 in the root of the score (ClimbOverWallState lines 296-311). Very High Weight comes only from gaining weight in play, and Fitness stays (5, or 4 after a start with Slow Metabolism): 10 + 10 - 25 or 8 + 10 - 25, clamped to 0: at root 0 it only succeeds with Rand.Next(100) <= Strength, 6% at Strength 5, never with a heavy load, and pathfinding no longer routes over tall fences (PathFindRequest line 77). On sheet ropes the fall roll only opens after (root + 1) x 100 x rope speed floors of continuous climbing (ClimbSheetRopeState lines 76, 83, 261-266; down x300, ClimbDownSheetRopeState lines 128-134), 40 floors for a new character, 3.5 with Very High Weight (root 0, rope level 3); at double game speed and above the whole-number multiplier divides the threshold. Since fact sweep 2 (2026-09-23) the row names only tall fences. With the sandbox option Easy Climbing (on in the Rising preset) every climb succeeds without a roll, the sheet-rope fall roll is skipped, and pathfinding always routes over tall fences (ClimbOverWallState lines 292-294, ClimbSheetRopeState line 93, ClimbDownSheetRopeState line 83, PathFindRequest line 77); the note says so since fact sweep 3 (2026-09-23).",
    "method": "Climbing, measure mod 6.19.0: getClimbingFailChanceFloat read across 21 trait cases, including Very High Weight; for each case Fitness, Strength and Nimble individually from 0 to 10, the others at 0. The test notes deviations against the case without the trait, the formula was then checked.",
-   "src": "4ad0fcc763"
+   "src": "0146226bfc"
   },
   "obese/climbstrength": {
    "code": "IsoGameCharacter.getClimbRopeSpeed (line 14799; traits lines 14803-14817); read in ClimbSheetRopeState (lines 71, 116)",
-   "note": "Rope speed per level matches the code. A new character with Very High Weight has max(Strength 5, Fitness 3) = 5, so 3 with -2: rope speed 0.035 instead of 0.08, about 56% slower climbing up (without gloves; with ordinary gloves 6 -> 4, -11%).",
+   "note": "Rope speed per level matches the code. Very High Weight comes only from gaining weight in play; at Strength 5, max(Strength, Fitness) = 5, so 3 with -2: rope speed 0.035 instead of 0.08, about 56% slower climbing up (without gloves; with ordinary gloves 6 -> 4, -11%).",
    "method": "Climbing, measure mod 6.19.0: getClimbRopeSpeed up and down read across 21 trait cases, including Very High Weight; for each case Fitness, Strength and Nimble individually from 0 to 10, the others at 0. Deviations against the case without the trait, then matched per level against the code.",
-   "src": "1f8cfbf273"
+   "src": "6d0092e4a8"
   },
   "obese/trip": {
    "code": "ClimbOverFenceState.shouldFallAfterVaultOver (line 493; traits lines 511-528; roll against the counter minus Fitness line 529)",
-   "note": "Measured on 2026-09-14 (code values, measure mod 6.26.2): tripped without 9.9333%, with 30.2667%, difference 20.3333 points (according to the code +20), 3000 samples per case over 50 ticks. The roll is Rand.Next(100) < counter - Fitness (line 529): a negative counter acts as 0. The measurement ran sprinting at Fitness 0, where the full value applies; at a run the base is below 0 from Fitness 1 on and absorbs part of the points. The weight traits also lower starting Fitness. Per code new character with Very High Weight (Fitness 3): 17% at a run, 27% sprinting, instead of 0% and 5%; the note gives it since fact sweep 2 (2026-09-23).",
+   "note": "Measured on 2026-09-14 (code values, measure mod 6.26.2): tripped without 9.9333%, with 30.2667%, difference 20.3333 points (according to the code +20), 3000 samples per case over 50 ticks. The roll is Rand.Next(100) < counter - Fitness (line 529): a negative counter acts as 0. The measurement ran sprinting at Fitness 0, where the full value applies; at a run the base is below 0 from Fitness 1 on and absorbs part of the points. Very High Weight comes only from gaining weight in play (Nutrition.applyTraitFromWeight from 100 kg; IsProfessionTrait = true, cost 0, not selectable at character creation, and no trait or occupation grants it); the Fitness -2 from XPBoosts applies only in applyTraits at creation. Per code at Fitness 5: 15% at a run, 25% sprinting, instead of 0% and 5% (after a start with Slow Metabolism, Fitness 4: 16% and 26%). The note gives this since fact sweep 3 (2026-09-23); before, it assumed a new character with Fitness 3, which cannot exist.",
    "method": "Code values, measure mod 6.26.2: ClimbOverFenceState.enter triggered with VaultOverSprint on the standing character, Fitness 0; \"fall\" outcome counted, without and with Very High Weight, 3000 samples each alternating over several ticks, difference of shares with minus without, tolerance 4 points.",
-   "src": "cff2e27831"
+   "src": "fc2956ff42"
   },
   "obese/lungefall": {
    "code": "IsoGameCharacter.attackFromWindowsLunge (line 12875; traits lines 12900-12915; stagger and roll lines 12919-12924); triggered only by the climbing zombie: ClimbOverFenceState (lines 367-371), ClimbThroughWindowState (lines 290-294), GrappledThrownOutWindowState (lines 267-271)",
-   "note": "Not measured: the roll only happens when a zombie that is climbing over a fence or through a window (or is being thrown out of one) lunges at a character close by (under 3.9 tiles, same floor) and its hand hits; only with the sandbox option Zombie Lunge. Every hit makes the character stagger; the roll decides whether it also falls. After a hit the game blocks the next one for about 7 seconds, so a reliable share would need hundreds of hits per case.",
+   "note": "Not measured: the roll only happens when a zombie that is climbing over a fence or through a window (or is being thrown out of one) lunges at a character close by (under 3.9 tiles, same floor) and its hand hits; only with the sandbox option Zombie Lunge (on by default, off in the Rising preset). Every hit makes the character stagger; the roll decides whether it also falls. After a hit the game blocks the next one for about 7 seconds, so a reliable share would need hundreds of hits per case. Very High Weight comes only from gaining weight in play, and Fitness stays: at Fitness 5 that is 10 instead of 20 (fact sweep 3, 2026-09-23).",
    "method": "",
-   "src": "b9aaaa3ac2"
+   "src": "f9e39230b8"
   },
   "obese/falldamage": {
    "code": "IsoGameCharacter.handleLandingImpact (line 2056): healthReduction x1.4 or x1.2 in lines 2083-2086",
@@ -242,9 +242,9 @@
   },
   "obese/fallinjury": {
    "code": "IsoGameCharacter.handleLandingImpact (line 2056): injury roll lines 2121-2140, weight traits lines 2127-2130",
-   "note": "Measured on 2026-09-14 (code values, measure mod 6.26.2): share of fractures among the injured samples without 31.7273%, with 51.5573%, difference 19.8301 points (according to the code +20; without the trait the code gives 32%, with the trait 52%: PZMath.lerpFunc_EaseOutQuad computes x squared, the names are swapped in the game, so rand = (int)(0.6 x 55) = 32; the test plan had expected 52%), 4000 samples per case over 163 ticks. The measurement counts fractures among the injured samples, which is exactly the row's value. Whether a fall injures at all is decided before that by Rand.Next(100) < damage (line 2119); the damage depends on fall height and inventory load (empty inventory: no damage) and rises with the same trait (row falldamage). If the fracture roll misses, the game rolls a deep wound at threshold + 10, and that also gets likelier. Since fact sweep 2 (2026-09-23) the row says \"Chance of a fracture when a fall injures you\" instead of \"Fracture or deep wound after a fall\".",
+   "note": "Measured on 2026-09-14 (code values, measure mod 6.26.2): share of fractures among the injured samples without 31.7273%, with 51.5573%, difference 19.8301 points (according to the code +20; without the trait the code gives 32%, with the trait 52%: PZMath.lerpFunc_EaseOutQuad computes x squared, the names are swapped in the game, so rand = (int)(0.6 x 55) = 32; the test plan had expected 52%), 4000 samples per case over 163 ticks. The measurement counts fractures among the injured samples, which is exactly the row's value. Whether a fall injures at all is decided before that by Rand.Next(100) < damage (line 2119); the damage depends on fall height and inventory load (empty inventory: no damage) and rises with the same trait (row falldamage). If the fracture roll misses, the game rolls a deep wound at threshold + 10, and that also gets likelier. Since fact sweep 2 (2026-09-23) the row says \"Chance of a fracture when a fall injures you\" instead of \"Fracture or deep wound after a fall\". From about three floors the threshold is above 100 even without the trait (Fitness 5, Nimble 0: 34 for one, 71 for two, 108 for three floors), so a fracture is certain anyway and the trait changes nothing. With the sandbox option Bone Fracture off (off in the Rising preset) the fracture roll always fails (lines 2137, 2149), and the points only raise the chance of a deep wound. The note gives both since fact sweep 3 (2026-09-23).",
    "method": "Code values, measure mod 6.26.2: IsoGameCharacter.DoLand(3.0) as with fall damage (God Mode on, invisible off, Fitness and Nimble 0), without and with Very High Weight the same 4000 samples per case; share of fractures among the injuries, difference with minus without, tolerance 6 points.",
-   "src": "91d50904dc"
+   "src": "9557005822"
   },
   "obese/enduranceregen": {
    "code": "IsoGameCharacter.getRecoveryMod (lines 4309-4356)",
@@ -278,15 +278,15 @@
   },
   "fasthealer/fracture": {
    "code": "BodyPart.generateFractureNew (line 828); only the fall sites call it",
-   "note": "Measured on 2026-09-13 (code values): without 10.0000, with 6.0000, factor 0.6000.",
+   "note": "Measured on 2026-09-13 (code values): without 10.0000, with 6.0000, factor 0.6000. With the sandbox option Bone Fracture off (off in the Rising preset) there are no fractures at all (BodyPart.generateFracture lines 818-821; IsoGameCharacter lines 2137, 2149); the note says so since fact sweep 3 (2026-09-23).",
    "method": "Code values, measure mod 6.22.0: BodyPart.generateFractureNew triggered on the forearm, fracture time set to 0.001 beforehand to avoid the sound; measured without and with Fast Healer, factor with/without, tolerance 0.006.",
-   "src": "db1ff45556"
+   "src": "75e29aa2d0"
   },
   "fasthealer/vehdamage": {
    "code": "IsoPlayer (lines 1973-1976) and BaseVehicle (lines 8510-8513): crash damage per body part x0.8 / x1.2",
-   "note": "Measured on 2026-09-14 (code values, measure mod 6.26.2): health lost per impact without 80.7997, with 65.0612, factor 0.8052 (according to the code 0.8), 1200 samples per case over 72 ticks.",
-   "method": "Code values, measure mod 6.26.2: applyDamageFromVehicleHit on the character, God Mode off, sandbox Player Damage From Vehicle Impact set to Normal, a car placed just next to it; without and with Fast Healer, 1200 samples each alternating over several ticks, factor of the health loss, tolerance 2%.",
-   "src": "b205faa5c2"
+   "note": "Measured on 2026-09-14 (code values, measure mod 6.26.2): health lost per impact without 80.7997, with 65.0612, factor 0.8052 (according to the code 0.8), 1200 samples per case over 72 ticks. What was measured is the path of being hit by a car (IsoPlayer.applyDamageFromVehicleHit) with the sandbox option Player Damage From Vehicle Impact set to Normal. By default it is None in every preset (SandboxOptions line 185, DamageModifier NONE 0.0; IsoPlayer lines 1964-1966): being hit then costs nothing, and the trait does nothing there. By default the factor applies in crashes inside the vehicle (BaseVehicle.damagePlayers, addRandomDamageFromCrash lines 8510-8513, PlayerDamageFromCrash on); that path carries the same factor in the code and is not measured. So since fact sweep 3 (2026-09-23) the status is code and the row says \"Injury in vehicle crashes\"; being hit by a car is in the note.",
+   "method": "Code values, measure mod 6.26.2: applyDamageFromVehicleHit on the character, God Mode off, sandbox Player Damage From Vehicle Impact set to Normal (not the default: None in every preset), a car placed just next to it; without and with Fast Healer, 1200 samples each alternating over several ticks, factor of the health loss, tolerance 2%.",
+   "src": "ada7318ac8"
   },
   "fasthealer/bitewound": {
    "code": "BodyPart.SetBitten (lines 601-619)",
@@ -296,27 +296,27 @@
   },
   "fasthealer/cutwound": {
    "code": "BodyPart setCut, setScratched, SetScratchedWeapon, SetScratchedWindow (lines 671-874)",
-   "note": "Measured on 2026-09-13 (code values): mean of the four wound types, factor 0.4982. Exception: cuts and scratches on a bare foot are then set to a fixed 1 to 3 by IsoPlayer, without the trait (IsoPlayer lines 7569-7578).",
+   "note": "Measured on 2026-09-13 (code values): mean of the four wound types, factor 0.4982. Exception: cuts and scratches on a bare foot are then set to a fixed 1 to 3 by IsoPlayer, without the trait (IsoPlayer lines 7569-7578). Bleeding, pain and limping are derived from the wound times (BodyPart.generateBleeding lines 1780-1793, getPain lines 904-921, IsoGameCharacter lines 8915-8918) and scale the same way; the note says so since fact sweep 3 (2026-09-23).",
    "method": "Code values, measure mod 6.22.0: mean of four samples of 500 wounds each (cut, scratch, weapon scratch and window scratch on the forearm), factor with/without Fast Healer averaged for each; tolerance 5%.",
-   "src": "349362df6e"
+   "src": "1f2468639b"
   },
   "fasthealer/deepwound": {
-   "code": "BodyPart.generateDeepWound (line 775)",
-   "note": "Measured on 2026-09-13 (code values): without 17.4936, with 12.9875, factor 0.7424 (sample). Exception: the deep wound left after a bullet is removed (BodyPart.setHaveBullet, lines 1074-1083) has its own spans, 17 to 23 without the trait, 12 to 18 with Fast Healer, 22 to 28 with Slow Healer, so -25% or +25%; a bullet only lodges after shots from other characters.",
+   "code": "BodyPart.generateDeepWound (line 775) ; stitching: BodyPart.setStitched (lines 876-881)",
+   "note": "Measured on 2026-09-13 (code values): without 17.4936, with 12.9875, factor 0.7424 (sample). Exception: the deep wound left after a bullet is removed (BodyPart.setHaveBullet, lines 1074-1083) has its own spans, 17 to 23 without the trait, 12 to 18 with Fast Healer, 22 to 28 with Slow Healer, so -25% or +25%; a bullet only lodges after shots from other characters. Stitching ends this timer: ISStitch (line 108) calls BodyPart.setStitched(true), which sets deepWoundTime to 0 (lines 876-881); after that the stitches heal through stitchTime, which no trait touches. Without a bandage the timer only drops 2e-6 per tick and stops at 3 (lines 358-363). So the row applies only to a deep wound that is bandaged and not stitched; the note says so since fact sweep 3 (2026-09-23). Bleeding, pain and limping follow the wound time (generateBleeding lines 1780-1793, getPain lines 904-921).",
    "method": "Code values, measure mod 6.22.0: sample of 500 calls to BodyPart.generateDeepWound/getDeepWoundTime on the forearm, average without and with Fast Healer; factor with/without, tolerance 5%.",
-   "src": "754cf35c03"
+   "src": "332b823072"
   },
   "slowhealer/fracture": {
    "code": "BodyPart.generateFractureNew (line 828); only the fall sites call it",
-   "note": "Measured on 2026-09-13 (code values): without 10.0000, with 18.0000, factor 1.8000.",
+   "note": "Measured on 2026-09-13 (code values): without 10.0000, with 18.0000, factor 1.8000. With the sandbox option Bone Fracture off (off in the Rising preset) there are no fractures at all (BodyPart.generateFracture lines 818-821; IsoGameCharacter lines 2137, 2149); the note says so since fact sweep 3 (2026-09-23).",
    "method": "Code values, measure mod 6.22.0: BodyPart.generateFractureNew triggered on the forearm, fracture time set to 0.001 beforehand to avoid the sound; measured without and with Slow Healer, factor with/without, tolerance 0.006.",
-   "src": "9b2930d9c4"
+   "src": "ae1587bbaa"
   },
   "slowhealer/vehdamage": {
    "code": "IsoPlayer (lines 1973-1976) and BaseVehicle (lines 8510-8513): accident damage per body part x0.8 / x1.2",
-   "note": "Measured on 2026-09-14 (code values, measure mod 6.26.2): health lost per impact without 80.7997, with 97.0075, factor 1.2006 (1.2 per code), 1200 samples over 72 ticks per case.",
-   "method": "Code values, measure mod 6.26.2: applyDamageFromVehicleHit on the character, God Mode off, sandbox option Player Damage From Vehicle Impact set to Normal, a car placed briefly next to the character; 1200 samples without and with Slow Healer alternating over several ticks, factor of the health loss, tolerance 2%.",
-   "src": "932a89a800"
+   "note": "Measured on 2026-09-14 (code values, measure mod 6.26.2): health lost per impact without 80.7997, with 97.0075, factor 1.2006 (1.2 per code), 1200 samples over 72 ticks per case. What was measured is the path of being hit by a car (IsoPlayer.applyDamageFromVehicleHit) with the sandbox option Player Damage From Vehicle Impact set to Normal. By default it is None in every preset (SandboxOptions line 185, DamageModifier NONE 0.0; IsoPlayer lines 1964-1966): being hit then costs nothing, and the trait does nothing there. By default the factor applies in crashes inside the vehicle (BaseVehicle.damagePlayers, addRandomDamageFromCrash lines 8510-8513, PlayerDamageFromCrash on); that path carries the same factor in the code and is not measured. So since fact sweep 3 (2026-09-23) the status is code and the row says \"Injury in vehicle crashes\"; being hit by a car is in the note.",
+   "method": "Code values, measure mod 6.26.2: applyDamageFromVehicleHit on the character, God Mode off, sandbox option Player Damage From Vehicle Impact set to Normal (not the default: None in every preset), a car placed briefly next to the character; 1200 samples without and with Slow Healer alternating over several ticks, factor of the health loss, tolerance 2%.",
+   "src": "9e4aff4772"
   },
   "slowhealer/bitewound": {
    "code": "BodyPart.SetBitten (lines 601-619)",
@@ -326,15 +326,15 @@
   },
   "slowhealer/cutwound": {
    "code": "BodyPart setCut, setScratched, SetScratchedWeapon, SetScratchedWindow (lines 671-874)",
-   "note": "Measured on 2026-09-13 (code values): average of the four wound types, factor 1.7517. Exception: cuts and scratches on a bare foot are then set to a fixed 1 to 3 by IsoPlayer, without the trait (IsoPlayer lines 7569-7578).",
+   "note": "Measured on 2026-09-13 (code values): average of the four wound types, factor 1.7517. Exception: cuts and scratches on a bare foot are then set to a fixed 1 to 3 by IsoPlayer, without the trait (IsoPlayer lines 7569-7578). Bleeding, pain and limping are derived from the wound times (BodyPart.generateBleeding lines 1780-1793, getPain lines 904-921, IsoGameCharacter lines 8915-8918) and scale the same way; the note says so since fact sweep 3 (2026-09-23).",
    "method": "Code values, measure mod 6.22.0: average of four samples of 500 wounds each (cut, scratch, weapon scratch and window scratch on the forearm), factor with/without Slow Healer averaged per type; tolerance 5%.",
-   "src": "10b2222a9b"
+   "src": "45695a8cc9"
   },
   "slowhealer/deepwound": {
-   "code": "BodyPart.generateDeepWound (line 775)",
-   "note": "Measured on 2026-09-13 (code values): without 17.4936, with 25.9510, factor 1.4835 (sample). Exception: the deep wound left after a bullet is removed (BodyPart.setHaveBullet, lines 1074-1083) has its own spans, 17 to 23 without the trait, 12 to 18 with Fast Healer, 22 to 28 with Slow Healer, so -25% or +25%; a bullet only lodges after shots from other characters.",
+   "code": "BodyPart.generateDeepWound (line 775) ; stitching: BodyPart.setStitched (lines 876-881)",
+   "note": "Measured on 2026-09-13 (code values): without 17.4936, with 25.9510, factor 1.4835 (sample). Exception: the deep wound left after a bullet is removed (BodyPart.setHaveBullet, lines 1074-1083) has its own spans, 17 to 23 without the trait, 12 to 18 with Fast Healer, 22 to 28 with Slow Healer, so -25% or +25%; a bullet only lodges after shots from other characters. Stitching ends this timer: ISStitch (line 108) calls BodyPart.setStitched(true), which sets deepWoundTime to 0 (lines 876-881); after that the stitches heal through stitchTime, which no trait touches. Without a bandage the timer only drops 2e-6 per tick and stops at 3 (lines 358-363). So the row applies only to a deep wound that is bandaged and not stitched; the note says so since fact sweep 3 (2026-09-23). Bleeding, pain and limping follow the wound time (generateBleeding lines 1780-1793, getPain lines 904-921).",
    "method": "Code values, measure mod 6.22.0: sample of 500 calls to BodyPart.generateDeepWound/getDeepWoundTime on the forearm, average without and with Slow Healer; factor with/without, tolerance 5%.",
-   "src": "7286ddb016"
+   "src": "3f663e2bc6"
   },
   "fastlearner/xp": {
    "code": "IsoGameCharacter$XP.AddXP (lines 15482-15563): x1.3 unless isSkillExcludedFromSpeedIncrease excludes the skill. Excluded are Fitness and Strength.",
@@ -422,9 +422,9 @@
   },
   "dextrous/climb": {
    "code": "IsoGameCharacter.getClimbingFailChanceFloat (line 14718; traits lines 14727-14748); consumed in ClimbSheetRopeState (line 263, roll line 84), ClimbDownSheetRopeState (line 130) and on tall fences in ClimbOverWallState (line 296)",
-   "note": "651 points across 21 cases, none deviates from the formula. A new character without gloves has 20, with Dextrous 24: both root 4, so the trait alone changes nothing; with ordinary gloves (+4) 28, root 5. The note says so since fact sweep 2 (2026-09-23).",
+   "note": "651 points across 21 cases, none deviates from the formula. A new character without gloves has 20, with Dextrous 24: both root 4, so the trait alone changes nothing; with ordinary gloves (+4) 28, root 5. The note says so since fact sweep 2 (2026-09-23). That holds for occupations without a Fitness, Strength or Nimble bonus: Farmer, Lumberjack, Nurse, Police Officer and Rancher start at 22, Firefighter at 24, so with Dextrous 26 or 28, root 5, tall fences 20% instead of 25%. The hint says so since fact sweep 3 (2026-09-23). With the sandbox option Easy Climbing (on in the Rising preset) every climb succeeds without a roll, the sheet-rope fall roll is skipped, and pathfinding always routes over tall fences (ClimbOverWallState lines 292-294, ClimbSheetRopeState line 93, ClimbDownSheetRopeState line 83, PathFindRequest line 77); the note says so since fact sweep 3 (2026-09-23).",
    "method": "Climbing, measure mod 6.19.0: getClimbingFailChanceFloat read in 21 trait cases, including Dextrous; per case Fitness, Strength and Nimble each from 0 to 10 individually, the others at 0. The test records deviations against the case without the trait; the formula was then checked.",
-   "src": "f549c7cdb1"
+   "src": "562b422b64"
   },
   "dextrous/climbstrength": {
    "code": "IsoGameCharacter.getClimbRopeSpeed (line 14799; traits lines 14803-14817); read in ClimbSheetRopeState (lines 71, 116)",
@@ -458,9 +458,9 @@
   },
   "allthumbs/climb": {
    "code": "IsoGameCharacter.getClimbingFailChanceFloat (line 14718; traits lines 14727-14748); consumed in ClimbSheetRopeState (line 263, roll line 84), ClimbDownSheetRopeState (line 130) and on tall fences in ClimbOverWallState (line 296)",
-   "note": "651 points across 21 cases, none deviates from the formula. A new character without gloves has 20, with All Thumbs 16: both root 4, so the trait alone changes nothing. The note says so since fact sweep 2 (2026-09-23).",
+   "note": "651 points across 21 cases, none deviates from the formula. A new character without gloves has 20, with All Thumbs 16: both root 4, so the trait alone changes nothing. The note says so since fact sweep 2 (2026-09-23). Only the Fitness Instructor (28) drops to 24 with All Thumbs, root 5 -> 4, tall fences 25% instead of 20%; the hint says so since fact sweep 3 (2026-09-23). With the sandbox option Easy Climbing (on in the Rising preset) every climb succeeds without a roll, the sheet-rope fall roll is skipped, and pathfinding always routes over tall fences (ClimbOverWallState lines 292-294, ClimbSheetRopeState line 93, ClimbDownSheetRopeState line 83, PathFindRequest line 77); the note says so since fact sweep 3 (2026-09-23).",
    "method": "Climbing, measure mod 6.19.0: getClimbingFailChanceFloat read in 21 trait cases, including All Thumbs; per case Fitness, Strength and Nimble each from 0 to 10 individually, the others at 0. The test records deviations against the case without the trait; the formula was then checked.",
-   "src": "d2b2cf9cb4"
+   "src": "47cf20d398"
   },
   "allthumbs/climbstrength": {
    "code": "IsoGameCharacter.getClimbRopeSpeed (line 14799; traits lines 14803-14817); read in ClimbSheetRopeState (lines 71, 116)",
@@ -494,9 +494,9 @@
   },
   "brave/corpsestress": {
    "code": "client/TimedActions/ISInventoryTransferAction.lua (lines 129-136)",
-   "note": "Measured on 2026-09-13 (code values, measure mod 6.24.0): unhappiness when moving items out of a corpse x0.5000 (ISInventoryTransferAction:update).",
+   "note": "Measured on 2026-09-13 (code values, measure mod 6.24.0): unhappiness when moving items out of a corpse x0.5000 (ISInventoryTransferAction:update). Single player only, inferred from the code, not measured in multiplayer: the value lives only in client Lua (ISInventoryTransferAction:update, a plain stats:add with no send); the server loads no client Lua, and the character receives the server's values every second (PlayerStatsPacket, Stats.load). Since fact sweep 3 (2026-09-23) a condition on the value.",
    "method": "Code values, measure mod 6.24.0: ISInventoryTransferAction:update triggered on the character with a stand-in source container (getType inventorymale), the unhappiness read; without and with Brave, factor with/without.",
-   "src": "100f966a7e"
+   "src": "30294d1241"
   },
   "brave/grapple": {
    "code": "IsoGameCharacter.calculateGrappleEffectivenessFromTraits (lines 7917-7946); callers IsoGameCharacter.pickUpCorpse (lines 7912-7913) and SwipeStatePlayer (lines 524-530); read only in BaseGrappleable.Grappled (line 75) and IsoDeadBody.Grappled (line 1775) as a threshold below 0.5",
@@ -512,9 +512,9 @@
   },
   "cowardly/corpsestress": {
    "code": "client/TimedActions/ISInventoryTransferAction.lua (lines 129-136)",
-   "note": "Measured on 2026-09-13 (code values, measure mod 6.24.0): unhappiness when moving items out of a corpse x2.0000 (ISInventoryTransferAction:update).",
+   "note": "Measured on 2026-09-13 (code values, measure mod 6.24.0): unhappiness when moving items out of a corpse x2.0000 (ISInventoryTransferAction:update). Single player only, inferred from the code, not measured in multiplayer: the value lives only in client Lua (ISInventoryTransferAction:update, a plain stats:add with no send); the server loads no client Lua, and the character receives the server's values every second (PlayerStatsPacket, Stats.load). Since fact sweep 3 (2026-09-23) a condition on the value.",
    "method": "Code values, measure mod 6.24.0: ISInventoryTransferAction:update triggered on the character with a stand-in source container (getType inventorymale), the unhappiness read; without and with Cowardly, factor with/without.",
-   "src": "9b99fd3b5a"
+   "src": "899071ef9f"
   },
   "cowardly/grapple": {
    "code": "IsoGameCharacter.calculateGrappleEffectivenessFromTraits (lines 7917-7946); callers IsoGameCharacter.pickUpCorpse (lines 7912-7913) and SwipeStatePlayer (lines 524-530); read only in BaseGrappleable.Grappled (line 75) and IsoDeadBody.Grappled (line 1775) as a threshold below 0.5",
@@ -530,15 +530,15 @@
   },
   "desensitized/corpses": {
    "code": "client/TimedActions/ISInventoryTransferAction.lua (lines 129-136); shared/TimedActions/ISCraftAction.lua (lines 19-26) is unreachable in 42.20.4 (see the game bug on the old crafting action)",
-   "note": "Measured on 2026-09-13 (code values, measure mod 6.24.0): unhappiness when moving items out of a corpse 0 instead of 0.0080 per tick (ISInventoryTransferAction:update).",
+   "note": "Measured on 2026-09-13 (code values, measure mod 6.24.0): unhappiness when moving items out of a corpse 0 instead of 0.0080 per tick (ISInventoryTransferAction:update). Single player only, inferred from the code, not measured in multiplayer: the value lives only in client Lua (ISInventoryTransferAction:update, a plain stats:add with no send); the server loads no client Lua, and the character receives the server's values every second (PlayerStatsPacket, Stats.load). Since fact sweep 3 (2026-09-23) a condition on the value.",
    "method": "Code values, measure mod 6.24.0: ISInventoryTransferAction:update triggered on the character with a stand-in source container (getType inventorymale), the unhappiness read; without and with Desensitized, factor with/without.",
-   "src": "c2aa9bdaef"
+   "src": "07e4cb0031"
   },
   "desensitized/nightmare": {
    "code": "SleepingEvent.checkNightmare (line 185)",
-   "note": "Measured on 2026-09-14 (code values, measure mod 6.26.2): nightmare without 5.0000%, with 10.2000%, difference 5.2000 points (+5 per code), 1500 samples over 50 ticks per case.",
+   "note": "Measured on 2026-09-14 (code values, measure mod 6.26.2): nightmare without 5.0000%, with 10.2000%, difference 5.2000 points (+5 per code), 1500 samples over 50 ticks per case. Single player only: checkNightmare returns on a client (SleepingEvent lines 186-188), and in multiplayer, also when hosting, nothing calls setPlayerFallAsleep; since fact sweep 3 (2026-09-23) a condition on the value.",
    "method": "Code values, measure mod 6.26.2, game started with -debug: SleepingEvent.setPlayerFallAsleep triggered on the character at Stress 0, nightmareWakeUp read via reflection, 1500 samples without and with Desensitized alternating over several ticks; difference of the shares with minus without, tolerance 2.5 points.",
-   "src": "ec966c1498"
+   "src": "e023a9edc7"
   },
   "hemophobic/bloodpanic": {
    "code": "IsoGameCharacter.updateInternal (lines 8219-8221)",
@@ -548,9 +548,9 @@
   },
   "hemophobic/treatpanic": {
    "code": "shared/TimedActions/ISApplyBandage.lua:105, ISComfreyCataplasm.lua:66, ISGarlicCataplasm.lua:65, ISPlantainCataplasm.lua:66 (only for a bleeding wound); ISStitch.lua:94, ISCleanBurn.lua:60, ISRemoveBullet.lua:59, ISRemoveGlass.lua:57 (always)",
-   "note": "Measured on 2026-09-13 (code values, measure mod 6.24.0): bandaging a bleeding wound +50.0000 panic, 0 without the trait (ISApplyBandage:complete).",
+   "note": "Measured on 2026-09-13 (code values, measure mod 6.24.0): removing a bandage from a bleeding wound +50.0000 panic, 0 without the trait (ISApplyBandage:complete with doIt false; the check comes before the branch and applies the same when bandaging). Until fact sweep 3 (2026-09-23) this said \"bandaging\". Disinfecting, splinting and cleaning bandages do not check the trait (ISDisinfect, ISSplint, ISCleanBandage); ISStitch gives the +50 when removing stitches too (line 94, before setStitched at line 108). Since then the row names the four actions without a condition, and the note names bandages and poultices on a bleeding wound.",
    "method": "Code values, measure mod 6.24.0: ISApplyBandage:complete triggered on a bleeding forearm wound, the bandage created but not applied (doIt false); panic read without and with Fear of Blood, difference with minus without.",
-   "src": "1c12c55536"
+   "src": "6f3917c2c1"
   },
   "hemophobic/medcheck": {
    "code": "ISWorldObjectContextMenuLogic (lines 876, 1369): Medical Check only without HEMOPHOBIC (lines from docs/engine/ALL_trait_usage_sites.txt)",
@@ -566,9 +566,9 @@
   },
   "hemophobic/blooditems": {
    "code": "client/TimedActions/ISInventoryTransferAction.lua (lines 139-144): getBloodLevelAdjustedLow() x Multiplier / 10000 stress per action tick, as long as the item carries blood",
-   "note": "Measured on 2026-09-13 (code values, measure mod 6.24.0): stress when moving a bloody axe = blood value x Multiplier / 10000, 0 without the trait (ISInventoryTransferAction:update).",
+   "note": "Measured on 2026-09-13 (code values, measure mod 6.24.0): stress when moving a bloody axe = blood value x Multiplier / 10000, 0 without the trait (ISInventoryTransferAction:update). Single player only, inferred from the code, not measured in multiplayer: the value lives only in client Lua (ISInventoryTransferAction:update, a plain stats:add with no send); the server loads no client Lua, and the character receives the server's values every second (PlayerStatsPacket, Stats.load). Since fact sweep 3 (2026-09-23) a condition on the value.",
    "method": "Code values, measure mod 6.24.0: ISInventoryTransferAction:update triggered with a bloody axe (blood value 1) and a stand-in source container, stress increase read, times 10000 divided by Multiplier; without and with Fear of Blood, difference with minus without against the axe's blood value.",
-   "src": "85afb8cbe4"
+   "src": "dea35fd3ff"
   },
   "agoraphobic/panicout": {
    "code": "IsoGameCharacter.updateInternal (lines 8207-8209), times getThirtyFPSMultiplier",
@@ -596,9 +596,9 @@
   },
   "irongut/foodsick": {
    "code": "BodyDamage.JustAteFood (lines 611-641; heavy dose lines 627-629, light dose line 638)",
-   "note": "Measured from 2026-09-13 to 2026-09-21 (code values): n = 1000 per case, 8 runs, pooled factor 0.478, range 0.41 to 0.55, expected 0.50. Share of poisonings over all runs: without 0.407, with Iron Gut 0.195. Factors of the single runs: 0.4136, 0.4518, 0.5236, 0.4590, 0.5495, 0.5048, 0.4703, 0.4564. The counted events are heavy doses: spoiled food always poisons, and the roll only picks between 5 x and 2 x (hunger x 10 x portion). The expected poison is 2 + 3c; at c = 40% with Iron Gut about -20% (at most -30%). So since fact sweep 2 (2026-09-23) the row says \"Chance of the heavy dose from spoiled food\" instead of \"Chance of food illness\".",
+   "note": "Measured from 2026-09-13 to 2026-09-21 (code values): n = 1000 per case, 8 runs, pooled factor 0.478, range 0.41 to 0.55, expected 0.50. Share of poisonings over all runs: without 0.407, with Iron Gut 0.195. Factors of the single runs: 0.4136, 0.4518, 0.5236, 0.4590, 0.5495, 0.5048, 0.4703, 0.4564. The counted events are heavy doses: spoiled food always poisons, and the roll only picks between 5 x and 2 x (hunger x 10 x portion). The expected poison is 2 + 3c; at c = 40% with Iron Gut about -20% (at most -30%). So since fact sweep 2 (2026-09-23) the row says \"Chance of the heavy dose from spoiled food\" instead of \"Chance of food illness\". The base chance (int)(days rotten, at most 5, / (DaysTotallyRotten - DaysFresh) x 100) is not capped at 100 (lines 616-619); Iron Gut halves it with integer division, and the roll is Rand.Next(100) < chance. The effective factor is min(b/2, 100) / min(b, 100): x0.5 only up to a base of 100, less above it, none from 200. For the 205 foods with a 2-day span (for example cabbage, opened cans) that point comes 4 days after they rot; an apple (span 3) is still at x0.83 at the 5-day cap. The measurement (rotten apples, base about 40%) sits where x0.5 applies in full. The note says so since fact sweep 3 (2026-09-23). Since fact sweep 3 (2026-09-23) the English row says \"rotten\" instead of \"spoiled\", as the game does (Tooltip_food_Rotten); stale food never takes this branch.",
    "method": "Code values (eight runs): per run and case 1000 rotten apples via BodyDamage.JustAteFood, share of poisonings without and with Iron Gut; factor with/without, tolerance 20% per run. The pooled factor is the sum of poisonings with the trait divided by the sum without (1556 / 3256).",
-   "src": "0ad17b6f1f"
+   "src": "b6ca4da879"
   },
   "irongut/taintedwater": {
    "code": "IsoGameCharacter.DrinkFluid (lines 5496-5509)",
@@ -620,7 +620,7 @@
   },
   "weakstomach/foodsick": {
    "code": "BodyDamage.JustAteFood (lines 611-641; heavy dose lines 627-629, light dose line 638)",
-   "note": "Measured from 2026-09-13 to 2026-09-21 (code values): n = 1000 per case, 8 runs, pooled factor 1.974, range 1.88 to 2.10, expected 2.00. Share of poisonings over all runs: without 0.407, with Weak Stomach 0.803. Factors of the single runs: 1.9757, 1.8776, 2.0199, 1.8806, 2.0469, 1.8923, 2.1034, 2.0150. The doubled chance stops at 100%: the base chance is (days past rotten, 1 to 5) / (DaysTotallyRotten - DaysFresh) x 100, and for most food the span is 2 to 4 days; a day or two after it rots the base chance there is already 50% or more, and Weak Stomach changes nothing any more. The measurement sat at about 40%, where x2 applies in full (checked again on 2026-09-23). The counted events are heavy doses: spoiled food always poisons, and the roll only picks between 5 x and 2 x (hunger x 10 x portion). The expected poison is 2 + 3c; at c = 40% with Weak Stomach about +40% (at most +43%). So since fact sweep 2 (2026-09-23) the row says \"Chance of the heavy dose from spoiled food\" instead of \"Chance of food illness\".",
+   "note": "Measured from 2026-09-13 to 2026-09-21 (code values): n = 1000 per case, 8 runs, pooled factor 1.974, range 1.88 to 2.10, expected 2.00. Share of poisonings over all runs: without 0.407, with Weak Stomach 0.803. Factors of the single runs: 1.9757, 1.8776, 2.0199, 1.8806, 2.0469, 1.8923, 2.1034, 2.0150. The doubled chance stops at 100%: the base chance is (days past rotten, 1 to 5) / (DaysTotallyRotten - DaysFresh) x 100, and for most food the span is 2 to 4 days; a day or two after it rots the base chance there is already 50% or more, and Weak Stomach changes nothing any more. The measurement sat at about 40%, where x2 applies in full (checked again on 2026-09-23). The counted events are heavy doses: spoiled food always poisons, and the roll only picks between 5 x and 2 x (hunger x 10 x portion). The expected poison is 2 + 3c; at c = 40% with Weak Stomach about +40% (at most +43%). So since fact sweep 2 (2026-09-23) the row says \"Chance of the heavy dose from spoiled food\" instead of \"Chance of food illness\". Since fact sweep 3 (2026-09-23) the English row says \"rotten\" instead of \"spoiled\", as the game does (Tooltip_food_Rotten); stale food never takes this branch.",
    "method": "Code values (eight runs): per run and case 1000 rotten apples via BodyDamage.JustAteFood, share of poisonings without and with Weak Stomach; factor with/without, tolerance 20% per run. The pooled factor is the sum of poisonings with the trait divided by the sum without (6426 / 3256).",
    "src": "e318186d01"
   },
@@ -632,9 +632,9 @@
   },
   "resilient/cold": {
    "code": "BodyDamage, catching a cold (lines 731-743)",
-   "note": "Measured on 2026-09-20 (code values): gain without 1.0000, with 0.4500, factor 0.4500. Below delta 0.22 it stays at 0 with Resilient (see the game bug on the cold threshold).",
+   "note": "Measured on 2026-09-20 (code values): gain without 1.0000, with 0.4500, factor 0.4500. Below delta 0.22 it stays at 0 with Resilient (see the game bug on the cold threshold; the threshold follows from the code, 0.1/0.45, only 0.12 to 0.2 was measured). No dice roll: the factor scales how fast a hidden meter (catchACold) fills while delta is above 0.1; at 100 the cold starts without a roll (lines 743-749). Otherwise the meter drops a fixed 0.175 per update without the multiplier (lines 751-756), and a full meter is empty after about 570 updates (about 10 s at 60 frames per second, about 19 s at 30). So since fact sweep 3 (2026-09-23) the row says \"Cold build-up while chilled\" instead of \"Chance of catching a cold\", with a note on it.",
    "method": "Code values: skin of the character cooled for one tick (core 25 degrees, air 0 degrees) until Thermoregulator.getCatchAColdDelta is above 0.45; per case setCatchACold(0), BodyDamage.UpdateWetness, getCatchACold read and divided by 0.003 x delta x Multiplier; without and with Resilient, tolerance 0.006. Afterwards Thermoregulator.reset and all values as before.",
-   "src": "e3a9fe567b"
+   "src": "7a7d533573"
   },
   "resilient/coldprogress": {
    "code": "BodyDamage.UpdateCold (lines 830-873)",
@@ -662,9 +662,9 @@
   },
   "pronetoillness/cold": {
    "code": "BodyDamage, catching a cold (lines 731-743)",
-   "note": "Measured on 2026-09-20 (code values): gain without 1.0000, with 1.7000, factor 1.7000.",
+   "note": "Measured on 2026-09-20 (code values): gain without 1.0000, with 1.7000, factor 1.7000. No dice roll: the factor scales how fast a hidden meter (catchACold) fills while delta is above 0.1; at 100 the cold starts without a roll (lines 743-749). Otherwise the meter drops a fixed 0.175 per update without the multiplier (lines 751-756), and a full meter is empty after about 570 updates (about 10 s at 60 frames per second, about 19 s at 30). So since fact sweep 3 (2026-09-23) the row says \"Cold build-up while chilled\" instead of \"Chance of catching a cold\", with a note on it.",
    "method": "Code values: skin of the character cooled for one tick (core 25 degrees, air 0 degrees) until Thermoregulator.getCatchAColdDelta is above 0.45; per case setCatchACold(0), BodyDamage.UpdateWetness, getCatchACold read and divided by 0.003 x delta x Multiplier; without and with Prone to Illness, tolerance 0.006. Afterwards Thermoregulator.reset and all values as before.",
-   "src": "8c20f80b93"
+   "src": "e4f0cc0f79"
   },
   "pronetoillness/coldprogress": {
    "code": "BodyDamage.UpdateCold (lines 830-873)",
@@ -692,15 +692,15 @@
   },
   "outdoorsman/cold": {
    "code": "BodyDamage, catching a cold (lines 731-743)",
-   "note": "Measured on 2026-09-20 (code values): gain without 1.0000, with 0.2500, factor 0.2500. Below delta 0.4 it stays at 0 with Outdoorsy (see the game bug on the cold threshold).",
+   "note": "Measured on 2026-09-20 (code values): gain without 1.0000, with 0.2500, factor 0.2500. Below delta 0.4 it stays at 0 with Outdoorsy (see the game bug on the cold threshold; the threshold follows from the code, 0.1/0.25, only 0.12 to 0.2 was measured). No dice roll: the factor scales how fast a hidden meter (catchACold) fills while delta is above 0.1; at 100 the cold starts without a roll (lines 743-749). Otherwise the meter drops a fixed 0.175 per update without the multiplier (lines 751-756), and a full meter is empty after about 570 updates (about 10 s at 60 frames per second, about 19 s at 30). So since fact sweep 3 (2026-09-23) the row says \"Cold build-up while chilled\" instead of \"Chance of catching a cold\", with a note on it.",
    "method": "Code values: skin of the character cooled for one tick (core 25 degrees, air 0 degrees) until Thermoregulator.getCatchAColdDelta is above 0.45; per case setCatchACold(0), BodyDamage.UpdateWetness, getCatchACold read and divided by 0.003 x delta x Multiplier; without and with Outdoorsy, tolerance 0.006. Afterwards Thermoregulator.reset and all values as before.",
-   "src": "0eb38a920a"
+   "src": "ad574288df"
   },
   "outdoorsman/firelight": {
    "code": "shared/TimedActions/ISBBQLightFromKindle.lua (lines 36-38, 104-106; set at line 154): ignition chance 1/150 instead of 1/300 at barbecues, fireplaces, stoves and braziers, not at campfires (isFireInteractionObject: IsoFireplace or IsoBarbecue, IsoObject lines 6214-6215)",
-   "note": "Measured on 2026-09-13 (code values, measure mod 6.24.0): ISBBQLightFromKindle:update rolls ZombRand(150) instead of 300, x2.0000. Applies at barbecues, fireplaces, stoves and braziers; campfires are lit by ISLightFromKindle, which has no Outdoorsy check (checked again on 2026-09-23). What was measured are the roll limits per tick. From 20% progress lighting and breaking race each other, the break is only rolled when lighting misses, and either ends the attempt. Per attempt: 300/599 = 50% lit without the trait, 450/599 = 75% with it, so x1.5; the time to a fire halves. Since fact sweep 2 (2026-09-23) Trait Facts shows x1.5 per attempt instead of x2.0 per roll; the value is computed from the code, hence status code.",
+   "note": "Measured on 2026-09-13 (code values, measure mod 6.24.0): ISBBQLightFromKindle:update rolls ZombRand(150) instead of 300, x2.0000. Applies at barbecues, fireplaces, stoves and braziers; campfires are lit by ISLightFromKindle, which has no Outdoorsy check (checked again on 2026-09-23). What was measured are the roll limits per tick. From 20% progress lighting and breaking race each other, the break is only rolled when lighting misses, and either ends the attempt. Per attempt: 300/599 = 50% lit without the trait, 450/599 = 75% with it, so x1.5; only the rolling phase halves (300 -> 150 ticks); with the wind-up of 20% per attempt (300 of 1500 units, no roll) and 2.0 instead of 1.33 attempts it is about 0.6 of the time to a fire (fact sweep 3, 2026-09-23; before that it said \"halves\"). Since fact sweep 2 (2026-09-23) Trait Facts shows x1.5 per attempt instead of x2.0 per roll; the value is computed from the code, hence status code.",
    "method": "Code values, measure mod 6.24.0: ISBBQLightFromKindle:update triggered without a queue and with the ground under the character instead of a grill; ZombRand returns 1 and also writes the limit, nothing ignites. Ignition chance 1/limit without and with Outdoorsy, factor with/without.",
-   "src": "0b2deb309d"
+   "src": "d57057dfeb"
   },
   "outdoorsman/kindling": {
    "code": "shared/TimedActions/ISBBQLightFromKindle.lua (lines 36-38, 104-106; set at line 154): kindling breaks 1/450 instead of 1/300 at barbecues, fireplaces, stoves and braziers, not at campfires (isFireInteractionObject: IsoFireplace or IsoBarbecue, IsoObject lines 6214-6215)",
@@ -788,9 +788,9 @@
   },
   "jogger/enduranceloss": {
    "code": "IsoGameCharacter.exert (line 9366); only callers IsoDoor, OpenWindowState, CloseWindowState",
-   "note": "Measured on 2026-09-13 (code values): without 0.1000, with 0.0900, factor 0.9000.",
+   "note": "Measured on 2026-09-13 (code values): without 0.1000, with 0.0900, factor 0.9000. In play only struggling with a window calls exert (OpenWindowState and CloseWindowState, onAttemptFinished only in the struggle outcome: when opening, perma-locked or locked while you stand outside; when closing, perma-locked or someone climbing through; lines 127-131 and 117-121), plus weapon hits on a closed door (IsoDoor.WeaponHit). Ordinary opening and closing costs no endurance; the note says so since fact sweep 3 (2026-09-23).",
    "method": "Code values, measure mod 6.22.0: IsoGameCharacter.exert(0.1) triggered on the character, endurance set to 1 beforehand, the consumption read; without and with Runner, factor with/without, tolerance 0.006.",
-   "src": "7b87b7e072"
+   "src": "81a2c0c92c"
   },
   "asthmatic/enduranceloss": {
    "code": "IsoPlayer.updateEndurance (line 2984; Asthmatic line 3015 when running, sprinting and dragging a corpse, line 3031 when walking under a load), 1.0 instead of 0.7",
@@ -812,9 +812,9 @@
   },
   "speeddemon/topspeed": {
    "code": "CarController.control_ForwardNew (lines 669-673): above maxSpeed x 1.15 engine force drops with (maxSpeed x 1.15 + 20 - speed) / 20, without the trait above maxSpeed with (maxSpeed + 20 - speed) / 20. Cap 34.0 m/s in BaseVehicle.",
-   "note": "Measured on 2026-09-10 in the plateau test, factor with/without: SmallCar 1.1162, StepVan 1.1133, CarNormal 1.1120, PickUpVan 1.1115 and 1.1102. The third PickUpVan pair is excluded: in that phase the car reached only 40.341 km/h instead of 88.918, so the plateau was not reached. The log does not give the cause. With that pair the log reports 0.9084. Confirmed on 2026-09-11 from standstill: PickUpVan 79.925 to 88.893 km/h, factor 1.1122. CarNormal sits at the cap of 122.400 km/h with the trait, so its factor is limited by the cap. SportsCar already drives 122.400 km/h without the trait, factor 1.0000. Why about +11% and not +15%: the 1.15 only moves the point where engine force starts to drop. Force is zero at maxSpeed x 1.15 + 20 km/h, without the trait at maxSpeed + 20 km/h. On the PickUpVan (maxSpeed 60.0) that is 89.0 against 80.0 km/h.",
+   "note": "Measured on 2026-09-10 in the plateau test, factor with/without: SmallCar 1.1162, StepVan 1.1133, CarNormal 1.1120, PickUpVan 1.1115 and 1.1102. The third PickUpVan pair is excluded: in that phase the car reached only 40.341 km/h instead of 88.918, so the plateau was not reached. The log does not give the cause. With that pair the log reports 0.9084. Confirmed on 2026-09-11 from standstill: PickUpVan 79.925 to 88.893 km/h, factor 1.1122. CarNormal sits at the cap of 122.400 km/h with the trait, so its factor is limited by the cap. SportsCar already drives 122.400 km/h without the trait, factor 1.0000. Why about +11% and not +15%: the 1.15 only moves the point where engine force starts to drop. Force is zero at maxSpeed x 1.15 + 20 km/h, without the trait at maxSpeed + 20 km/h. On the PickUpVan (maxSpeed 60.0) that is 89.0 against 80.0 km/h. In multiplayer, also when hosting, the client computes with an inflated speed (CarController lines 130-136, a factor up to 120 / speed limit) and cuts engine force at the real speed limit (lines 681-683, default 70). By the plateau rule ordinary cars gain about 5 to 7% there and fast ones nothing; computed only, not measured in multiplayer. The note says so since fact sweep 3 (2026-09-23); before, it said \"servers cap at 70 km/h by default\", which is the real speed, while the gauge shows 120 there.",
    "method": "Cars (plateau test): full throttle on a straight stretch, Speed Demon alternating on and off, each phase first settled, then the speed plateau measured, three pairs per car. Five cars: SmallCar, PickUpVan, StepVan, CarNormal and SportsCar. Four show the factor, SportsCar shows only the cap. In addition Cars (acceleration test) on 2026-09-11: PickUpVan from standstill at full throttle until the speed settled, one pair.",
-   "src": "44ae041b3a"
+   "src": "3ad84dd823"
   },
   "speeddemon/rpmbuild": {
    "code": "CarController.control_Reverse (lines 694-698); control_Forward with the term has no caller",
@@ -836,15 +836,15 @@
   },
   "sundaydriver/topspeed": {
    "code": "CarController.control_ForwardNew (offsets 826-978)",
-   "note": "Measured on 2026-09-11: PickUpVan from standstill without the trait 79.890 and 79.925 km/h, with Sunday Driver 64.803 km/h, factor 0.8112. Why about -19% and not -25%: with the trait engine force is zero at maxSpeed x 0.75 + 20 km/h, without the trait at maxSpeed + 20 km/h. On the PickUpVan (maxSpeed 60.0) that is 65.0 against 80.0 km/h. Only this one car was measured from standstill, one pair.",
+   "note": "Measured on 2026-09-11: PickUpVan from standstill without the trait 79.890 and 79.925 km/h, with Sunday Driver 64.803 km/h, factor 0.8112. Why about -19% and not -25%: with the trait engine force is zero at maxSpeed x 0.75 + 20 km/h, without the trait at maxSpeed + 20 km/h. On the PickUpVan (maxSpeed 60.0) that is 65.0 against 80.0 km/h. Only this one car was measured from standstill, one pair. In multiplayer, also when hosting, the inflated speed and the server speed limit (CarController lines 130-136, 681-683) shift this value too: by the plateau rule about -12% on ordinary cars and about -4% on sports cars; computed only, not measured in multiplayer. The note says so since fact sweep 3 (2026-09-23).",
    "method": "Cars (acceleration test): PickUpVan driven from standstill at full throttle until the speed settled, top speed with Sunday Driver against the phase without the trait before it. The earlier plateau test set the trait at full speed and therefore saw no reduction.",
-   "src": "3370a286f3"
+   "src": "e6f3471b5e"
   },
   "sundaydriver/reverseforce": {
    "code": "CarController.control_Reverse (line 686; Sunday Driver line 690, factor lines 703-707), engineForce x0.7; called from update (line 233)",
-   "note": "Measured on 2026-09-11, evaluated on 2026-09-13: in the 2 to 4 km/h window 0.7000 (SportsCar) and 0.7004 (PickUpVan). Above that, the reduction applies up to 10 km/h.",
+   "note": "Measured on 2026-09-11, evaluated on 2026-09-13: in the 2 to 4 km/h window 0.7000 (SportsCar) and 0.7004 (PickUpVan). Above that, the reduction applies up to 10 km/h. The note gives the limit since fact sweep 3 (2026-09-23): -30% up to about 3.3 km/h, above that the factor falls in a straight line to 0 at 10 km/h (x0.63 at 4, x0.42 at 6, x0.21 at 8 km/h; CarController lines 692 and 703-708).",
    "method": "Cars (acceleration test), measure mod 6.11.0 (SportsCar) and 6.15.0 (PickUpVan): force (getForce) in reverse in the 2 to 4 km/h window with Sunday Driver read against the phase without the trait; above that, the trait already reduces force with speed.",
-   "src": "e5e5da9587"
+   "src": "14b9a8cb40"
   },
   "sundaydriver/reversespeed": {
    "code": "CarController.control_Reverse (offsets 271-311)",
@@ -854,9 +854,9 @@
   },
   "gymnast/climb": {
    "code": "IsoGameCharacter.getClimbingFailChanceFloat (line 14718; traits lines 14727-14748); used in ClimbSheetRopeState (line 263, roll line 84), ClimbDownSheetRopeState (line 130) and on tall fences in ClimbOverWallState (line 296)",
-   "note": "651 data points across 21 cases, none deviates from the formula. Gymnast brings Nimble +1: a new character has 22 + 4 = 26, root 5, and fails tall fences 20% of the time instead of 25%. The note says so since fact sweep 2 (2026-09-23).",
+   "note": "651 data points across 21 cases, none deviates from the formula. Gymnast brings Nimble +1: a new character has 22 + 4 = 26, root 5, and fails tall fences 20% of the time instead of 25%. The note says so since fact sweep 2 (2026-09-23). With the sandbox option Easy Climbing (on in the Rising preset) every climb succeeds without a roll, the sheet-rope fall roll is skipped, and pathfinding always routes over tall fences (ClimbOverWallState lines 292-294, ClimbSheetRopeState line 93, ClimbDownSheetRopeState line 83, PathFindRequest line 77); the note says so since fact sweep 3 (2026-09-23).",
    "method": "Climbing, measure mod 6.19.0: getClimbingFailChanceFloat read in 21 trait cases, including Gymnast; per case Fitness, Strength and Nimble each individually from 0 to 10, the others at 0. The test notes deviations against the case without the trait, the formula was then checked.",
-   "src": "7ab2b7d883"
+   "src": "e3ae5b0170"
   },
   "gymnast/climbstrength": {
    "code": "IsoGameCharacter.getClimbRopeSpeed (line 14799; traits lines 14803-14817); read in ClimbSheetRopeState (lines 71, 116)",
@@ -866,9 +866,9 @@
   },
   "graceful/footsteps": {
    "code": "IsoGameCharacter.DoFootstepSound (lines 5310-5314)",
-   "note": "Measured on 2026-09-14 (code values, measure mod 6.26.2): footstep sound radius without 10.0000, with 6.0000, factor 0.6000. The game rounds the radius zombies hear up to whole tiles (ceil(volume x 10), line 5329); the test chose a volume with a radius of exactly 10. With shoes in play, per code: walking 7 to 5, running 11 to 7, sprinting 14 to 9 tiles. The sound the player hears stays the same: FMOD gets the volume before the trait factors (parameterVolume, lines 5306 and 5325). So since fact sweep 2 (2026-09-23) the row says \"Footstep noise radius for zombies\" instead of \"Footstep loudness\", and the note gives the whole squares (walking 7 to 5, running 11 to 7, sprinting 14 to 9 squares).",
+   "note": "Measured on 2026-09-14 (code values, measure mod 6.26.2): footstep sound radius without 10.0000, with 6.0000, factor 0.6000. The game rounds the radius zombies hear up to whole tiles (ceil(volume x 10), line 5329); the test chose a volume with a radius of exactly 10. With shoes in play, per code: walking 7 to 5, running 11 to 7, sprinting 14 to 9 tiles. The sound the player hears stays the same: FMOD gets the volume before the trait factors (parameterVolume, lines 5306 and 5325). So since fact sweep 2 (2026-09-23) the row says \"Footstep noise radius for zombies\" instead of \"Footstep loudness\", and the note gives the whole squares (walking 7 to 5, running 11 to 7, sprinting 14 to 9 squares). Sneaking 4 to 3 (getSneakSpotMod 0.95 x 1.2 at Sneak 0). The numbers hold outdoors; indoors the game halves the radius and truncates it (lines 5332-5334): sneaking 2 to 1, walking 3 to 2, running 5 to 3, sprinting 7 to 4. The note gives both since fact sweep 3 (2026-09-23).",
    "method": "Code values, measure mod 6.26.2, game with -debug: DoFootstepSound on the character, WorldSound.radius of the new sound read via reflection; invisible off, Lightfoot and Nimble 0, not sneaking, without and with Graceful; factor with/without, tolerance 0.006.",
-   "src": "8c15717013"
+   "src": "d2c5d7d7bd"
   },
   "graceful/trip": {
    "code": "ClimbOverFenceState.shouldFallAfterVaultOver (line 493; traits lines 511-528; roll against the counter minus Fitness line 529)",
@@ -878,15 +878,15 @@
   },
   "graceful/lungefall": {
    "code": "IsoGameCharacter.attackFromWindowsLunge (line 12875; traits lines 12900-12915; stagger and roll lines 12919-12924); triggered only by the climbing zombie: ClimbOverFenceState (lines 367-371), ClimbThroughWindowState (lines 290-294), GrappledThrownOutWindowState (lines 267-271)",
-   "note": "Not measured: the roll only happens when a zombie that is climbing over a fence or through a window (or is being thrown out of one) lunges at a character close by (under 3.9 tiles, same floor) and its hand hits; only with the sandbox option Zombie Lunge. Every hit makes the character stagger; the roll decides whether it also falls. After a hit the game blocks the next one for about 7 seconds, so a reliable share would need hundreds of hits per case.",
+   "note": "Not measured: the roll only happens when a zombie that is climbing over a fence or through a window (or is being thrown out of one) lunges at a character close by (under 3.9 tiles, same floor) and its hand hits; only with the sandbox option Zombie Lunge (on by default, off in the Rising preset). Every hit makes the character stagger; the roll decides whether it also falls. After a hit the game blocks the next one for about 7 seconds, so a reliable share would need hundreds of hits per case.",
    "method": "",
-   "src": "b9aaaa3ac2"
+   "src": "0986cf275c"
   },
   "clumsy/footsteps": {
    "code": "IsoGameCharacter.DoFootstepSound (lines 5310-5314)",
-   "note": "Measured on 2026-09-14 (code values, measure mod 6.26.2): footstep sound radius without 10.0000, with 12.0000, factor 1.2000. The game rounds the radius zombies hear up to whole tiles (ceil(volume x 10), line 5329); the test chose a volume with a radius of exactly 10. With shoes in play, per code: walking 7 to 9, running 11 to 13 tiles. The sound the player hears stays the same: FMOD gets the volume before the trait factors (parameterVolume, lines 5306 and 5325). So since fact sweep 2 (2026-09-23) the row says \"Footstep noise radius for zombies\" instead of \"Footstep loudness\", and the note gives the whole squares (walking 7 to 9, running 11 to 13, sprinting 14 to 17 squares, sneaking 4 to 4).",
+   "note": "Measured on 2026-09-14 (code values, measure mod 6.26.2): footstep sound radius without 10.0000, with 12.0000, factor 1.2000. The game rounds the radius zombies hear up to whole tiles (ceil(volume x 10), line 5329); the test chose a volume with a radius of exactly 10. With shoes in play, per code: walking 7 to 9, running 11 to 13 tiles. The sound the player hears stays the same: FMOD gets the volume before the trait factors (parameterVolume, lines 5306 and 5325). So since fact sweep 2 (2026-09-23) the row says \"Footstep noise radius for zombies\" instead of \"Footstep loudness\", and the note gives the whole squares (walking 7 to 9, running 11 to 13, sprinting 14 to 17 squares, sneaking 4 to 5). Until fact sweep 3 (2026-09-23) sneaking said 4 to 4: that left out the factor 1.2 in getSneakSpotMod (0.95 x 1.2 at Sneak 0). The numbers hold outdoors; indoors the game halves the radius and truncates it (lines 5332-5334): sneaking 2 to 2, walking 3 to 4, running 5 to 6, sprinting 7 to 8.",
    "method": "Code values, measure mod 6.26.2, game with -debug: DoFootstepSound on the character, WorldSound.radius of the new sound read via reflection; invisible off, Lightfoot and Nimble 0, not sneaking, without and with Clumsy; factor with/without, tolerance 0.006.",
-   "src": "b95302baa5"
+   "src": "b561406977"
   },
   "clumsy/trip": {
    "code": "ClimbOverFenceState.shouldFallAfterVaultOver (line 493; traits lines 511-528; roll against the counter minus Fitness line 529)",
@@ -896,15 +896,15 @@
   },
   "clumsy/lungefall": {
    "code": "IsoGameCharacter.attackFromWindowsLunge (line 12875; traits lines 12900-12915; stagger and roll lines 12919-12924); triggered only by the climbing zombie: ClimbOverFenceState (lines 367-371), ClimbThroughWindowState (lines 290-294), GrappledThrownOutWindowState (lines 267-271)",
-   "note": "Not measured: the roll only happens when a zombie that is climbing over a fence or through a window (or is being thrown out of one) lunges at a character close by (under 3.9 tiles, same floor) and its hand hits; only with the sandbox option Zombie Lunge. Every hit makes the character stagger; the roll decides whether it also falls. After a hit the game blocks the next one for about 7 seconds, so a reliable share would need hundreds of hits per case.",
+   "note": "Not measured: the roll only happens when a zombie that is climbing over a fence or through a window (or is being thrown out of one) lunges at a character close by (under 3.9 tiles, same floor) and its hand hits; only with the sandbox option Zombie Lunge (on by default, off in the Rising preset). Every hit makes the character stagger; the roll decides whether it also falls. After a hit the game blocks the next one for about 7 seconds, so a reliable share would need hundreds of hits per case.",
    "method": "",
-   "src": "b9aaaa3ac2"
+   "src": "0986cf275c"
   },
   "clumsy/climb": {
    "code": "IsoGameCharacter.getClimbingFailChanceFloat (line 14718; traits lines 14727-14748); used in ClimbSheetRopeState (line 263, roll line 84), ClimbDownSheetRopeState (line 130) and on tall fences in ClimbOverWallState (line 296)",
-   "note": "651 data points across 21 cases, none deviates from the formula. The game rolls with the integer square root of the score (line 14753): for a new character 20 gives 4, with Clumsy 10 gives 3; the chance to fail on tall fences therefore rises from 25% to 33%, not to double.",
+   "note": "651 data points across 21 cases, none deviates from the formula. The game rolls with the integer square root of the score (line 14753): for a new character 20 gives 4, with Clumsy 10 gives 3; the chance to fail on tall fences therefore rises from 25% to 33%, not to double. With the sandbox option Easy Climbing (on in the Rising preset) every climb succeeds without a roll, the sheet-rope fall roll is skipped, and pathfinding always routes over tall fences (ClimbOverWallState lines 292-294, ClimbSheetRopeState line 93, ClimbDownSheetRopeState line 83, PathFindRequest line 77); the note says so since fact sweep 3 (2026-09-23).",
    "method": "Climbing, measure mod 6.19.0: getClimbingFailChanceFloat read in 21 trait cases, including Clumsy; for each case Fitness, Strength and Nimble individually from 0 to 10, the others at 0. The test notes deviations against the case without trait; the formula was checked afterwards.",
-   "src": "5cf42e27c3"
+   "src": "220d3ab1dd"
   },
   "clumsy/canwound": {
    "code": "RecipeCodeOnCreate.openCan (lines 634-679)",
@@ -962,21 +962,21 @@
   },
   "insomniac/fallasleep": {
    "code": "SleepingEvent.doDelayToSleep (line 144; Restless Sleeper line 147, Night Owl line 172)",
-   "note": "Measured on 2026-09-13 (Sleep): wait time cap 0.7998 hours against 0.2401 without trait, x3.3318 (code 1.0 / 0.3); in a good bed, which doDelayToSleep computes with x0.8 (1.0 x 0.8 = 0.8, 0.3 x 0.8 = 0.24); 150 samples each. Second run (6.23.3) x3.3534. Both runs had the search error that distorted Night Owl; it accounts for at most 0.6% of this cap. Third run (6.23.4, without the search error): cap 0.7914 against 0.2403 hours, x3.2936, within tolerance.",
+   "note": "Measured on 2026-09-13 (Sleep): wait time cap 0.7998 hours against 0.2401 without trait, x3.3318 (code 1.0 / 0.3); in a good bed, which doDelayToSleep computes with x0.8 (1.0 x 0.8 = 0.8, 0.3 x 0.8 = 0.24); 150 samples each. Second run (6.23.3) x3.3534. Both runs had the search error that distorted Night Owl; it accounts for at most 0.6% of this cap. Third run (6.23.4, without the search error): cap 0.7914 against 0.2403 hours, x3.2936, within tolerance. The 0 to 60 minutes hold in an average bed without pain, stress and sleeping pills (doDelayToSleep lines 144-182): bed and stress multiply both cases, pain adds 1 + 0.2 hours per level, the cap is 2 hours (pain level 1 in an average bed: 90 against 120 minutes), with sleeping pills 0.1 hours for everyone; the note says so since fact sweep 3 (2026-09-23). Single player only: in multiplayer, also when hosting, nothing calls setPlayerFallAsleep (ISWorldObjectContextMenu.lua lines 1114-1121 return first), so there is no delay and no nightmare roll; since fact sweep 3 (2026-09-23) a condition on the value.",
    "method": "Sleep (falling asleep), measure mod 6.23.2 to 6.23.4: wait time per sample via interval search (timeOfSleep shifted sample by sample, does tiredness drop after one tick?), cap from the largest value times (n + 1) / n; first 150 samples per case in sequence, 300 alternating from 6.23.3 on.",
-   "src": "b896f6fe9c"
+   "src": "7c6b543968"
   },
   "nightowl/sleeprecovery": {
    "code": "IsoPlayer.updateStats_Sleeping (line 2874; traits lines 2882-2911)",
-   "note": "Measured on 2026-09-13 (Sleep): tiredness drops x1.4000 faster, two phases against the neighbors without. Second run (6.23.3) the same. Third run (6.23.4) the same.",
+   "note": "Measured on 2026-09-13 (Sleep): tiredness drops x1.4000 faster, two phases against the neighbors without. Second run (6.23.3) the same. Third run (6.23.4) the same. In multiplayer, also when hosting, only if the server allows sleep: SleepAllowed and SleepNeeded are off by default (ServerOptions lines 107-108), and then the server holds tiredness at 0 (IsoGameCharacter lines 9100-9102) and offers no sleep; since fact sweep 3 (2026-09-23) a condition on the value.",
    "method": "Sleep (recovery), measure mod 6.23.2 to 6.23.4 (three runs): 17 phases of 20 game minutes, without trait alternating with the four sleep traits, Night Owl in two of them; tiredness 0.8 and elapsed wait time each, decay rate against the neighboring phases without, tolerance 1%.",
-   "src": "2e89ae98c2"
+   "src": "2ef189f342"
   },
   "nightowl/fallasleep": {
    "code": "SleepingEvent.doDelayToSleep (line 144; Restless Sleeper line 147, Night Owl line 172)",
-   "note": "Measured on 2026-09-13 (Sleep, measure mod 6.23.4): wait time cap 0.1203 against 0.2403 hours without trait in a good bed, x0.5005 (code x0.5); 300 samples each, cases alternating. The two runs before that gave exactly x0.4832; that was an interval search error in the measure mod up to 6.23.3 (the sample was on the midpoint instead of one step below it, at 0.0093 hours per tick). Night Owl halves before the 2-hour cap and before the sleeping tablets (SleepingEvent lines 172-180): if the delay without Night Owl is above 2 hours (for example pain level 2 on the floor: 2.72 -> 1.36 against 2.0, -32%), less than half remains, and with sleeping tablets nothing. The note says so since fact sweep 2 (2026-09-23).",
+   "note": "Measured on 2026-09-13 (Sleep, measure mod 6.23.4): wait time cap 0.1203 against 0.2403 hours without trait in a good bed, x0.5005 (code x0.5); 300 samples each, cases alternating. The two runs before that gave exactly x0.4832; that was an interval search error in the measure mod up to 6.23.3 (the sample was on the midpoint instead of one step below it, at 0.0093 hours per tick). Night Owl halves before the 2-hour cap and before the sleeping tablets (SleepingEvent lines 172-180): if the delay without Night Owl is above 2 hours (for example pain level 2 on the floor: 2.72 -> 1.36 against 2.0, -32%), less than half remains, and with sleeping tablets nothing. The note says so since fact sweep 2 (2026-09-23). Single player only: in multiplayer, also when hosting, nothing calls setPlayerFallAsleep (ISWorldObjectContextMenu.lua lines 1114-1121 return first), so there is no delay and no nightmare roll; since fact sweep 3 (2026-09-23) a condition on the value.",
    "method": "Sleep (falling asleep), measure mod 6.23.4: wait time cap determined via interval search, 300 samples alternating with the case without trait, estimated from the largest value; a search error up to 6.23.3 had previously distorted Night Owl's tight cap.",
-   "src": "b9be4f761d"
+   "src": "e1c5fef6d2"
   },
   "deaf/detection": {
    "code": "IsoGameCharacter.getDetectionRange (line 13952), TestIfSeen",
@@ -1022,9 +1022,9 @@
   },
   "hardofhearing/hearing": {
    "code": "IsoGameCharacter.getHearDistanceModifier (line 13934); in single player only AlarmClock (line 181) and AlarmClockClothing (line 191) read it; FMODParameterUtils.getClosestListener (line 40) and ParameterFirearmInside.getClosestListener (line 77) use it only to pick the listener when there are several local players (split screen); the muffled sound comes from ParameterHardOfHearing (line 22), only on or off",
-   "note": "getHearDistanceModifier 1.0 -> 4.5. In play this means: an alarm clock placed in the world wakes the character only from 1/4.5 of its range (alarm clock SoundRadius 15, so 3.3 squares; watch 7, so 1.6). A clock in the inventory or a watch worn rings on the character's own square (getAlarmSquare, AlarmClock lines 78-94), distance 0, and always wakes (in the note since fact sweep 2, 2026-09-23). The muffling of sounds is a separate switch without the 4.5 (checked again on 2026-09-23).",
+   "note": "getHearDistanceModifier 1.0 -> 4.5. In play this means: an alarm clock placed in the world wakes the character only from 1/4.5 of its range (alarm clock SoundRadius 15, so 3.3 squares; watch 7, so 1.6). A clock in the inventory or a watch worn rings on the character's own square (getAlarmSquare, AlarmClock lines 78-94), distance 0, and always wakes (in the note since fact sweep 2, 2026-09-23). The muffling of sounds is a separate switch without the 4.5 (checked again on 2026-09-23). Alarm clocks only matter while asleep. In multiplayer, also when hosting, only if the server allows sleep: SleepAllowed and SleepNeeded are off by default (ServerOptions lines 107-108), and then the server holds tiredness at 0 (IsoGameCharacter lines 9100-9102) and offers no sleep; since fact sweep 3 (2026-09-23) a condition on the value.",
    "method": "World entry: getHearDistanceModifier() read without and with Hard of Hearing, value compared to the decimal place as in the code; early measure mod runs before version numbering began (10, 10b, 10c) and a later world-entry run (13-sprint), traits backed up beforehand and reset afterwards.",
-   "src": "0c55342289"
+   "src": "f665a48e3d"
   },
   "eagleeyed/lightcone": {
    "code": "LightingJNI.calculateVisionCone (lines 428-432)",
@@ -1069,28 +1069,28 @@
    "src": "d6c311b66e"
   },
   "smoker/nicotine": {
-   "code": "BodyDamage (line 765; lines 886-905: cough every 43200 to 129600 in-game seconds without a cold, also while smoking; line 1719: withdrawal), RecipeCodeOnEat (line 29)",
-   "note": "Measured on 2026-09-14 (code values, measure mod 6.26.2): while smoking, stress without 0.0000, with -0.0500, difference -0.0500; unhappiness without 0.0000, with -0.0500, difference -0.0500 (both per code the cigarette's stressChange); nausea without 14.0000, with 0.0000, factor 0.0000. Not measured, from the code: the cough every 12 to 36 in-game hours comes whether the character smokes or not, as long as it has no cold, and zombies hear it.",
+   "code": "BodyDamage (line 765; lines 886-905: cough every 43200 to 129600 in-game seconds without a cold, also while smoking; line 1719: withdrawal), RecipeCodeOnEat (line 29) ; RecipeCodeOnEat.consumeNicotineLogic (lines 21-46: cough, withdrawal); IsoGameCharacter.Eat (line 5382)",
+   "note": "Measured on 2026-09-14 (code values, measure mod 6.26.2), only the trait's own part, RecipeCodeOnEat.consumeNicotine on its own: stress without 0.0000, with -0.0500, difference -0.0500; unhappiness without 0.0000, with -0.0500, difference -0.0500 (both per code the cigarette's stressChange); nausea without 14.0000, with 0.0000, factor 0.0000. Real smoking first goes through Eat (IsoGameCharacter line 5382; for packs and chewing tobacco BodyDamage line 514), which gives everyone the stressChange: stress -0.05 without the trait, -0.10 with Smoker; Smoker also clears nicotine withdrawal (up to 0.51, counts toward the stress moodle, Stats lines 126-128). The unhappiness -0.05 is on the 0-to-100 scale (the game applies the 0-to-1 stress value to unhappiness), which is not noticeable; so since fact sweep 3 (2026-09-23) the row no longer says \"relieves unhappiness\". From the code, not measured: per smoke a smoker coughs with 1 in 2 (InverseCoughProbabilitySmoker on every tobacco item), a non-smoker with 1 in 10 (cigarettes), 1 in 5 (cigarillo, pipe) or 1 in 4 (cigar), never with chewing tobacco (RecipeCodeOnEat lines 24-46); on top comes the cough every 12 to 36 in-game hours as long as the character has no cold. Zombies hear both (radius 35 to 40).",
    "method": "Code values, measure mod 6.26.2: RecipeCodeOnEat.consumeNicotine with a spawned cigarette without coughing on the character, stress, unhappiness and nausea read before and after the call, without and with Smoker; difference with minus without, tolerance 0.006, values reset afterwards.",
-   "src": "342246b6cc"
+   "src": "95f9519cf3"
   },
   "organized/container": {
    "code": "ItemContainer.getEffectiveCapacity (lines 205-214)",
    "note": "School bag 15: Organized 19, Disorganized 10.",
-   "method": "World entry: capacity of a school bag spawned in the measure mod (getEffectiveCapacity) read without and with Organized, the bag never enters the world; first in the third run from 2026-09-10 before version numbering started (in the second run no bag could be spawned), the same in a later run.",
+   "method": "World entry: capacity of a school bag spawned in the measure mod (getEffectiveCapacity) read without and with Organized, the bag never enters the world; first on 2026-09-10, the same in a later run.",
    "src": "f9d36e6526"
   },
   "disorganized/container": {
    "code": "ItemContainer.getEffectiveCapacity (lines 205-214)",
    "note": "School bag 15: Organized 19, Disorganized 10.",
-   "method": "World entry: capacity of a school bag spawned in the measure mod (getEffectiveCapacity) read without and with Disorganized, the bag never enters the world; first in the third run from 2026-09-10 before version numbering started (in the second run no bag could be spawned), the same in a later run.",
+   "method": "World entry: capacity of a school bag spawned in the measure mod (getEffectiveCapacity) read without and with Disorganized, the bag never enters the world; first on 2026-09-10, the same in a later run.",
    "src": "110d948c0e"
   },
   "disorganized/ingredients": {
-   "code": "client/ISUI/ISCraftingUI.lua (line 15): ReturnItemToContainer does not put ingredients back",
-   "note": "Measured on 2026-09-14 (code values, measure mod 6.26.2): relocation actions from ReturnItemToContainer without 1.0000, with 0.0000, factor 0.0000.",
+   "code": "client/ISUI/ISCraftingUI.lua (lines 13-15): ReturnItemToContainer puts nothing back that was fetched from bags or containers (tools, food, lighters)",
+   "note": "Measured on 2026-09-14 (code values, measure mod 6.26.2): relocation actions from ReturnItemToContainer without 1.0000, with 0.0000, factor 0.0000. Otherwise the game puts back everything fetched from bags or containers, including tools when crafting (getAllPutBackInputItems, CraftRecipeData lines 1651-1658), food and the lighter when eating or smoking (ISInventoryPaneContextMenu, eatItem), and the lighter and stick at a campfire (ISCampingMenu lines 600-624); the measurement itself used a hammer. When drinking from a bottle the game puts nothing back for anyone (onDrinkForThirst passes the undefined variable item, ISInventoryPaneContextMenu line 2369). Since fact sweep 3 (2026-09-23) the row names tools, food and lighters instead of only leftover ingredients.",
    "method": "Code values, measure mod 6.26.2: ISCraftingUI.ReturnItemToContainer called with a spawned hammer and a school bag for the character, ISTimedActionQueue.add only counts along; relocation actions without and with Disorganized, factor with/without, tolerance 0.006.",
-   "src": "0f4341d24c"
+   "src": "50a7fe73d4"
   },
   "handy/buildtime": {
    "code": "client/BuildingObjects/TimedActions/ISBuildAction.lua (lines 257-272), ISBuildIsoEntity",
@@ -1106,7 +1106,7 @@
   },
   "handy/barricade": {
    "code": "shared/TimedActions/ISBarricadeAction.lua (lines 175-194)",
-   "note": "Measured on 2026-09-13 (code values) on the action itself: without 100, with Handy 80, factor 0.80. Checked again on 2026-09-21 in the game code of 42.20.4: only the game's own test file still calls ISBarricadeAction. Players barricade through the build menu, recipe time 200, and Handy takes 50 off there as with every construction (see Time to build). Listed as having no effect since Trait Facts 0.13.5; until then the value was wrongly listed as measured. Reproduced in play on 2026-09-21: 200 without and 150 with Handy at Carpentry 1; the old formula would give 95 and 75.",
+   "note": "Measured on 2026-09-13 (code values) on the action itself: without 100, with Handy 80, factor 0.80. Checked again on 2026-09-21 in the game code of 42.20.4: only the game's own test file still calls ISBarricadeAction. Players barricade through the build menu, recipe time 200, and Handy takes 50 off there as with every construction (see Time to build). Listed as having no effect since the check of 2026-09-21; before that the value was wrongly listed as measured. Reproduced in play on 2026-09-21: 200 without and 150 with Handy at Carpentry 1; the old formula would give 95 and 75.",
    "method": "Code values, measure mod 6.22.0: ISBarricadeAction:new built on the character (Carpentry level set to 0), maxTime read; without and with Handy, factor with/without, tolerance 0.006.",
    "src": "e1f25ebe28"
   },
@@ -1117,10 +1117,10 @@
    "src": "689c5db3ee"
   },
   "illiterate/reading": {
-   "code": "shared/TimedActions/ISReadABook.lua (line 129); client/ISUI/ISInventoryPaneContextMenu.lua (line 549 media label, line 588 notebook, 1043-1089, 2815); client/ISUI/Maps/ISWorldMapSymbols.lua (lines 1367-1373: adding and editing map notes blocked; existing labels stay readable)",
-   "note": "Measured on 2026-09-13 (code values, measure mod 6.24.0): ISReadABook.checkLevel resets the pages read from 5 to 0. Checked again on 2026-09-21: a character with Illiterate never reaches this place in play, because the menu and the double click already block books (ISInventoryPaneContextMenu, ISInventoryPane). What the mod shows is right; the proof for it is the block in the menu.",
+   "code": "shared/TimedActions/ISReadABook.lua (line 129); client/ISUI/ISInventoryPaneContextMenu.lua (line 549 media label, line 588 notebook, 1043-1089, 2815); client/ISUI/Maps/ISWorldMapSymbols.lua (lines 1367-1373: adding and editing map notes blocked; existing labels stay readable) ; Food.DoTooltip (lines 1363-1366, 1387-1391); ItemContainer.hasRecipe (lines 3446-3453); CraftRecipe.couldBenefitFromRecipeAtHand/hasRecipeAtHand (lines 1456-1507)",
+   "note": "From the game code, not measured: the context menu shows Read greyed out, with a tooltip saying the character cannot read, for every book, magazine and note that is not tagged PictureBook or Picture (ISInventoryPaneContextMenu lines 1054-1059, 2815), and double-click skips them (ISInventoryPane line 1102). Also blocked: \"read label\" on media (line 549), the notebook (line 588) and the map note buttons (ISWorldMapSymbols lines 1367-1373). Packaged food shows no nutrition values (Food.DoTooltip lines 1363-1391), and a recipe magazine at hand does not let the character craft a learned recipe one level early (ItemContainer.hasRecipe lines 3446-3453, except with PictureBook). The reset of pages read in ISReadABook.checkLevel (line 129), measured on 2026-09-13 (5 to 0), cannot be reached by a character with Illiterate in play; so since fact sweep 3 (2026-09-23) the status is code instead of measured. Since then the row also names packaging and the recipe at hand.",
    "method": "Code values, measure mod 6.24.0: ISReadABook.checkLevel triggered on a book with 5 pages read (Carpentry level set to 0), the reading progress read afterwards; without and with Illiterate, factor with/without.",
-   "src": "f700b1a04e"
+   "src": "ffe9f0d4e8"
   },
   "nutritionist/nutrition": {
    "code": "Food.DoTooltip (line 1241; NUTRITIONIST or NUTRITIONIST2 in line 1372)",
@@ -1130,9 +1130,9 @@
   },
   "wildernessknowledge/firelight": {
    "code": "shared/Camping/TimedActions/ISLightFromKindle.lua (lines 38-41): ignition chance 1/150 instead of 1/300, campfire only",
-   "note": "Measured on 2026-09-13 (code values, measure mod 6.24.0): ISLightFromKindle:updateKindling rolls ZombRand(150) instead of 300, x2.0000. Campfire. What was measured are the roll limits per tick. From 20% progress lighting and breaking race each other, the break is only rolled when lighting misses, and either ends the attempt. Per attempt: 300/599 = 50% lit without the trait, 450/599 = 75% with it, so x1.5; the time to a fire halves. Since fact sweep 2 (2026-09-23) Trait Facts shows x1.5 per attempt instead of x2.0 per roll; the value is computed from the code, hence status code.",
+   "note": "Measured on 2026-09-13 (code values, measure mod 6.24.0): ISLightFromKindle:updateKindling rolls ZombRand(150) instead of 300, x2.0000. Campfire. What was measured are the roll limits per tick. From 20% progress lighting and breaking race each other, the break is only rolled when lighting misses, and either ends the attempt. Per attempt: 300/599 = 50% lit without the trait, 450/599 = 75% with it, so x1.5; only the rolling phase halves (300 -> 150 ticks); with the wind-up of 20% per attempt (300 of 1500 units, no roll) and 2.0 instead of 1.33 attempts it is about 0.6 of the time to a fire (fact sweep 3, 2026-09-23; before that it said \"halves\"). Since fact sweep 2 (2026-09-23) Trait Facts shows x1.5 per attempt instead of x2.0 per roll; the value is computed from the code, hence status code.",
    "method": "Code values, measure mod 6.24.0: ISLightFromKindle:updateKindling triggered without a queue and without a real campfire; ZombRand returns 1 and records the bound along with it, nothing ignites. Ignition chance 1/bound without and with Bushcrafter, factor with/without.",
-   "src": "df64fbdd8e"
+   "src": "b7b2f771bd"
   },
   "wildernessknowledge/kindling": {
    "code": "shared/Camping/TimedActions/ISLightFromKindle.lua (lines 38-41): tinder breaks 1/450 instead of 1/300, campfire only",
@@ -1142,9 +1142,9 @@
   },
   "formerscout/firelight": {
    "code": "shared/Camping/TimedActions/ISLightFromKindle.lua (lines 38-41): ignition chance 1/150 instead of 1/300, campfire only",
-   "note": "Measured on 2026-09-13 (code values, measure mod 6.24.0): ISLightFromKindle:updateKindling rolls ZombRand(150) instead of 300, x2.0000. Campfire. What was measured are the roll limits per tick. From 20% progress lighting and breaking race each other, the break is only rolled when lighting misses, and either ends the attempt. Per attempt: 300/599 = 50% lit without the trait, 450/599 = 75% with it, so x1.5; the time to a fire halves. Since fact sweep 2 (2026-09-23) Trait Facts shows x1.5 per attempt instead of x2.0 per roll; the value is computed from the code, hence status code.",
+   "note": "Measured on 2026-09-13 (code values, measure mod 6.24.0): ISLightFromKindle:updateKindling rolls ZombRand(150) instead of 300, x2.0000. Campfire. What was measured are the roll limits per tick. From 20% progress lighting and breaking race each other, the break is only rolled when lighting misses, and either ends the attempt. Per attempt: 300/599 = 50% lit without the trait, 450/599 = 75% with it, so x1.5; only the rolling phase halves (300 -> 150 ticks); with the wind-up of 20% per attempt (300 of 1500 units, no roll) and 2.0 instead of 1.33 attempts it is about 0.6 of the time to a fire (fact sweep 3, 2026-09-23; before that it said \"halves\"). Since fact sweep 2 (2026-09-23) Trait Facts shows x1.5 per attempt instead of x2.0 per roll; the value is computed from the code, hence status code.",
    "method": "Code values, measure mod 6.24.0: ISLightFromKindle:updateKindling triggered without a queue and without a real campfire; ZombRand returns 1 and records the bound along with it, nothing ignites. Ignition chance 1/bound without and with Former Scout, factor with/without.",
-   "src": "3553be3f5a"
+   "src": "777b92a823"
   },
   "formerscout/kindling": {
    "code": "shared/Camping/TimedActions/ISLightFromKindle.lua (lines 38-41): tinder breaks 1/450 instead of 1/300, campfire only",
@@ -1166,9 +1166,9 @@
   },
   "burglar/climb": {
    "code": "IsoGameCharacter.getClimbingFailChanceFloat (line 14718; traits lines 14727-14748); used in ClimbSheetRopeState (line 263, roll line 84), ClimbDownSheetRopeState (line 130) and on tall fences in ClimbOverWallState (line 296)",
-   "note": "651 data points across 21 cases, none deviates from the formula. A new character without gloves has 20, with Burglar 24: both root 4, so the trait alone changes nothing; with ordinary gloves (+4) 28, root 5. The note says so since fact sweep 2 (2026-09-23).",
+   "note": "651 data points across 21 cases, none deviates from the formula. Burglar comes only with the Burglar occupation, which also gives Nimble 2 (character_professions.txt lines 3-11): without gloves 24 without the trait, 28 with it (root 4 -> 5, tall fences 25% -> 20%); with ordinary gloves (+4) 28 -> 32, both root 5. Until fact sweep 3 (2026-09-23) the note assumed a character without Nimble and said the trait alone changes nothing; since then Burglar has its own hint. With the sandbox option Easy Climbing (on in the Rising preset) every climb succeeds without a roll, the sheet-rope fall roll is skipped, and pathfinding always routes over tall fences (ClimbOverWallState lines 292-294, ClimbSheetRopeState line 93, ClimbDownSheetRopeState line 83, PathFindRequest line 77); the note says so since fact sweep 3 (2026-09-23).",
    "method": "Climbing, measure mod 6.19.0: getClimbingFailChanceFloat read in 21 trait cases, including Burglar; for each case Fitness, Strength and Nimble individually from 0 to 10, the others at 0. The test notes deviations against the case without trait; the formula was checked afterwards.",
-   "src": "bc57c73499"
+   "src": "183738acc2"
   },
   "burglar/climbstrength": {
    "code": "IsoGameCharacter.getClimbRopeSpeed (line 14799; traits lines 14803-14817); read in ClimbSheetRopeState (lines 71, 116)",
@@ -1178,15 +1178,15 @@
   },
   "inventive/autolearn": {
    "code": "IsoGameCharacter.isInventive (line 15232); CraftRecipe.validateHasAutoLearnAnySkill (lines 905, 910) and validateHasAutoLearnAllSkill (lines 921, 926)",
-   "note": "Measured on 2026-09-14 (code values, measure mod 6.26.2): smallest skill level at which the recipe is learned automatically, without 4.0000, with 3.0000, difference -1.0000; the occupation version likewise (without 4.0000, with 3.0000, difference -1.0000).",
+   "note": "Measured on 2026-09-14 (code values, measure mod 6.26.2): smallest skill level at which the recipe is learned automatically, without 4.0000, with 3.0000, difference -1.0000; the occupation version likewise (without 4.0000, with 3.0000, difference -1.0000). After the -1 the game applies max(1, level) (lines 910-913, 926-929): a requirement at level 1 stays 1, for example the second skill of Forge_Small_Knife (Blacksmith:2;SmallBlade:1); that is 19 of about 375 requirements in media/scripts. The measurement used a recipe from level 2 and so could not see the floor. The note says so since fact sweep 3 (2026-09-23).",
    "method": "Code values, measure mod 6.26.2: CraftRecipe.checkAutoLearnAnySkills on the character for a recipe with exactly one learn skill from level 2, level set upward from 0, without and with Inventive (both versions); difference of the smallest learn level with minus without, recipe forgotten afterwards.",
-   "src": "1522bce266"
+   "src": "d87e1c67e4"
   },
   "inventive/research": {
-   "code": "IsoGameCharacter.isInventive (line 15232); CraftRecipe.getResearchSkillLevel (line 1215, -2 in lines 1232-1233)",
-   "note": "Measured on 2026-09-13 (code values, measure mod 6.24.0): research level of MakeImprovisedLighter 4 without, 2 with Inventive, likewise with the occupation version (CraftRecipe.getResearchSkillLevel).",
+   "code": "IsoGameCharacter.isInventive (line 15232); CraftRecipe.getResearchSkillLevel (line 1215, -2 in lines 1232-1233) ; normalizeSkillLevel (lines 1238-1242), canResearch (lines 1304-1307)",
+   "note": "Measured on 2026-09-13 (code values, measure mod 6.24.0): research level of MakeImprovisedLighter 4 without, 2 with Inventive, likewise with the occupation version (CraftRecipe.getResearchSkillLevel). The -2 has a floor: normalizeSkillLevel clamps to 0 through 10 (lines 1238-1242), and below 1 every recipe can be researched (canResearch, lines 1304-1307). Without its own ResearchSkillLevel a recipe's research level is max(1, rounded highest requirement x 2/3) (lines 1215-1225); about a quarter of the researchable recipes sit at 1 (for example Forge_Small_Knife) and drop only to 0. The note says so since fact sweep 3 (2026-09-23).",
    "method": "Code values, measure mod 6.24.0: CraftRecipe.getResearchSkillLevel on the recipe MakeImprovisedLighter (level 4) read on the character, without and with Inventive, difference with minus without; the game clamps the result to 0 through 10, which does not apply at level 4.",
-   "src": "c91ba4df97"
+   "src": "bcb4f5ddeb"
   },
   "fastreader/readtime": {
    "code": "shared/TimedActions/ISReadABook.lua (lines 443-509)",
@@ -1202,27 +1202,27 @@
   },
   "adrenalinejunkie/panicrun": {
    "code": "IsoGameCharacter.calculateWalkSpeed (lines 8957-9006): run speed = (base speed - 0.15) x fullSpeedMod + Sprinting / 20 (lines 8964-8967), capped at 1.0 (line 8986); the base speed from calculateBaseSpeed (lines 8754-8797) carries the bonus of Adrenaline Junkie (lines 8761-8764)",
-   "note": "Measured on 2026-09-20 (Adrenaline) on the running character, distance per tick with against without Adrenaline Junkie. Panic level 4, two pairs of phases each: x1.1582 (second run, Sprinting 1), x1.1628 (third run, Sprinting 1) and x1.1661 (fourth run, Sprinting 0); in the third run about 4.4 against 5.1 tiles per second. Panic level 3 (Strong Panic): x1.1305 (fourth run, two pairs of phases, Sprinting 0) and x1.1213 (re-measured at level 3 only, four pairs of phases, Sprinting 1, single values x1.121 to x1.122). In the fourth run Sprinting rose at level 3 during the last phase without the trait (mean WalkSpeed there 0.6837 instead of 0.6500); the first pair of phases alone gives x1.138, the second x1.123. The game's variable WalkSpeed rises at level 4 with Sprinting 1 from 0.7000 to 0.9500 (x1.3571, as per code), with Sprinting 0 from 0.6500 to 0.9000 (x1.3846); at level 3 with Sprinting 1 from 0.7000 to 0.9000 (x1.2857). In the second run one phase with the trait had a mean of 0.9445, which gives x1.3532 there. At level 3 the bonus is smaller (+0.20 instead of +0.25). With higher Sprinting the share shrinks; from Sprinting 7 the run speed without the trait is already capped at 1.0 per code (not measured). Fifth run on 2026-09-21 on a fresh character (Sprinting 0): level 4 x1.1698; at level 3 x1.1280, where Sprinting again rose during the first phase, the second pair of phases alone gives x1.133. Across all clean runs running spans x1.1213 to x1.1698. Trait Facts therefore shows the range 12 to 17%; until then it was 13 to 16%.",
+   "note": "Measured on 2026-09-20 (Adrenaline) on the running character, distance per tick with against without Adrenaline Junkie. Panic level 4, two pairs of phases each: x1.1582 (second run, Sprinting 1), x1.1628 (third run, Sprinting 1) and x1.1661 (fourth run, Sprinting 0); in the third run about 4.4 against 5.1 tiles per second. Panic level 3 (Strong Panic): x1.1305 (fourth run, two pairs of phases, Sprinting 0) and x1.1213 (re-measured at level 3 only, four pairs of phases, Sprinting 1, single values x1.121 to x1.122). In the fourth run Sprinting rose at level 3 during the last phase without the trait (mean WalkSpeed there 0.6837 instead of 0.6500); the first pair of phases alone gives x1.138, the second x1.123. The game's variable WalkSpeed rises at level 4 with Sprinting 1 from 0.7000 to 0.9500 (x1.3571, as per code), with Sprinting 0 from 0.6500 to 0.9000 (x1.3846); at level 3 with Sprinting 1 from 0.7000 to 0.9000 (x1.2857). In the second run one phase with the trait had a mean of 0.9445, which gives x1.3532 there. At level 3 the bonus is smaller (+0.20 instead of +0.25). With higher Sprinting the share shrinks; from Sprinting 7 the run speed without the trait is already capped at 1.0 per code (not measured). Fifth run on 2026-09-21 on a fresh character (Sprinting 0): level 4 x1.1698; at level 3 x1.1280, where Sprinting again rose during the first phase, the second pair of phases alone gives x1.133. Across all clean runs running spans x1.1213 to x1.1698. Trait Facts therefore shows the range 12 to 17%; before the re-measurement of 2026-09-21 it was 13 to 16%.",
    "method": "Adrenaline (second to fourth run of the series and one re-measurement; the first run measured walking only): the character runs straight ahead with Shift held, the test mod holds panic at level 4 in every tick, in separate parts at level 3, and keeps endurance full, God Mode off; per part five phases of 300 ticks alternating without and with Adrenaline Junkie, nine in the re-measurement; per phase distance divided by the Multiplier, each phase with the trait against the mean of its neighbours without. Alongside, the animation variable WalkSpeed as the game's own value.",
    "src": "8e775d9724"
   },
   "adrenalinejunkie/panicsprint": {
    "code": "IsoGameCharacter.calculateWalkSpeed (lines 8957-9006): run speed = (base speed - 0.15) x fullSpeedMod + Sprinting / 20 (lines 8964-8967), capped at 1.0 (line 8986); the base speed from calculateBaseSpeed (lines 8754-8797) carries the bonus of Adrenaline Junkie (lines 8761-8764); the same value applies when sprinting (runOrSprint, lines 8963 and 9004)",
-   "note": "Measured on 2026-09-20 (Adrenaline) on the sprinting character, distance per tick with against without Adrenaline Junkie. Panic level 4, two pairs of phases each: x1.1336 (third run, Sprinting 1, single values x1.1437 and x1.1235; 5.4 against about 6.1 tiles per second) and x1.1465 (fourth run, Sprinting 0). Panic level 3 (Strong Panic), both at Sprinting 1 because sprinting during the test had already raised the skill: x1.1028 (fourth run, two pairs of phases) and x1.1049 (re-measured at level 3 only, four pairs of phases, single values x1.111, x1.108, x1.108 and x1.093; one tick not counted in the fourth pair). The game's variable WalkSpeed rises as when running: at level 4 from 0.7000 to 0.9500 (x1.3571) with Sprinting 1 and from 0.6500 to 0.9000 (x1.3846) with Sprinting 0, at level 3 from 0.7000 to 0.9000 (x1.2857). The same speed value, slightly less of it on the ground than when running (x1.16 there at level 4). With higher Sprinting the share shrinks as it does there. Fifth run on 2026-09-21 (Sprinting 0): level 4 x1.1456, level 3 x1.1141. Across all runs sprinting spans x1.1028 to x1.1465. Trait Facts therefore shows the range 10 to 15%; until then it was 10 to 14%.",
+   "note": "Measured on 2026-09-20 (Adrenaline) on the sprinting character, distance per tick with against without Adrenaline Junkie. Panic level 4, two pairs of phases each: x1.1336 (third run, Sprinting 1, single values x1.1437 and x1.1235; 5.4 against about 6.1 tiles per second) and x1.1465 (fourth run, Sprinting 0). Panic level 3 (Strong Panic), both at Sprinting 1 because sprinting during the test had already raised the skill: x1.1028 (fourth run, two pairs of phases) and x1.1049 (re-measured at level 3 only, four pairs of phases, single values x1.111, x1.108, x1.108 and x1.093; one tick not counted in the fourth pair). The game's variable WalkSpeed rises as when running: at level 4 from 0.7000 to 0.9500 (x1.3571) with Sprinting 1 and from 0.6500 to 0.9000 (x1.3846) with Sprinting 0, at level 3 from 0.7000 to 0.9000 (x1.2857). The same speed value, slightly less of it on the ground than when running (x1.16 there at level 4). With higher Sprinting the share shrinks as it does there. Fifth run on 2026-09-21 (Sprinting 0): level 4 x1.1456, level 3 x1.1141. Across all runs sprinting spans x1.1028 to x1.1465. Trait Facts therefore shows the range 10 to 15%; before the re-measurement of 2026-09-21 it was 10 to 14%.",
    "method": "Adrenaline (third and fourth run of the series and one re-measurement): the character sprints straight ahead with Alt held, the test mod holds panic at level 4 in every tick, in separate parts at level 3, and keeps endurance full, God Mode off; per part five phases of 300 ticks alternating without and with Adrenaline Junkie, nine in the re-measurement; per phase distance divided by the Multiplier, each phase with the trait against the mean of its neighbours without.",
    "src": "827f0ad21e"
   },
   "resilient/coldmild": {
    "code": "BodyDamage.UpdateWetness (build-up lines 731-743, decay lines 751-756); CatchAColdDecreaseRate 0.175 (shared/defines.lua:40, without Multiplier)",
-   "note": "Measured on 2026-09-20 (code values): at delta 0.12 to 0.2 gain without trait 1.0000, with Resilient 0.0000; with the trait the risk only grows from delta 0.22 (see the game bug on the cold threshold).",
+   "note": "Measured on 2026-09-20 (code values): at delta 0.12 to 0.2 gain without trait 1.0000, with Resilient 0.0000; with the trait the risk only grows from delta 0.22 (see the game bug on the cold threshold; the threshold follows from the code, 0.1/0.45; only 0.12 to 0.2 was measured).",
    "method": "Code values: skin cooled in small steps only to delta 0.12 to 0.2, then setCatchACold(0), UpdateWetness, getCatchACold; without trait and with Resilient.",
-   "src": "1d59a6448b"
+   "src": "cb1c7f43ec"
   },
   "outdoorsman/coldmild": {
    "code": "BodyDamage.UpdateWetness (build-up lines 731-743, decay lines 751-756); CatchAColdDecreaseRate 0.175 (shared/defines.lua:40, without Multiplier)",
-   "note": "Measured on 2026-09-20 (code values): at delta 0.12 to 0.2 gain without trait 1.0000, with Outdoorsy 0.0000; with the trait the risk only grows from delta 0.4 (see the game bug on the cold threshold).",
+   "note": "Measured on 2026-09-20 (code values): at delta 0.12 to 0.2 gain without trait 1.0000, with Outdoorsy 0.0000; with the trait the risk only grows from delta 0.4 (see the game bug on the cold threshold; the threshold follows from the code, 0.1/0.25; only 0.12 to 0.2 was measured).",
    "method": "Code values: skin cooled in small steps only to delta 0.12 to 0.2, then setCatchACold(0), UpdateWetness, getCatchACold; without trait and with Outdoorsy.",
-   "src": "88f5567a71"
+   "src": "cf8c414b41"
   }
  },
  "bugs": {
@@ -1297,11 +1297,11 @@
    "src": "bb6331563f"
   },
   "adrenaline-movespeed": {
-   "title": "Adrenaline Junkie's x1.1 walking factor is never used",
-   "consequence": "Read only by getPathSpeed, which no other class uses. getMoveSpeed returns x1.1 only at Extreme Panic (level 4). Measured on 2026-09-20 and 2026-09-21 on the walking character: at Strong Panic (level 3) getMoveSpeed stays at x1.0, WalkSpeed is capped at 1.0 on both levels, and the distance with the trait is the same on both levels (level 4 against level 3: x1.080 against x1.080, x1.084 against x1.082, x1.082 against x1.082). So the x1.1 adds nothing. This holds for walking; when running and sprinting, WalkSpeed differs between the levels, so those runs are no control.",
+   "title": "Adrenaline Junkie's x1.1 movement factor is never used",
+   "consequence": "Read only by getPathSpeed, which no other class uses. getMoveSpeed returns x1.1 only at Extreme Panic (level 4). Measured on 2026-09-20 and 2026-09-21 on the walking character: at Strong Panic (level 3) getMoveSpeed stays at x1.0, WalkSpeed is capped at 1.0 on both levels, and the distance with the trait is the same on both levels or even higher at level 3 (level 4 against level 3: x1.080 against x1.080, x1.084 against x1.082, x1.086 against x1.093, x1.082 against x1.082). So the x1.1 adds nothing. This holds for walking; when running and sprinting, WalkSpeed differs between the levels, so those runs are no control.",
    "code": "IsoPlayer.getMoveSpeed (line 1662)",
    "method": "Adrenaline, measure mod 6.32.0 to 6.41.0: the character walks straight ahead, panic held at level 4 (nine phases) and in the later runs also at level 3 (five phases), 300 ticks each, alternating without and with Adrenaline Junkie; per phase WalkSpeed, getMoveSpeed and the distance per tick divided by the Multiplier.",
-   "src": "998684a90b"
+   "src": "1650600362"
   },
   "drinkfrombottle": {
    "title": "The drinking script with Iron Gut and Weak Stomach factors is never reached",
@@ -1332,18 +1332,18 @@
    "src": "fa8c9ca0cf"
   },
   "unfallbruch": {
-   "title": "Fractures from car crashes ignore Fast Healer and Slow Healer",
-   "consequence": "IsoPlayer and BaseVehicle call generateFracture directly, without checking the trait. Measured on 2026-09-14 (Code values, measure mod 6.26.2): mean fracture time without trait 37.6784, with Fast Healer 35.1779 (factor 0.9336), with Slow Healer 40.9039 (factor 1.0856), 1200 samples over 72 ticks per case, measured when hit by a car (IsoPlayer.applyDamageFromVehicleHit); per code, 0.9202 and 1.0798, purely through the damage, instead of 0.6 and 1.8 from generateFractureNew. In a crash while driving (BaseVehicle lines 8528-8532) the trait factor is missing as well, but that path has its own fracture rule (damage over 50, a 1 in 10 roll, only if the deep wound roll before it missed) and time formula; it is not measured.",
+   "title": "Car-crash fractures skip Fast and Slow Healer's fracture-time factor (0.6 and 1.8)",
+   "consequence": "IsoPlayer and BaseVehicle call generateFracture directly instead of generateFractureNew; the trait acts there only through the crash damage (x0.8 with Fast Healer, x1.2 with Slow Healer), which sets both the fracture chance and the fracture time. Measured on 2026-09-14 (Code values, measure mod 6.26.2): mean fracture time without trait 37.6784, with Fast Healer 35.1779 (factor 0.9336), with Slow Healer 40.9039 (factor 1.0856), 1200 samples over 72 ticks per case, measured when hit by a car (IsoPlayer.applyDamageFromVehicleHit); per code, 0.9202 and 1.0798, purely through the damage, instead of 0.6 and 1.8 from generateFractureNew. In a crash while driving (BaseVehicle lines 8528-8532) the fracture-time factor is missing as well, but that path has its own fracture rule (damage over 50, a 1 in 10 roll, only if the deep wound roll before it missed) and time formula; it is not measured.",
    "code": "IsoPlayer (lines 1984-1990) and BaseVehicle (line 8532) call BodyPart.generateFracture (line 818) directly; only falls (IsoGameCharacter lines 2139, 2151) go through generateFractureNew (line 828)",
    "method": "Code values, measure mod 6.26.2: same samples as the accident damage (IsoPlayer.applyDamageFromVehicleHit, CarNormal alongside, God Mode off, sandbox set to Normal), fracture time of all fractures averaged per case; factor with/without checked against the value per code without the trait factor, tolerance 4%.",
-   "src": "6edf9549dd"
+   "src": "44b37c11ab"
   },
   "erkaeltung-schwelle": {
    "title": "Resilient and Outdoorsy: no risk of a cold at all in mild cold",
-   "consequence": "The decay of catchACold asks for the same delta as the build-up, but already with the trait factor applied, and then subtracts a fixed 0.175, far more than one update adds. With Resilient the risk of a cold therefore only grows from delta 0.22, with Outdoorsy only from 0.4; below that it stays at 0 instead of x0.45 or x0.25. Measured on 2026-09-20 (code values) at delta 0.12 to 0.2: gain without trait 1.0000, with Resilient 0.0000, with Outdoorsy 0.0000.",
+   "consequence": "The decay of catchACold asks for the same delta as the build-up, but already with the trait factor applied, and then subtracts a fixed 0.175, far more than one update adds. With Resilient the risk of a cold therefore only grows from delta 0.22, with Outdoorsy only from 0.4; below that it stays at 0 instead of x0.45 or x0.25. Measured on 2026-09-20 (code values) at delta 0.12 to 0.2: gain without trait 1.0000, with Resilient 0.0000, with Outdoorsy 0.0000. The thresholds 0.22 and 0.4 follow from the code (0.1/0.45 and 0.1/0.25); only 0.12 to 0.2 was measured. With Prone to Illness and Outdoorsy the threshold is 0.235, with Resilient and Outdoorsy 0.89.",
    "code": "BodyDamage.UpdateWetness (build-up lines 731-743, decay lines 751-756); CatchAColdDecreaseRate 0.175 (shared/defines.lua:40, without Multiplier)",
    "method": "Code values: skin cooled in small steps only to delta 0.12 to 0.2, then as for the cold setCatchACold(0), UpdateWetness, getCatchACold; without trait, with Resilient and with Outdoorsy.",
-   "src": "10f8aa9325"
+   "src": "ff0a3114de"
   },
   "grapple-schwelle": {
    "title": "The grapple factors of nine traits are only checked against 0.5, and no character gets that low",
@@ -1360,11 +1360,11 @@
    "src": "e3277d5600"
   },
   "kletterwert-eins": {
-   "title": "A climbing score of 1 to 3 always fails at tall fences, worse than 0",
-   "consequence": "At tall fences the game rolls 1 in the root of the climbing score. At root 1 (a sum of 1 to 3) Rand.NextBool(1) is always true, so the character fails every time. At root 0, though, it succeeds with Rand.Next(100) <= Strength, 6 times in 100 at Strength 5. Pathfinding routes over tall fences from a score of 1, so it sends the character to fences where it always fails. This hits for example a new character with High Weight (Fitness 4, 18 - 15 = 3) or Clumsy with High Weight. From the code, not measured in play.",
-   "code": "ClimbOverWallState (lines 296-311, roll line 306); RandInterface.NextBool (lines 24-25), RandAbstract.Next (lines 20-23); IsoGameCharacter.getClimbingFailChanceFloat (lines 14718-14754, root line 14753); PathFindRequest (line 77)",
+   "title": "A climbing score of 1 to 3 always fails at tall fences, worse than 0 (without a heavy load)",
+   "consequence": "At tall fences the game rolls 1 in the root of the climbing score. At root 1 (a sum of 1 to 3) Rand.NextBool(1) is always true, so the character fails every time. At root 0, though, without a heavy load it succeeds with Rand.Next(100) <= max(1, Strength), 6 times in 100 at Strength 5 (never with a heavy load). Pathfinding routes over tall fences from a score of 1, so it sends the character to fences where it always fails. This hits for example a new character without gloves with High Weight (Fitness 4, 18 - 15 = 3; gloves add 4) or Clumsy with High Weight. From the code, not measured in play. Not with the sandbox option Easy Climbing (on in the Rising preset): then every climb succeeds without a roll (ClimbOverWallState lines 292-294).",
+   "code": "ClimbOverWallState (lines 296-311, roll line 306); RandInterface.NextBool (lines 24-25), RandAbstract.Next (lines 20-28); IsoGameCharacter.getClimbingFailChanceFloat (lines 14718-14754, root line 14753); PathFindRequest (line 77)",
    "method": "",
-   "src": "ead69c8ba0"
+   "src": "bf7f0e23e0"
   }
  },
  "reports": {
@@ -1702,7 +1702,7 @@
   {
    "key": "Code-Werte",
    "name": "Code values",
-   "measures": "About 80 values that can be read directly on a character, such as panic, knockback, wound healing, action times or illness.",
+   "measures": "About 100 values that can be read directly on a character, such as panic, hit force, wound healing, action times or illness.",
    "how": "The test mod adds a trait, reads the value, removes the trait and reads it again. Values that change slowly are sampled over time."
   },
   {

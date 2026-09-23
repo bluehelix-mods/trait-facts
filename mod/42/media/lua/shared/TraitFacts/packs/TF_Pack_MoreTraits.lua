@@ -22,10 +22,20 @@
 -- direkt mit setHealth ab (MT.lua:271-276). Ein normaler Nahkampftreffer nimmt
 -- modDelta x 1.5 x (0.3 + 0.1 x Stufe) x 0.15 dieses Wurfs, x1.5 von hinten
 -- oder der Seite (IsoGameCharacter.java:5789-5799); bei halber Reichweite von
--- vorn (modDelta 1) 7 bis 29 %, insgesamt 2 bis 88 % (Entfernungsfaktor 0.3
--- bis 2, CombatManager.java:830-833). Bis 0.14.0 stand hier "7 bis 44 %", und
--- die Fussnote schrieb die ganze Spanne dem Waffenskill zu (Faktensweep 2,
--- 23.09.2026). Eigene Zeile "Zusatzschaden je Treffer" mit Einheit "% des Schadenswurfs"
+-- vorn (modDelta 1) 7 bis 27 % (Aexte 29 %), insgesamt 2 bis 81 % (Aexte
+-- 88 %; Entfernungsfaktor 0.3 bis 2, CombatManager.java:830-833). Bis 0.14.0
+-- stand hier "7 bis 44 %", und die Fussnote schrieb die ganze Spanne dem
+-- Waffenskill zu (Faktensweep 2, 23.09.2026). Bis 0.14.1 "7 bis 29 %" fuer
+-- alle Waffen: getWeaponLevel setzt nur bei der Axt die Stufe gleich dem
+-- Skill, jede andere Kategorie beginnt bei -1 und addiert den Skill, Skill 10
+-- ist dort Stufe 9 (IsoGameCharacter.java:10123-10150; Faktensweep 3,
+-- 23.09.2026). Schusswaffen: kein x0.15 (nur Nahkampf, CombatManager.java:
+-- 3195-3199), modDelta fest 1 (Schrotflinten mit RangeFalloff 2, :831-833),
+-- Waffenstufe 0, weil sie keine Nahkampf-Kategorie haben; ein normaler Schuss
+-- nimmt also 1.5 x 0.3 = 45 % des Wurfs von vorn, x1.5 von hinten. Das steht
+-- in den Fussnoten von Unwavering und Action Hero, den beiden Zeilen, die
+-- Schusswaffen einschliessen (Faktensweep 3, 23.09.2026).
+-- Eigene Zeile "Zusatzschaden je Treffer" mit Einheit "% des Schadenswurfs"
 -- und dem Vergleich als condition. Dazu: die Krit-Wuerfe der Mod sind eigene
 -- Wuerfe auf ihren Zusatzschaden, Mundane laesst dem Spiel mindestens 10 von
 -- 100, Action Hero hat keine Obergrenze, Lead Foot ist x2.4 bis x3.25, Pack
@@ -64,7 +74,11 @@
 --   nimmt sie nur im Mehrspieler oder mit -debug an (isCheatAllowed). Im
 --   Einzelspieler wirkt es nicht; im Mehrspieler verlieren Zombies dich als
 --   Ziel, und andere Spieler sehen dich nicht. Das Paket beschreibt das
---   Einzelspiel (Faktensweep 23.09.2026).
+--   Einzelspiel (Faktensweep 23.09.2026). Keine eigene Zeile, aber seit dem
+--   Faktensweep 3 (23.09.2026) sagt die Fussnote der Ram-Zeile es, ebenso
+--   die Fussnoten von Indefatigable (Schwelle 25 im Mehrspieler, kein
+--   Zu-Boden-Ziehen, MT_Indefatigable.lua:15, :17, :37) und Restful Sleeper
+--   (condition mpsleep: auf Servern schlaeft standardmaessig niemand).
 -- * Unwavering, Verletzungen bremsen weniger (MT_Combat.lua:633-667: +30/+30/
 --   +60/+60 auf die Speed-Modifier je Koerperteil): BodyDamage speichert die
 --   Modifier nicht, das Flag in modData bleibt aber gesetzt, also ist es nach
@@ -99,7 +113,12 @@
 --   keine Zeile; nur aus dem Code gelesen (Faktensweep 2, 23.09.2026).
 --
 -- Gym-Goer steht mit dem, was der Code tut (+10 % XP beim Training), nicht
--- mit dem, was die Beschreibung verspricht ("doppelt so wirksam").
+-- mit dem, was die Beschreibung verspricht ("doppelt so wirksam"). Bei
+-- Strength sind es +15 % bzw. +7 %: der Bonus geht ueber MT.AddXP
+-- (doXPBoost false) noch einmal durch AddXP, und der Protein-Faktor x1.5
+-- (Proteine ueber 50 und unter 300) bzw. x0.7 (unter -300) steht dort vor
+-- dem doXPBoost-Block (IsoGameCharacter.java:15500-15508), auf einem Betrag,
+-- der ihn schon enthaelt (:15622). Faktensweep 3, 23.09.2026.
 --
 -- Sandbox-Optionen: die Werte unten sind die Vorgaben der Mod. Eine Zeile,
 -- die sich verstellen laesst, sagt das in ihrer Fussnote. Gerechnet wird
@@ -261,8 +280,10 @@ rows["toadtraits:antigun"] = {
       note = "UI_TF_note_mt_aimxp" },
 }
 
--- Battering Ram: der Geistermodus beim Sprinten fehlt mit Absicht (Kopf der
--- Datei). Die Fussnote nennt den Zusatzschaden mit Martial (MT_Combat.lua:537-556).
+-- Battering Ram: der Geistermodus beim Sprinten hat keine eigene Zeile (Kopf
+-- der Datei). Die Fussnote nennt den Zusatzschaden mit Martial (MT_Combat.lua:
+-- 537-556) und seit dem Faktensweep 3 (23.09.2026) den Geistermodus im
+-- Mehrspieler (:566-585, server/MT_ServerCommands.lua:473-480).
 rows["toadtraits:batteringram"] = {
     { id = "mtram",    kind = "info", text = "UI_TF_eff_mt_rammed",
       note = "UI_TF_note_mt_rammartial", better = "up", group = "combat" },
@@ -345,11 +366,23 @@ rows["toadtraits:packmouse"] = {
       note = "UI_TF_note_mt_carrymouse" },
 }
 
+-- Fitted (MT_World.lua:262-316) setzt RunSpeedModifier und
+-- CombatSpeedModifier getragener Kleidung auf 1.0. Den RunSpeedModifier von
+-- Kleidung liest in 42.20.4 nur calcRunSpeedModByClothing
+-- (IsoGameCharacter.java:8799-8817), und das ruft niemand auf (auch nicht im
+-- Bytecode); updateSpeedModifiers (:9008-9029) setzt runSpeedModifier auf 1.0
+-- und senkt ihn nur ohne oder mit kaputten Schuhen. Kleidung bremst also nie
+-- die Bewegung, es gibt nichts zu entfernen. Wirklich ist nur der Angriff:
+-- CombatSpeedModifier geht ueber updateSpeedModifiers (:9016-9017) in
+-- calculateCombatSpeed (:8847). Bis 0.14.1 stand "Bewegung und Angriffe" in
+-- der Gruppe Bewegung (Faktensweep 3, 23.09.2026). Nach dem Laden gehen die
+-- Werte nicht verloren: onCreatePlayer loescht sState jedes getragenen
+-- Stuecks (MT_Creation.lua:414-421), ClothingUpdate setzt sie neu.
 rows["toadtraits:fitted"] = {
     { id = "mtclothw", kind = "mult", value = 0.5, text = "UI_TF_eff_mt_clothweight",
       better = "down", group = "movement" },
     { id = "mtcloths", kind = "info", text = "UI_TF_eff_mt_clothspeed",
-      better = "up", group = "movement" },
+      note = "UI_TF_note_mt_clothspeed", better = "up", group = "combat" },
 }
 
 -- Gesundheit -------------------------------------------------------------
@@ -436,10 +469,15 @@ rows["toadtraits:quickrest"] = {
       better = "up", group = "health" },
 }
 
+-- Nur im Schlaf (MT_Rest.lua:78 isAsleep). Auf einem Server schlaeft
+-- standardmaessig niemand: SleepAllowed und SleepNeeded sind aus
+-- (ServerOptions.java:107-108), calculateStats setzt die Muedigkeit dort auf
+-- 0 (IsoGameCharacter.java:9100-9102). Dieselbe condition wie die
+-- Schlafzeilen von Night Owl und Hard of Hearing (Faktensweep 3, 23.09.2026).
 rows["toadtraits:restfulsleeper"] = {
     { id = "mtsleep", kind = "range", value = { 5, 20 }, text = "UI_TF_eff_mt_sleepfatigue",
       unit = "UI_TF_unit_points", note = "UI_TF_note_mt_sleepfat",
-      better = "up", group = "sleep" },
+      condition = "UI_TF_note_mpsleep", better = "up", group = "sleep" },
 }
 
 rows["toadtraits:albino"] = {
@@ -556,12 +594,20 @@ rows["toadtraits:drinker"] = {
 -- Die Spezialisierungen kuerzen XP auf allen Skills ausserhalb ihrer Liste
 -- (MT_XP.lua:44-104, SPEC_PERKS in Zeile 5). Die Boosts selbst liest Trait
 -- Facts live, sie stehen unter den Startskills.
-
+--
+-- Specialization: Food hat eine eigene Fussnote (Faktensweep 3, 23.09.2026):
+-- ihre Liste nennt an sechster Stelle Perks.Foraging (MT_XP.lua:21). Das
+-- gibt es in 42.20 nicht, der Skill heisst PlantScavenging (PerkFactory.java:
+-- 95, :320); Perks ist eine Kahlua-Tabelle (CustomPerks.java:63), der
+-- Eintrag also nil, und ipairs (MT_XP.lua:74) bricht dort ab. Tracking,
+-- Husbandry und Butchering, die der Trait selbst mit +4 boostet
+-- (ToadTraits.txt:910), verlieren darum auch 75 %. Nur aus dem Code gelesen.
+local SPEC_NOTE = { specfood = "UI_TF_note_mt_specxp_food" }
 for _, key in ipairs({ "specweapons", "specfood", "specguns", "specmove",
                        "speccrafting", "specaid" }) do
     rows["toadtraits:" .. key] = {
         { id = "mtxp", kind = "pct", value = -75, text = "UI_TF_eff_xp",
-          note = "UI_TF_note_mt_specxp" },
+          note = SPEC_NOTE[key] or "UI_TF_note_mt_specxp" },
     }
 end
 
@@ -594,13 +640,21 @@ end
 -- ZombRand(0, N) <= 100 mit N = 500001 + 12500 x (Nimble + Sprinting); beim
 -- Sprinten N x 0.6, also 1/0.6 = 1.67-mal so oft; mit beiden Skills auf 10
 -- N = 750001, also 0.67-mal so oft. Graceful N x 1.2, Clumsy N x 0.8.
+-- Die Skill-Zeile vergleicht den Trait mit sich selbst (Stufe 10 gegen 0),
+-- nicht mit "ohne Trait", und ohne Trait stolpert niemand. Bis 0.14.1 teilte
+-- sie den Text mit der Sprint-Zeile und erbte deren "down": ein gruenes
+-- -33 % an einem Trait, der -6 kostet. Darum eigener Text mit "open"; BETTER
+-- haengt am Text, ein Feld je Zeile reichte nicht (Faktensweep 3, 23.09.2026).
+-- Mit Luck Impact 0 stolpert eine Figur mit Lucky oder Unlucky bei jedem Bild
+-- (tripChance x 0, ZombRand(0, 0) ist 0), bis zum naechsten Laden; nur in der
+-- Fundstellen-Datei, keine Zeile.
 rows["toadtraits:noodlelegs"] = {
     { id = "mttrip", kind = "info", text = "UI_TF_eff_mt_trip",
       note = "UI_TF_note_mt_framerate", better = "down", group = "movement" },
     { id = "mttripsprint", kind = "mult", value = 1.67, text = "UI_TF_eff_mt_tripchance",
       note = "UI_TF_note_mt_tripsprint", better = "down", group = "movement" },
-    { id = "mttripskill", kind = "mult", value = 0.67, text = "UI_TF_eff_mt_tripchance",
-      note = "UI_TF_note_mt_tripskill" },
+    { id = "mttripskill", kind = "mult", value = 0.67, text = "UI_TF_eff_mt_tripchanceskill",
+      note = "UI_TF_note_mt_tripskill", better = "open", group = "movement" },
 }
 
 -- Butterfingers (MT_State.lua:217-255): nur in Bewegung; Grundwert 3, dazu 1 je
@@ -640,11 +694,14 @@ for _, key in ipairs({ "bladetwirl", "blunttwirl", "flexible", "grunt", "olympia
 end
 
 -- Die Beschreibung verspricht Rezepte, die Definition vergibt keine
--- (ToadTraits.txt ohne GrantedRecipes, kein Lua-Bezug).
+-- (ToadTraits.txt ohne GrantedRecipes, kein Lua-Bezug). Gegenueber "ohne
+-- Trait" verliert die Figur nichts, sie bekommt nur ein Versprechen nicht:
+-- "open" statt "down" (bis 0.14.1 das rote Verlustzeichen; Faktensweep 3,
+-- 23.09.2026).
 rows["toadtraits:scrapper"] = {
     { id = "mtboosts",  kind = "info", text = "UI_TF_eff_mt_boostsonly" },
     { id = "mtrecipes", kind = "info", text = "UI_TF_eff_mt_norecipes",
-      better = "down", group = "crafting" },
+      better = "open", group = "crafting" },
 }
 
 rows["toadtraits:wildsman"] = {
@@ -697,7 +754,7 @@ for key, note in pairs(GEAR) do
 end
 
 -- Zwei Vanilla-Traits bekommen von der Mod Startausruestung
--- (S/MT_Creation.lua:221-243, aus onNewGame :445): Tailor immer ein Naehset
+-- (S/MT_Creation.lua:221-244, aus onNewGame :448): Tailor immer ein Naehset
 -- mit Schere, Nadel und 4 Faeden, Smoker eine Packung Zigaretten und ein
 -- Feuerzeug, solange die Option SmokerStart an ist (Vorgabe an). Paketzeilen
 -- an Vanilla-Traits nennen ihr Paket (TF.Summary.gather); seit dem

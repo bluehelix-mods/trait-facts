@@ -527,11 +527,15 @@ function TF.Live.entries(traitDef)
             "UI_TF_unit_tiles",
             gated and "UI_TF_live_sight_noglasses" or "UI_TF_live_sight_note",
             gated and "foragenoglasses" or "forageradius")
-        -- Ein Abzug trifft auf die Untergrenze von 3 Kacheln: ISBaseIcon
-        -- klemmt 3 + 0.5 x Stufe + Boni auf mindestens 3 (ISBaseIcon.lua:
-        -- 318-331). Short Sighted (-2) und Agoraphobic (-1.5) tun bei
-        -- Nahrungssuche 0 also nichts und wirken erst ab Stufe 4 bzw. 3 ganz
-        -- (Faktensweep 2, 23.09.2026). Eine condition, keine Fussnote: die
+        -- Ein Abzug trifft auf die Untergrenze von 3 Kacheln. Im Suchradius
+        -- (ISSearchManager.lua:1016-1052) sind es 3 + Bonus + 0.7 x Stufe,
+        -- Short Sighted (-2) und Agoraphobic (-1.5) kosten bei Nahrungssuche 0
+        -- nichts, 0,7 Kacheln je Stufe mehr und ab Stufe 3 ganz. Beim Entdecken
+        -- eines Gegenstands (ISBaseIcon.lua:318-376) 3 + 0.5 x Stufe + Bonus,
+        -- mindestens 3, dann x (Stufe + 1)/10 und x (ln Gewicht + 0.5), danach
+        -- wieder mindestens 3 x visionBonus: bei leichten Gegenstaenden oft
+        -- auch auf hoher Stufe nichts (Faktensweep 2 und 3, 23.09.2026; bis
+        -- 0.14.1 stand hier "ab Stufe 4 bzw. 3 ganz"). Eine condition, keine Fussnote: die
         -- Fussnote bestimmt den Eimer der Uebersicht, und Agoraphobic muss
         -- mit den positiven Radien zusammen rechnen. TF.Summary nimmt die
         -- Bedingung wieder heraus, wenn die Summe nicht mehr negativ ist.
@@ -631,9 +635,12 @@ end
 -- Seit dem Faktensweep 2 (23.09.2026) auch die freien Rezepte des Berufs:
 -- das Spiel lernt sie beim Start aus der Berufsdefinition (IsoWorld.java:
 -- 2212-2215, im Mehrspieler applyProfessionRecipes), nicht aus dessen
--- gewaehrten Traits. 15 Vanilla-Berufe tun das; Chef, Mechanic, Metalworker
--- und Smither lernen ihre Rezepte nur so (Cook2, Mechanics2, Blacksmith2 haben
--- keine), und die Uebersicht zeigte bei ihnen keine Zeile "Freie Rezepte".
+-- gewaehrten Traits. 15 Vanilla-Berufe tun das, und alle 15 lernen ihre
+-- Berufsrezepte nur so: die gewaehrten Traits haben keine (Burglar, Cook2,
+-- Mechanics2, Blacksmith2, Inventive, Desensitized) oder andere (Herbalist
+-- beim Park Ranger), 8 Berufe gewaehren gar keinen Trait. Bis 0.14.0 fehlten
+-- die Berufsrezepte in der Uebersicht bei allen 15 (Faktensweep 3,
+-- 23.09.2026; hier standen bis dahin nur Chef, Mechanic, Metalworker, Smither).
 -- Die Namensmengen fallen in TF.Summary.merge mit denen der Traits zusammen.
 -- @return table  Liste von Eintraegen, moeglicherweise leer
 function TF.Live.professionEntries(profDef)
