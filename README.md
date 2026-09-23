@@ -20,8 +20,8 @@ Every value carries one of three sources, and the mod tells you which:
 | Source | How | Example |
 | --- | --- | --- |
 | Live | read from the game while it runs | exclusions, granted traits, recipes, foraging, starting levels |
-| Measured | measured in the running game with a test mod, trait on against trait off | walking speed, panic, endurance, sleep |
-| Code | read from the game code of Build 42.20.4, stamped with that version | knockback, tree scratches, illness |
+| Measured | measured in the running game with a test mod, trait on against trait off | walking speed, panic, endurance, sleep, knockback, colds |
+| Code | read from the game code of Build 42.20.4, stamped with that version | tree scratches, being spotted, hit chance |
 
 If the game runs a different build than the stored values, the overview warns.
 If a live measurement disagrees with a stored value, the measurement wins and the
