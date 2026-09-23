@@ -20,12 +20,12 @@ Every value carries one of three sources, and the mod tells you which:
 | Source | How | Example |
 | --- | --- | --- |
 | Live | read from the game while it runs | exclusions, granted traits, recipes, foraging, starting levels |
-| Measured | measured in the running game with a test mod, trait on against trait off | walking speed, panic, endurance, sleep, knockback, colds |
+| Measured | measured in the running game with a test mod, trait on against trait off | walking speed, panic, endurance, sleep, fall damage, colds |
 | Code | read from the game code of Build 42.20.4, stamped with that version | tree scratches, being spotted, hit chance |
 
 If the game runs a different build than the stored values, the overview warns.
-If a live measurement disagrees with a stored value, the measurement wins and the
-row is marked.
+A few stored values are also measured each time the game starts; if a measurement
+disagrees with the stored value, the measurement wins and the row is marked.
 
 Along the way the measurements turned up behaviour the game does not describe,
 from traits that do nothing to values that apply twice. The wiki lists them.
