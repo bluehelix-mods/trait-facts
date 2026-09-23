@@ -1,7 +1,7 @@
 name=Trait Facts
 id=TraitFacts
 description=Shows what your traits actually do in Build 42.20: every value with unit and base, plus an overview of what your whole build adds up to. Numbers are read live from the game where possible, measured in the game where measurable, otherwise taken from the game code of 42.20.4 and stamped with that version.
-modversion=0.14.6
+modversion=0.14.7
 versionMin=42.20
 author=Bluehelix
 incompatible=MoreDescriptionForTraits4219,DetailedDescriptionsForOccupationsAndTraits,ThisIsYourLife

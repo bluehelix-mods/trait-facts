@@ -211,6 +211,14 @@ local sepMark = nil
 -- Laden der Uebersetzung gilt der Ersatz, danach der Punkt.
 function TF.fmt.sep()
     if sepMark then return sepMark end
+    -- Eigener Schluessel seit 24.09.2026; der Umweg ueber UI_TF_search_why
+    -- bleibt als Rueckfall fuer Uebersetzungen ohne ihn.
+    local eigen = getTextOrNull and getTextOrNull("UI_TF_sep")
+    if type(eigen) == "string" and eigen ~= "" and eigen ~= "UI_TF_sep"
+            and not string.find(eigen, "%", 1, true) and not string.find(eigen, " ", 1, true) then
+        sepMark = eigen
+        return eigen
+    end
     local raw = getTextOrNull and getTextOrNull("UI_TF_search_why")
     if type(raw) == "string" then
         local cut = string.find(raw, " ", 1, true)

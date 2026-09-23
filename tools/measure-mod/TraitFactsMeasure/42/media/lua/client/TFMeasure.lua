@@ -1666,7 +1666,7 @@ local function eigeneDateien()
 end
 
 --- Die Dateien des Mess-Mods neben dieser hier.
-TFMeasure.GESCHWISTER = { "TFMeasureMenu.lua", "TFMeasureScreen.lua", "TFMeasureNachstellen.lua" }
+TFMeasure.GESCHWISTER = { "TFMeasureMenu.lua", "TFMeasureScreen.lua", "TFMeasureNachstellen.lua", "TFMeasureBefehle.lua" }
 
 --- Laedt das Mess-Mod neu und schaltet die Tests wieder scharf.
 --
