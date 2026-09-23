@@ -260,6 +260,13 @@ Fälltempo darum seit 0.14.0 wieder als +25 % aus dem Code.
 
 Erwartet: mit 1000 ms, ohne 1250 ms, `faellen|abstand` 0,8.
 
+**Ergebnis 23.09.2026** (6.43.1, `docs/messungen/messung-2026-09-23-axt.txt`):
+Fällen mit/ohne 0,7982, 997,6 gegen 1249,9 ms, in allen acht Phasen war die
+Animation vor dem Neustart aus. Schaden 53 gegen 35 (x1,51), Schlagtakt in der
+Luft 0,80, Schwungdauer 0,79. Ax-pert fällt also 25 % schneller; die Läufe vom
+13.09. waren ein Messfehler. Trait Facts führt das Fälltempo seit 0.14.3 als
+gemessen.
+
 Kletterlauf und XP-Leiter kamen am selben Abend Zeile für Zeile gleich heraus
 wie ihre Berichte vom 13.09. 01:05 und 12.09.; beide sind also reproduzierbar.
 
