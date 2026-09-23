@@ -62,7 +62,7 @@ TFMeasure.Fenster = nil
 -- Mod-Waehler zeigt nur mod.info an, und eine Nummer, die nie wandert, sagt
 -- nichts darueber, welcher Code wirklich geladen ist. Deshalb steht sie
 -- zusaetzlich in der ersten Logzeile und im Kopf des Berichts.
-TFMeasure.VERSION = "6.42.0"
+TFMeasure.VERSION = "6.43.0"
 
 --- Ausgabedatei, liegt danach in Zomboid/Lua/.
 TFMeasure.FILE = "TraitFacts_measure.txt"
@@ -3382,16 +3382,25 @@ end
 -- Schlaege in die Luft ueber AttemptAttack, vom Baum weggedreht; die Zeiten
 -- kommen aus OnWeaponSwing und OnPlayerAttackFinished.
 --
--- Das Faelltempo haengt nicht an Ax-pert, obwohl die Animation ChopTreeSpeed
--- als Tempo fuehrt. 6.18.0 schaltete mitten in der Aktion um: 1250 ms mit
--- und ohne. Die naheliegende Erklaerung, das Spiel lese das Tempo nur beim
--- Start der Aktion, widerlegte 6.19.0 mit einer eigenen Aktion je Phase:
--- wieder 1250 ms (13.09.2026, docs/messungen/messung-2026-09-13-axt.txt und
--- -13b-axt.txt). Der Test bleibt so gebaut, damit er ein spaeteres Build
--- sauber misst: je Phase eine eigene Aktion (aufhoeren, Trait setzen, neu
--- anfangen), der erste Hieb ist Anlauf (Ausholen, Einblenden), gemessen wird
--- der Abstand der folgenden; Phasen im Wechsel ohne, mit, ohne ..., damit
--- eine Drift beide Seiten gleich trifft.
+-- Faelltempo, Stand 6.43.0 (Faktensweep 23.09.2026): 6.18.0 und 6.19.0 massen
+-- 1250 ms je Hieb mit und ohne Ax-pert (docs/messungen/messung-2026-09-13-axt.txt,
+-- -13b-axt.txt), und die Mod fuehrte das Faelltempo darauf als wirkungslos.
+-- Das Ergebnis taugt nicht: die Engine liest m_SpeedScale nur, wenn der
+-- Animationsknoten startet (AnimLayer.startLiveNodeTracks), und ein Knoten,
+-- der noch laeuft, wird wiederverwendet. 6.19.0 beendete die Aktion und
+-- startete die naechste im selben Tick; chop_tree blieb dabei aktiv und
+-- behielt das Tempo der ersten Phase, und die lief immer ohne Ax-pert:
+-- 1.0 s / 0.8 = 1250 ms. Darum jetzt:
+--   * Phase 1 MIT Ax-pert, danach im Wechsel. Laeuft die erste Phase mit
+--     1000 ms, ist die Wirkung belegt, egal was danach kommt.
+--   * Zwischen zwei Phasen eine Pause: Aktion beenden, warten, bis
+--     PerformingAction nicht mehr "chop_tree" ist (Bedingung des Knotens in
+--     AnimSets/player/actions/chop_tree.xml), dann noch pauseTicks stehen
+--     (Ueberblenden 0.4 s), erst dann Trait setzen und neu anfangen.
+--   * Das Protokoll fuehrt je Phase den Getter und ob die Animation vor dem
+--     Neustart wirklich aus war.
+-- Der erste Hieb einer Phase ist Anlauf (Ausholen, Einblenden), gemessen wird
+-- der Abstand der folgenden.
 --
 -- Beim Schlag steht das Tempo ebenfalls mit dem Start fest (pressedAttack);
 -- dort genuegt das Umschalten zwischen zwei Schlaegen, und der Takt eines
@@ -3415,6 +3424,9 @@ TFMeasure.AXT = {
     -- mit einem Anlauf-Hieb und zwei gemessenen Abstaenden.
     phasen = 8,
     hiebeJePhase = 3,
+    -- Pause zwischen zwei Faell-Phasen, damit chop_tree sicher neu startet.
+    pauseTicks = 60 * 2,
+    pauseMaxTicks = 60 * 15,
     schlaege = 20,
     jePhase = 2,
     baumLeben = 5000,
@@ -3431,6 +3443,20 @@ local function hatTrait(player, key)
         if keyOf(liste:get(index)) == key then return true end
     end
     return false
+end
+
+--- getChopTreeSpeed() im Moment des Phasenstarts, fuers Protokoll.
+local function chopTempo(player)
+    local wert
+    pcall(function() wert = player:getChopTreeSpeed() end)
+    return wert
+end
+
+--- Laeuft der Faell-Knoten noch? Seine Bedingung ist PerformingAction = chop_tree.
+local function animLaeuft(player)
+    local wert
+    pcall(function() wert = player:getVariableString("PerformingAction") end)
+    return wert == "chop_tree"
 end
 
 local function axemanSetzen(player, z, an)
@@ -3491,7 +3517,7 @@ local function axtLive(z)
     local a = axtAuswertung(z)
     local phase = z.mit and T("mit") or T("ohne")
     local function sekunden(ms) return ms and komma(ms / 1000, 2) or "-" end
-    if z.phase == "faellen" then
+    if z.phase == "faellen" or z.phase == "pause" then
         local gesamt = cfg.phasen * cfg.hiebeJePhase
         local n = #z.hiebe
         lauf.fortschritt = 0.6 * n / gesamt
@@ -3500,7 +3526,9 @@ local function axtLive(z)
             { T("axt_live_abstand"), T("paar_s", sekunden(a.abstandOhne), sekunden(a.abstandMit)) },
             { T("axt_live_schaden"), T("paar", komma(a.schadenOhne, 0), komma(a.schadenMit, 0)) },
         }
-        if #z.hiebe > 0 then
+        if z.phase == "pause" then
+            lauf.status = T("axt_status_pause", tostring(z.phaseNr + 1), tostring(cfg.phasen))
+        elseif #z.hiebe > 0 then
             lauf.status = T("axt_status_faellen", tostring(n), tostring(gesamt), phase)
         end
     else
@@ -3560,10 +3588,13 @@ local function axtFertig(player, z)
         write("# Build " .. version)
         write(string.format("# Axt %s (Baumschaden %s), Axt-Skill fest auf %d, Baumleben vor jedem Treffer auf %d",
             tostring(z.axtName or "?"), f2(z.axtSchaden), cfg.skill, cfg.baumLeben))
-        write(string.format("# Faellen: %d Phasen im Wechsel ohne/mit, je eine neue Aktion mit %d Hieben; "
+        write(string.format("# Faellen: %d Phasen im Wechsel mit/ohne (Phase 1 mit), je eine neue Aktion mit %d Hieben; "
             .. "der erste ist Anlauf", cfg.phasen, cfg.hiebeJePhase))
+        write(string.format("# zwischen den Phasen Pause, bis PerformingAction nicht mehr chop_tree ist, dann %d Ticks; "
+            .. "der Trait wird erst danach gesetzt", cfg.pauseTicks))
         write(string.format("# Schlaege: Ax-pert wechselt alle %d, Schlag 0 ist Warmlauf", cfg.jePhase))
-        write("# erwartet laut Getter: abstand 0.8 (ChopTreeSpeed 1.0 statt 0.8; am 13.09.2026 zweimal 1.00),")
+        write("# erwartet laut Code: abstand 0.8, mit 1000 ms, ohne 1250 ms (ChopTreeSpeed 1.0 statt 0.8);")
+        write("#   13.09.2026 gemessen 1.00, aber mit Neustart im selben Tick (Animation lief weiter),")
         write("#   schaden 1.5 vor dem (int),")
         write("#   schwung 0.8, wenn calculateCombatSpeed die Axt ohne Ax-pert mit 0.8 rechnet; 1.0 hiesse wirkungslos")
         if z.ohneLuaSchlag then write("# AttemptAttack fehlt; gezaehlt wurden Schlaege von der Taste") end
@@ -3577,6 +3608,12 @@ local function axtFertig(player, z)
             ms(a.taktOhne), ms(a.taktMit), f4(a.schwung), a.nTaktOhne, a.nTaktMit))
         write(string.format("schwung|dauer|ohne_ms=%s|mit_ms=%s|mit/ohne=%s",
             ms(a.dauerOhne), ms(a.dauerMit), f4(a.dauer)))
+        write("")
+        write("[phasen] phase|axeman|chopTreeSpeed|anim_war_aus|pause_ticks")
+        for nr, ph in ipairs(z.phasen) do
+            write(string.format("phase|%d|%d|%s|%d|%d", nr, ph.mit and 1 or 0, f2(ph.getter),
+                ph.animAus and 1 or 0, ph.pauseTicks or 0))
+        end
         write("")
         write("[hiebe] phase|nr|axeman|schaden|abstand_ms|abstand_ticks|baumschaden_axt")
         for _, h in ipairs(z.hiebe) do
@@ -3636,7 +3673,7 @@ function TFMeasure.axtStarten(player)
     end
     local z = { baum = baum, leben0 = baum:getHealth(), typ = typ, axeman0 = hatTrait(player, "axeman"),
                 phase = "faellen", phaseNr = 1, hiebInPhase = 0,
-                hiebe = {}, schlaege = {}, tick = 0, wartenSeit = 0 }
+                hiebe = {}, schlaege = {}, phasen = {}, tick = 0, wartenSeit = 0 }
     if Perks and Perks.Axe then
         z.stufe0 = player:getPerkLevel(Perks.Axe)
         stufeSetzen(player, Perks.Axe, cfg.skill)
@@ -3646,7 +3683,9 @@ function TFMeasure.axtStarten(player)
         pcall(function() hatAxt = hand:hasTag(ItemTag.CHOP_TREE) end)
     end
     if not hatAxt then player:getInventory():AddItem(cfg.axt) end
-    axemanSetzen(player, z, false)
+    -- Phase 1 mit Ax-pert, gesetzt bevor die Aktion startet (seit 6.43.0).
+    axemanSetzen(player, z, true)
+    z.phasen[1] = { mit = true, getter = chopTempo(player), animAus = not animLaeuft(player), pauseTicks = 0 }
     baum:setHealth(cfg.baumLeben)
     TFMeasure.axtZustand = z
     TFMeasure.lauf = { id = "axt", erledigt = 0, fortschritt = 0,
@@ -3692,11 +3731,9 @@ function TFMeasure.axtTick()
                 if z.phaseNr >= cfg.phasen then
                     axtZumSchlagen(player, z)
                 else
-                    -- Neue Phase, neue Aktion: das Tempo gilt ab ihrem Start.
-                    z.phaseNr, z.hiebInPhase = z.phaseNr + 1, 0
+                    -- Neue Phase erst nach einer Pause, siehe Kopf des Abschnitts.
                     ISTimedActionQueue.clear(player)
-                    axemanSetzen(player, z, z.phaseNr % 2 == 0)
-                    ISWorldObjectContextMenu.doChopTree(player, z.baum)
+                    z.phase, z.pauseSeit, z.animAusSeit = "pause", z.tick, nil
                 end
             end
         else
@@ -3705,6 +3742,25 @@ function TFMeasure.axtTick()
                 TFMeasure.axtAbbrechen(T("axt_keintreffer"))
                 return
             end
+        end
+    elseif z.phase == "pause" then
+        -- Ein spaeter Treffer nach dem Beenden zaehlt nicht.
+        if z.baum:getHealth() < cfg.baumLeben then z.baum:setHealth(cfg.baumLeben) end
+        if animLaeuft(player) then
+            z.animAusSeit = nil
+        else
+            z.animAusSeit = z.animAusSeit or z.tick
+        end
+        local ruhig = z.animAusSeit and (z.tick - z.animAusSeit >= cfg.pauseTicks)
+        local zuLang = z.tick - z.pauseSeit > cfg.pauseMaxTicks
+        if ruhig or zuLang then
+            -- Ungerade Phasen mit Ax-pert, gerade ohne.
+            z.phaseNr, z.hiebInPhase = z.phaseNr + 1, 0
+            axemanSetzen(player, z, z.phaseNr % 2 == 1)
+            z.phasen[z.phaseNr] = { mit = z.mit, getter = chopTempo(player), animAus = ruhig and true or false,
+                                    pauseTicks = z.tick - z.pauseSeit }
+            z.phase, z.wartenSeit = "faellen", z.tick
+            ISWorldObjectContextMenu.doChopTree(player, z.baum)
         end
     elseif z.phase == "schwingen" then
         -- Der Schlag nach dem letzten gemessenen schliesst dessen Takt.

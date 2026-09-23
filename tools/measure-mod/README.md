@@ -224,7 +224,7 @@ weggedreht, Ax-pert alle zwei Schläge im Wechsel; die Zeiten kommen aus
 Lua nicht an, bittet das Fenster nach 3 Sekunden, die linke Maustaste zu
 halten, und zählt, was dann kommt.
 
-Im Bericht unter `[ergebnis]`: `faellen|abstand` (erwartet 0,8),
+Im Bericht unter `[ergebnis]`: `faellen|abstand` (erwartet 0,8; seit 6.43.0 mit Pause vor jeder Phase, siehe unten),
 `faellen|schaden` (erwartet 1,5, durch das Abschneiden etwas darüber),
 `schwung|takt` und `schwung|dauer` (0,8 heißt: Ax-pert wirkt aufs
 Schwungtempo; 1,0 hieße wirkungslos). Je Hieb steht auch der Baumschaden der
@@ -239,7 +239,26 @@ Ergebnis vom 13.09.2026, drei Läufe (6.18.0, 6.19.0 und 6.21.0,
 | Schaden je Hieb | 1,50, 1,52 und 1,52 (35 → 53, stumpfer 33 → 50) | bestätigt; die Axt stumpft ab |
 | Schlagtakt in der Luft | 0,79, 0,80 und 0,80 (rund 830 → 660 ms) | Ax-pert wirkt aufs Schwungtempo, seit Trait Facts 0.1.24 als −20 % Axt-Schwungzeit geführt |
 | Schlagdauer | 0,79, 0,80 und 0,79 | dasselbe |
-| Fälltakt | 1,00, 1,00 und 0,99 (1250 ms beide; im dritten Lauf ein Ausreißer von 1399 ms ohne Ax-pert) | mitten in der Aktion umgeschaltet und je Phase neu gestartet: Ax-pert ändert das Fälltempo nicht, seit Trait Facts 0.1.25 als wirkungslos geführt |
+| Fälltakt | 1,00, 1,00 und 0,99 (1250 ms beide; im dritten Lauf ein Ausreißer von 1399 ms ohne Ax-pert) | **ungültig** (Faktensweep 23.09.2026), siehe unten |
+
+**Fälltakt neu messen (seit 6.43.0).** Der Faktensweep vom 23.09.2026 hat die
+Lesart „Ax-pert ändert das Fälltempo nicht“ gekippt. Die Engine liest das Tempo
+eines Animationsknotens (`m_SpeedScale`, hier `ChopTreeSpeed`) nur, wenn der
+Knoten startet, und ein Knoten, der noch läuft, wird wiederverwendet. 6.19.0
+hat die Aktion beendet und im selben Tick neu gestartet. Dabei blieb `chop_tree`
+aktiv und behielt das Tempo der ersten Phase, und die lief immer ohne Ax-pert:
+1,0 s / 0,8 = 1250 ms, genau der gemessene Takt. Trait Facts führt das
+Fälltempo darum seit 0.14.0 wieder als +25 % aus dem Code.
+
+6.43.0 misst so, dass es entscheiden kann:
+- Phase 1 läuft **mit** Ax-pert, gesetzt, bevor die Aktion startet. Zeigt sie
+  1000 ms, ist die Wirkung belegt.
+- Zwischen den Phasen steht die Figur still, bis `PerformingAction` nicht mehr
+  `chop_tree` ist, und danach noch 2 s. Erst dann setzt der Test den Trait.
+- Der Abschnitt `[phasen]` im Bericht nennt je Phase den Trait, den Getter und
+  ob die Animation vor dem Neustart wirklich aus war.
+
+Erwartet: mit 1000 ms, ohne 1250 ms, `faellen|abstand` 0,8.
 
 Kletterlauf und XP-Leiter kamen am selben Abend Zeile für Zeile gleich heraus
 wie ihre Berichte vom 13.09. 01:05 und 12.09.; beide sind also reproduzierbar.
