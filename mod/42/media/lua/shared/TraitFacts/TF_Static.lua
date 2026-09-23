@@ -128,9 +128,10 @@ TF.Static["feeble"] = {
 -- wenn der Animationsknoten startet (AnimLayer.startLiveNodeTracks), und der
 -- Test schaltete den Trait um, waehrend der Knoten weiterlief (clear und
 -- doChopTree im selben Tick); jede Phase lief so mit dem Tempo der ersten,
--- und die war immer ohne Ax-pert. Eine Figur, die Ax-pert schon beim Start
--- des Faellens hat, ist nie gemessen worden. Darum jetzt Stand code; die
--- Nachmessung mit dem Trait vor dem Start ist geplant (Mess-Mod 6.43.0).
+-- und die war immer ohne Ax-pert. Nachgemessen am 23.09.2026 mit Mess-Mod
+-- 6.43.1 (Trait vor dem Start, Pause bis die Animation aus ist,
+-- docs/messungen/messung-2026-09-23-axt.txt): mit 997,6 ms, ohne 1249,9 ms
+-- je Hieb, 0.7982. Die +25 % stimmen, Stand gemessen.
 -- Das alles gilt nur im Einzelspiel (Faktensweep 2, 23.09.2026): im
 -- Multiplayer, auch beim Hosten, landet der Server die Hiebe selbst
 -- (ISChopTreeAction.lua Z. 64-68 nur `not isClient()`, serverStart Z. 108-111
