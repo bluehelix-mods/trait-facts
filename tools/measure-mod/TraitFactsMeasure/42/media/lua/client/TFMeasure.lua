@@ -62,7 +62,7 @@ TFMeasure.Fenster = nil
 -- Mod-Waehler zeigt nur mod.info an, und eine Nummer, die nie wandert, sagt
 -- nichts darueber, welcher Code wirklich geladen ist. Deshalb steht sie
 -- zusaetzlich in der ersten Logzeile und im Kopf des Berichts.
-TFMeasure.VERSION = "6.43.0"
+TFMeasure.VERSION = "6.43.1"
 
 --- Ausgabedatei, liegt danach in Zomboid/Lua/.
 TFMeasure.FILE = "TraitFacts_measure.txt"
@@ -6136,20 +6136,22 @@ function M.anteilProzent(liste)
 end
 
 -- ------------------------------------------------ Stolpern am Zaun
--- ClimbOverFenceState (Build 42.20): das oeffentliche enter (Z. 89-133)
--- wuerfelt shouldFallAfterVaultOver (privat, Z. 490-527), sobald die Variable
--- VaultOverSprint gesetzt ist (Z. 107), und schreibt dann "fall" in
--- ClimbFenceOutcome (Z. 108). Chance 10 fuer den Sprung aus dem Sprint
--- (Z. 496-498), dazu Moodles (Z. 499-507, fuer alle Faelle gleich), Traits
--- (Z. 508-525) und minus Fitness (Z. 526): Clumsy +10, Graceful -10, Very
--- Underweight +20 und gleich noch einmal +10 (Z. 514 und 517, Spielfehler
--- zaun-veryunderweight), Obese +20, Overweight +10; Underweight kommt nicht
--- vor. setParams (public, Z. 578-627) setzt vorher SOLID_FLOOR aus dem Feld in
--- Richtung dir; ohne Boden setzt enter "falling" (Z. 115-117) und verdeckt den
--- Wurf. RUN und SPRINT nimmt setParams von der stehenden Figur (falsch: kein
--- Ausdauerabzug, Z. 94-100). exit (Z. 224-237) raeumt die Variablen und gibt
--- die Bewegung frei. Je enter feuert triggerMusicIntensityEvent("HopFence")
--- (Z. 121-124). Ein Zaun ist nicht noetig.
+-- ClimbOverFenceState (Build 42.20): das oeffentliche enter (Z. 92-133)
+-- wuerfelt shouldFallAfterVaultOver (privat, Z. 493-530), sobald die Variable
+-- VaultOverRun oder VaultOverSprint gesetzt ist (Z. 110), und schreibt dann
+-- "fall" in ClimbFenceOutcome (Z. 111). Chance 10 fuer den Sprung aus dem
+-- Sprint (Z. 499-501), dazu Moodles (Z. 502-507) und Unterkoerper-Schmerz
+-- (Z. 508-510), fuer alle Faelle gleich, Traits (Z. 511-528) und minus
+-- Fitness (Z. 529): Clumsy +10, Graceful -10, Very Underweight +20 und gleich
+-- noch einmal +10 (Z. 517 und 520, Spielfehler zaun-veryunderweight), Obese
+-- +20, Overweight +10; Underweight kommt nicht vor. setParams (public,
+-- Z. 581-630) setzt vorher SOLID_FLOOR aus dem Feld in Richtung dir; ohne
+-- Boden setzt enter "falling" (Z. 118-120) und verdeckt den Wurf. RUN und
+-- SPRINT nimmt setParams von der stehenden Figur (falsch: kein Ausdauerabzug,
+-- Z. 97-103). exit (Z. 227-240) raeumt die Variablen und gibt die Bewegung
+-- frei. Je enter feuert triggerMusicIntensityEvent("HopFence") (Z. 124-127).
+-- Ein Zaun ist nicht noetig. Zeilen nach dem CFR-Baum mit Kopfzeilen
+-- (Faktensweep 2, 23.09.2026; vorher je 3 zu niedrig).
 function M.zaunVersuch(p, st, richtung)
     st:setParams(p, richtung)
     p:setVariable("VaultOverSprint", true)
@@ -6161,7 +6163,7 @@ end
 
 --- Fitness 0 (sie zieht ab, und Graceful laege sonst unter 0, wo nichts
 -- mehr faellt) und eine Richtung mit Boden: je ein Versuch nach N, S, W, E,
--- der erste ohne "falling" oder "rope" (Z. 115-120) gilt.
+-- der erste ohne "falling" oder "rope" (Z. 118-123) gilt.
 function M.zaunVorher(p, z)
     z.zaunFitness0 = p:getPerkLevel(Perks.Fitness)
     stufeSetzen(p, Perks.Fitness, 0)
@@ -6192,7 +6194,7 @@ function M.zaunProbe(p, z)
     if not z.zaunRichtung then return nil, z.zaunGrund end
     if p:isRunning() or p:isSprinting() then return nil, "Figur rennt" end
     local ausgang = M.zaunVersuch(p, z.zaunZustand, z.zaunRichtung)
-    -- Ohne Boden in der Richtung ("falling", "rope", Z. 115-120) verdeckt enter
+    -- Ohne Boden in der Richtung ("falling", "rope", Z. 118-123) verdeckt enter
     -- den Wurf; das passiert, wenn die Figur waehrend der Gruppe weitergeht.
     if ausgang == "falling" or ausgang == "rope" then return nil, "kein Boden in der Richtung" end
     return (ausgang == "fall") and 1 or 0
@@ -7834,15 +7836,18 @@ TFMeasure.WERTE = {
       vorher = woodworkNull, nachher = woodworkZurueck },
     { id = "xp", effekt = "xp", messen = M.xpcrafty, traits = { { "crafty", 1.3 } } },
     { id = "xp", effekt = "xp", messen = M.xppacifist, traits = { { "pacifist", 0.75 } } },
-    -- seit 6.24.0
-    { id = "grillfeuer", effekt = "firelight", messen = M.grillZuenden, traits = { { "outdoorsman", 2.0 } },
+    -- seit 6.24.0. Ohne effekt seit 6.43.1 (Faktensweep 2, 23.09.2026): der
+    -- Test liest die Wuerfelgrenze je Tick, Trait Facts zeigt seit 0.14.1 den
+    -- Wert je Versuch (Zuenden und Brechen als Wettlauf, x1.5 und x0.5);
+    -- verglichen wird darum mit dem Code je Wurf.
+    { id = "grillfeuer", messen = M.grillZuenden, traits = { { "outdoorsman", 2.0 } },
       vorher = M.feuerVorher, nachher = M.feuerNachher },
-    { id = "grillbruch", effekt = "kindling", messen = M.grillBrechen, traits = { { "outdoorsman", 300 / 450 } },
+    { id = "grillbruch", messen = M.grillBrechen, traits = { { "outdoorsman", 300 / 450 } },
       vorher = M.feuerVorher, nachher = M.feuerNachher },
-    { id = "lagerfeuer", effekt = "firelight", messen = M.lagerZuenden,
+    { id = "lagerfeuer", messen = M.lagerZuenden,
       traits = { { "wildernessknowledge", 2.0 }, { "formerscout", 2.0 } },
       vorher = M.feuerVorher, nachher = M.feuerNachher },
-    { id = "lagerbruch", effekt = "kindling", messen = M.lagerBrechen,
+    { id = "lagerbruch", messen = M.lagerBrechen,
       traits = { { "wildernessknowledge", 300 / 450 }, { "formerscout", 300 / 450 } },
       vorher = M.feuerVorher, nachher = M.feuerNachher },
     { id = "leiche", effekt = "corpsestress", messen = M.leiche,

@@ -326,8 +326,11 @@ Bericht: `Zomboid/Lua/TraitFacts_adrenalin.txt`.
 
 ### Klettern
 
-Der Kletterlauf (F8 in 6.17.x, seit 6.18.0 im Fenster) prüft die Klettersicherheit am Bettlaken-Seil und das
-Klettertempo. `getClimbingFailChanceFloat()` liefert nur die ganzzahlige Wurzel
+Der Kletterlauf (F8 in 6.17.x, seit 6.18.0 im Fenster) liest den Kletterwert und das
+Klettertempo am Bettlaken-Seil. Der Kletterwert entscheidet vor allem das Scheitern an hohen Zäunen
+(ClimbOverWallState Z. 296-311); am Seil öffnet der Sturzwurf erst nach sehr langem Klettern am Stück
+(Faktensweep 2, 23.09.2026; bis dahin stand hier "Klettersicherheit am Bettlaken-Seil"). Der Lauf liest
+Werte des Spiels, er lässt die Figur weder klettern noch stürzen. `getClimbingFailChanceFloat()` liefert nur die ganzzahlige Wurzel
 der Sicherheitspunkte; an einer neuen Figur (20 Punkte, Wurzel 4,47) verschwindet
 ein Trait mit ±4 im Abrunden, so geschehen am 10.09.2026 bei All Thumbs,
 Dextrous, Gymnast und Burglar. Deshalb geht der Lauf je Fall Fitness, Strength
@@ -587,8 +590,8 @@ Ticks, und der Balken im Fenster wandert auch während einer Stichprobe.
 
 | Gruppe | Stelle | laut Code | n je Fall, Toleranz |
 | --- | --- | --- | --- |
-| Stolpern am Zaun | `ClimbOverFenceState.enter` (Z. 89-133) würfelt `shouldFallAfterVaultOver` (Z. 490-527) | ohne 10 %; Clumsy +10, Graceful -10, Obese +20, Overweight +10 Punkte | 3000, 4 Punkte |
-| Zaun, Spielfehler zaun-veryunderweight | ebenda, Very Underweight in Z. 514 und 517 | Very Underweight +30, Underweight 0 | 3000, 4 Punkte |
+| Stolpern am Zaun | `ClimbOverFenceState.enter` (Z. 92-133) würfelt `shouldFallAfterVaultOver` (Z. 493-530) | ohne 10 %; Clumsy +10, Graceful -10, Obese +20, Overweight +10 Punkte | 3000, 4 Punkte |
+| Zaun, Spielfehler zaun-veryunderweight | ebenda, Very Underweight in Z. 517 und 520 | Very Underweight +30, Underweight 0 | 3000, 4 Punkte |
 | Sturzschaden | `DoLand(3.0)` ruft `handleLandingImpact` (Z. 2056-2160), der Schaden kommt aus `OnPlayerGetDamage` "FALLDOWN" (Z. 2117) | ×1,2 Very Underweight und Overweight, ×1,4 Emaciated und Obese; Faktor aus dem größten Schaden je Fall | 4000, 1 % |
 | Sturzverletzung | ebenda, Z. 2121-2146 | Anteil Brüche unter den Verletzungen 32 %, +10 bzw. +20 Punkte (`PZMath.lerpFunc_EaseOutQuad` rechnet x², die Namen sind im Spiel vertauscht; der Messplan nahm 52 % an) | 4000, 6 Punkte |
 | Unfallschaden | `IsoPlayer.applyDamageFromVehicleHit(auto, -1, 30)` (Z. 1960-1997) | verlorene Gesundheit ×0,8 Fast Healer, ×1,2 Slow Healer | 1200, 2 % |
