@@ -430,7 +430,7 @@
   "UI_TF_note_mt_sleepfat": "numa escala de 0 a 100: 20 a partir de 60 de fadiga, 10 a partir de 20, senão 5; você acorda assim que a fadiga chega a zero",
   "UI_TF_note_mt_spearonly": "lanças, contra zumbis; o dobro quando a rolagem do traço acerta; não com Mundano",
   "UI_TF_note_mt_specxp": "toda habilidade fora desta especialização, exceto Aptidão Física e Força; ajustável na opção Redução de XP de Especialização",
-  "UI_TF_note_mt_specxp_food": "toda habilidade fora desta especialização exceto Aptidão Física e Força, e também Rastreamento, Cuidados com Animais e Abate (a lista de habilidades do More Traits para numa entrada Foraging que não existe na 42.20); ajustável na opção Redução de XP de Especialização",
+  "UI_TF_note_mt_specxp_food": "outras habilidades exceto Aptidão Física e Força, mais Rastreamento, Cuidados com Animais e Abate (bug do More Traits); opção Redução de XP de Especialização",
   "UI_TF_note_mt_stomp": "o dobro mais 1: +148%% com sapatos comuns, +156%% com tênis, +140%% com as botas mais pesadas, +120%% com as Botas Antigas do More Traits, +200%% com faixas para os pés, +225%% com pantufas e chinelos; descalço não faz nada; definido uma vez por par e perdido quando o jogo é carregado de novo, depois disso só um par que você calça pela primeira vez recebe",
   "UI_TF_note_mt_sun": "sobe 1 por minuto de jogo ao ar livre entre 8 e 17 horas (0,5 com guarda-chuva); um guarda-chuva deixa dois terços, dentro de casa um quarto; é a dor da cabeça, então sua dor sobe devagar até 0,8 vez esse valor (32 com a Gravidade dos Ferimentos padrão)",
   "UI_TF_note_mt_terminator": "enquanto houver uma arma de fogo nas suas mãos",

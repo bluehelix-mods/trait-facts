@@ -430,7 +430,7 @@
   "UI_TF_note_mt_sleepfat": "on a scale of 0 to 100: 20 from 60 fatigue, 10 from 20, otherwise 5; you wake as soon as fatigue hits zero",
   "UI_TF_note_mt_spearonly": "spears, against zombies; doubled when the trait's roll hits; not with Mundane",
   "UI_TF_note_mt_specxp": "every skill outside this specialization, except Fitness and Strength; adjustable with the option Specialization XP Reduction",
-  "UI_TF_note_mt_specxp_food": "every skill outside this specialization except Fitness and Strength, and also Tracking, Animal Care and Butchering (More Traits' skill list breaks off at a Foraging entry that does not exist in 42.20); adjustable with the option Specialization XP Reduction",
+  "UI_TF_note_mt_specxp_food": "all other skills except Fitness and Strength, plus Tracking, Animal Care and Butchering (More Traits bug); option Specialization XP Reduction",
   "UI_TF_note_mt_stomp": "doubled plus 1: +148%% for ordinary shoes, +156%% for sneakers, +140%% for the heaviest boots, +120%% for More Traits' Antique Boots, +200%% for footwraps, +225%% for slippers and flip-flops; barefoot it does nothing; set once per pair and lost when the game is loaded again, after that only a pair you put on for the first time gets it",
   "UI_TF_note_mt_sun": "builds up by 1 per game minute outdoors between 8 and 17 (0.5 with an umbrella); an umbrella leaves two thirds of it, indoors a quarter; it is the head's pain, so your pain slowly climbs to 0.8 of it (32 at the default Injury Severity)",
   "UI_TF_note_mt_terminator": "while a firearm is in your hands",

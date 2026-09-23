@@ -430,7 +430,7 @@
   "UI_TF_note_mt_sleepfat": "sur une échelle de 0 à 100 : 20 dès 60 de fatigue, 10 dès 20, sinon 5 ; vous vous réveillez dès que la fatigue atteint zéro",
   "UI_TF_note_mt_spearonly": "lances, contre les zombies ; doublé quand le jet du trait réussit ; pas avec Banal",
   "UI_TF_note_mt_specxp": "toute compétence hors de cette spécialisation, sauf Fitness et Force ; réglable avec l'option Spécialisation Réduction d'XP",
-  "UI_TF_note_mt_specxp_food": "toute compétence hors de cette spécialisation, sauf Fitness et Force, et aussi Pistage, Élevage et Dépeçage (la liste de compétences de More Traits s'arrête à une entrée Foraging qui n'existe pas en 42.20) ; réglable avec l'option Spécialisation Réduction d'XP",
+  "UI_TF_note_mt_specxp_food": "toutes les autres compétences sauf Fitness et Force, plus Pistage, Élevage et Dépeçage (bug de More Traits) ; option Spécialisation Réduction d'XP",
   "UI_TF_note_mt_stomp": "doublé et 1 en plus : +148 %% pour des chaussures ordinaires, +156 %% pour des chaussures de sport, +140 %% pour les bottes les plus lourdes, +120 %% pour les Bottes anciennes de More Traits, +200 %% pour des chaussures de fortune, +225 %% pour les chaussons et les tongs ; pieds nus, aucun effet ; fixé une fois par paire et perdu au prochain chargement de la partie, ensuite seule une paire que vous enfilez pour la première fois l'obtient",
   "UI_TF_note_mt_sun": "monte de 1 par minute de jeu dehors entre 8 h et 17 h (0,5 avec un parapluie) ; un parapluie en laisse deux tiers, à l'intérieur un quart ; c'est la douleur de la tête, votre douleur monte donc lentement jusqu'à 0,8 fois cette valeur (32 avec la Gravité des blessures par défaut)",
   "UI_TF_note_mt_terminator": "tant qu'une arme à feu est en main",

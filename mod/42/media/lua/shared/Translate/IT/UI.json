@@ -430,7 +430,7 @@
   "UI_TF_note_mt_sleepfat": "su una scala da 0 a 100: 20 da 60 di stanchezza, 10 da 20, altrimenti 5; ti svegli appena la stanchezza arriva a zero",
   "UI_TF_note_mt_spearonly": "lance, contro gli zombi; raddoppia quando il tiro del tratto riesce; non con Ordinario",
   "UI_TF_note_mt_specxp": "ogni abilità fuori da questa specializzazione, tranne Forma fisica e Forza; regolabile con l'opzione Riduzione degli XP di specializzazione",
-  "UI_TF_note_mt_specxp_food": "ogni abilità fuori da questa specializzazione, tranne Forma fisica e Forza, e anche Tracciamento, Allevamento e Macellazione (l'elenco di abilità di More Traits si interrompe a una voce Foraging che in 42.20 non esiste); regolabile con l'opzione Riduzione degli XP di specializzazione",
+  "UI_TF_note_mt_specxp_food": "le altre abilità tranne Forma fisica e Forza, più Tracciamento, Allevamento e Macellazione (bug di More Traits); opzione Riduzione degli XP di specializzazione",
   "UI_TF_note_mt_stomp": "raddoppiata e 1 in più: +148%% con scarpe comuni, +156%% con scarpe da ginnastica, +140%% con gli stivali più pesanti, +120%% con gli Stivali Antichi di More Traits, +200%% con fasce per i piedi, +225%% con pantofole e infradito; scalzo non fa nulla; impostata una volta per paio e persa al successivo caricamento della partita, dopo vale solo per un paio che indossi per la prima volta",
   "UI_TF_note_mt_sun": "sale di 1 per minuto di gioco all'aperto tra le 8 e le 17 (0,5 con l'ombrello); con l'ombrello ne restano due terzi, al chiuso un quarto; è il dolore alla testa, quindi il tuo dolore sale lentamente fino a 0,8 volte quel valore (32 con la Gravità delle ferite predefinita)",
   "UI_TF_note_mt_terminator": "mentre hai un'arma da fuoco in mano",

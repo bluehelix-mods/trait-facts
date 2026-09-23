@@ -430,7 +430,7 @@
   "UI_TF_note_mt_sleepfat": "0 ila 100 ölçeğinde: 60 yorgunluktan itibaren 20, 20'den itibaren 10, yoksa 5; yorgunluk sıfıra inince uyanırsın",
   "UI_TF_note_mt_spearonly": "mızraklar, zombilere karşı; özelliğin zarı tutunca iki katı; Sıradan ile olmaz",
   "UI_TF_note_mt_specxp": "bu uzmanlığın dışındaki her beceri, Fitness ve Güç hariç; Uzmanlık Deneyimi Azaltma seçeneğiyle ayarlanır",
-  "UI_TF_note_mt_specxp_food": "bu uzmanlığın dışındaki her beceri, Fitness ve Güç hariç, ayrıca İz Sürme, Hayvan Bakımı ve Kasaplık da (More Traits'in beceri listesi 42.20'de bulunmayan bir Foraging girdisinde kesilir); Uzmanlık Deneyimi Azaltma seçeneğiyle ayarlanır",
+  "UI_TF_note_mt_specxp_food": "diğer beceriler (Fitness ve Güç hariç), ayrıca İz Sürme, Hayvan Bakımı ve Kasaplık (More Traits hatası); Uzmanlık Deneyimi Azaltma seçeneği",
   "UI_TF_note_mt_stomp": "iki katı artı 1: normal ayakkabılarda +148%%, spor ayakkabılarda +156%%, en ağır botlarda +140%%, More Traits'in Antika Botlarında +120%%, ayak sargılarında +200%%, terlik ve parmak arası terliklerde +225%%; yalınayak hiçbir şey yapmaz; çift başına bir kez ayarlanır ve oyun yeniden yüklenince kaybolur, sonrasında bunu yalnızca ilk kez giydiğin bir çift alır",
   "UI_TF_note_mt_sun": "dışarıda 8 ile 17 arasında oyun dakikası başına 1 artar (şemsiyeyle 0,5); şemsiyeyle üçte ikisi, içeride dörtte biri kalır; bu Baş bölgesinin ağrısıdır, yani ağrın yavaşça bunun 0,8 katına çıkar (varsayılan Yaralanma Şiddeti'nde 32)",
   "UI_TF_note_mt_terminator": "elinde ateşli silah varken",

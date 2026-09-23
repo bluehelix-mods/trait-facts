@@ -430,7 +430,7 @@
   "UI_TF_note_mt_sleepfat": "na skali 0 do 100: 20 od 60 zmęczenia, 10 od 20, inaczej 5; budzisz się, gdy zmęczenie dojdzie do zera",
   "UI_TF_note_mt_spearonly": "włócznie, przeciw zombie; podwojone, gdy losowanie cechy się powiedzie; nie z cechą Przyziemny",
   "UI_TF_note_mt_specxp": "każda umiejętność poza tą specjalizacją, oprócz Kondycji i Siły; regulowane opcją Specjalizacja redukcja XP",
-  "UI_TF_note_mt_specxp_food": "każda umiejętność poza tą specjalizacją oprócz Kondycji i Siły, a do tego Tropienie, Opieka nad zwierzętami i Oprawianie (lista umiejętności More Traits urywa się na wpisie Foraging, którego w 42.20 nie ma); regulowane opcją Specjalizacja redukcja XP",
+  "UI_TF_note_mt_specxp_food": "inne umiejętności oprócz Kondycji i Siły, a do tego Tropienie, Opieka nad zwierzętami i Oprawianie (błąd More Traits); opcja Specjalizacja redukcja XP",
   "UI_TF_note_mt_stomp": "podwojone i jeszcze 1: +148%% w zwykłym obuwiu, +156%% w butach sportowych, +140%% w najcięższych butach, +120%% w Antycznych butach z More Traits, +200%% w owijkach na stopy, +225%% w kapciach i japonkach; boso nic nie daje; ustawiane raz na parę i tracone po ponownym wczytaniu gry, potem dostaje to tylko para, którą zakładasz po raz pierwszy",
   "UI_TF_note_mt_sun": "rośnie o 1 na minutę gry na dworze między 8 a 17 (0,5 z parasolem); parasol zostawia dwie trzecie, w budynku ćwierć; to ból Głowy, więc twój ból powoli rośnie do 0,8 tej wartości (32 przy domyślnej Dotkliwości obrażeń)",
   "UI_TF_note_mt_terminator": "dopóki masz broń palną w rękach",

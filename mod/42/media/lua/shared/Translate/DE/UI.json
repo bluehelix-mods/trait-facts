@@ -430,7 +430,7 @@
   "UI_TF_note_mt_sleepfat": "auf der Skala 0 bis 100: 20 ab 60 Müdigkeit, 10 ab 20, sonst 5; du wachst auf, sobald die Müdigkeit null erreicht",
   "UI_TF_note_mt_spearonly": "Speere, gegen Zombies; doppelt, wenn der Wurf des Traits trifft; nicht mit Gewöhnlich",
   "UI_TF_note_mt_specxp": "jeder Skill außerhalb dieser Spezialisierung, außer Fitness und Stärke; einstellbar über die Option Spezialisierung XP-Reduktion",
-  "UI_TF_note_mt_specxp_food": "jeder Skill außerhalb dieser Spezialisierung außer Fitness und Stärke, dazu auch Spurensuche, Tierpflege und Schlachten (die Skill-Liste von More Traits bricht an einem Eintrag Foraging ab, den es in 42.20 nicht gibt); einstellbar über die Option Spezialisierung XP-Reduktion",
+  "UI_TF_note_mt_specxp_food": "alle anderen Skills außer Fitness und Stärke, dazu Spurensuche, Tierpflege und Schlachten (Fehler in More Traits); Option Spezialisierung XP-Reduktion",
   "UI_TF_note_mt_stomp": "verdoppelt und 1 obendrauf: +148 %% bei normalen Schuhen, +156 %% bei Sneakers, +140 %% bei den schwersten Stiefeln, +120 %% bei den Antiken Stiefeln aus More Traits, +200 %% bei Fußwickeln, +225 %% bei Hausschuhen und Flip-Flops; barfuß wirkt es nicht; einmal je Paar gesetzt und nach dem nächsten Laden des Spiels weg, danach bekommt es nur ein Paar, das du zum ersten Mal anziehst",
   "UI_TF_note_mt_sun": "baut sich draußen zwischen 8 und 17 Uhr um 1 je Spielminute auf (mit Schirm um 0,5); mit Schirm bleiben zwei Drittel davon, drinnen ein Viertel; das ist der Schmerz am Kopf, dein Schmerz steigt also langsam auf das 0,8-Fache davon (32 beim normalen Verletzungsgrad)",
   "UI_TF_note_mt_terminator": "solange du eine Schusswaffe in den Händen hältst",

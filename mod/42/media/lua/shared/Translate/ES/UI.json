@@ -430,7 +430,7 @@
   "UI_TF_note_mt_sleepfat": "en una escala de 0 a 100: 20 desde 60 de cansancio, 10 desde 20, si no 5; despiertas en cuanto el cansancio llega a cero",
   "UI_TF_note_mt_spearonly": "lanzas, contra zombis; el doble cuando acierta la tirada del rasgo; no con Mundano",
   "UI_TF_note_mt_specxp": "toda habilidad fuera de esta especialidad, salvo Estado físico y Fuerza; ajustable con la opción Reducción de XP de Especialización",
-  "UI_TF_note_mt_specxp_food": "toda habilidad fuera de esta especialidad salvo Estado físico y Fuerza, y además Rastreo, Cuidado de animales y Carnicería (la lista de habilidades de More Traits se corta en una entrada Foraging que no existe en 42.20); ajustable con la opción Reducción de XP de Especialización",
+  "UI_TF_note_mt_specxp_food": "otras habilidades salvo Estado físico y Fuerza, más Rastreo, Cuidado de animales y Carnicería (error de More Traits); opción Reducción de XP de Especialización",
   "UI_TF_note_mt_stomp": "el doble más 1: +148%% con zapatos normales, +156%% con zapatillas, +140%% con las botas más pesadas, +120%% con las Botas antiguas de More Traits, +200%% con vendajes para pies, +225%% con chanclas y chancletas; descalzo no hace nada; se fija una vez por par y se pierde al volver a cargar la partida, después solo lo recibe un par que te pongas por primera vez",
   "UI_TF_note_mt_sun": "sube 1 por minuto de juego en exteriores entre las 8 y las 17 (0,5 con paraguas); con paraguas quedan dos tercios, bajo techo un cuarto; es el dolor de la cabeza, así que tu dolor sube despacio hasta 0,8 veces esa cantidad (32 con la Gravedad de las lesiones por defecto)",
   "UI_TF_note_mt_terminator": "mientras lleves un arma de fuego en las manos",
