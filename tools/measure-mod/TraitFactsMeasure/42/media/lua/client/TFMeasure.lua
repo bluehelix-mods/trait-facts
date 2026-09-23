@@ -62,7 +62,7 @@ TFMeasure.Fenster = nil
 -- Mod-Waehler zeigt nur mod.info an, und eine Nummer, die nie wandert, sagt
 -- nichts darueber, welcher Code wirklich geladen ist. Deshalb steht sie
 -- zusaetzlich in der ersten Logzeile und im Kopf des Berichts.
-TFMeasure.VERSION = "6.43.1"
+TFMeasure.VERSION = "6.44.0"
 
 --- Ausgabedatei, liegt danach in Zomboid/Lua/.
 TFMeasure.FILE = "TraitFacts_measure.txt"
@@ -402,6 +402,11 @@ local function traitTypeNamed(wanted)
     end
     return nil
 end
+
+-- Fuer die Mess-Befehle (TFMeasureBefehle.lua, seit 6.44.0, 24.09.2026): dieselben
+-- Helfer statt einer zweiten Fassung.
+TFMeasure.keyOf = keyOf
+TFMeasure.traitTypeNamed = traitTypeNamed
 
 --- Die XP-Leiter, direkt aus der Engine.
 --
@@ -3474,6 +3479,7 @@ local function stufeSetzen(player, perk, stufe)
     player:setPerkLevelDebug(perk, stufe)
     pcall(function() player:getXp():setXPToLevel(perk, stufe) end)
 end
+TFMeasure.stufeSetzen = stufeSetzen
 
 local function mittelwert(liste, feld, mit, bis)
     local summe, anzahl = 0, 0

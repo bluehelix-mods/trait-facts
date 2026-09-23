@@ -1311,6 +1311,82 @@ Reflection in `WorldSoundManager` (nur mit `-debug`), und drei der vier
 Geräusche entstehen per Zufall (Z. 266-273). Heraus käme wieder die Drehzahl,
 nicht der Trait.
 
+## Mess-Befehle über eine Datei (seit 6.44.0)
+
+Die Konsolenpunkte der Messliste (`docs/berichte/2026-09-23-messliste.md`)
+gehen ohne Tippen in der Lua-Konsole: Befehle in eine Datei schreiben, die
+Antworten aus einer zweiten lesen. Code: `TFMeasureBefehle.lua`.
+
+- **Nur mit `-debug`** (`isDebugEnabled()`/`getDebug()`) und nur, wenn das
+  Mess-Mod geladen ist. Im Log steht einmal
+  `Mess-Befehle aktiv: Zomboid/Lua/TraitFacts_befehle.txt`.
+- **Feste Liste.** Die Datei wählt nur einen Eintrag aus einer Lua-Tabelle.
+  Kein `loadstring`, `load`, `dofile` oder `require`, und kein Global und
+  keine Funktion wird über einen Namen aus der Datei gesucht. Argumente sind
+  geprüft: Trait-Schlüssel nach `^[%w_:]+$` und über die Trait-Registry
+  aufgelöst, Gegenstände nach `^[%w_]+%.[%w_]+$` und im ScriptManager
+  vorhanden, Skills und Stats nur aus festen Listen, Stufen 0 bis 10. Alles
+  andere bekommt `fehler`.
+- **Ablauf.** Etwa jede Sekunde (60 Ticks) liest das Mod
+  `Zomboid/Lua/TraitFacts_befehle.txt`. Das Ereignis ist `OnTickEvenPaused`
+  (gibt es in 42.20.4, feuert auch bei angehaltenem Spiel), sonst `OnTick`.
+  Jede id läuft einmal: gemerkt im Speicher, und ids, die schon in
+  `Zomboid/Lua/TraitFacts_antworten.txt` stehen, laufen auch nach einem
+  Neustart nicht noch einmal. Höchstens 20 neue Befehle je Blick.
+- **Format.** Eine Zeile je Befehl: `<id> <befehl> [argumente]`, `#` am
+  Zeilenanfang ist ein Kommentar. Die id besteht aus Buchstaben, Ziffern,
+  `_`, `-` und `.`. Antwort: `<id> ok <wert>` oder `<id> fehler <grund>`.
+  Ein Befehl, der wirft, antwortet `fehler Laufzeitfehler: ...`, die
+  Zeilen danach laufen weiter.
+
+Beispiel:
+
+```
+# A6 Tragefaktor, C1 Lead Foot
+a6-1 maxweight
+c1-1 stomp
+c1-2 mt_apply leadfoot
+```
+
+ergibt zum Beispiel
+
+```
+a6-1 ok maxweight=18 delta=1
+c1-1 ok stomp=2.0999999 stompState=LeadFoot schuhe=Base.Shoes_Strapped
+c1-2 ok stomp=2.0999999 stompState=LeadFoot schuhe=Base.Shoes_Strapped
+```
+
+| Befehl | liefert |
+| --- | --- |
+| `version` | Fassung Mess-Mod und Bildschirmlauf, Trait Facts, Spiel, Debug an, More Traits geladen |
+| `traits` | Anzahl und volle IDs der Traits von Figur 0 (`base:strong,...`) |
+| `trait_add <schlüssel>` | setzt den Trait; Schlüssel als Pfad (`strong`) oder volle ID (`toadtraits:leadfoot`) |
+| `trait_remove <schlüssel>` | nimmt den Trait weg |
+| `perk <Skill>` | Stufe, z. B. `perk Fitness` |
+| `perk_set <Skill> <0-10>` | setzt die Stufe wie Vanillas Debug-Fenster (`setPerkLevelDebug` + `setXPToLevel`) |
+| `maxweight` | `getMaxWeight()` und `getMaxWeightDelta()` |
+| `stomp` | `getClothingItem_Feet():getStompPower()` und `stompState` der modData |
+| `jam` | `getJamGunChance()` der Waffe in der Haupthand und `MTstate` der modData |
+| `darkness` | `forageSystem.getDarknessEffectReduction(player)` |
+| `recipes` | `getKnownRecipes():size()` |
+| `spawn <Modul.Typ>` | legt den Gegenstand ins Inventar |
+| `equip <Modul.Typ>` | nimmt den ersten passenden aus dem Hauptinventar in die Haupthand |
+| `crit` | `calculateCritChance` am nächsten Zombie, mit Abstand und Waffe (`fehler`, wenn die Methode fehlt) |
+| `stat <NAME>` | Wert aus `CharacterStat`: HUNGER, THIRST, FATIGUE, STRESS, PANIC, UNHAPPINESS, ENDURANCE, POISON |
+| `gametime` | Tage seit Beginn, Stunde, Minute, Weltstunden, Datum |
+| `mt_apply <terminator\|leadfoot>` | ruft `MT.Combat.TerminatorGun` bzw. `MT.World.LeadFoot` von More Traits auf (feste Verweise) und zeigt danach `jam` bzw. `stomp`. Die Funktion setzt nur, solange der Merker `MTstate`/`stompState` nicht schon gesetzt ist |
+
+Skills: Aiming, Axe, Blacksmith, Blunt, Butchering, Carving, Cooking, Doctor,
+Electricity, Farming, Fishing, Fitness, FlintKnapping, Glassmaking,
+Husbandry, Lightfoot, LongBlade, Maintenance, Masonry, Mechanics,
+MetalWelding, Nimble, PlantScavenging, Pottery, Reloading, SmallBlade,
+SmallBlunt, Sneak, Spear, Sprinting, Strength, Tailoring, Tracking, Trapping,
+Woodwork.
+
+Num 9 lädt `TFMeasureBefehle.lua` mit neu, sobald das Spiel sie einmal beim
+Start geladen hat; in einem Spiel, das vor 6.44.0 lief, braucht sie einen
+Neustart (sie steht noch nicht in `TFMeasure.GESCHWISTER`).
+
 ## Neu laden ohne Spielneustart
 
 **F9** lädt das Mess-Mod zur Laufzeit neu und schaltet die Tests wieder scharf.
@@ -1553,3 +1629,8 @@ und Schläge nach (ChopTreeSpeed und CombatSpeed 0,8 und 1,0) und prüft
 Fenster, Stand-Datei, Axt-Test, Abbrechen, fehlenden Baum, abgelehnten
 Lua-Schlag, F9 und dass jeder erfragte Text in der UI.json steht. Ein
 Tippfehler kostet sonst eine ganze Spielsitzung.
+
+`python tools/test-mess-befehle.py` prüft die Mess-Befehle für sich: jede id
+läuft einmal, unbekannte Befehle und schlechte Argumente bekommen `fehler`,
+ohne `-debug` läuft nichts, ein werfender Befehl hält die Zeilen danach nicht
+auf, und der Quelltext enthält kein `loadstring`, `load` und kein `_G`.
