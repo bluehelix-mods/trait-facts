@@ -100,7 +100,9 @@ end
 -- zaehlt: jeder <LINE>-Token beginnt eine neue, auch ein leerer. Ein Eintrag,
 -- dessen Zelle umbricht, belegt mehrere; sein Streifen soll ueber alle gehen,
 -- nicht ueber die erste allein.
-function TF.Panel.compose(traits, withTitle, width, profession)
+-- @param opts table|nil  an TF.Summary.build durchgereicht ({ living = true }
+--              im Charakterfenster, TF_CharWindow)
+function TF.Panel.compose(traits, withTitle, width, profession, opts)
     local pieces, kinds = {}, {}
     local function push(text, kind)
         pieces[#pieces + 1] = text
@@ -175,7 +177,7 @@ function TF.Panel.compose(traits, withTitle, width, profession)
         end
     end
 
-    local groups = TF.Summary.build(traits, width, profession)
+    local groups = TF.Summary.build(traits, width, profession, opts)
     if #groups == 0 then
         -- Zwei verschiedene Faelle, zwei verschiedene Saetze: noch nichts
         -- ausgewaehlt, oder ausgewaehlt und ohne Wirkung. Unfit und Out of
@@ -658,6 +660,9 @@ local function newSummaryPanel(parent)
     end
     return panel
 end
+-- Oeffentlich seit 0.14.6: der Reiter im Charakterfenster (TF_CharWindow)
+-- zeigt dieselbe Uebersicht mit Streifen, Kaestchen und Hover.
+TF.Panel.newSummaryPanel = newSummaryPanel
 
 local function ensurePanel(self)
     if self.tfSummary then return self.tfSummary end
@@ -885,6 +890,21 @@ end
 
 --- Setzt die Uebersicht des Bildschirms in `panel`, fuer dessen Breite.
 function TF.Panel.fill(self, panel)
+    -- Der Beruf rechnet mit (seit 0.12.0): seine Foraging-Werte, seine
+    -- Startstufen und damit die Stufen-Traits, die das Spiel selbst setzt.
+    local profession = self.profession
+    if not profession and self.getSelectedProf then
+        profession = TF.safe("summary:prof", self.getSelectedProf, self)
+    end
+    TF.Panel.fillWith(panel, chosenTraits(self), profession)
+end
+
+--- Setzt die Uebersicht fuer `traits` und `profession` in `panel`, fuer
+-- dessen Breite. Der Kern von TF.Panel.fill, seit 0.14.6 eigens, damit das
+-- Charakterfenster im Spiel (TF_CharWindow) dieselbe Uebersicht mit den
+-- Traits der lebenden Figur setzt.
+-- @param opts table|nil  an TF.Summary.build durchgereicht ({ living = true })
+function TF.Panel.fillWith(panel, traits, profession, opts)
     -- Das Farbschema aus den Mod-Optionen, bevor der Text entsteht.
     if TF.Options and TF.Options.sync then TF.safe("options:sync", TF.Options.sync) end
     -- Die nutzbare Breite ist die Panelbreite ohne die eigenen Raender.
@@ -900,13 +920,7 @@ function TF.Panel.fill(self, panel)
     -- Ohne Titelzeile: der Titel steht seit 0.5.0 in beiden Anordnungen in
     -- der Kopfzeile ueber dem Panel (placeHeader), mit ?, Zahnrad und
     -- Fehler melden. Im Text scrollte er mit.
-    -- Der Beruf rechnet mit (seit 0.12.0): seine Foraging-Werte, seine
-    -- Startstufen und damit die Stufen-Traits, die das Spiel selbst setzt.
-    local profession = self.profession
-    if not profession and self.getSelectedProf then
-        profession = TF.safe("summary:prof", self.getSelectedProf, self)
-    end
-    local made = TF.Panel.compose(chosenTraits(self), false, nutzbar, profession)
+    local made = TF.Panel.compose(traits, false, nutzbar, profession, opts)
     panel:setText(made.text)
     -- Streifen nur im Spaltensatz. Im durchlaufenden Satz bricht das Panel
     -- selbst um, die Zeilenzahl des Textes stimmt dann nicht, und
@@ -1160,6 +1174,7 @@ end
 -- laesst. Die Knoepfe sind Kinder des Bildschirms, nicht des Panels, damit
 -- sie nicht mitscrollen; placeHeader setzt sie je Bild.
 local ICON_GEAR = "media/ui/inventoryPanes/Button_Settings.png"
+TF.Panel.ICON_GEAR = ICON_GEAR
 local ICON_BUG = "media/ui/BugIcon.png"
 -- Eigene Symbole: das Spiel bringt keines fuer Kopieren oder Einfuegen mit.
 local ICON_COPY = "media/ui/TraitFacts/tf_copy.png"
@@ -1584,6 +1599,11 @@ local function toggleOptions(self)
     end
     popup:setVisible(show)
 end
+-- Oeffentlich seit 0.14.6: das Zahnrad im Charakterfenster (TF_CharWindow)
+-- oeffnet dasselbe Fenster. `self` braucht dafuer tfGearButton, addChild,
+-- getWidth und getHeight; das Fenster wird sein Kind.
+TF.Panel.toggleOptions = toggleOptions
+TF.Panel.closeOptions = closeOptions
 
 --- Nach einem Klick schweigt der Tooltip des Knopfs, bis die Maus ihn verlassen
 -- hat und wieder darauf zeigt (seit 0.13.8, Wunsch vom 21.09.2026: nach dem

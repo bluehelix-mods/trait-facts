@@ -682,14 +682,24 @@ function TF.Summary.levelTraits(traitDefs, profession)
     return result
 end
 
-function TF.Summary.gather(traitDefs, profession)
+--- @param opts table|nil  { living = true } fuer eine lebende Figur im Spiel
+--               (Charakterfenster, TF_CharWindow, seit 0.14.6): ihre Traits
+--               sind der Stand nach dem Start, das Spiel hat die Stufen-Traits
+--               also schon gesetzt oder abgeloest. Die Vorhersage aus den
+--               Startstufen (TF.Summary.levelTraits) entfaellt dann; sie
+--               nahm sonst einen Trait weg, den die Figur durch Training
+--               wirklich traegt, oder setzte einen dazu, den sie verloren hat.
+function TF.Summary.gather(traitDefs, profession, opts)
     local found = {}
     -- Arbeitsliste: die gewaehlten Traits, dazu die Stufen-Traits, die das
     -- Spiel selbst setzt. Ein abgeloester Stufen-Trait (Fit bei Fitness 10)
     -- behaelt seine Startstufen-Zeile, denn die Stufen zaehlen weiter, und
     -- verliert seine hinterlegten Wirkungen; ein gesetzter (Athletic) bringt
     -- nur die hinterlegten mit, seine +4 Stufen hat niemand gewaehlt.
-    local bands = TF.safe("summary:bands", TF.Summary.levelTraits, traitDefs, profession)
+    local bands = nil
+    if not (opts and opts.living) then
+        bands = TF.safe("summary:bands", TF.Summary.levelTraits, traitDefs, profession)
+    end
     local work = {}
     for _, traitDef in ipairs(traitDefs or {}) do
         local dropped = bands and TF.traitNamespace(traitDef) == "base"
@@ -1186,9 +1196,10 @@ end
 
 --- @param width number  nutzbare Breite des Panels; ab TF.Summary.MIN_COLUMN_WIDTH
 --                entsteht der Spaltensatz, darunter der durchlaufende Text
-function TF.Summary.build(traitDefs, width, profession)
+-- @param opts table|nil  an TF.Summary.gather durchgereicht ({ living = true })
+function TF.Summary.build(traitDefs, width, profession, opts)
     local spalten = TF.Summary.columnsFor(width)
-    local merged = TF.Summary.merge(TF.Summary.gather(traitDefs, profession))
+    local merged = TF.Summary.merge(TF.Summary.gather(traitDefs, profession, opts))
 
     -- Ueberschneidungen aufloesen: aus breit und eng werden zwei Faelle, und
     -- der enge Beitrag allein entfaellt. Benannter Fall zuerst, der Rest
