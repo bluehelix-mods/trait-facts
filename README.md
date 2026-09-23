@@ -27,14 +27,21 @@ If the game runs a different build than the stored values, the overview warns.
 A few stored values are also measured each time the game starts; if a measurement
 disagrees with the stored value, the measurement wins and the row is marked.
 
+The values are for single player. Some differ in multiplayer, also when
+hosting, for example Ax-pert's chopping, Handy's instant builds and the sleep
+traits. Vanilla values assume the default sandbox settings; the Rising preset
+turns off fractures, failed climbs and fence lunges, so those rows do not apply
+there.
+
 Along the way the measurements turned up behaviour the game does not describe,
 from traits that do nothing to values that apply twice. The wiki lists them.
 
 ## Translations
 
-English is the source. The other languages were translated with the help of AI
-and checked mechanically: every skill and trait name uses the exact word the game
-itself uses in that language. They have not been read by native speakers yet.
+English is the source and German is written by hand. The other ten languages
+were translated with AI help and checked mechanically: every skill and trait name
+uses the exact word the game itself uses in that language. No native speaker has
+read them yet.
 **Corrections are very welcome**: open an issue, or change
 `mod/42/media/lua/shared/Translate/<LANG>/UI.json` and send a pull request.
 `python tools/uebersetzung-pruefen.py <LANG>` checks a file before you send it.
