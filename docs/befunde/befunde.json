@@ -17,16 +17,17 @@
     {
       "id": "strong/knockback",
       "stand": "gemessen",
-      "code": "IsoGameCharacter.processHitDamage (Z. 5773-5777), nur Nahkampf",
+      "code": "IsoGameCharacter.processHitDamage (Z. 5773-5777), nur Nahkampf; gelesen im Einzelspiel nur als Schwelle 0.4 der Taumel-Animation (AnimSets/zombie/staggerback/defaultStaggerBack.xml gegen GeneralStagger.xml und smallFromFront.xml), und nur ohne ZombieHitReaction (CombatManager Z. 2410-2416), also bei Stößen",
       "berichte": [
         "docs/berichte/2026-09-08-extraktion.md",
         "docs/berichte/2026-09-13-engine-recherche.md",
-        "tools/measure-mod/README.md"
+        "tools/measure-mod/README.md",
+        "docs/berichte/2026-09-23-faktensweep-2.md"
       ],
       "messungen": [
         "messung-2026-09-13-werte.txt"
       ],
-      "notiz": "Gemessen am 13.09.2026 (Code-Werte): ohne 0.4000, mit 0.5600, Faktor 1.4000.",
+      "notiz": "Gemessen am 13.09.2026 (Code-Werte): ohne 0.4000, mit 0.5600, Faktor 1.4000. Gemessen ist der Getter getHitForce, nicht eine Schubstrecke. Verbraucht wird hitForce im Einzelspiel nur als Schwelle: über 0.4 spielt der Zombie den langen Stoß-Taumel (Zombie_ShoveStagger_2m), darunter den kurzen. Diesen Weg nimmt nur ein Treffer ohne ZombieHitReaction, und jede Nahkampf-Schwunganimation setzt eine; es bleiben die Stöße. Die zur Kraft proportionale Schubstrecke (calcHitDir, Z. 13628-13643) ruft nur HitReactionNetworkAI im Multiplayer. Darum heißt die Zeile seit dem Faktensweep 2 (23.09.2026) \"Schlagkraft\" statt \"Rückstoß\", die Schwelle steht in der Fußnote; \"gemessen\" gilt für den Faktor der Schlagkraft, wie oft ein Stoß mit Strong die Schwelle kreuzt, ist nicht gemessen.",
       "methode": "Code-Werte, Mess-Mod 6.22.0: IsoGameCharacter.processHitDamage mit einem erzeugten Baseballschläger ausgelöst, die Figur trifft sich selbst, danach getHitForce gelesen; ohne und mit Strong, Faktor mit/ohne, Toleranz 0,006."
     },
     {
@@ -82,16 +83,17 @@
     {
       "id": "weak/knockback",
       "stand": "gemessen",
-      "code": "IsoGameCharacter.processHitDamage (Z. 5773-5777), nur Nahkampf",
+      "code": "IsoGameCharacter.processHitDamage (Z. 5773-5777), nur Nahkampf; gelesen im Einzelspiel nur als Schwelle 0.4 der Taumel-Animation (AnimSets/zombie/staggerback/defaultStaggerBack.xml gegen GeneralStagger.xml und smallFromFront.xml), und nur ohne ZombieHitReaction (CombatManager Z. 2410-2416), also bei Stößen",
       "berichte": [
         "docs/berichte/2026-09-08-extraktion.md",
         "docs/berichte/2026-09-13-engine-recherche.md",
-        "tools/measure-mod/README.md"
+        "tools/measure-mod/README.md",
+        "docs/berichte/2026-09-23-faktensweep-2.md"
       ],
       "messungen": [
         "messung-2026-09-13-werte.txt"
       ],
-      "notiz": "Gemessen am 13.09.2026 (Code-Werte): ohne 0.4000, mit 0.2400, Faktor 0.6000.",
+      "notiz": "Gemessen am 13.09.2026 (Code-Werte): ohne 0.4000, mit 0.2400, Faktor 0.6000. Gemessen ist der Getter getHitForce, nicht eine Schubstrecke. Verbraucht wird hitForce im Einzelspiel nur als Schwelle: über 0.4 spielt der Zombie den langen Stoß-Taumel (Zombie_ShoveStagger_2m), darunter den kurzen. Diesen Weg nimmt nur ein Treffer ohne ZombieHitReaction, und jede Nahkampf-Schwunganimation setzt eine; es bleiben die Stöße. Die zur Kraft proportionale Schubstrecke (calcHitDir, Z. 13628-13643) ruft nur HitReactionNetworkAI im Multiplayer. Darum heißt die Zeile seit dem Faktensweep 2 (23.09.2026) \"Schlagkraft\" statt \"Rückstoß\", die Schwelle steht in der Fußnote; \"gemessen\" gilt für den Faktor der Schlagkraft, wie oft ein Stoß mit Puny die Schwelle kreuzt, ist nicht gemessen.",
       "methode": "Code-Werte, Mess-Mod 6.22.0: IsoGameCharacter.processHitDamage mit einem erzeugten Baseballschläger ausgelöst, die Figur trifft sich selbst, danach getHitForce gelesen; ohne und mit Puny, Faktor mit/ohne, Toleranz 0,006."
     },
     {
@@ -133,7 +135,8 @@
       "berichte": [
         "docs/berichte/2026-09-08-extraktion.md",
         "tools/measure-mod/README.md",
-        "docs/berichte/2026-09-23-faktensweep.md"
+        "docs/berichte/2026-09-23-faktensweep.md",
+        "docs/berichte/2026-09-23-faktensweep-2.md"
       ],
       "messungen": [
         "messung-2026-09-10.txt",
@@ -144,7 +147,7 @@
         "messung-2026-09-13b-axt.txt",
         "messung-2026-09-13c-axt.txt"
       ],
-      "notiz": "Laut Code +25 %: getChopTreeSpeed liefert mit Ax-pert 1.0 statt 0.8 (gemessen am 10.09.2026 und 13.09.2026), und die Fäll-Animation läuft mit diesem Wert; der Clip dauert 1.0 s, also ein Hieb alle 1.0 s statt alle 1.25 s. Die Messung vom 13.09.2026 kann das nicht entscheiden: in allen drei Läufen lag der Abstand mit und ohne Ax-pert bei rund 1250 ms, also beim Tempo ohne Ax-pert. Das Spiel liest die Geschwindigkeit nur, wenn der Animationsknoten startet, und der Test hat den Trait umgeschaltet, während der Knoten weiterlief (Warteschlange leeren und neu fällen im selben Tick); jede Phase lief so mit dem Tempo der ersten, und die war immer ohne Ax-pert. Eine Figur, die Ax-pert schon beim Start des Fällens hat, ist nie gemessen worden. Die Nachmessung ist geplant (Mess-Mod 6.43.0: Ax-pert vor dem Start gesetzt, zwischen den Phasen eine Pause, bis die Fäll-Animation aus ist). Bis 23.09.2026 stand der Wert als wirkungslos; das war ein Fehlschluss aus dieser Messung.",
+      "notiz": "Laut Code +25 %: getChopTreeSpeed liefert mit Ax-pert 1.0 statt 0.8 (gemessen am 10.09.2026 und 13.09.2026), und die Fäll-Animation läuft mit diesem Wert; der Clip dauert 1.0 s, also ein Hieb alle 1.0 s statt alle 1.25 s. Die Messung vom 13.09.2026 kann das nicht entscheiden: in allen drei Läufen lag der Abstand mit und ohne Ax-pert bei rund 1250 ms, also beim Tempo ohne Ax-pert. Das Spiel liest die Geschwindigkeit nur, wenn der Animationsknoten startet, und der Test hat den Trait umgeschaltet, während der Knoten weiterlief (Warteschlange leeren und neu fällen im selben Tick); jede Phase lief so mit dem Tempo der ersten, und die war immer ohne Ax-pert. Eine Figur, die Ax-pert schon beim Start des Fällens hat, ist nie gemessen worden. Die Nachmessung ist geplant (Mess-Mod 6.43.0: Ax-pert vor dem Start gesetzt, zwischen den Phasen eine Pause, bis die Fäll-Animation aus ist). Bis 23.09.2026 stand der Wert als wirkungslos; das war ein Fehlschluss aus dieser Messung. Das gilt nur im Einzelspiel (Faktensweep 2, 23.09.2026): im Multiplayer, auch beim Hosten, landet der Server die Hiebe selbst (ISChopTreeAction.lua Z. 64-68 nur ohne isClient, serverStart Z. 108-111 emulateAnimEvent mit 1500 ms, LuaManager Z. 9585-9589, AnimEventEmulator.update wiederholt alle 1500 ms): ein Hieb alle 1,5 s, mit und ohne Ax-pert. Der Baumschaden x1.5 läuft auch dort. Nicht auf einem Server geprüft.",
       "methode": "Axt: Ax-pert, Mess-Mod 6.18.0 bis 6.21.0 (drei Läufe): Abstand zweier Hiebe in Millisekunden mit und ohne Ax-pert verglichen; im ersten Lauf wechselte der Trait mitten in der Aktion, danach 8 Phasen mit je neuer Aktion, deren erster Hieb als Anlauf nicht zählt."
     },
     {
@@ -154,14 +157,15 @@
       "berichte": [
         "docs/berichte/2026-09-08-extraktion.md",
         "tools/measure-mod/README.md",
-        "docs/berichte/2026-09-23-faktensweep.md"
+        "docs/berichte/2026-09-23-faktensweep.md",
+        "docs/berichte/2026-09-23-faktensweep-2.md"
       ],
       "messungen": [
         "messung-2026-09-13-axt.txt",
         "messung-2026-09-13b-axt.txt",
         "messung-2026-09-13c-axt.txt"
       ],
-      "notiz": "Schlagdauer mit/ohne 0.79, 0.80, 0.79 in drei Läufen, bei Axt-Skill 3. Kein fester Faktor: in calculateCombatSpeed trifft die 0.8 ohne Ax-pert nur den Grundterm (0.8 x BaseSpeed der Waffe); danach kommen ohne Trait-Bezug +0.03 je Waffenstufe, +0.02 je Fitness-Stufe und -0.07 je Stufe Erschöpfung und Überladung dazu, dann ein Zufall von 1.1 bis 1.2 und die Klemme 0.8 bis 1.6. Laut Code für die Axt (BaseSpeed 1.0) rund -18 % bei einer neuen Figur (Axt 0, Fitness 5), -16 % bei Axt 3 und -12 % bei Axt 10 und Fitness 10. Gemessen sind bei Axt 3 aber -20 bis -21 %; die Schlagdauer folgt 1/CombatSpeed also nicht genau, und die Fitness der Testfigur steht nicht im Log. Trait Facts zeigt die gemessenen -20 % für eine neue Figur und nennt in der Fußnote, dass es mit Axt und Fitness weniger wird. Eine Messung bei Axt 10 und Fitness 10 steht aus (nachgeprüft am 23.09.2026).",
+      "notiz": "Schlagdauer mit/ohne 0.79, 0.80, 0.79 in drei Läufen, bei Axt-Skill 3. Kein fester Faktor: in calculateCombatSpeed trifft die 0.8 ohne Ax-pert nur den Grundterm (0.8 x BaseSpeed der Waffe); danach kommen ohne Trait-Bezug +0.03 je Waffenstufe, +0.02 je Fitness-Stufe und -0.07 je Stufe Erschöpfung und Überladung dazu, dann ein Zufall von 1.1 bis 1.2 und die Klemme 0.8 bis 1.6. Laut Code für die Axt (BaseSpeed 1.0) rund -17 % für einen neuen Holzfäller (Axt 2, Fitness 5; Ax-pert gibt es nur über den Beruf Lumberjack), -16 % bei Axt 3 und -12 % bei Axt 10 und Fitness 10. Langsame Waffen der Kategorie Axt liegen ohne Trait an oder nahe der Untergrenze 0.8, dort bringt der Trait laut Modell weniger: die Spitzhacke (BaseSpeed 0.8) rund -13 % bei Axt 2, -6 % bei Axt 0. Gemessen sind bei Axt 3 aber -20 bis -21 %; die Schlagdauer folgt 1/CombatSpeed also nicht genau, und die Fitness der Testfigur steht nicht im Log. Trait Facts zeigt die gemessenen -20 % und nennt in der Fußnote die Bedingung der Messung (Feuerwehraxt, Axt 3) und dass es laut Code mit der Spitzhacke und mit hoher Axt und Fitness weniger wird; bis zum Faktensweep 2 (23.09.2026) hieß es dort \"für eine neue Figur\", gemessen war aber nur Axt 3, und die -12 % bei Axt 10 standen als Tatsache da. Messungen bei Axt 2 und bei Axt 10 mit Fitness 10 und mit der Spitzhacke stehen aus.",
       "methode": "Axt: Ax-pert, Mess-Mod 6.18.0 bis 6.21.0 (drei Läufe): 20 Schläge in die Luft, Ax-pert alle zwei Schläge im Wechsel, Schwungtakt und -dauer aus OnWeaponSwing und OnPlayerAttackFinished gegen die Werte ohne Trait verglichen; Axt-Skill fest auf 3, Fitness nicht mitgeschrieben."
     },
     {
@@ -183,10 +187,11 @@
     {
       "id": "underweight/meleedamage",
       "stand": "gemessen",
-      "code": "CharacterTraits.getTraitDamageDealtReductionModifier (Z. 132)",
+      "code": "CharacterTraits.getTraitDamageDealtReductionModifier (Z. 132); verbraucht in CombatManager (Z. 819-821), nur Nahkampf, nicht beim Treten auf Liegende (Z. 846-850)",
       "berichte": [
         "docs/berichte/2026-09-08-extraktion.md",
-        "tools/measure-mod/README.md"
+        "tools/measure-mod/README.md",
+        "docs/berichte/2026-09-23-faktensweep-2.md"
       ],
       "messungen": [
         "messung-2026-09-10.txt",
@@ -194,16 +199,17 @@
         "messung-2026-09-10c.txt",
         "messung-2026-09-13-sprint.txt"
       ],
-      "notiz": "Getter mit Trait an und aus, auf die Nachkommastelle wie im Code.",
+      "notiz": "Getter mit Trait an und aus, auf die Nachkommastelle wie im Code. Ein Tritt auf einen liegenden Zombie überschreibt den Schaden danach mit eigener Formel (Z. 846-850), der Trait fällt dort weg; ein Stoß im Stehen macht ohnehin keinen Schaden (Z. 593-595). Panik und Stress ziehen nach dem Faktor je Stufe 0,1 ab. Die Fußnote sagt es seit dem Faktensweep 2 (23.09.2026).",
       "methode": "Weltbetreten: getTraitDamageDealtReductionModifier() ohne und mit Low Weight ausgelesen, Wert auf die Nachkommastelle wie im Code verglichen; frühe Mess-Mod-Läufe vor der Versionszählung (10, 10b, 10c) und ein späterer Weltbetreten-Lauf mit 6.21.0 (13-sprint), Traits vorher gesichert und danach zurückgesetzt."
     },
     {
       "id": "veryunderweight/meleedamage",
       "stand": "gemessen",
-      "code": "CharacterTraits.getTraitDamageDealtReductionModifier (Z. 132)",
+      "code": "CharacterTraits.getTraitDamageDealtReductionModifier (Z. 132); verbraucht in CombatManager (Z. 819-821), nur Nahkampf, nicht beim Treten auf Liegende (Z. 846-850)",
       "berichte": [
         "docs/berichte/2026-09-08-extraktion.md",
-        "tools/measure-mod/README.md"
+        "tools/measure-mod/README.md",
+        "docs/berichte/2026-09-23-faktensweep-2.md"
       ],
       "messungen": [
         "messung-2026-09-10.txt",
@@ -211,7 +217,7 @@
         "messung-2026-09-10c.txt",
         "messung-2026-09-13-sprint.txt"
       ],
-      "notiz": "Getter mit Trait an und aus, auf die Nachkommastelle wie im Code.",
+      "notiz": "Getter mit Trait an und aus, auf die Nachkommastelle wie im Code. Ein Tritt auf einen liegenden Zombie überschreibt den Schaden danach mit eigener Formel (Z. 846-850), der Trait fällt dort weg; ein Stoß im Stehen macht ohnehin keinen Schaden (Z. 593-595). Panik und Stress ziehen nach dem Faktor je Stufe 0,1 ab. Die Fußnote sagt es seit dem Faktensweep 2 (23.09.2026).",
       "methode": "Weltbetreten: getTraitDamageDealtReductionModifier() ohne und mit Very Low Weight ausgelesen, Wert auf die Nachkommastelle wie im Code verglichen; frühe Mess-Mod-Läufe vor der Versionszählung (10, 10b, 10c) und ein späterer Weltbetreten-Lauf mit 6.21.0 (13-sprint), Traits vorher gesichert und danach zurückgesetzt."
     },
     {
@@ -235,16 +241,17 @@
     {
       "id": "veryunderweight/trip",
       "stand": "gemessen",
-      "code": "ClimbOverFenceState.shouldFallAfterVaultOver (Z. 493; Traits Z. 511-526)",
+      "code": "ClimbOverFenceState.shouldFallAfterVaultOver (Z. 493; Traits Z. 511-528; Wurf gegen Zähler minus Fitness Z. 529)",
       "berichte": [
         "docs/berichte/2026-09-08-extraktion.md",
         "tools/measure-mod/README.md",
-        "docs/berichte/2026-09-13-messbarkeit.md"
+        "docs/berichte/2026-09-13-messbarkeit.md",
+        "docs/berichte/2026-09-23-faktensweep-2.md"
       ],
       "messungen": [
         "messung-2026-09-14-werte.txt"
       ],
-      "notiz": "Gemessen am 14.09.2026 (Code-Werte, Mess-Mod 6.26.2): gestolpert ohne 9.9333 %, mit 39.6333 %, Differenz 29.7000 Punkte, je Fall 3000 Proben über 70 Ticks. Laut Code +30, weil Very Low Weight (VERY_UNDERWEIGHT im Spielcode) zweimal abgefragt wird (+20 und +10, Spielfehler zaun-veryunderweight).",
+      "notiz": "Gemessen am 14.09.2026 (Code-Werte, Mess-Mod 6.26.2): gestolpert ohne 9.9333 %, mit 39.6333 %, Differenz 29.7000 Punkte, je Fall 3000 Proben über 70 Ticks. Laut Code +30, weil Very Low Weight (VERY_UNDERWEIGHT im Spielcode) zweimal abgefragt wird (+20 und +10, Spielfehler zaun-veryunderweight). Der Wurf ist Rand.Next(100) < Zähler - Fitness (Z. 529): ein negativer Zähler wirkt wie 0. Gemessen wurde beim Sprinten mit Fitness 0, wo der volle Wert gilt; im Laufen liegt die Basis ab Fitness 1 unter 0 und schluckt einen Teil der Punkte. Die Gewichts-Traits senken dazu die Start-Fitness. Laut Code neue Figur mit Very Low Weight (Fitness 3): im Laufen 27 %, beim Sprinten 37 %, statt 0 % und 5 %; die Fußnote nennt es seit dem Faktensweep 2 (23.09.2026).",
       "methode": "Code-Werte, Mess-Mod 6.26.2: ClimbOverFenceState.enter mit VaultOverSprint an der stehenden Figur ausgelöst, Fitness 0; Ausgang \"fall\" gezählt, ohne und mit Very Low Weight je 3000 Proben über mehrere Ticks im Wechsel, Differenz der Anteile mit - ohne, Toleranz 4 Punkte."
     },
     {
@@ -265,12 +272,13 @@
       "berichte": [
         "docs/berichte/2026-09-08-extraktion.md",
         "tools/measure-mod/README.md",
-        "docs/berichte/2026-09-13-messbarkeit.md"
+        "docs/berichte/2026-09-13-messbarkeit.md",
+        "docs/berichte/2026-09-23-faktensweep-2.md"
       ],
       "messungen": [
         "messung-2026-09-14-werte.txt"
       ],
-      "notiz": "Gemessen am 14.09.2026 (Code-Werte, Mess-Mod 6.26.2): Anteil Brüche unter den verletzten Proben ohne 31.7273 %, mit 42.7469 %, Differenz 11.0196 Punkte (laut Code +10; ohne Trait laut Code 32 %, mit 42 %: PZMath.lerpFunc_EaseOutQuad rechnet x², die Namen sind im Spiel vertauscht, also rand = (int)(0.6 x 55) = 32; der Messplan hatte 52 % erwartet), je Fall 4000 Proben über 163 Ticks.",
+      "notiz": "Gemessen am 14.09.2026 (Code-Werte, Mess-Mod 6.26.2): Anteil Brüche unter den verletzten Proben ohne 31.7273 %, mit 42.7469 %, Differenz 11.0196 Punkte (laut Code +10; ohne Trait laut Code 32 %, mit 42 %: PZMath.lerpFunc_EaseOutQuad rechnet x², die Namen sind im Spiel vertauscht, also rand = (int)(0.6 x 55) = 32; der Messplan hatte 52 % erwartet), je Fall 4000 Proben über 163 Ticks. Die Messung zählt Brüche unter den verletzten Proben, das ist genau der Wert der Zeile. Ob ein Sturz überhaupt verletzt, entscheidet vorher Rand.Next(100) < Schaden (Z. 2119); der Schaden hängt an Fallhöhe und Inventarlast (leeres Inventar: kein Schaden) und steigt mit demselben Trait (Zeile falldamage). Geht der Bruchwurf daneben, würfelt das Spiel eine tiefe Wunde mit Schwelle + 10, auch die wird wahrscheinlicher. Seit dem Faktensweep 2 (23.09.2026) heißt die Zeile \"Chance, sich bei einem verletzenden Sturz etwas zu brechen\" statt \"Knochenbruch oder tiefe Wunde nach Sturz\".",
       "methode": "Code-Werte, Mess-Mod 6.26.2: IsoGameCharacter.DoLand(3.0) wie beim Sturzschaden (God Mode an, unsichtbar aus, Fitness und Nimble 0), ohne und mit Very Low Weight dieselben 4000 Proben je Fall; Anteil Brüche unter den Verletzungen, Differenz mit - ohne, Toleranz 6 Punkte."
     },
     {
@@ -306,10 +314,11 @@
     {
       "id": "emaciated/meleedamage",
       "stand": "gemessen",
-      "code": "CharacterTraits.getTraitDamageDealtReductionModifier (Z. 132)",
+      "code": "CharacterTraits.getTraitDamageDealtReductionModifier (Z. 132); verbraucht in CombatManager (Z. 819-821), nur Nahkampf, nicht beim Treten auf Liegende (Z. 846-850)",
       "berichte": [
         "docs/berichte/2026-09-08-extraktion.md",
-        "tools/measure-mod/README.md"
+        "tools/measure-mod/README.md",
+        "docs/berichte/2026-09-23-faktensweep-2.md"
       ],
       "messungen": [
         "messung-2026-09-10.txt",
@@ -317,7 +326,7 @@
         "messung-2026-09-10c.txt",
         "messung-2026-09-13-sprint.txt"
       ],
-      "notiz": "Getter mit Trait an und aus, auf die Nachkommastelle wie im Code.",
+      "notiz": "Getter mit Trait an und aus, auf die Nachkommastelle wie im Code. Ein Tritt auf einen liegenden Zombie überschreibt den Schaden danach mit eigener Formel (Z. 846-850), der Trait fällt dort weg; ein Stoß im Stehen macht ohnehin keinen Schaden (Z. 593-595). Panik und Stress ziehen nach dem Faktor je Stufe 0,1 ab. Die Fußnote sagt es seit dem Faktensweep 2 (23.09.2026).",
       "methode": "Weltbetreten: getTraitDamageDealtReductionModifier() ohne und mit Emaciated ausgelesen, Wert auf die Nachkommastelle wie im Code verglichen; frühe Mess-Mod-Läufe vor der Versionszählung (10, 10b, 10c) und ein späterer Weltbetreten-Lauf mit 6.21.0 (13-sprint), Traits vorher gesichert und danach zurückgesetzt."
     },
     {
@@ -360,12 +369,13 @@
       "berichte": [
         "docs/berichte/2026-09-08-extraktion.md",
         "tools/measure-mod/README.md",
-        "docs/berichte/2026-09-13-messbarkeit.md"
+        "docs/berichte/2026-09-13-messbarkeit.md",
+        "docs/berichte/2026-09-23-faktensweep-2.md"
       ],
       "messungen": [
         "messung-2026-09-14-werte.txt"
       ],
-      "notiz": "Gemessen am 14.09.2026 (Code-Werte, Mess-Mod 6.26.2): Anteil Brüche unter den verletzten Proben ohne 31.7273 %, mit 52.6826 %, Differenz 20.9553 Punkte (laut Code +20; ohne Trait laut Code 32 %, mit 52 %: PZMath.lerpFunc_EaseOutQuad rechnet x², die Namen sind im Spiel vertauscht, also rand = (int)(0.6 x 55) = 32; der Messplan hatte 52 % erwartet), je Fall 4000 Proben über 163 Ticks.",
+      "notiz": "Gemessen am 14.09.2026 (Code-Werte, Mess-Mod 6.26.2): Anteil Brüche unter den verletzten Proben ohne 31.7273 %, mit 52.6826 %, Differenz 20.9553 Punkte (laut Code +20; ohne Trait laut Code 32 %, mit 52 %: PZMath.lerpFunc_EaseOutQuad rechnet x², die Namen sind im Spiel vertauscht, also rand = (int)(0.6 x 55) = 32; der Messplan hatte 52 % erwartet), je Fall 4000 Proben über 163 Ticks. Die Messung zählt Brüche unter den verletzten Proben, das ist genau der Wert der Zeile. Ob ein Sturz überhaupt verletzt, entscheidet vorher Rand.Next(100) < Schaden (Z. 2119); der Schaden hängt an Fallhöhe und Inventarlast (leeres Inventar: kein Schaden) und steigt mit demselben Trait (Zeile falldamage). Geht der Bruchwurf daneben, würfelt das Spiel eine tiefe Wunde mit Schwelle + 10, auch die wird wahrscheinlicher. Seit dem Faktensweep 2 (23.09.2026) heißt die Zeile \"Chance, sich bei einem verletzenden Sturz etwas zu brechen\" statt \"Knochenbruch oder tiefe Wunde nach Sturz\".",
       "methode": "Code-Werte, Mess-Mod 6.26.2: IsoGameCharacter.DoLand(3.0) wie beim Sturzschaden (God Mode an, unsichtbar aus, Fitness und Nimble 0), ohne und mit Emaciated dieselben 4000 Proben je Fall; Anteil Brüche unter den Verletzungen, Differenz mit - ohne, Toleranz 6 Punkte."
     },
     {
@@ -416,15 +426,16 @@
     {
       "id": "overweight/climb",
       "stand": "gemessen",
-      "code": "IsoGameCharacter.getClimbingFailChanceFloat (Z. 14718; Traits Z. 14727-14748); verbraucht in ClimbSheetRopeState (Z. 263, Wurf Z. 84)",
+      "code": "IsoGameCharacter.getClimbingFailChanceFloat (Z. 14718; Traits Z. 14727-14748); verbraucht vor allem an hohen Zäunen in ClimbOverWallState (Z. 296-311), außerdem in ClimbSheetRopeState (Z. 263, Wurf Z. 84) und ClimbDownSheetRopeState (Z. 130)",
       "berichte": [
         "docs/berichte/2026-09-08-extraktion.md",
-        "tools/measure-mod/README.md"
+        "tools/measure-mod/README.md",
+        "docs/berichte/2026-09-23-faktensweep-2.md"
       ],
       "messungen": [
         "messung-2026-09-13-klettern.txt"
       ],
-      "notiz": "651 Punkte über 21 Fälle, keiner weicht von der Formel ab.",
+      "notiz": "651 Punkte über 21 Fälle, keiner weicht von der Formel ab. An hohen Zäunen scheitert die Figur mit 1 zu Wurzel des Werts (ClimbOverWallState Z. 296-311). Eine neue Figur mit High Weight hat Fitness 4 (XPBoosts Fitness=-1), also 8 + 10 - 15 = 3, Wurzel 1: Rand.NextBool(1) ist immer wahr, sie scheitert jedes Mal, statt 25 % ohne Trait (Spielfehler kletterwert-eins); die Wegfindung führt trotzdem über hohe Zäune (PathFindRequest Z. 77, Wert ab 1). Wer erst im Spiel High Weight bekommt und Fitness 5 behält, landet bei 5, Wurzel 2, 50 %. Am Bettlaken-Seil öffnet der Sturzwurf erst nach (Wurzel + 1) x 100 x Seiltempo Stockwerken am Stück (ClimbSheetRopeState Z. 76, 83, 261-266; runter x300, ClimbDownSheetRopeState Z. 128-134), bei einer neuen Figur 40 Stockwerke; bei doppelter Spielgeschwindigkeit und mehr teilt der ganzzahlige Multiplikator die Schwelle. Die Zeile nennt seit dem Faktensweep 2 (23.09.2026) nur noch die hohen Zäune.",
       "methode": "Klettern, Mess-Mod 6.19.0: getClimbingFailChanceFloat in 21 Trait-Fällen gelesen, darunter High Weight; je Fall Fitness, Strength und Nimble einzeln von 0 bis 10, die anderen auf 0. Der Test vermerkt Abweichungen gegen den Fall ohne Trait, die Formel wurde danach geprüft."
     },
     {
@@ -433,27 +444,29 @@
       "code": "IsoGameCharacter.getClimbRopeSpeed (Z. 14799; Traits Z. 14803-14817); gelesen in ClimbSheetRopeState (Z. 71, 116)",
       "berichte": [
         "docs/berichte/2026-09-08-extraktion.md",
-        "tools/measure-mod/README.md"
+        "tools/measure-mod/README.md",
+        "docs/berichte/2026-09-23-faktensweep-2.md"
       ],
       "messungen": [
         "messung-2026-09-13-klettern.txt"
       ],
-      "notiz": "Seiltempo je Stufe wie im Code.",
+      "notiz": "Seiltempo je Stufe wie im Code. Die Stufen 4 und 5 haben dasselbe Seiltempo (0.08; kein case 4/5, IsoGameCharacter Z. 14827-14865). Eine neue Figur mit High Weight hat max(Strength 5, Fitness 4) = 5, mit -1 also 4: kein Unterschied; mit normalen Handschuhen (Stufe 6 -> 5) -11 %.",
       "methode": "Klettern, Mess-Mod 6.19.0: getClimbRopeSpeed hoch und runter in 21 Trait-Fällen gelesen, darunter High Weight; je Fall Fitness, Strength und Nimble einzeln von 0 bis 10, die anderen auf 0. Abweichungen gegen den Fall ohne Trait, danach je Stufe mit dem Code abgeglichen."
     },
     {
       "id": "overweight/trip",
       "stand": "gemessen",
-      "code": "ClimbOverFenceState.shouldFallAfterVaultOver (Z. 493; Traits Z. 511-526)",
+      "code": "ClimbOverFenceState.shouldFallAfterVaultOver (Z. 493; Traits Z. 511-528; Wurf gegen Zähler minus Fitness Z. 529)",
       "berichte": [
         "docs/berichte/2026-09-08-extraktion.md",
         "tools/measure-mod/README.md",
-        "docs/berichte/2026-09-13-messbarkeit.md"
+        "docs/berichte/2026-09-13-messbarkeit.md",
+        "docs/berichte/2026-09-23-faktensweep-2.md"
       ],
       "messungen": [
         "messung-2026-09-14-werte.txt"
       ],
-      "notiz": "Gemessen am 14.09.2026 (Code-Werte, Mess-Mod 6.26.2): gestolpert ohne 9.9333 %, mit 18.6667 %, Differenz 8.7333 Punkte (laut Code +10), je Fall 3000 Proben über 50 Ticks.",
+      "notiz": "Gemessen am 14.09.2026 (Code-Werte, Mess-Mod 6.26.2): gestolpert ohne 9.9333 %, mit 18.6667 %, Differenz 8.7333 Punkte (laut Code +10), je Fall 3000 Proben über 50 Ticks. Der Wurf ist Rand.Next(100) < Zähler - Fitness (Z. 529): ein negativer Zähler wirkt wie 0. Gemessen wurde beim Sprinten mit Fitness 0, wo der volle Wert gilt; im Laufen liegt die Basis ab Fitness 1 unter 0 und schluckt einen Teil der Punkte. Die Gewichts-Traits senken dazu die Start-Fitness. Laut Code neue Figur mit High Weight (Fitness 4): im Laufen 6 %, beim Sprinten 16 %, statt 0 % und 5 %; die Fußnote nennt es seit dem Faktensweep 2 (23.09.2026).",
       "methode": "Code-Werte, Mess-Mod 6.26.2: ClimbOverFenceState.enter mit VaultOverSprint an der stehenden Figur ausgelöst, Fitness 0; Ausgang \"fall\" gezählt, ohne und mit High Weight je 3000 Proben über mehrere Ticks im Wechsel, Differenz der Anteile mit - ohne, Toleranz 4 Punkte."
     },
     {
@@ -489,12 +502,13 @@
       "berichte": [
         "docs/berichte/2026-09-08-extraktion.md",
         "tools/measure-mod/README.md",
-        "docs/berichte/2026-09-13-messbarkeit.md"
+        "docs/berichte/2026-09-13-messbarkeit.md",
+        "docs/berichte/2026-09-23-faktensweep-2.md"
       ],
       "messungen": [
         "messung-2026-09-14-werte.txt"
       ],
-      "notiz": "Gemessen am 14.09.2026 (Code-Werte, Mess-Mod 6.26.2): Anteil Brüche unter den verletzten Proben ohne 31.7273 %, mit 42.3871 %, Differenz 10.6599 Punkte (laut Code +10; ohne Trait laut Code 32 %, mit 42 %: PZMath.lerpFunc_EaseOutQuad rechnet x², die Namen sind im Spiel vertauscht, also rand = (int)(0.6 x 55) = 32; der Messplan hatte 52 % erwartet), je Fall 4000 Proben über 163 Ticks.",
+      "notiz": "Gemessen am 14.09.2026 (Code-Werte, Mess-Mod 6.26.2): Anteil Brüche unter den verletzten Proben ohne 31.7273 %, mit 42.3871 %, Differenz 10.6599 Punkte (laut Code +10; ohne Trait laut Code 32 %, mit 42 %: PZMath.lerpFunc_EaseOutQuad rechnet x², die Namen sind im Spiel vertauscht, also rand = (int)(0.6 x 55) = 32; der Messplan hatte 52 % erwartet), je Fall 4000 Proben über 163 Ticks. Die Messung zählt Brüche unter den verletzten Proben, das ist genau der Wert der Zeile. Ob ein Sturz überhaupt verletzt, entscheidet vorher Rand.Next(100) < Schaden (Z. 2119); der Schaden hängt an Fallhöhe und Inventarlast (leeres Inventar: kein Schaden) und steigt mit demselben Trait (Zeile falldamage). Geht der Bruchwurf daneben, würfelt das Spiel eine tiefe Wunde mit Schwelle + 10, auch die wird wahrscheinlicher. Seit dem Faktensweep 2 (23.09.2026) heißt die Zeile \"Chance, sich bei einem verletzenden Sturz etwas zu brechen\" statt \"Knochenbruch oder tiefe Wunde nach Sturz\".",
       "methode": "Code-Werte, Mess-Mod 6.26.2: IsoGameCharacter.DoLand(3.0) wie beim Sturzschaden (God Mode an, unsichtbar aus, Fitness und Nimble 0), ohne und mit High Weight dieselben 4000 Proben je Fall; Anteil Brüche unter den Verletzungen, Differenz mit - ohne, Toleranz 6 Punkte."
     },
     {
@@ -561,15 +575,16 @@
     {
       "id": "obese/climb",
       "stand": "gemessen",
-      "code": "IsoGameCharacter.getClimbingFailChanceFloat (Z. 14718; Traits Z. 14727-14748); verbraucht in ClimbSheetRopeState (Z. 263, Wurf Z. 84)",
+      "code": "IsoGameCharacter.getClimbingFailChanceFloat (Z. 14718; Traits Z. 14727-14748); verbraucht vor allem an hohen Zäunen in ClimbOverWallState (Z. 296-311), außerdem in ClimbSheetRopeState (Z. 263, Wurf Z. 84) und ClimbDownSheetRopeState (Z. 130)",
       "berichte": [
         "docs/berichte/2026-09-08-extraktion.md",
-        "tools/measure-mod/README.md"
+        "tools/measure-mod/README.md",
+        "docs/berichte/2026-09-23-faktensweep-2.md"
       ],
       "messungen": [
         "messung-2026-09-13-klettern.txt"
       ],
-      "notiz": "651 Punkte über 21 Fälle, keiner weicht von der Formel ab.",
+      "notiz": "651 Punkte über 21 Fälle, keiner weicht von der Formel ab. An hohen Zäunen scheitert die Figur mit 1 zu Wurzel des Werts (ClimbOverWallState Z. 296-311). Eine neue Figur mit Very High Weight hat Fitness 3 (XPBoosts Fitness=-2), also 6 + 10 - 25, auf 0 gekappt: bei Wurzel 0 gelingt es nur mit Rand.Next(100) <= Strength, bei Strength 5 in 6 %, mit Schwerer Last nie, und die Wegfindung führt nicht mehr über hohe Zäune (PathFindRequest Z. 77). Am Bettlaken-Seil öffnet der Sturzwurf erst nach (Wurzel + 1) x 100 x Seiltempo Stockwerken am Stück (ClimbSheetRopeState Z. 76, 83, 261-266; runter x300, ClimbDownSheetRopeState Z. 128-134), bei einer neuen Figur 40 Stockwerke, mit Very High Weight (Wurzel 0, Seilstufe 3) 3,5; bei doppelter Spielgeschwindigkeit und mehr teilt der ganzzahlige Multiplikator die Schwelle. Die Zeile nennt seit dem Faktensweep 2 (23.09.2026) nur noch die hohen Zäune.",
       "methode": "Klettern, Mess-Mod 6.19.0: getClimbingFailChanceFloat in 21 Trait-Fällen gelesen, darunter Very High Weight; je Fall Fitness, Strength und Nimble einzeln von 0 bis 10, die anderen auf 0. Der Test vermerkt Abweichungen gegen den Fall ohne Trait, die Formel wurde danach geprüft."
     },
     {
@@ -578,27 +593,29 @@
       "code": "IsoGameCharacter.getClimbRopeSpeed (Z. 14799; Traits Z. 14803-14817); gelesen in ClimbSheetRopeState (Z. 71, 116)",
       "berichte": [
         "docs/berichte/2026-09-08-extraktion.md",
-        "tools/measure-mod/README.md"
+        "tools/measure-mod/README.md",
+        "docs/berichte/2026-09-23-faktensweep-2.md"
       ],
       "messungen": [
         "messung-2026-09-13-klettern.txt"
       ],
-      "notiz": "Seiltempo je Stufe wie im Code.",
+      "notiz": "Seiltempo je Stufe wie im Code. Eine neue Figur mit Very High Weight hat max(Strength 5, Fitness 3) = 5, mit -2 also 3: Seiltempo 0.035 statt 0.08, rund 56 % langsamer beim Hochklettern (ohne Handschuhe; mit normalen Handschuhen 6 -> 4, -11 %).",
       "methode": "Klettern, Mess-Mod 6.19.0: getClimbRopeSpeed hoch und runter in 21 Trait-Fällen gelesen, darunter Very High Weight; je Fall Fitness, Strength und Nimble einzeln von 0 bis 10, die anderen auf 0. Abweichungen gegen den Fall ohne Trait, danach je Stufe mit dem Code abgeglichen."
     },
     {
       "id": "obese/trip",
       "stand": "gemessen",
-      "code": "ClimbOverFenceState.shouldFallAfterVaultOver (Z. 493; Traits Z. 511-526)",
+      "code": "ClimbOverFenceState.shouldFallAfterVaultOver (Z. 493; Traits Z. 511-528; Wurf gegen Zähler minus Fitness Z. 529)",
       "berichte": [
         "docs/berichte/2026-09-08-extraktion.md",
         "tools/measure-mod/README.md",
-        "docs/berichte/2026-09-13-messbarkeit.md"
+        "docs/berichte/2026-09-13-messbarkeit.md",
+        "docs/berichte/2026-09-23-faktensweep-2.md"
       ],
       "messungen": [
         "messung-2026-09-14-werte.txt"
       ],
-      "notiz": "Gemessen am 14.09.2026 (Code-Werte, Mess-Mod 6.26.2): gestolpert ohne 9.9333 %, mit 30.2667 %, Differenz 20.3333 Punkte (laut Code +20), je Fall 3000 Proben über 50 Ticks.",
+      "notiz": "Gemessen am 14.09.2026 (Code-Werte, Mess-Mod 6.26.2): gestolpert ohne 9.9333 %, mit 30.2667 %, Differenz 20.3333 Punkte (laut Code +20), je Fall 3000 Proben über 50 Ticks. Der Wurf ist Rand.Next(100) < Zähler - Fitness (Z. 529): ein negativer Zähler wirkt wie 0. Gemessen wurde beim Sprinten mit Fitness 0, wo der volle Wert gilt; im Laufen liegt die Basis ab Fitness 1 unter 0 und schluckt einen Teil der Punkte. Die Gewichts-Traits senken dazu die Start-Fitness. Laut Code neue Figur mit Very High Weight (Fitness 3): im Laufen 17 %, beim Sprinten 27 %, statt 0 % und 5 %; die Fußnote nennt es seit dem Faktensweep 2 (23.09.2026).",
       "methode": "Code-Werte, Mess-Mod 6.26.2: ClimbOverFenceState.enter mit VaultOverSprint an der stehenden Figur ausgelöst, Fitness 0; Ausgang \"fall\" gezählt, ohne und mit Very High Weight je 3000 Proben über mehrere Ticks im Wechsel, Differenz der Anteile mit - ohne, Toleranz 4 Punkte."
     },
     {
@@ -634,12 +651,13 @@
       "berichte": [
         "docs/berichte/2026-09-08-extraktion.md",
         "tools/measure-mod/README.md",
-        "docs/berichte/2026-09-13-messbarkeit.md"
+        "docs/berichte/2026-09-13-messbarkeit.md",
+        "docs/berichte/2026-09-23-faktensweep-2.md"
       ],
       "messungen": [
         "messung-2026-09-14-werte.txt"
       ],
-      "notiz": "Gemessen am 14.09.2026 (Code-Werte, Mess-Mod 6.26.2): Anteil Brüche unter den verletzten Proben ohne 31.7273 %, mit 51.5573 %, Differenz 19.8301 Punkte (laut Code +20; ohne Trait laut Code 32 %, mit 52 %: PZMath.lerpFunc_EaseOutQuad rechnet x², die Namen sind im Spiel vertauscht, also rand = (int)(0.6 x 55) = 32; der Messplan hatte 52 % erwartet), je Fall 4000 Proben über 163 Ticks.",
+      "notiz": "Gemessen am 14.09.2026 (Code-Werte, Mess-Mod 6.26.2): Anteil Brüche unter den verletzten Proben ohne 31.7273 %, mit 51.5573 %, Differenz 19.8301 Punkte (laut Code +20; ohne Trait laut Code 32 %, mit 52 %: PZMath.lerpFunc_EaseOutQuad rechnet x², die Namen sind im Spiel vertauscht, also rand = (int)(0.6 x 55) = 32; der Messplan hatte 52 % erwartet), je Fall 4000 Proben über 163 Ticks. Die Messung zählt Brüche unter den verletzten Proben, das ist genau der Wert der Zeile. Ob ein Sturz überhaupt verletzt, entscheidet vorher Rand.Next(100) < Schaden (Z. 2119); der Schaden hängt an Fallhöhe und Inventarlast (leeres Inventar: kein Schaden) und steigt mit demselben Trait (Zeile falldamage). Geht der Bruchwurf daneben, würfelt das Spiel eine tiefe Wunde mit Schwelle + 10, auch die wird wahrscheinlicher. Seit dem Faktensweep 2 (23.09.2026) heißt die Zeile \"Chance, sich bei einem verletzenden Sturz etwas zu brechen\" statt \"Knochenbruch oder tiefe Wunde nach Sturz\".",
       "methode": "Code-Werte, Mess-Mod 6.26.2: IsoGameCharacter.DoLand(3.0) wie beim Sturzschaden (God Mode an, unsichtbar aus, Fitness und Nimble 0), ohne und mit Very High Weight dieselben 4000 Proben je Fall; Anteil Brüche unter den Verletzungen, Differenz mit - ohne, Toleranz 6 Punkte."
     },
     {
@@ -668,7 +686,7 @@
       "messungen": [
         "messung-2026-09-20-werte.txt"
       ],
-      "notiz": "Gemessen am 20.09.2026 (Code-Werte): ohne Verletzung ohne Trait 11.1083 %, mit 13.5917 %, Differenz 2.4833 Punkte, je Fall 12000 Proben. Laut Code wird der innere Wert 10 zu 13; verletzt wird bei Rand.Next(100) > Wert, ohne Verletzung bleibt man also mit (Wert + 1) %: 11 % auf 14 %, +27 %. Gemessen +22,4 %, im Rahmen der Streuung. Mit Waffenskill (innerer Wert 13 bis 22) +21 bis +29 %, nie +30 %; bis 23.09.2026 zeigte Trait Facts die +30 des inneren Werts.",
+      "notiz": "Gemessen am 20.09.2026 (Code-Werte): ohne Verletzung ohne Trait 11.1083 %, mit 13.5917 %, Differenz 2.4833 Punkte, je Fall 12000 Proben. Laut Code wird der innere Wert 10 zu 13; verletzt wird bei Rand.Next(100) > Wert, ohne Verletzung bleibt man also mit (Wert + 1) %: 11 % auf 14 %, +27 %. Gemessen +22,4 %, im Rahmen der Streuung. Mit Waffenskill (innerer Wert 13 und 15 bis 22) +21 bis +29 %, nie +30 %; bis 23.09.2026 zeigte Trait Facts die +30 des inneren Werts.",
       "methode": "Code-Werte, Mess-Mod 6.32.0: BodyDamage.AddRandomDamageFromZombie an einem Stellvertreter außerhalb der Welt, ein Zombie von vorn, keine Waffe (Grundchance 15 - 5); Anteil der Angriffe ohne Verletzung gezählt, ohne und mit Thick-skinned je 12000 Proben über 120 Ticks im Wechsel, Differenz der Anteile mit - ohne."
     },
     {
@@ -693,7 +711,7 @@
       "messungen": [
         "messung-2026-09-20-werte.txt"
       ],
-      "notiz": "Gemessen am 20.09.2026 (Code-Werte): ohne Verletzung ohne Trait 11.1083 %, mit 8.0750 %, Differenz -3.0333 Punkte, je Fall 12000 Proben. Laut Code wird der innere Wert 10 zu 7 (abgerundet); verletzt wird bei Rand.Next(100) > Wert, ohne Verletzung bleibt man also mit (Wert + 1) %: 11 % auf 8 %, -27 %, gemessen -27,3 %. Mit Waffenskill (innerer Wert 13 bis 22) -21 bis -27 %; bis 23.09.2026 zeigte Trait Facts die -23 aus /1.3 ohne Abrunden.",
+      "notiz": "Gemessen am 20.09.2026 (Code-Werte): ohne Verletzung ohne Trait 11.1083 %, mit 8.0750 %, Differenz -3.0333 Punkte, je Fall 12000 Proben. Laut Code wird der innere Wert 10 zu 7 (abgerundet); verletzt wird bei Rand.Next(100) > Wert, ohne Verletzung bleibt man also mit (Wert + 1) %: 11 % auf 8 %, -27 %, gemessen -27,3 %. Mit Waffenskill (innerer Wert 13 und 15 bis 22, getMeleeCombatMod Z. 10074-10106; 14 kommt nicht vor) -21 bis -26 %; bis 23.09.2026 zeigte Trait Facts die -23 aus /1.3 ohne Abrunden. Bis zum Faktensweep 2 (23.09.2026) stand hier -27 und in der gemeinsamen Fußnote mit Thick-skinned \"21 bis 29 %\"; seitdem hat jeder Trait seine eigene.",
       "methode": "Code-Werte, Mess-Mod 6.32.0: BodyDamage.AddRandomDamageFromZombie an einem Stellvertreter außerhalb der Welt, ein Zombie von vorn, keine Waffe (Grundchance 15 - 5); Anteil der Angriffe ohne Verletzung gezählt, ohne und mit Thin-skinned je 12000 Proben über 120 Ticks im Wechsel, Differenz der Anteile mit - ohne."
     },
     {
@@ -966,13 +984,14 @@
       "code": "IsoPlayer.calculateCritChance (Z. 3599; Marksman Z. 3645-3646), nur Fernkampf",
       "berichte": [
         "docs/berichte/2026-09-08-extraktion.md",
-        "tools/measure-mod/README.md"
+        "tools/measure-mod/README.md",
+        "docs/berichte/2026-09-23-faktensweep-2.md"
       ],
       "messungen": [
         "messung-2026-09-13b-werte.txt",
         "messung-2026-09-13c-werte.txt"
       ],
-      "notiz": "Gemessen am 13.09.2026 (Code-Werte, Mess-Mod 6.24.1): Pistole in der Hand, Ziel die Figur selbst, Aiming 0: kritische Chance 60 ohne, 70 mit Marksman, +10 (IsoPlayer.calculateCritChance, ohne Zufall, auf 10 bis 90 geklemmt). Der Lauf davor mit Aiming 5 lag ohne und mit Trait an der Klemme 90.",
+      "notiz": "Gemessen am 13.09.2026 (Code-Werte, Mess-Mod 6.24.1): Pistole in der Hand, Ziel die Figur selbst, Aiming 0: kritische Chance 60 ohne, 70 mit Marksman, +10 (IsoPlayer.calculateCritChance, ohne Zufall, auf 10 bis 90 geklemmt). Der Lauf davor mit Aiming 5 lag ohne und mit Trait an der Klemme 90. Die Klemme 10 bis 90 kommt nach dem +10 (IsoPlayer Z. 3689): eine Schrotflinte (CriticalChance 70) liegt aus der Nähe mit dem Bonus bis +40 schon ohne Trait bei 90, ein Jagdgewehr bei Aiming 6 im besten Abstand bei 81 (+9). Die Fußnote nennt die Klemme seit dem Faktensweep 2 (23.09.2026).",
       "methode": "Code-Werte, Mess-Mod 6.24.1: IsoPlayer.calculateCritChance mit Pistole in der Hand gelesen, Ziel die Figur selbst, Aiming 0, dazu die kleinste Zielverzögerung, bei der die Chance ohne Marksman höchstens 70 ist; Differenz mit - ohne. Das Spiel klemmt die Chance auf 10 bis 90."
     },
     {
@@ -1070,12 +1089,13 @@
       "code": "IsoGameCharacter.getClimbingFailChanceFloat (Z. 14718; Traits Z. 14727-14748); verbraucht in ClimbSheetRopeState (Z. 263, Wurf Z. 84), ClimbDownSheetRopeState (Z. 130) und an hohen Zäunen in ClimbOverWallState (Z. 296)",
       "berichte": [
         "docs/berichte/2026-09-08-extraktion.md",
-        "tools/measure-mod/README.md"
+        "tools/measure-mod/README.md",
+        "docs/berichte/2026-09-23-faktensweep-2.md"
       ],
       "messungen": [
         "messung-2026-09-13-klettern.txt"
       ],
-      "notiz": "651 Punkte über 21 Fälle, keiner weicht von der Formel ab.",
+      "notiz": "651 Punkte über 21 Fälle, keiner weicht von der Formel ab. Eine neue Figur ohne Handschuhe hat 20, mit Dextrous 24: beides Wurzel 4, der Trait allein ändert nichts; mit normalen Handschuhen (+4) 28, Wurzel 5. Die Fußnote sagt es seit dem Faktensweep 2 (23.09.2026).",
       "methode": "Klettern, Mess-Mod 6.19.0: getClimbingFailChanceFloat in 21 Trait-Fällen gelesen, darunter Dextrous; je Fall Fitness, Strength und Nimble einzeln von 0 bis 10, die anderen auf 0. Der Test vermerkt Abweichungen gegen den Fall ohne Trait, die Formel wurde danach geprüft."
     },
     {
@@ -1084,12 +1104,13 @@
       "code": "IsoGameCharacter.getClimbRopeSpeed (Z. 14799; Traits Z. 14803-14817); gelesen in ClimbSheetRopeState (Z. 71, 116)",
       "berichte": [
         "docs/berichte/2026-09-08-extraktion.md",
-        "tools/measure-mod/README.md"
+        "tools/measure-mod/README.md",
+        "docs/berichte/2026-09-23-faktensweep-2.md"
       ],
       "messungen": [
         "messung-2026-09-13-klettern.txt"
       ],
-      "notiz": "Seiltempo je Stufe wie im Code.",
+      "notiz": "Seiltempo je Stufe wie im Code. Die Stufen 4 und 5 haben dasselbe Seiltempo (IsoGameCharacter Z. 14827-14865): bei einer neuen Figur ohne Handschuhe (Stufe 5) bringt +1 rund +12,5 %, -1 nichts; die Fußnote sagt es seit dem Faktensweep 2 (23.09.2026).",
       "methode": "Klettern, Mess-Mod 6.19.0: getClimbRopeSpeed hoch und runter in 21 Trait-Fällen gelesen, darunter Dextrous; je Fall Fitness, Strength und Nimble einzeln von 0 bis 10, die anderen auf 0. Abweichungen gegen den Fall ohne Trait, danach je Stufe mit dem Code abgeglichen."
     },
     {
@@ -1159,12 +1180,13 @@
       "code": "IsoGameCharacter.getClimbingFailChanceFloat (Z. 14718; Traits Z. 14727-14748); verbraucht in ClimbSheetRopeState (Z. 263, Wurf Z. 84), ClimbDownSheetRopeState (Z. 130) und an hohen Zäunen in ClimbOverWallState (Z. 296)",
       "berichte": [
         "docs/berichte/2026-09-08-extraktion.md",
-        "tools/measure-mod/README.md"
+        "tools/measure-mod/README.md",
+        "docs/berichte/2026-09-23-faktensweep-2.md"
       ],
       "messungen": [
         "messung-2026-09-13-klettern.txt"
       ],
-      "notiz": "651 Punkte über 21 Fälle, keiner weicht von der Formel ab.",
+      "notiz": "651 Punkte über 21 Fälle, keiner weicht von der Formel ab. Eine neue Figur ohne Handschuhe hat 20, mit All Thumbs 16: beides Wurzel 4, der Trait allein ändert nichts. Die Fußnote sagt es seit dem Faktensweep 2 (23.09.2026).",
       "methode": "Klettern, Mess-Mod 6.19.0: getClimbingFailChanceFloat in 21 Trait-Fällen gelesen, darunter All Thumbs; je Fall Fitness, Strength und Nimble einzeln von 0 bis 10, die anderen auf 0. Der Test vermerkt Abweichungen gegen den Fall ohne Trait, die Formel wurde danach geprüft."
     },
     {
@@ -1173,12 +1195,13 @@
       "code": "IsoGameCharacter.getClimbRopeSpeed (Z. 14799; Traits Z. 14803-14817); gelesen in ClimbSheetRopeState (Z. 71, 116)",
       "berichte": [
         "docs/berichte/2026-09-08-extraktion.md",
-        "tools/measure-mod/README.md"
+        "tools/measure-mod/README.md",
+        "docs/berichte/2026-09-23-faktensweep-2.md"
       ],
       "messungen": [
         "messung-2026-09-13-klettern.txt"
       ],
-      "notiz": "Seiltempo je Stufe wie im Code.",
+      "notiz": "Seiltempo je Stufe wie im Code. Die Stufen 4 und 5 haben dasselbe Seiltempo (IsoGameCharacter Z. 14827-14865): bei einer neuen Figur ohne Handschuhe (Stufe 5) bringt +1 rund +12,5 %, -1 nichts; die Fußnote sagt es seit dem Faktensweep 2 (23.09.2026).",
       "methode": "Klettern, Mess-Mod 6.19.0: getClimbRopeSpeed hoch und runter in 21 Trait-Fällen gelesen, darunter All Thumbs; je Fall Fitness, Strength und Nimble einzeln von 0 bis 10, die anderen auf 0. Abweichungen gegen den Fall ohne Trait, danach je Stufe mit dem Code abgeglichen."
     },
     {
@@ -1188,12 +1211,13 @@
       "berichte": [
         "docs/berichte/2026-09-08-extraktion.md",
         "tools/measure-mod/README.md",
-        "docs/berichte/2026-09-13-messbarkeit.md"
+        "docs/berichte/2026-09-13-messbarkeit.md",
+        "docs/berichte/2026-09-23-faktensweep-2.md"
       ],
       "messungen": [
         "messung-2026-09-14-werte.txt"
       ],
-      "notiz": "Gemessen am 14.09.2026 (Code-Werte, Mess-Mod 6.26.2): Sichtweite ohne 10.0000, mit 2.0000, Faktor 0.2000; laut Code ist die Höchstweite ohne Brille gleich der Mindestweite (Faktor min/max).",
+      "notiz": "Gemessen am 14.09.2026 (Code-Werte, Mess-Mod 6.26.2): Sichtweite ohne 10.0000, mit 2.0000, Faktor 0.2000; laut Code ist die Höchstweite ohne Brille gleich der Mindestweite (Faktor min/max). Jenseits der Höchstweite zieht CombatManager.getDistanceModifier (Z. 2031-2044) (d - max) x (4 + (d - max) x 0,3) ab, und getAimDelayPenalty (Z. 2051-2058) wächst: Jagdgewehr, Aiming 0, 8 Felder: normal +7, ohne Brille -34,8, rund 42 Punkte weniger Treffer- und Kritchance. Die Zeile sagt das seit dem Faktensweep 2 (23.09.2026), vorher nur \"verlieren ihren Reichweitenbonus\".",
       "methode": "Code-Werte, Mess-Mod 6.26.2: HandWeapon.getMaxSightRange(Figur) an einem erzeugten Jagdgewehr gelesen, die Figur ohne Brille, ohne und mit Short Sighted; Faktor mit/ohne gegen getMinSightRange/getMaxSightRange laut Code, Toleranz 0,006."
     },
     {
@@ -1535,11 +1559,12 @@
     {
       "id": "irongut/foodsick",
       "stand": "gemessen",
-      "code": "BodyDamage.JustAteFood (Z. 611-627)",
+      "code": "BodyDamage.JustAteFood (Z. 611-641; schwere Dosis Z. 627-629, leichte Z. 638)",
       "berichte": [
         "docs/berichte/2026-09-08-extraktion.md",
         "docs/berichte/2026-09-13-engine-recherche.md",
-        "tools/measure-mod/README.md"
+        "tools/measure-mod/README.md",
+        "docs/berichte/2026-09-23-faktensweep-2.md"
       ],
       "messungen": [
         "messung-2026-09-13-werte.txt",
@@ -1551,7 +1576,7 @@
         "messung-2026-09-20-werte.txt",
         "messung-2026-09-21-werte.txt"
       ],
-      "notiz": "Gemessen vom 13.09.2026 bis 21.09.2026 (Code-Werte): n = 1000 je Fall, 8 Läufe, Faktor über alle Läufe 0.478, Spanne 0.41 bis 0.55, laut Code 0.50. Anteil der Vergiftungen über alle Läufe: ohne 0.407, mit Iron Gut 0.195. Faktoren der einzelnen Läufe: 0.4136, 0.4518, 0.5236, 0.4590, 0.5495, 0.5048, 0.4703, 0.4564.",
+      "notiz": "Gemessen vom 13.09.2026 bis 21.09.2026 (Code-Werte): n = 1000 je Fall, 8 Läufe, Faktor über alle Läufe 0.478, Spanne 0.41 bis 0.55, laut Code 0.50. Anteil der Vergiftungen über alle Läufe: ohne 0.407, mit Iron Gut 0.195. Faktoren der einzelnen Läufe: 0.4136, 0.4518, 0.5236, 0.4590, 0.5495, 0.5048, 0.4703, 0.4564. Gezählt sind die schweren Dosen: verdorbenes Essen vergiftet immer, der Wurf entscheidet nur zwischen 5 x und 2 x (Hunger x 10 x Portion). Das erwartete Gift ist 2 + 3c; bei c = 40 % mit Iron Gut rund -20 % (höchstens -30 %). Die Zeile heißt darum seit dem Faktensweep 2 (23.09.2026) \"Chance, dass verdorbenes Essen die schwere Dosis gibt\" statt \"Chance, an Essen krank zu werden\".",
       "methode": "Code-Werte, Mess-Mod 6.22.0 bis 6.40.1 (acht Läufe): je Lauf und Fall 1000 verdorbene Äpfel über BodyDamage.JustAteFood, Anteil der Vergiftungen ohne und mit Iron Gut; Faktor mit/ohne, Toleranz 20 % je Lauf. Der Faktor über alle Läufe ist die Summe der Vergiftungen mit Trait durch die Summe ohne (1556 / 3256)."
     },
     {
@@ -1602,11 +1627,12 @@
     {
       "id": "weakstomach/foodsick",
       "stand": "gemessen",
-      "code": "BodyDamage.JustAteFood (Z. 611-627)",
+      "code": "BodyDamage.JustAteFood (Z. 611-641; schwere Dosis Z. 627-629, leichte Z. 638)",
       "berichte": [
         "docs/berichte/2026-09-08-extraktion.md",
         "docs/berichte/2026-09-13-engine-recherche.md",
-        "tools/measure-mod/README.md"
+        "tools/measure-mod/README.md",
+        "docs/berichte/2026-09-23-faktensweep-2.md"
       ],
       "messungen": [
         "messung-2026-09-13-werte.txt",
@@ -1618,7 +1644,7 @@
         "messung-2026-09-20-werte.txt",
         "messung-2026-09-21-werte.txt"
       ],
-      "notiz": "Gemessen vom 13.09.2026 bis 21.09.2026 (Code-Werte): n = 1000 je Fall, 8 Läufe, Faktor über alle Läufe 1.974, Spanne 1.88 bis 2.10, laut Code 2.00. Anteil der Vergiftungen über alle Läufe: ohne 0.407, mit Weak Stomach 0.803. Faktoren der einzelnen Läufe: 1.9757, 1.8776, 2.0199, 1.8806, 2.0469, 1.8923, 2.1034, 2.0150. Die verdoppelte Chance endet bei 100 %: die Grundchance ist (Tage über verdorben, 1 bis 5) / (DaysTotallyRotten - DaysFresh) x 100, und bei den meisten Speisen liegt die Spanne bei 2 bis 4 Tagen; ein bis zwei Tage nach dem Verderben ist die Grundchance dort schon 50 % und mehr, und Weak Stomach ändert nichts mehr. Die Messung lag bei rund 40 %, wo x2 voll gilt (nachgeprüft am 23.09.2026).",
+      "notiz": "Gemessen vom 13.09.2026 bis 21.09.2026 (Code-Werte): n = 1000 je Fall, 8 Läufe, Faktor über alle Läufe 1.974, Spanne 1.88 bis 2.10, laut Code 2.00. Anteil der Vergiftungen über alle Läufe: ohne 0.407, mit Weak Stomach 0.803. Faktoren der einzelnen Läufe: 1.9757, 1.8776, 2.0199, 1.8806, 2.0469, 1.8923, 2.1034, 2.0150. Die verdoppelte Chance endet bei 100 %: die Grundchance ist (Tage über verdorben, 1 bis 5) / (DaysTotallyRotten - DaysFresh) x 100, und bei den meisten Speisen liegt die Spanne bei 2 bis 4 Tagen; ein bis zwei Tage nach dem Verderben ist die Grundchance dort schon 50 % und mehr, und Weak Stomach ändert nichts mehr. Die Messung lag bei rund 40 %, wo x2 voll gilt (nachgeprüft am 23.09.2026). Gezählt sind die schweren Dosen: verdorbenes Essen vergiftet immer, der Wurf entscheidet nur zwischen 5 x und 2 x (Hunger x 10 x Portion). Das erwartete Gift ist 2 + 3c; bei c = 40 % mit Weak Stomach rund +40 % (höchstens +43 %). Die Zeile heißt darum seit dem Faktensweep 2 (23.09.2026) \"Chance, dass verdorbenes Essen die schwere Dosis gibt\" statt \"Chance, an Essen krank zu werden\".",
       "methode": "Code-Werte, Mess-Mod 6.22.0 bis 6.40.1 (acht Läufe): je Lauf und Fall 1000 verdorbene Äpfel über BodyDamage.JustAteFood, Anteil der Vergiftungen ohne und mit Weak Stomach; Faktor mit/ohne, Toleranz 20 % je Lauf. Der Faktor über alle Läufe ist die Summe der Vergiftungen mit Trait durch die Summe ohne (6426 / 3256)."
     },
     {
@@ -1825,30 +1851,32 @@
     },
     {
       "id": "outdoorsman/firelight",
-      "stand": "gemessen",
+      "stand": "code",
       "code": "shared/TimedActions/ISBBQLightFromKindle.lua (Z. 36-38, 104-106; gesetzt Z. 154): Zündchance 1/150 statt 1/300 an Grill, Kamin, Ofen und Feuerschale, nicht am Lagerfeuer (isFireInteractionObject: IsoFireplace oder IsoBarbecue, IsoObject Z. 6214-6215)",
       "berichte": [
         "docs/berichte/2026-09-08-extraktion.md",
-        "tools/measure-mod/README.md"
+        "tools/measure-mod/README.md",
+        "docs/berichte/2026-09-23-faktensweep-2.md"
       ],
       "messungen": [
         "messung-2026-09-13b-werte.txt"
       ],
-      "notiz": "Gemessen am 13.09.2026 (Code-Werte, Mess-Mod 6.24.0): ISBBQLightFromKindle:update würfelt ZombRand(150) statt 300, x2.0000. Gilt an Grill, Kamin, Ofen und Feuerschale; Lagerfeuer zündet ISLightFromKindle ohne Outdoorsy (nachgeprüft am 23.09.2026).",
+      "notiz": "Gemessen am 13.09.2026 (Code-Werte, Mess-Mod 6.24.0): ISBBQLightFromKindle:update würfelt ZombRand(150) statt 300, x2.0000. Gilt an Grill, Kamin, Ofen und Feuerschale; Lagerfeuer zündet ISLightFromKindle ohne Outdoorsy (nachgeprüft am 23.09.2026). Gemessen sind die Würfelgrenzen je Tick. Zünden und Brechen laufen ab 20 % Fortschritt als Wettlauf, das Brechen wird nur gewürfelt, wenn das Zünden nicht trifft, und beides beendet den Versuch. Je Versuch: ohne Trait 300/599 = 50 % gezündet, mit Trait 450/599 = 75 %, also x1.5; die Zeit bis zum Feuer halbiert sich. Seit dem Faktensweep 2 (23.09.2026) zeigt Trait Facts x1.5 je Versuch statt x2.0 je Wurf; der Wert ist aus dem Code gerechnet, darum Stand Code.",
       "methode": "Code-Werte, Mess-Mod 6.24.0: ISBBQLightFromKindle:update ohne Warteschlange und mit dem Boden unter der Figur statt eines Grills ausgelöst; ZombRand liefert 1 und schreibt die Grenze mit, nichts zündet. Zündchance 1/Grenze ohne und mit Outdoorsy, Faktor mit/ohne."
     },
     {
       "id": "outdoorsman/kindling",
-      "stand": "gemessen",
+      "stand": "code",
       "code": "shared/TimedActions/ISBBQLightFromKindle.lua (Z. 36-38, 104-106; gesetzt Z. 154): Anzünder bricht 1/450 statt 1/300 an Grill, Kamin, Ofen und Feuerschale, nicht am Lagerfeuer (isFireInteractionObject: IsoFireplace oder IsoBarbecue, IsoObject Z. 6214-6215)",
       "berichte": [
         "docs/berichte/2026-09-08-extraktion.md",
-        "tools/measure-mod/README.md"
+        "tools/measure-mod/README.md",
+        "docs/berichte/2026-09-23-faktensweep-2.md"
       ],
       "messungen": [
         "messung-2026-09-13b-werte.txt"
       ],
-      "notiz": "Gemessen am 13.09.2026 (Code-Werte, Mess-Mod 6.24.0): ISBBQLightFromKindle:update würfelt ZombRand(450) statt 300, x0.6667. Gilt an Grill, Kamin, Ofen und Feuerschale; Lagerfeuer zündet ISLightFromKindle ohne Outdoorsy (nachgeprüft am 23.09.2026).",
+      "notiz": "Gemessen am 13.09.2026 (Code-Werte, Mess-Mod 6.24.0): ISBBQLightFromKindle:update würfelt ZombRand(450) statt 300, x0.6667. Gilt an Grill, Kamin, Ofen und Feuerschale; Lagerfeuer zündet ISLightFromKindle ohne Outdoorsy (nachgeprüft am 23.09.2026). Gemessen sind die Würfelgrenzen je Tick. Zünden und Brechen laufen als Wettlauf (siehe firelight): je Versuch bricht der Stock ohne Trait in 299/599 = 50 %, mit Trait in 149/599 = 25 %, also x0.5; je gezündetem Feuer gehen rund 1 statt 0,33 Stöcke kaputt. Seit dem Faktensweep 2 (23.09.2026) zeigt Trait Facts x0.5 je Versuch statt x0.667 je Wurf; der Wert ist aus dem Code gerechnet, darum Stand Code.",
       "methode": "Code-Werte, Mess-Mod 6.24.0: ISBBQLightFromKindle:update ohne Warteschlange und mit dem Boden unter der Figur statt eines Grills ausgelöst; ZombRand liefert 1 und schreibt die Grenze mit. Zweiter Aufruf: Anzünder bricht, Chance 1/Grenze ohne und mit Outdoorsy, Faktor mit/ohne."
     },
     {
@@ -1865,7 +1893,7 @@
         "messung-2026-09-10c.txt",
         "messung-2026-09-13-sprint.txt"
       ],
-      "notiz": "getTraitWeatherPenaltyModifier 1.5 -> 1.0.",
+      "notiz": "getTraitWeatherPenaltyModifier 1.5 -> 1.0. Gemessen ist der Getter; dass er die Wind- und Regenstrafe beim Zielen (Treffer- und Kritchance) skaliert, steht im Code (CombatManager.getWeatherPenalty, aus calculateHitChanceData und IsoPlayer.calculateCritChance).",
       "methode": "Weltbetreten: getTraitWeatherPenaltyModifier() ohne und mit Outdoorsy ausgelesen, Wert auf die Nachkommastelle wie im Code verglichen; frühe Mess-Mod-Läufe vor der Versionszählung (10, 10b, 10c) und ein späterer Weltbetreten-Lauf mit 6.21.0 (13-sprint), Traits vorher gesichert und danach zurückgesetzt."
     },
     {
@@ -2172,7 +2200,7 @@
     {
       "id": "sundaydriver/engineforce",
       "stand": "gemessen",
-      "code": "CarController.control_ForwardNew (Z. 582; Sunday Driver Z. 586), engineForce x0.75; aufgerufen aus update (Z. 236). Die Kraft hängt über 0.3 + Drehzahl/30000 an der Drehzahl (Offsets 674-695)",
+      "code": "CarController.control_ForwardNew (Z. 582; Sunday Driver Z. 586, Faktor Z. 663-667), engineForce x0.75; aufgerufen aus update (Z. 236). Die Kraft hängt über 0.3 + Drehzahl/30000 an der Drehzahl (Offsets 674-695)",
       "berichte": [
         "docs/berichte/2026-09-08-extraktion.md",
         "docs/berichte/2026-09-10-lua-abgleich.md",
@@ -2203,7 +2231,7 @@
     {
       "id": "sundaydriver/reverseforce",
       "stand": "gemessen",
-      "code": "CarController.control_Reverse (Z. 686; Sunday Driver Z. 690), engineForce x0.7; aufgerufen aus update (Z. 233)",
+      "code": "CarController.control_Reverse (Z. 686; Sunday Driver Z. 690, Faktor Z. 703-707), engineForce x0.7; aufgerufen aus update (Z. 233)",
       "berichte": [
         "docs/berichte/2026-09-08-extraktion.md",
         "docs/berichte/2026-09-10-lua-abgleich.md",
@@ -2238,12 +2266,13 @@
       "code": "IsoGameCharacter.getClimbingFailChanceFloat (Z. 14718; Traits Z. 14727-14748); verbraucht in ClimbSheetRopeState (Z. 263, Wurf Z. 84), ClimbDownSheetRopeState (Z. 130) und an hohen Zäunen in ClimbOverWallState (Z. 296)",
       "berichte": [
         "docs/berichte/2026-09-08-extraktion.md",
-        "tools/measure-mod/README.md"
+        "tools/measure-mod/README.md",
+        "docs/berichte/2026-09-23-faktensweep-2.md"
       ],
       "messungen": [
         "messung-2026-09-13-klettern.txt"
       ],
-      "notiz": "651 Punkte über 21 Fälle, keiner weicht von der Formel ab.",
+      "notiz": "651 Punkte über 21 Fälle, keiner weicht von der Formel ab. Gymnast bringt Nimble +1 mit: eine neue Figur hat 22 + 4 = 26, Wurzel 5, und scheitert an hohen Zäunen mit 20 statt 25 %. Die Fußnote sagt es seit dem Faktensweep 2 (23.09.2026).",
       "methode": "Klettern, Mess-Mod 6.19.0: getClimbingFailChanceFloat in 21 Trait-Fällen gelesen, darunter Gymnast; je Fall Fitness, Strength und Nimble einzeln von 0 bis 10, die anderen auf 0. Der Test vermerkt Abweichungen gegen den Fall ohne Trait, die Formel wurde danach geprüft."
     },
     {
@@ -2252,12 +2281,13 @@
       "code": "IsoGameCharacter.getClimbRopeSpeed (Z. 14799; Traits Z. 14803-14817); gelesen in ClimbSheetRopeState (Z. 71, 116)",
       "berichte": [
         "docs/berichte/2026-09-08-extraktion.md",
-        "tools/measure-mod/README.md"
+        "tools/measure-mod/README.md",
+        "docs/berichte/2026-09-23-faktensweep-2.md"
       ],
       "messungen": [
         "messung-2026-09-13-klettern.txt"
       ],
-      "notiz": "Seiltempo je Stufe wie im Code.",
+      "notiz": "Seiltempo je Stufe wie im Code. Die Stufen 4 und 5 haben dasselbe Seiltempo (IsoGameCharacter Z. 14827-14865): bei einer neuen Figur ohne Handschuhe (Stufe 5) bringt +1 rund +12,5 %, -1 nichts; die Fußnote sagt es seit dem Faktensweep 2 (23.09.2026).",
       "methode": "Klettern, Mess-Mod 6.19.0: getClimbRopeSpeed hoch und runter in 21 Trait-Fällen gelesen, darunter Gymnast; je Fall Fitness, Strength und Nimble einzeln von 0 bis 10, die anderen auf 0. Abweichungen gegen den Fall ohne Trait, danach je Stufe mit dem Code abgeglichen."
     },
     {
@@ -2268,27 +2298,29 @@
         "docs/berichte/2026-09-08-extraktion.md",
         "docs/berichte/2026-09-13-engine-recherche.md",
         "tools/measure-mod/README.md",
-        "docs/berichte/2026-09-13-messbarkeit.md"
+        "docs/berichte/2026-09-13-messbarkeit.md",
+        "docs/berichte/2026-09-23-faktensweep-2.md"
       ],
       "messungen": [
         "messung-2026-09-14-werte.txt"
       ],
-      "notiz": "Gemessen am 14.09.2026 (Code-Werte, Mess-Mod 6.26.2): Radius des Schrittgeräuschs ohne 10.0000, mit 6.0000, Faktor 0.6000. Den Radius, den Zombies hören, rundet das Spiel auf ganze Felder auf (ceil(Lautstärke x 10), Z. 5329); der Test wählte eine Lautstärke mit Radius genau 10. Mit Schuhen im Spiel laut Code: Gehen 7 auf 5, Rennen 11 auf 7, Sprinten 14 auf 9 Felder.",
+      "notiz": "Gemessen am 14.09.2026 (Code-Werte, Mess-Mod 6.26.2): Radius des Schrittgeräuschs ohne 10.0000, mit 6.0000, Faktor 0.6000. Den Radius, den Zombies hören, rundet das Spiel auf ganze Felder auf (ceil(Lautstärke x 10), Z. 5329); der Test wählte eine Lautstärke mit Radius genau 10. Mit Schuhen im Spiel laut Code: Gehen 7 auf 5, Rennen 11 auf 7, Sprinten 14 auf 9 Felder. Der Klang, den der Spieler hört, bleibt gleich: FMOD bekommt die Lautstärke vor den Trait-Faktoren (parameterVolume, Z. 5306 und 5325). Die Zeile heißt darum seit dem Faktensweep 2 (23.09.2026) \"Schrittgeräusch-Radius für Zombies\" statt \"Schrittlautstärke\", die Fußnote nennt die ganzen Felder (Gehen 7 auf 5, Rennen 11 auf 7, Sprinten 14 auf 9 Felder).",
       "methode": "Code-Werte, Mess-Mod 6.26.2, Spiel mit -debug: DoFootstepSound an der Figur, WorldSound.radius des neuen Geräuschs per Reflection gelesen; unsichtbar aus, Lightfoot und Nimble 0, nicht schleichend, ohne und mit Graceful; Faktor mit/ohne, Toleranz 0,006."
     },
     {
       "id": "graceful/trip",
       "stand": "gemessen",
-      "code": "ClimbOverFenceState.shouldFallAfterVaultOver (Z. 493; Traits Z. 511-526)",
+      "code": "ClimbOverFenceState.shouldFallAfterVaultOver (Z. 493; Traits Z. 511-528; Wurf gegen Zähler minus Fitness Z. 529)",
       "berichte": [
         "docs/berichte/2026-09-08-extraktion.md",
         "tools/measure-mod/README.md",
-        "docs/berichte/2026-09-13-messbarkeit.md"
+        "docs/berichte/2026-09-13-messbarkeit.md",
+        "docs/berichte/2026-09-23-faktensweep-2.md"
       ],
       "messungen": [
         "messung-2026-09-14-werte.txt"
       ],
-      "notiz": "Gemessen am 14.09.2026 (Code-Werte, Mess-Mod 6.26.2): gestolpert ohne 9.9333 %, mit 0.0000 %, Differenz -9.9333 Punkte (laut Code -10, bei Fitness 0 fällt die Chance damit auf 0), je Fall 3000 Proben über 50 Ticks.",
+      "notiz": "Gemessen am 14.09.2026 (Code-Werte, Mess-Mod 6.26.2): gestolpert ohne 9.9333 %, mit 0.0000 %, Differenz -9.9333 Punkte (laut Code -10, bei Fitness 0 fällt die Chance damit auf 0), je Fall 3000 Proben über 50 Ticks. Der Wurf ist Rand.Next(100) < Zähler - Fitness (Z. 529): ein negativer Zähler wirkt wie 0. Gemessen wurde beim Sprinten mit Fitness 0, wo der volle Wert gilt; im Laufen liegt die Basis ab Fitness 1 unter 0 und schluckt einen Teil der Punkte. Die Gewichts-Traits senken dazu die Start-Fitness. Laut Code neue Figur (Fitness 5): im Laufen 0 % mit und ohne Trait, beim Sprinten 5 % auf 0 %; die Fußnote nennt es seit dem Faktensweep 2 (23.09.2026).",
       "methode": "Code-Werte, Mess-Mod 6.26.2: ClimbOverFenceState.enter mit VaultOverSprint an der stehenden Figur ausgelöst, Fitness 0; Ausgang \"fall\" gezählt, ohne und mit Graceful je 3000 Proben über mehrere Ticks im Wechsel, Differenz der Anteile mit - ohne, Toleranz 4 Punkte."
     },
     {
@@ -2310,27 +2342,29 @@
         "docs/berichte/2026-09-08-extraktion.md",
         "docs/berichte/2026-09-13-engine-recherche.md",
         "tools/measure-mod/README.md",
-        "docs/berichte/2026-09-13-messbarkeit.md"
+        "docs/berichte/2026-09-13-messbarkeit.md",
+        "docs/berichte/2026-09-23-faktensweep-2.md"
       ],
       "messungen": [
         "messung-2026-09-14-werte.txt"
       ],
-      "notiz": "Gemessen am 14.09.2026 (Code-Werte, Mess-Mod 6.26.2): Radius des Schrittgeräuschs ohne 10.0000, mit 12.0000, Faktor 1.2000. Den Radius, den Zombies hören, rundet das Spiel auf ganze Felder auf (ceil(Lautstärke x 10), Z. 5329); der Test wählte eine Lautstärke mit Radius genau 10. Mit Schuhen im Spiel laut Code: Gehen 7 auf 9, Rennen 11 auf 13 Felder.",
+      "notiz": "Gemessen am 14.09.2026 (Code-Werte, Mess-Mod 6.26.2): Radius des Schrittgeräuschs ohne 10.0000, mit 12.0000, Faktor 1.2000. Den Radius, den Zombies hören, rundet das Spiel auf ganze Felder auf (ceil(Lautstärke x 10), Z. 5329); der Test wählte eine Lautstärke mit Radius genau 10. Mit Schuhen im Spiel laut Code: Gehen 7 auf 9, Rennen 11 auf 13 Felder. Der Klang, den der Spieler hört, bleibt gleich: FMOD bekommt die Lautstärke vor den Trait-Faktoren (parameterVolume, Z. 5306 und 5325). Die Zeile heißt darum seit dem Faktensweep 2 (23.09.2026) \"Schrittgeräusch-Radius für Zombies\" statt \"Schrittlautstärke\", die Fußnote nennt die ganzen Felder (Gehen 7 auf 9, Rennen 11 auf 13, Sprinten 14 auf 17 Felder, Schleichen 4 auf 4).",
       "methode": "Code-Werte, Mess-Mod 6.26.2, Spiel mit -debug: DoFootstepSound an der Figur, WorldSound.radius des neuen Geräuschs per Reflection gelesen; unsichtbar aus, Lightfoot und Nimble 0, nicht schleichend, ohne und mit Clumsy; Faktor mit/ohne, Toleranz 0,006."
     },
     {
       "id": "clumsy/trip",
       "stand": "gemessen",
-      "code": "ClimbOverFenceState.shouldFallAfterVaultOver (Z. 493; Traits Z. 511-526)",
+      "code": "ClimbOverFenceState.shouldFallAfterVaultOver (Z. 493; Traits Z. 511-528; Wurf gegen Zähler minus Fitness Z. 529)",
       "berichte": [
         "docs/berichte/2026-09-08-extraktion.md",
         "tools/measure-mod/README.md",
-        "docs/berichte/2026-09-13-messbarkeit.md"
+        "docs/berichte/2026-09-13-messbarkeit.md",
+        "docs/berichte/2026-09-23-faktensweep-2.md"
       ],
       "messungen": [
         "messung-2026-09-14-werte.txt"
       ],
-      "notiz": "Gemessen am 14.09.2026 (Code-Werte, Mess-Mod 6.26.2): gestolpert ohne 9.9333 %, mit 19.0333 %, Differenz 9.1000 Punkte (laut Code +10), je Fall 3000 Proben über 50 Ticks.",
+      "notiz": "Gemessen am 14.09.2026 (Code-Werte, Mess-Mod 6.26.2): gestolpert ohne 9.9333 %, mit 19.0333 %, Differenz 9.1000 Punkte (laut Code +10), je Fall 3000 Proben über 50 Ticks. Der Wurf ist Rand.Next(100) < Zähler - Fitness (Z. 529): ein negativer Zähler wirkt wie 0. Gemessen wurde beim Sprinten mit Fitness 0, wo der volle Wert gilt; im Laufen liegt die Basis ab Fitness 1 unter 0 und schluckt einen Teil der Punkte. Die Gewichts-Traits senken dazu die Start-Fitness. Laut Code neue Figur (Fitness 5): im Laufen 0 % auf 5 %, beim Sprinten 5 % auf 15 %; die Fußnote nennt es seit dem Faktensweep 2 (23.09.2026).",
       "methode": "Code-Werte, Mess-Mod 6.26.2: ClimbOverFenceState.enter mit VaultOverSprint an der stehenden Figur ausgelöst, Fitness 0; Ausgang \"fall\" gezählt, ohne und mit Clumsy je 3000 Proben über mehrere Ticks im Wechsel, Differenz der Anteile mit - ohne, Toleranz 4 Punkte."
     },
     {
@@ -2546,7 +2580,7 @@
         "messung-2026-09-13b-schlaf.txt",
         "messung-2026-09-13c-schlaf.txt"
       ],
-      "notiz": "Gemessen am 13.09.2026 (Schlaf, Mess-Mod 6.23.4): Deckel der Wartezeit 0.1203 gegen 0.2403 Stunden ohne Trait im guten Bett, x0.5005 (Code x0.5); je 300 Proben, die Fälle im Wechsel. Die beiden Läufe davor ergaben genau x0.4832; das war ein Fehler der Intervallsuche im Mess-Mod bis 6.23.3 (die Probe lag auf der Mitte statt einen Schritt darunter, bei 0.0093 Stunden je Tick).",
+      "notiz": "Gemessen am 13.09.2026 (Schlaf, Mess-Mod 6.23.4): Deckel der Wartezeit 0.1203 gegen 0.2403 Stunden ohne Trait im guten Bett, x0.5005 (Code x0.5); je 300 Proben, die Fälle im Wechsel. Die beiden Läufe davor ergaben genau x0.4832; das war ein Fehler der Intervallsuche im Mess-Mod bis 6.23.3 (die Probe lag auf der Mitte statt einen Schritt darunter, bei 0.0093 Stunden je Tick). Night Owl halbiert vor dem Deckel 2 Stunden und vor den Schlaftabletten (SleepingEvent Z. 172-180): liegt die Wartezeit ohne Night Owl über 2 Stunden (etwa Schmerzstufe 2 auf dem Boden: 2,72 -> 1,36 statt 2,0, -32 %), bleibt weniger als die Hälfte, mit Schlaftabletten nichts. Die Fußnote sagt es seit dem Faktensweep 2 (23.09.2026).",
       "methode": "Schlaf (Einschlafen), Mess-Mod 6.23.4: Deckel der Wartezeit per Intervallsuche ermittelt, 300 Proben im Wechsel mit dem Fall ohne Trait, geschätzt aus dem größten Wert; ein Suchfehler bis 6.23.3 hatte den engen Deckel von Night Owl zuvor verfälscht."
     },
     {
@@ -2555,7 +2589,8 @@
       "code": "IsoGameCharacter.getDetectionRange (Z. 13952), TestIfSeen",
       "berichte": [
         "docs/berichte/2026-09-08-extraktion.md",
-        "tools/measure-mod/README.md"
+        "tools/measure-mod/README.md",
+        "docs/berichte/2026-09-23-faktensweep-2.md"
       ],
       "messungen": [
         "messung-2026-09-10.txt",
@@ -2563,7 +2598,7 @@
         "messung-2026-09-10c.txt",
         "messung-2026-09-13-sprint.txt"
       ],
-      "notiz": "getDetectionRange mit Trait an und aus; der Abstand stimmt, die Basis hängt am Zustand der Figur.",
+      "notiz": "getDetectionRange mit Trait an und aus; der Abstand stimmt, die Basis hängt am Zustand der Figur. Gemessen ist der Getter; dass TestIfSeen mit dem Radius wahrnimmt, steht im Code. Der Teil über 2 Felder wird mit dem Hör-Multiplikator getragener Kopfbedeckung skaliert (IsoGameCharacter Z. 13952-13959; HearingModifier 0,75 an 28 Gegenständen, 0,5 an 3), mit einem 0,75-Helm bringt Keen Hearing +2,25 statt +3; die Fußnote sagt es seit dem Faktensweep 2 (23.09.2026).",
       "methode": "Weltbetreten: getDetectionRange() ohne und mit Deaf ausgelesen, Abstand auf die Nachkommastelle wie im Code verglichen; frühe Mess-Mod-Läufe vor der Versionszählung (10, 10b, 10c) und ein späterer Weltbetreten-Lauf mit 6.21.0 (13-sprint), Traits vorher gesichert und danach zurückgesetzt."
     },
     {
@@ -2598,7 +2633,8 @@
       "code": "IsoGameCharacter.getDetectionRange (Z. 13952), TestIfSeen",
       "berichte": [
         "docs/berichte/2026-09-08-extraktion.md",
-        "tools/measure-mod/README.md"
+        "tools/measure-mod/README.md",
+        "docs/berichte/2026-09-23-faktensweep-2.md"
       ],
       "messungen": [
         "messung-2026-09-10.txt",
@@ -2606,7 +2642,7 @@
         "messung-2026-09-10c.txt",
         "messung-2026-09-13-sprint.txt"
       ],
-      "notiz": "getDetectionRange mit Trait an und aus; der Abstand stimmt, die Basis hängt am Zustand der Figur.",
+      "notiz": "getDetectionRange mit Trait an und aus; der Abstand stimmt, die Basis hängt am Zustand der Figur. Gemessen ist der Getter; dass TestIfSeen mit dem Radius wahrnimmt, steht im Code. Der Teil über 2 Felder wird mit dem Hör-Multiplikator getragener Kopfbedeckung skaliert (IsoGameCharacter Z. 13952-13959; HearingModifier 0,75 an 28 Gegenständen, 0,5 an 3), mit einem 0,75-Helm bringt Keen Hearing +2,25 statt +3; die Fußnote sagt es seit dem Faktensweep 2 (23.09.2026).",
       "methode": "Weltbetreten: getDetectionRange() ohne und mit Keen Hearing ausgelesen, Abstand auf die Nachkommastelle wie im Code verglichen; frühe Mess-Mod-Läufe vor der Versionszählung (10, 10b, 10c) und ein späterer Weltbetreten-Lauf mit 6.21.0 (13-sprint), Traits vorher gesichert und danach zurückgesetzt."
     },
     {
@@ -2631,7 +2667,8 @@
       "code": "IsoGameCharacter.getDetectionRange (Z. 13952), TestIfSeen",
       "berichte": [
         "docs/berichte/2026-09-08-extraktion.md",
-        "tools/measure-mod/README.md"
+        "tools/measure-mod/README.md",
+        "docs/berichte/2026-09-23-faktensweep-2.md"
       ],
       "messungen": [
         "messung-2026-09-10.txt",
@@ -2639,7 +2676,7 @@
         "messung-2026-09-10c.txt",
         "messung-2026-09-13-sprint.txt"
       ],
-      "notiz": "getDetectionRange mit Trait an und aus; der Abstand stimmt, die Basis hängt am Zustand der Figur.",
+      "notiz": "getDetectionRange mit Trait an und aus; der Abstand stimmt, die Basis hängt am Zustand der Figur. Gemessen ist der Getter; dass TestIfSeen mit dem Radius wahrnimmt, steht im Code. Der Teil über 2 Felder wird mit dem Hör-Multiplikator getragener Kopfbedeckung skaliert (IsoGameCharacter Z. 13952-13959; HearingModifier 0,75 an 28 Gegenständen, 0,5 an 3), mit einem 0,75-Helm bringt Keen Hearing +2,25 statt +3; die Fußnote sagt es seit dem Faktensweep 2 (23.09.2026).",
       "methode": "Weltbetreten: getDetectionRange() ohne und mit Hard of Hearing ausgelesen, Abstand auf die Nachkommastelle wie im Code verglichen; frühe Mess-Mod-Läufe vor der Versionszählung (10, 10b, 10c) und ein späterer Weltbetreten-Lauf mit 6.21.0 (13-sprint), Traits vorher gesichert und danach zurückgesetzt."
     },
     {
@@ -2665,7 +2702,8 @@
       "berichte": [
         "docs/berichte/2026-09-08-extraktion.md",
         "tools/measure-mod/README.md",
-        "docs/berichte/2026-09-23-faktensweep.md"
+        "docs/berichte/2026-09-23-faktensweep.md",
+        "docs/berichte/2026-09-23-faktensweep-2.md"
       ],
       "messungen": [
         "messung-2026-09-10.txt",
@@ -2673,7 +2711,7 @@
         "messung-2026-09-10c.txt",
         "messung-2026-09-13-sprint.txt"
       ],
-      "notiz": "getHearDistanceModifier 1.0 -> 4.5. Im Spiel heißt das: ein Wecker weckt die Figur erst aus 1/4.5 seiner Reichweite. Die Dämpfung der Geräusche ist ein eigener Schalter ohne die 4.5 (nachgeprüft am 23.09.2026).",
+      "notiz": "getHearDistanceModifier 1.0 -> 4.5. Im Spiel heißt das: ein abgestellter Wecker weckt die Figur erst aus 1/4.5 seiner Reichweite (Wecker SoundRadius 15, also 3,3 Felder; Uhr 7, also 1,6). Ein Wecker im Inventar oder eine getragene Uhr klingelt auf dem Feld der Figur (getAlarmSquare, AlarmClock Z. 78-94), Abstand 0, und weckt immer (seit dem Faktensweep 2, 23.09.2026, in der Fußnote). Die Dämpfung der Geräusche ist ein eigener Schalter ohne die 4.5 (nachgeprüft am 23.09.2026).",
       "methode": "Weltbetreten: getHearDistanceModifier() ohne und mit Hard of Hearing ausgelesen, Wert auf die Nachkommastelle wie im Code verglichen; frühe Mess-Mod-Läufe vor der Versionszählung (10, 10b, 10c) und ein späterer Weltbetreten-Lauf mit 6.21.0 (13-sprint), Traits vorher gesichert und danach zurückgesetzt."
     },
     {
@@ -2695,12 +2733,13 @@
       "berichte": [
         "docs/berichte/2026-09-08-extraktion.md",
         "docs/berichte/2026-09-13-engine-recherche.md",
-        "tools/measure-mod/README.md"
+        "tools/measure-mod/README.md",
+        "docs/berichte/2026-09-23-faktensweep-2.md"
       ],
       "messungen": [
         "messung-2026-09-13-werte.txt"
       ],
-      "notiz": "Gemessen am 13.09.2026 (Code-Werte): ohne 10.0000, mit 12.0000, Faktor 1.2000.",
+      "notiz": "Gemessen am 13.09.2026 (Code-Werte): ohne 10.0000, mit 12.0000, Faktor 1.2000. Treffer- und Kritchance nutzen die Höchstweite als Rand eines Glockenbands um (min + max) / 2 (CombatManager Z. 2031-2042, Verbraucher Z. 2177-2190 und IsoPlayer Z. 3639-3641): das Band rückt nach außen und wird breiter. Pistole (min 2, max 6), Aiming 0, ohne Zielverzögerung: bei 4 Feldern Bonus 15 -> 12,7, bei 5 Feldern 7 -> 14; schlechter von 2 bis rund 4,3 Feldern. Die Fußnote sagt es seit dem Faktensweep 2 (23.09.2026); gemessen ist nur der Getter.",
       "methode": "Code-Werte, Mess-Mod 6.22.0: HandWeapon.getMaxSightRange(Figur) an einem erzeugten Jagdgewehr gelesen, das nicht in der Hand liegt; ohne und mit Eagle Eyed, Faktor mit/ohne, Toleranz 0,006."
     },
     {
@@ -2720,13 +2759,14 @@
     {
       "id": "nightvision/nightcone",
       "stand": "code",
-      "code": "LightingJNI.calculateVisionCone (Z. 428-432)",
+      "code": "LightingJNI.calculateVisionCone (zu Fuß Z. 426-432, im Fahrzeug Z. 433-454)",
       "berichte": [
         "docs/berichte/2026-09-08-extraktion.md",
-        "docs/berichte/2026-09-13-engine-recherche.md"
+        "docs/berichte/2026-09-13-engine-recherche.md",
+        "docs/berichte/2026-09-23-faktensweep-2.md"
       ],
       "messungen": [],
-      "notiz": "Nicht gemessen: Den Sichtkegel rechnet das Spiel in einem Teil, den Lua nicht lesen kann, und glättet ihn über die Zeit. Messbar wäre er nur indirekt und nur nachts über die gesehenen Felder auf freier Fläche, mit Mauern und Sichtlinien als Störgrößen.",
+      "notiz": "Nicht gemessen: Den Sichtkegel rechnet das Spiel in einem Teil, den Lua nicht lesen kann, und glättet ihn über die Zeit. Messbar wäre er nur indirekt und nur nachts über die gesehenen Felder auf freier Fläche, mit Mauern und Sichtlinien als Störgrößen. Im Fahrzeug beginnt der Kegel bei 324 - 540 x Dunkelheit, nachts also -216, mit Trait -180; beides hebt die Scheinwerfer-Untergrenze 36 oder die Klemme 18 auf denselben Wert. Cat's Eyes wirkt dort nur in der Dämmerung, höchstens rund +20 Grad. Bis zum Faktensweep 2 (23.09.2026) sagte die Fußnote \"voll im Dunkeln ... auch im Fahrzeug\".",
       "methode": ""
     },
     {
@@ -2745,10 +2785,11 @@
       "stand": "code",
       "code": "IsoZombie.spotted (Z. 2321) verzweigt: spottedNew (Z. 1660; Traits Z. 1809-1812), spottedOld (Z. 1965; Traits Z. 2166-2169)",
       "berichte": [
-        "docs/berichte/2026-09-08-extraktion.md"
+        "docs/berichte/2026-09-08-extraktion.md",
+        "docs/berichte/2026-09-23-faktensweep-2.md"
       ],
       "messungen": [],
-      "notiz": "Nicht gemessen: Nach jedem Entdecken merkt sich der Zombie die Figur, jeder weitere Wurf zählt dann fünffach, und das lässt sich nicht zurücksetzen. Es bleibt eine Probe je Zombie, und die Chance hängt außerdem an Licht, Blickwinkel, Bewegung, Abstand und Schleichen.",
+      "notiz": "Nicht gemessen: Nach jedem Entdecken merkt sich der Zombie die Figur, jeder weitere Wurf zählt dann fünffach, und das lässt sich nicht zurücksetzen. Es bleibt eine Probe je Zombie, und die Chance hängt außerdem an Licht, Blickwinkel, Bewegung, Abstand und Schleichen. Der Faktor trifft eine Rohzahl, die das Spiel bei 400 kappt und durch 400 teilt (IsoZombie Z. 1835-1843): ein Zombie, der die Figur bei Tag von vorn sieht, liegt weit darüber und entdeckt sie mit und ohne Trait sofort; von hinten ist es 0. Wirken kann der Trait nur, wo der Zombie unsicher ist (Dunkelheit, Schleichen, Rand des Blickfelds, Abstand); die Fußnote sagt es seit dem Faktensweep 2 (23.09.2026).",
       "methode": ""
     },
     {
@@ -2756,10 +2797,11 @@
       "stand": "code",
       "code": "IsoZombie.spotted (Z. 2321) verzweigt: spottedNew (Z. 1660; Traits Z. 1809-1812), spottedOld (Z. 1965; Traits Z. 2166-2169)",
       "berichte": [
-        "docs/berichte/2026-09-08-extraktion.md"
+        "docs/berichte/2026-09-08-extraktion.md",
+        "docs/berichte/2026-09-23-faktensweep-2.md"
       ],
       "messungen": [],
-      "notiz": "Nicht gemessen: Nach jedem Entdecken merkt sich der Zombie die Figur, jeder weitere Wurf zählt dann fünffach, und das lässt sich nicht zurücksetzen. Es bleibt eine Probe je Zombie, und die Chance hängt außerdem an Licht, Blickwinkel, Bewegung, Abstand und Schleichen.",
+      "notiz": "Nicht gemessen: Nach jedem Entdecken merkt sich der Zombie die Figur, jeder weitere Wurf zählt dann fünffach, und das lässt sich nicht zurücksetzen. Es bleibt eine Probe je Zombie, und die Chance hängt außerdem an Licht, Blickwinkel, Bewegung, Abstand und Schleichen. Der Faktor trifft eine Rohzahl, die das Spiel bei 400 kappt und durch 400 teilt (IsoZombie Z. 1835-1843): ein Zombie, der die Figur bei Tag von vorn sieht, liegt weit darüber und entdeckt sie mit und ohne Trait sofort; von hinten ist es 0. Wirken kann der Trait nur, wo der Zombie unsicher ist (Dunkelheit, Schleichen, Rand des Blickfelds, Abstand); die Fußnote sagt es seit dem Faktensweep 2 (23.09.2026).",
       "methode": ""
     },
     {
@@ -2829,13 +2871,14 @@
       "berichte": [
         "docs/berichte/2026-09-08-extraktion.md",
         "docs/berichte/2026-09-13-engine-recherche.md",
-        "tools/measure-mod/README.md"
+        "tools/measure-mod/README.md",
+        "docs/berichte/2026-09-23-faktensweep-2.md"
       ],
       "messungen": [
         "messung-2026-09-13-werte.txt",
         "messung-2026-09-21-nachstellen.txt"
       ],
-      "notiz": "Gemessen am 13.09.2026 (Code-Werte): ohne 200.0000, mit 150.0000, Faktor 0.7500. Im Spiel nachgestellt am 21.09.2026: eine Bretter-Barrikade über das Baumenü setzt 200 an, mit Handy 150, bei Carpentry 1. Handy zieht fest 50 Zeiteinheiten ab, ohne Untergrenze (ISBuildAction Z. 268-270): Bauten mit Rezeptzeit 50, etwa die Hälfte des Baumenüs samt aller Möbel, landen bei 0 und sind im ersten Tick fertig (aus dem Code, nicht im Spiel nachgebaut). Auf einem MP-Server rechnet der Server die Dauer selbst (BuildAction.getDuration, Z. 91-102: 200 - 5 x Carpentry, Handy -50), dort -25 bis -33 %; nicht auf einem Server geprüft.",
+      "notiz": "Gemessen am 13.09.2026 (Code-Werte): ohne 200.0000, mit 150.0000, Faktor 0.7500. Im Spiel nachgestellt am 21.09.2026: eine Bretter-Barrikade über das Baumenü setzt 200 an, mit Handy 150, bei Carpentry 1. Handy zieht fest 50 Zeiteinheiten ab, ohne Untergrenze (ISBuildAction Z. 268-270): Bauten mit Rezeptzeit 50, etwa die Hälfte des Baumenüs samt aller Möbel, landen bei 0 und sind im ersten Tick fertig (aus dem Code, nicht im Spiel nachgebaut). Auf einem MP-Server, auch beim Hosten (dort läuft ein eigener Server-Prozess), rechnet der Server die Dauer selbst (BuildAction.getDuration, Z. 91-102: 200 - 5 x Carpentry, Handy -50), dort -25 bis -33 % bei jedem Bau, nichts geht sofort; nicht auf einem Server geprüft. Seit dem Faktensweep 2 (23.09.2026) sagt die Fußnote das, vorher nannte sie das Sofort-Bauen ohne Einschränkung.",
       "methode": "Code-Werte, Mess-Mod 6.22.0: ISBuildAction:new an der Figur bei einer Basiszeit von 200 gebaut, maxTime gelesen; ohne und mit Handy, Faktor mit/ohne, Toleranz 0,006."
     },
     {
@@ -2844,11 +2887,15 @@
       "code": "server/BuildingObjects/ISBuildUtil.lua: getWoodHealth (Z. 39, Handy Z. 48-49); einziger Leser im Baumenü ISBuildIsoEntity:getHealth (Z. 38-43) ohne Aufrufer",
       "berichte": [
         "docs/berichte/2026-09-08-extraktion.md",
-        "docs/berichte/2026-09-10-lua-abgleich.md"
+        "docs/berichte/2026-09-10-lua-abgleich.md",
+        "docs/berichte/2026-09-23-faktensweep-2.md"
       ],
-      "messungen": [],
-      "notiz": "Aufruferliste am 12.09.2026 (Audit); der Lua-Abgleich vom 10.09. hielt den Wert noch für lebendig.",
-      "methode": ""
+      "messungen": [
+        "messung-2026-09-20-werte.txt",
+        "messung-2026-09-21-werte.txt"
+      ],
+      "notiz": "Aufruferliste am 12.09.2026 (Audit); der Lua-Abgleich vom 10.09. hielt den Wert noch für lebendig. Gemessen am 20. und 21.09.2026 (Code-Werte): eine Holzwand bekommt über setInfo mit und ohne Handy 470 Lebenspunkte; getWoodHealth selbst gibt die +100, aber das Baumenü liest es nicht (Spielfehler handy-haltbarkeit).",
+      "methode": "Code-Werte, Mess-Mod 6.32.0 und 6.40.1: ISBuildIsoEntity:setInfo selbst aufgerufen, wie create es beim Bauen tut (Holzwand WoodenWallLvl1 auf einem Feld neben der Figur), getMaxHealth der neuen Wand ohne und mit Handy: 470 und 470; Gegenprobe buildUtil.getWoodHealth 50 und 150. Ein Funktionsaufruf, kein Bau im Spiel."
     },
     {
       "id": "handy/barricade",
@@ -2912,70 +2959,75 @@
     },
     {
       "id": "wildernessknowledge/firelight",
-      "stand": "gemessen",
+      "stand": "code",
       "code": "shared/Camping/TimedActions/ISLightFromKindle.lua (Z. 38-41): Zündchance 1/150 statt 1/300, nur am Lagerfeuer",
       "berichte": [
         "docs/berichte/2026-09-08-extraktion.md",
-        "tools/measure-mod/README.md"
+        "tools/measure-mod/README.md",
+        "docs/berichte/2026-09-23-faktensweep-2.md"
       ],
       "messungen": [
         "messung-2026-09-13b-werte.txt"
       ],
-      "notiz": "Gemessen am 13.09.2026 (Code-Werte, Mess-Mod 6.24.0): ISLightFromKindle:updateKindling würfelt ZombRand(150) statt 300, x2.0000. Lagerfeuer.",
+      "notiz": "Gemessen am 13.09.2026 (Code-Werte, Mess-Mod 6.24.0): ISLightFromKindle:updateKindling würfelt ZombRand(150) statt 300, x2.0000. Lagerfeuer. Gemessen sind die Würfelgrenzen je Tick. Zünden und Brechen laufen ab 20 % Fortschritt als Wettlauf, das Brechen wird nur gewürfelt, wenn das Zünden nicht trifft, und beides beendet den Versuch. Je Versuch: ohne Trait 300/599 = 50 % gezündet, mit Trait 450/599 = 75 %, also x1.5; die Zeit bis zum Feuer halbiert sich. Seit dem Faktensweep 2 (23.09.2026) zeigt Trait Facts x1.5 je Versuch statt x2.0 je Wurf; der Wert ist aus dem Code gerechnet, darum Stand Code.",
       "methode": "Code-Werte, Mess-Mod 6.24.0: ISLightFromKindle:updateKindling ohne Warteschlange und ohne echtes Lagerfeuer ausgelöst; ZombRand liefert 1 und schreibt die Grenze mit, nichts zündet. Zündchance 1/Grenze ohne und mit Bushcrafter, Faktor mit/ohne."
     },
     {
       "id": "wildernessknowledge/kindling",
-      "stand": "gemessen",
+      "stand": "code",
       "code": "shared/Camping/TimedActions/ISLightFromKindle.lua (Z. 38-41): Anzünder bricht 1/450 statt 1/300, nur am Lagerfeuer",
       "berichte": [
         "docs/berichte/2026-09-08-extraktion.md",
-        "tools/measure-mod/README.md"
+        "tools/measure-mod/README.md",
+        "docs/berichte/2026-09-23-faktensweep-2.md"
       ],
       "messungen": [
         "messung-2026-09-13b-werte.txt"
       ],
-      "notiz": "Gemessen am 13.09.2026 (Code-Werte, Mess-Mod 6.24.0): ISLightFromKindle:updateKindling würfelt ZombRand(450) statt 300, x0.6667. Lagerfeuer.",
+      "notiz": "Gemessen am 13.09.2026 (Code-Werte, Mess-Mod 6.24.0): ISLightFromKindle:updateKindling würfelt ZombRand(450) statt 300, x0.6667. Lagerfeuer. Gemessen sind die Würfelgrenzen je Tick. Zünden und Brechen laufen als Wettlauf (siehe firelight): je Versuch bricht der Stock ohne Trait in 299/599 = 50 %, mit Trait in 149/599 = 25 %, also x0.5; je gezündetem Feuer gehen rund 1 statt 0,33 Stöcke kaputt. Seit dem Faktensweep 2 (23.09.2026) zeigt Trait Facts x0.5 je Versuch statt x0.667 je Wurf; der Wert ist aus dem Code gerechnet, darum Stand Code.",
       "methode": "Code-Werte, Mess-Mod 6.24.0: ISLightFromKindle:updateKindling ohne Warteschlange und ohne echtes Lagerfeuer ausgelöst; ZombRand liefert 1 und schreibt die Grenze mit. Zweiter Aufruf: Anzünder bricht, Chance 1/Grenze ohne und mit Bushcrafter, Faktor mit/ohne."
     },
     {
       "id": "formerscout/firelight",
-      "stand": "gemessen",
+      "stand": "code",
       "code": "shared/Camping/TimedActions/ISLightFromKindle.lua (Z. 38-41): Zündchance 1/150 statt 1/300, nur am Lagerfeuer",
       "berichte": [
         "docs/berichte/2026-09-08-extraktion.md",
-        "tools/measure-mod/README.md"
+        "tools/measure-mod/README.md",
+        "docs/berichte/2026-09-23-faktensweep-2.md"
       ],
       "messungen": [
         "messung-2026-09-13b-werte.txt"
       ],
-      "notiz": "Gemessen am 13.09.2026 (Code-Werte, Mess-Mod 6.24.0): ISLightFromKindle:updateKindling würfelt ZombRand(150) statt 300, x2.0000. Lagerfeuer.",
+      "notiz": "Gemessen am 13.09.2026 (Code-Werte, Mess-Mod 6.24.0): ISLightFromKindle:updateKindling würfelt ZombRand(150) statt 300, x2.0000. Lagerfeuer. Gemessen sind die Würfelgrenzen je Tick. Zünden und Brechen laufen ab 20 % Fortschritt als Wettlauf, das Brechen wird nur gewürfelt, wenn das Zünden nicht trifft, und beides beendet den Versuch. Je Versuch: ohne Trait 300/599 = 50 % gezündet, mit Trait 450/599 = 75 %, also x1.5; die Zeit bis zum Feuer halbiert sich. Seit dem Faktensweep 2 (23.09.2026) zeigt Trait Facts x1.5 je Versuch statt x2.0 je Wurf; der Wert ist aus dem Code gerechnet, darum Stand Code.",
       "methode": "Code-Werte, Mess-Mod 6.24.0: ISLightFromKindle:updateKindling ohne Warteschlange und ohne echtes Lagerfeuer ausgelöst; ZombRand liefert 1 und schreibt die Grenze mit, nichts zündet. Zündchance 1/Grenze ohne und mit Former Scout, Faktor mit/ohne."
     },
     {
       "id": "formerscout/kindling",
-      "stand": "gemessen",
+      "stand": "code",
       "code": "shared/Camping/TimedActions/ISLightFromKindle.lua (Z. 38-41): Anzünder bricht 1/450 statt 1/300, nur am Lagerfeuer",
       "berichte": [
         "docs/berichte/2026-09-08-extraktion.md",
-        "tools/measure-mod/README.md"
+        "tools/measure-mod/README.md",
+        "docs/berichte/2026-09-23-faktensweep-2.md"
       ],
       "messungen": [
         "messung-2026-09-13b-werte.txt"
       ],
-      "notiz": "Gemessen am 13.09.2026 (Code-Werte, Mess-Mod 6.24.0): ISLightFromKindle:updateKindling würfelt ZombRand(450) statt 300, x0.6667. Lagerfeuer.",
+      "notiz": "Gemessen am 13.09.2026 (Code-Werte, Mess-Mod 6.24.0): ISLightFromKindle:updateKindling würfelt ZombRand(450) statt 300, x0.6667. Lagerfeuer. Gemessen sind die Würfelgrenzen je Tick. Zünden und Brechen laufen als Wettlauf (siehe firelight): je Versuch bricht der Stock ohne Trait in 299/599 = 50 %, mit Trait in 149/599 = 25 %, also x0.5; je gezündetem Feuer gehen rund 1 statt 0,33 Stöcke kaputt. Seit dem Faktensweep 2 (23.09.2026) zeigt Trait Facts x0.5 je Versuch statt x0.667 je Wurf; der Wert ist aus dem Code gerechnet, darum Stand Code.",
       "methode": "Code-Werte, Mess-Mod 6.24.0: ISLightFromKindle:updateKindling ohne Warteschlange und ohne echtes Lagerfeuer ausgelöst; ZombRand liefert 1 und schreibt die Grenze mit. Zweiter Aufruf: Anzünder bricht, Chance 1/Grenze ohne und mit Former Scout, Faktor mit/ohne."
     },
     {
       "id": "burglar/windowlock",
       "stand": "code",
-      "code": "OpenWindowState (Z. 163-168)",
+      "code": "OpenWindowState.onAttemptFinished (Z. 153-190; Wurf Z. 163-168, Erfolg Z. 177-190), je Durchlauf der Schleife \"trying\" (AnimSets/player/openwindow/trying.xml)",
       "berichte": [
         "docs/berichte/2026-09-08-extraktion.md",
-        "docs/berichte/2026-09-13-engine-recherche.md"
+        "docs/berichte/2026-09-13-engine-recherche.md",
+        "docs/berichte/2026-09-23-faktensweep-2.md"
       ],
       "messungen": [],
-      "notiz": "Nicht gemessen: Der Wurf fällt nur am Ende der echten Fenster-Animation, die Mess-Mod kann ihn nicht direkt auslösen. Für 10 % gegen 5 % bräuchte es rund 1000 Versuche je Fall zu je 2 bis 3 Sekunden.",
+      "notiz": "Nicht gemessen: Der Wurf fällt nur am Ende der echten Fenster-Animation, die Mess-Mod kann ihn nicht direkt auslösen. Für 10 % gegen 5 % bräuchte es rund 1000 Versuche je Fall zu je 2 bis 3 Sekunden. Gewürfelt wird je Versuch, und die Figur versucht es weiter, bis das Fenster aufgeht oder klemmt. Je Fenster also p / (p + (1 - p) x s), s = Chance, dass ein Versuch öffnet: Strength 5 (s = 11,6 %) 49 % ohne, 31 % mit Burglar; Strength 0-1 85 % auf 73 %; ab Strength 8 23 % auf 13 %. Seit dem Faktensweep 2 (23.09.2026) zeigt die Zeile 49 % auf 31 % je Fenster für eine neue Figur, vorher -50 % je Versuch.",
       "methode": ""
     },
     {
@@ -2997,12 +3049,13 @@
       "code": "IsoGameCharacter.getClimbingFailChanceFloat (Z. 14718; Traits Z. 14727-14748); verbraucht in ClimbSheetRopeState (Z. 263, Wurf Z. 84), ClimbDownSheetRopeState (Z. 130) und an hohen Zäunen in ClimbOverWallState (Z. 296)",
       "berichte": [
         "docs/berichte/2026-09-08-extraktion.md",
-        "tools/measure-mod/README.md"
+        "tools/measure-mod/README.md",
+        "docs/berichte/2026-09-23-faktensweep-2.md"
       ],
       "messungen": [
         "messung-2026-09-13-klettern.txt"
       ],
-      "notiz": "651 Punkte über 21 Fälle, keiner weicht von der Formel ab.",
+      "notiz": "651 Punkte über 21 Fälle, keiner weicht von der Formel ab. Eine neue Figur ohne Handschuhe hat 20, mit Burglar 24: beides Wurzel 4, der Trait allein ändert nichts; mit normalen Handschuhen (+4) 28, Wurzel 5. Die Fußnote sagt es seit dem Faktensweep 2 (23.09.2026).",
       "methode": "Klettern, Mess-Mod 6.19.0: getClimbingFailChanceFloat in 21 Trait-Fällen gelesen, darunter Burglar; je Fall Fitness, Strength und Nimble einzeln von 0 bis 10, die anderen auf 0. Der Test vermerkt Abweichungen gegen den Fall ohne Trait, die Formel wurde danach geprüft."
     },
     {
@@ -3011,12 +3064,13 @@
       "code": "IsoGameCharacter.getClimbRopeSpeed (Z. 14799; Traits Z. 14803-14817); gelesen in ClimbSheetRopeState (Z. 71, 116)",
       "berichte": [
         "docs/berichte/2026-09-08-extraktion.md",
-        "tools/measure-mod/README.md"
+        "tools/measure-mod/README.md",
+        "docs/berichte/2026-09-23-faktensweep-2.md"
       ],
       "messungen": [
         "messung-2026-09-13-klettern.txt"
       ],
-      "notiz": "Seiltempo je Stufe wie im Code.",
+      "notiz": "Seiltempo je Stufe wie im Code. Die Stufen 4 und 5 haben dasselbe Seiltempo (IsoGameCharacter Z. 14827-14865): bei einer neuen Figur ohne Handschuhe (Stufe 5) bringt +1 rund +12,5 %, -1 nichts; die Fußnote sagt es seit dem Faktensweep 2 (23.09.2026).",
       "methode": "Klettern, Mess-Mod 6.19.0: getClimbRopeSpeed hoch und runter in 21 Trait-Fällen gelesen, darunter Burglar; je Fall Fitness, Strength und Nimble einzeln von 0 bis 10, die anderen auf 0. Abweichungen gegen den Fall ohne Trait, danach je Stufe mit dem Code abgeglichen."
     },
     {
@@ -3158,7 +3212,9 @@
         "cowardly",
         "desensitized"
       ],
-      "werte": [],
+      "werte": [
+        "desensitized/corpses"
+      ],
       "berichte": [
         "docs/berichte/2026-09-13-engine-recherche.md",
         "tools/measure-mod/README.md"
@@ -3270,10 +3326,10 @@
     },
     {
       "id": "handy-haltbarkeit",
-      "titel": "Handy +100 Lebenspunkte für Gebautes",
-      "folge": "Nur über ISBuildIsoEntity:getHealth ohne Aufrufer und über Altklassen erreichbar, die das Baumenü nicht mehr erzeugt.",
+      "titel": "Handy +100 Lebenspunkte für Gebautes wirkt nie",
+      "folge": "Nur über ISBuildIsoEntity:getHealth ohne Aufrufer und über Altklassen erreichbar, die das Baumenü nicht mehr erzeugt. Gemessen am 20. und 21.09.2026 (Code-Werte, als Funktionsaufruf): eine Holzwand über setInfo hat mit und ohne Handy 470 Lebenspunkte.",
       "code": "server/BuildingObjects/ISBuildUtil.lua: getWoodHealth (Z. 39, Handy Z. 48-49); ISBuildIsoEntity:getHealth (Z. 38-43) ohne Aufrufer",
-      "stand": "code",
+      "stand": "gemessen",
       "umgang": "ausgegraut",
       "traits": [
         "handy"
@@ -3283,8 +3339,14 @@
       ],
       "berichte": [
         "mod/42/media/lua/shared/TraitFacts/TF_Static.lua",
-        "docs/berichte/2026-09-10-lua-abgleich.md"
-      ]
+        "docs/berichte/2026-09-10-lua-abgleich.md",
+        "docs/berichte/2026-09-23-faktensweep-2.md"
+      ],
+      "messungen": [
+        "messung-2026-09-20-werte.txt",
+        "messung-2026-09-21-werte.txt"
+      ],
+      "methode": "Code-Werte, Mess-Mod 6.32.0 und 6.40.1: ISBuildIsoEntity:setInfo selbst aufgerufen, wie create es beim Bauen tut (Holzwand WoodenWallLvl1 auf einem Feld neben der Figur), getMaxHealth der neuen Wand ohne und mit Handy: 470 und 470; Gegenprobe buildUtil.getWoodHealth 50 und 150. Ein Funktionsaufruf, kein Bau im Spiel."
     },
     {
       "id": "speeddemon-vorwaerts",
@@ -3390,7 +3452,8 @@
         "irongut"
       ],
       "werte": [
-        "irongut/taintedwater"
+        "irongut/taintedwater",
+        "irongut/poison"
       ],
       "berichte": [
         "mod/42/media/lua/shared/TraitFacts/TF_Static.lua",
@@ -3429,7 +3492,7 @@
     {
       "id": "unfallbruch",
       "titel": "Knochenbrüche bei Autounfällen umgehen Fast und Slow Healer",
-      "folge": "IsoPlayer und BaseVehicle rufen generateFracture direkt, ohne Trait-Abfrage. Gemessen am 14.09.2026 (Code-Werte, Mess-Mod 6.26.2): mittlere Bruchzeit ohne Trait 37.6784, mit Fast Healer 35.1779 (Faktor 0.9336), mit Slow Healer 40.9039 (Faktor 1.0856), je Fall 1200 Proben über 72 Ticks, gemessen beim Angefahrenwerden (IsoPlayer.applyDamageFromVehicleHit); laut Code 0.9202 und 1.0798, allein über den Schaden, statt 0.6 und 1.8 aus generateFractureNew. Beim Unfall am Steuer (BaseVehicle Z. 8531) fehlt der Trait-Faktor ebenso, dort gilt aber eine eigene Bruchregel (Schaden über 50, Wurf 1 in 10) und Zeitformel; dieser Weg ist nicht gemessen.",
+      "folge": "IsoPlayer und BaseVehicle rufen generateFracture direkt, ohne Trait-Abfrage. Gemessen am 14.09.2026 (Code-Werte, Mess-Mod 6.26.2): mittlere Bruchzeit ohne Trait 37.6784, mit Fast Healer 35.1779 (Faktor 0.9336), mit Slow Healer 40.9039 (Faktor 1.0856), je Fall 1200 Proben über 72 Ticks, gemessen beim Angefahrenwerden (IsoPlayer.applyDamageFromVehicleHit); laut Code 0.9202 und 1.0798, allein über den Schaden, statt 0.6 und 1.8 aus generateFractureNew. Beim Unfall am Steuer (BaseVehicle Z. 8528-8532) fehlt der Trait-Faktor ebenso, dort gilt aber eine eigene Bruchregel (Schaden über 50, Wurf 1 in 10, nur wenn der Tiefwunden-Wurf davor nicht traf) und Zeitformel; dieser Weg ist nicht gemessen.",
       "code": "IsoPlayer (Z. 1984-1990) und BaseVehicle (Z. 8532) rufen BodyPart.generateFracture (Z. 818) direkt; nur die Stürze (IsoGameCharacter Z. 2139, 2151) gehen über generateFractureNew (Z. 828)",
       "stand": "gemessen",
       "umgang": "fussnote",
@@ -3464,7 +3527,9 @@
       ],
       "werte": [
         "resilient/coldmild",
-        "outdoorsman/coldmild"
+        "outdoorsman/coldmild",
+        "resilient/cold",
+        "outdoorsman/cold"
       ],
       "berichte": [
         "tools/measure-mod/README.md"
@@ -3520,6 +3585,24 @@
       "berichte": [
         "docs/berichte/2026-09-23-faktensweep.md",
         "mod/42/media/lua/client/TraitFacts/TF_Live.lua"
+      ]
+    },
+    {
+      "id": "kletterwert-eins",
+      "titel": "Kletterwert 1 bis 3 scheitert an hohen Zäunen immer, schlechter als 0",
+      "folge": "An hohen Zäunen würfelt das Spiel mit 1 zu Wurzel des Kletterwerts. Bei Wurzel 1 (Summe 1 bis 3) ist Rand.NextBool(1) immer wahr, die Figur scheitert jedes Mal. Bei Wurzel 0 dagegen gelingt es mit Rand.Next(100) <= Strength, bei Strength 5 in 6 von 100 Fällen. Die Wegfindung führt ab Wert 1 über hohe Zäune und schickt die Figur so an Zäune, an denen sie immer scheitert. Betroffen ist etwa eine neue Figur mit High Weight (Fitness 4, 18 - 15 = 3) oder Clumsy mit High Weight. Aus dem Code, nicht im Spiel gemessen.",
+      "code": "ClimbOverWallState (Z. 296-311, Wurf Z. 306); RandInterface.NextBool (Z. 24-25), RandAbstract.Next (Z. 20-23); IsoGameCharacter.getClimbingFailChanceFloat (Z. 14718-14754, Wurzel Z. 14753); PathFindRequest (Z. 77)",
+      "stand": "code",
+      "umgang": "fussnote",
+      "traits": [
+        "overweight",
+        "clumsy"
+      ],
+      "werte": [
+        "overweight/climb"
+      ],
+      "berichte": [
+        "docs/berichte/2026-09-23-faktensweep-2.md"
       ]
     }
   ],

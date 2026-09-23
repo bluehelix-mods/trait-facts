@@ -257,10 +257,11 @@ TF.Summary.BETTER = {
     UI_TF_eff_panic         = "down",
     UI_TF_eff_panicin       = "down",
     UI_TF_eff_panicout      = "down",
-    -- Die Zeile nennt nur, was der Trait kann. Dass Smoker laut Registry eine
-    -- Buerde ist (Kosten -3), liegt am Zigarettenbedarf, und der steht nicht
-    -- in dieser Zeile.
-    UI_TF_eff_smoker        = "up",
+    -- Die Zeile nennt Nutzen (Stress, Unzufriedenheit) und Last (Entzug,
+    -- Husten, den Zombies hoeren); eine Richtung waere geraten. Bis 0.14.0
+    -- "up", also das gruene Gewinnzeichen an einem Trait, der -3 kostet
+    -- (Faktensweep 2, 23.09.2026).
+    UI_TF_eff_smoker        = "open",
     UI_TF_eff_treatpanic    = "down",
 
     -- Essen und Trinken
@@ -315,8 +316,10 @@ TF.Summary.BETTER = {
     UI_TF_eff_kindling      = "down",
     UI_TF_eff_transfer      = "down",
     UI_TF_eff_craftwalk     = "down",
-    -- Eine Zuordnung, keine Wirkung: dass Strong die Stufe 9 ist, ist weder
-    -- gut noch schlecht.
+    -- Seit 0.1.14 eine Zahl (Stufen gegenueber der Grundstufe 5), keine
+    -- Zuordnung mehr: eine hoehere Startstufe hilft der Figur, darum "up"
+    -- (Faktensweep 2, 23.09.2026; der alte Satz "weder gut noch schlecht"
+    -- stand noch darueber).
     UI_TF_eff_startstrength = "up",
     UI_TF_eff_startfitness  = "up",
     UI_TF_eff_treedamage    = "up",
@@ -810,6 +813,13 @@ end
 --
 -- Skaliert wird nur, wenn Text, Einheit und Geltungsbereich gleich sind;
 -- der Faktor-Eimer geht dann in der Spanne auf.
+--
+-- Nicht auf pctrange (Faktensweep 2, 23.09.2026): das ist eine Spanne von
+-- Aenderungen in Prozent, und ein Faktor darauf waere (1 + p) x f - 1, nicht
+-- p x f. Heute trifft das keine Zeile, aber eine Paketzeile koennte es. Die
+-- Fussnote des Faktors zaehlt hier bewusst nicht mit: Night Owl traegt seit
+-- dem Faktensweep 2 eine (nightowlcap) und muss Insomniacs Spanne trotzdem
+-- halbieren.
 local function scaleRanges(order)
     local kept = {}
     for _, bucket in ipairs(order) do
@@ -819,7 +829,7 @@ local function scaleRanges(order)
                 -- Ein Faktor ist einheitenlos; die Spanne traegt ihre Einheit
                 -- (Minuten). Die Einheit zaehlt nur, wenn der Faktor selbst
                 -- eine hat - sonst passte "-50 %" nie auf "0 bis 60 min".
-                if other.how == "range" and other.text == bucket.text
+                if other.how == "range" and other.kind ~= "pctrange" and other.text == bucket.text
                         and (bucket.unit == nil or other.unit == bucket.unit)
                         and other.scope == bucket.scope then
                     local f = asFactor(bucket)
@@ -973,15 +983,25 @@ function TF.Summary.merge(found)
             if not seen then bucket.sources[#bucket.sources + 1] = item.source end
         end
     end
-    -- Die Startstufe faellt nie unter 0 (checkXPBoost und applyTraits
-    -- klemmen). Die Zeile zeigt, was die Traits beitragen, ohne den Beruf;
-    -- unter -5 sagt eine Bedingung, dass die Figur trotzdem bei 0 bleibt.
-    -- Unfit und Very High Weight tragen -6 bei (Audit 12.09.2026). Auf -5
-    -- kappen waere falsch: mit einem Berufs-Boost stimmt die -6.
+    -- Die Startstufe bleibt zwischen 0 und 10: applyTraits addiert zur 5
+    -- die Boosts der Traits und des Berufs und klemmt dann in beide
+    -- Richtungen (IsoGameCharacter.java:10437-10438). Die Zeile zeigt die
+    -- Summe aus Traits und Beruf (TF.Live.professionEntries, seit 0.12.0);
+    -- ohne Beruf nur die Traits. Unter -5 sagt eine Bedingung, dass die Figur
+    -- trotzdem bei 0 bleibt (Unfit und Very High Weight: -6, Audit
+    -- 12.09.2026), ueber +5, dass sie bei 10 bleibt (Athletic +4 mit Fitness
+    -- Instructor +3: +7, die Figur startet mit Fitness 10; Faktensweep 2,
+    -- 23.09.2026). Die Zahl selbst bleibt die Summe: ohne Beruf ist die
+    -- Startstufe nicht bekannt, und eine gekappte Zahl stimmte dann nicht.
     for _, bucket in ipairs(order) do
-        if LEVEL_TEXTS[bucket.text] and type(bucket.value) == "number" and bucket.value < -5 then
-            bucket.conditions = bucket.conditions or {}
-            bucket.conditions[#bucket.conditions + 1] = "UI_TF_note_levelfloor"
+        if LEVEL_TEXTS[bucket.text] and type(bucket.value) == "number" then
+            if bucket.value < -5 then
+                bucket.conditions = bucket.conditions or {}
+                bucket.conditions[#bucket.conditions + 1] = "UI_TF_note_levelfloor"
+            elseif bucket.value > 5 then
+                bucket.conditions = bucket.conditions or {}
+                bucket.conditions[#bucket.conditions + 1] = "UI_TF_note_levelceil"
+            end
         end
     end
     return scaleRanges(order)
@@ -1027,6 +1047,20 @@ local function splitOverlap(a, b)
         measuredStale = broad.measuredStale or narrow.measuredStale or nil,
         textArg = broad.textArg,
     }
+    -- Die Bedingungen beider Teile gelten auch fuer ihre Summe; bis zum
+    -- Faktensweep 2 (23.09.2026) fielen sie hier weg. Ein hint braucht das
+    -- nicht: "both" hat immer mehr als einen Eintrag, und dann zeigt build
+    -- keinen hint.
+    for _, part in ipairs({ broad, narrow }) do
+        for _, condition in ipairs(part.conditions or {}) do
+            both.conditions = both.conditions or {}
+            local known = false
+            for _, have in ipairs(both.conditions) do
+                if have == condition then known = true break end
+            end
+            if not known then both.conditions[#both.conditions + 1] = condition end
+        end
+    end
     -- Der Rest des breiten Bereichs: nur der breite Trait, mit seiner eigenen
     -- Fussnote ("except Fitness and Strength").
     local rest = {}
@@ -1100,6 +1134,31 @@ local function renderLine(bucket, value, note, spalten)
           x = spalten.label.x, width = spalten.label.width },
         { runs = note, x = spalten.note.x, width = spalten.note.width },
     })
+end
+
+--- Die 3-Kachel-Untergrenze beim Sammeln (Faktensweep 2, 23.09.2026).
+--
+-- ISBaseIcon rechnet 3 + 0.5 x Stufe + Trait- und Berufsbonus und klemmt
+-- danach auf mindestens 3 Kacheln (ISBaseIcon.lua:318-331, der Ring im
+-- Suchmodus ebenso, ISSearchManager.lua:1022-1052). Ein Abzug kostet also
+-- nur, was ueber 3 liegt: bei Nahrungssuche 0 nichts, je Stufe eine halbe
+-- Kachel mehr. TF.Live gibt jedem negativen Radius die Bedingung mit; sie
+-- gilt aber nur, solange auch die Zeile negativ ist. In einer Summe mit
+-- positiven Radien (Agoraphobic mit Eagle Eyed) faellt sie weg, und in der
+-- Schnittmenge einer Ueberschneidung (ohne Brille) kommt sie dazu, wenn die
+-- Summe dort negativ ist. Neue Tabelle statt Aenderung an Ort und Stelle:
+-- der Rest einer Ueberschneidung teilt sie sonst mit seinem Ursprung.
+local SIGHT_FLOOR = "UI_TF_note_sightfloor"
+local function sightFloor(bucket)
+    if bucket.text ~= "UI_TF_live_sight" then return end
+    local kept = {}
+    for _, condition in ipairs(bucket.conditions or {}) do
+        if condition ~= SIGHT_FLOOR then kept[#kept + 1] = condition end
+    end
+    if type(bucket.value) == "number" and bucket.value < -0.0001 then
+        kept[#kept + 1] = SIGHT_FLOOR
+    end
+    bucket.conditions = (#kept > 0) and kept or nil
 end
 
 --- @param width number  nutzbare Breite des Panels; ab TF.Summary.MIN_COLUMN_WIDTH
@@ -1204,10 +1263,30 @@ function TF.Summary.build(traitDefs, width, profession)
 
     local byGroup = {}
     for _, bucket in ipairs(ordered) do
+        sightFloor(bucket)
         -- Ein Faktor, der auf genau 1.0 herauskommt, hebt sich auf. Die Zeile
-        -- "+0 %" waere korrekt und trotzdem nutzlos.
+        -- "+0 %" waere korrekt und trotzdem nutzlos - ausser sie traegt eine
+        -- Bedingung: dann heben sich die Traits nur in diesem einen Fall auf.
+        -- Thin-skinned (x2) mit Outdoorsy (x0.5) ergibt bei den Kratzern von
+        -- Baeumen genau 1.0, aber nur beim Gehen ohne Kleidung; rennend sind
+        -- es -25 %, mit 30 Punkten Kleidung +23 % (IsoGameCharacter.java:
+        -- 3854-3872, aeusserer und innerer Wurf). Bis 0.14.0 verschwand die
+        -- Zeile samt Bedingung, und die Uebersicht sagte damit "hebt sich auf"
+        -- (Faktensweep 2, 23.09.2026). UI_TF_note_bandset zaehlt nicht: sie
+        -- sagt, woher ein Trait kommt, nicht wann die Zahl stimmt.
         local drop = false
-        if bucket.how == "factor" and math.abs(asFactor(bucket) - 1) < 0.0001 then drop = true end
+        if bucket.how == "factor" and math.abs(asFactor(bucket) - 1) < 0.0001 then
+            local bedingt = false
+            for _, condition in ipairs(bucket.conditions or {}) do
+                if condition ~= "UI_TF_note_bandset" then bedingt = true end
+            end
+            if bedingt then
+                -- Genau 1, damit keine Rundung "-0 %" daraus macht.
+                bucket.kind, bucket.value = "mult", 1
+            else
+                drop = true
+            end
+        end
         -- Mit Toleranz wie die beiden Nachbarregeln: flat-Werte werden in
         -- Gleitkomma summiert, und -1.5 + 0.4 + 0.4 + 0.7 ist -1.1e-16, nicht 0.
         -- Exakt verglichen blieb eine rote Zeile "-0 tiles" stehen (Bugjagd
@@ -1343,7 +1422,8 @@ function TF.Summary.build(traitDefs, width, profession)
     -- was der Tooltip schon sagt ("only live values are shown"). Das Thema
     -- bleibt fuer fremde Traits, die sonst nirgends in der Uebersicht staenden.
     -- Eine Zeile je Mod, nicht je Trait (seit 0.5.0): More Traits Definitive
-    -- bringt 96 Traits mit, und eine Liste aus lauter gleichen Zeilen
+    -- definiert 96 Traits (mit ihren Untermods Disable Prepared und Disable
+    -- Specialization bis zu 15 weniger), und eine Liste aus lauter gleichen Zeilen
     -- ("Trait X, Wirkungen aus ...") sagte nichts und schob die Themen
     -- darueber aus dem Bild (Befund im Spiel 16.09.2026). Gezaehlt wird je
     -- Mod, in der Reihenfolge des ersten Treffers.

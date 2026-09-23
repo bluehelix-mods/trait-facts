@@ -41,7 +41,17 @@ TF.Static = TF.Static or {}
 -- samt Fast und Slow Learner (siehe TF_XpColumns).
 
 -- Knockback: IsoGameCharacter.processHitDamage(), hitForce x 1.4 / x 0.6,
--- jeweils nur wenn !weapon.isRanged().
+-- jeweils nur wenn !weapon.isRanged(). Gemessen ist der Getter. Verbraucht
+-- wird hitForce im Einzelspiel nur als Schwelle: die Taumel-Animation des
+-- Zombies waehlt ueber 0.4 den langen Stoss-Taumel (Zombie_ShoveStagger_2m,
+-- AnimSets/zombie/staggerback/defaultStaggerBack.xml), darunter den kurzen
+-- (GeneralStagger.xml, smallFromFront.xml). StaggerBack gibt es nur ohne
+-- ZombieHitReaction (CombatManager Z. 2410-2416), und jede Nahkampf-
+-- Schwunganimation setzt eine; es bleiben also die Stoesse. Die zur Kraft
+-- proportionale Schubstrecke (calcHitDir, Z. 13628-13643) ruft nur
+-- HitReactionNetworkAI im Multiplayer. Darum heisst die Zeile seit dem
+-- Faktensweep 2 (23.09.2026) "Schlagkraft" mit der Schwelle in der Fussnote,
+-- nicht mehr "Rueckstoss".
 -- Tragekapazitaet: maxWeightDelta setzen nur die IsoPlayer-Konstruktoren
 -- (Z. 592-600, 656-664; if/else if, Strong vor Weak vor Feeble vor Stout).
 -- Die laufen aber vor applyTraits (IsoWorld Z. 2200 und 2211): die
@@ -70,7 +80,7 @@ TF.Static = TF.Static or {}
 TF.Static["strong"] = {
     -- Startstufe und Stufen-Satz: TF.Live.entries (getXpBoosts, seit 0.1.15).
     { id = "knockback",   kind = "pct",  value = 40,   text = "UI_TF_eff_knockback",
-      note = "UI_TF_note_meleeonly" },
+      note = "UI_TF_note_hitforce" },
     { id = "carryweight", kind = "mult", value = 1.5,  text = "UI_TF_eff_carry",
       dead = true, note = "UI_TF_note_deadcarry" },
     { id = "grapple",     kind = "mult", value = 1.25, text = "UI_TF_eff_grapple",
@@ -87,7 +97,7 @@ TF.Static["stout"] = {
 TF.Static["weak"] = {
     -- Startstufe und Stufen-Satz: TF.Live.entries (getXpBoosts, seit 0.1.15).
     { id = "knockback",   kind = "pct",  value = -40,  text = "UI_TF_eff_knockback",
-      note = "UI_TF_note_meleeonly" },
+      note = "UI_TF_note_hitforce" },
     { id = "carryweight", kind = "mult", value = 0.75, text = "UI_TF_eff_carry",
       dead = true, note = "UI_TF_note_deadcarry" },
 }
@@ -100,8 +110,10 @@ TF.Static["feeble"] = {
       dead = true, note = "UI_TF_note_deadcarry" },
 }
 
--- Ax-pert: getChopTreeSpeed() liefert 1.0 statt 0.8, im Getter +25 % (Probe
--- chopTreeSpeed). Die Faell-Animation (AnimSets/player/actions/chop_tree.xml)
+-- Ax-pert: getChopTreeSpeed() liefert 1.0 statt 0.8, im Getter +25 %. Die
+-- Probe chopTreeSpeed stand hier bis zum Faktensweep 2 (23.09.2026) ohne
+-- Eintrag in TF.Probes, lief also nie; das Wiki zeigte trotzdem "Live".
+-- Die Faell-Animation (AnimSets/player/actions/chop_tree.xml)
 -- fuehrt ChopTreeSpeed als m_SpeedScale, der Clip dauert 1.0 s, der Hieb
 -- faellt bei 0.35: mit Ax-pert ein Hieb je 1.0 s, ohne je 1.25 s, x1.25.
 -- Bis 0.13.9 stand die Zeile als dead, weil der Takt am 13.09.2026 in drei
@@ -113,6 +125,13 @@ TF.Static["feeble"] = {
 -- und die war immer ohne Ax-pert. Eine Figur, die Ax-pert schon beim Start
 -- des Faellens hat, ist nie gemessen worden. Darum jetzt Stand code; die
 -- Nachmessung mit dem Trait vor dem Start ist geplant (Mess-Mod 6.43.0).
+-- Das alles gilt nur im Einzelspiel (Faktensweep 2, 23.09.2026): im
+-- Multiplayer, auch beim Hosten, landet der Server die Hiebe selbst
+-- (ISChopTreeAction.lua Z. 64-68 nur `not isClient()`, serverStart Z. 108-111
+-- emulateAnimEvent(1500, "ChopTree"), LuaManager Z. 9585-9589,
+-- AnimEventEmulator.update wiederholt alle 1500 ms), mit und ohne Ax-pert
+-- ein Hieb alle 1,5 s. Der Baumschaden x 1.5 laeuft dort ebenfalls auf dem
+-- Server und gilt weiter. Die Fussnote sagt es.
 -- Der Baumschaden steigt auf x 1.5, nur fuer Waffen der Kategorie AXE;
 -- gemessen am 13.09.2026: 35 -> 53 je Hieb, 1.50 ueber 24 Hiebe.
 -- Axt-Schwungzeit: dieselbe 0.8 bremst ohne Ax-pert jeden Schlag mit einer
@@ -122,20 +141,30 @@ TF.Static["feeble"] = {
 -- Grundterm 0.8 x BaseSpeed; danach kommen ohne Trait-Bezug +0.03 je
 -- Waffenstufe, +0.02 je Fitness-Stufe und -0.07 je Stufe Erschoepfung und
 -- Ueberladung dazu, dann Rand.Next(1.1, 1.2) und die Klemme 0.8 bis 1.6.
--- Laut Code also kein fester Faktor: rund -18 % bei einer neuen Figur (Axt 0,
--- Fitness 5), -16 % bei Axt 3, -12 % bei Axt 10 und Fitness 10 (Faktensweep
--- 23.09.2026; bis dahin stand hier "ein Schlag dauert also x 0.8").
+-- Laut Code also kein fester Faktor: mit der Axt (BaseSpeed 1.0) rund -17 %
+-- fuer einen neuen Holzfaeller (Axt 2, Fitness 5; Ax-pert gibt es nur ueber
+-- den Beruf Lumberjack, character_professions.txt Z. 124-132), -16 % bei
+-- Axt 3, -12 % bei Axt 10 und Fitness 10 (Faktensweep 23.09.2026; bis dahin
+-- stand hier "ein Schlag dauert also x 0.8"). Bis zum Faktensweep 2
+-- (23.09.2026) stand hier "-18 % bei einer neuen Figur (Axt 0)": das war der
+-- falsche Ausgangspunkt, ohne den Beruf hat niemand Ax-pert. Langsame Waffen
+-- der Kategorie Axt (Spitzhacke BaseSpeed 0.8, Cudgel 0.85, ScrapCleaver
+-- 0.9) liegen ohne Trait an oder nahe der Klemme 0.8, dort bringt der Trait
+-- laut Modell deutlich weniger (Spitzhacke rund -13 % bei Axt 2, -6 % bei
+-- Axt 0).
 -- Gemessen am 13.09.2026 (docs/messungen/messung-2026-09-13-axt.txt, Axt-Skill
 -- fest auf 3, Fitness nicht mitgeschrieben): Schlagdauer mit/ohne 0.788, Takt
 -- 0.792, also -20 %; das ist mehr, als das lineare Modell bei Axt 3 erwartet,
 -- die Schlagdauer folgt 1/CombatSpeed also nicht genau. Die Zeile zeigt die
--- gemessenen -20 % fuer eine neue Figur, die Fussnote die Spanne. Bis 0.1.23
+-- gemessenen -20 % mit der Bedingung der Messung (Axt 3); die Modellzahl
+-- -12 % steht seit dem Faktensweep 2 nicht mehr in der Fussnote, gemessen
+-- ist sie nicht. Bis 0.1.23
 -- stand hier -5 %, wirkungslos: die x 0.95 in HandWeapon.getSpeedMod hat
 -- wirklich keinen Aufrufer (Spielfehler speedmod-axeman), aber sie ist nicht
 -- der Weg, auf dem Ax-pert wirkt.
 TF.Static["axeman"] = {
     { id = "chopspeed",  kind = "pct", value = 25,  text = "UI_TF_eff_chopspeed",
-      probe = "chopTreeSpeed", note = "UI_TF_note_chophit" },
+      note = "UI_TF_note_chophit" },
     { id = "axeswing",   kind = "pct", value = -20, text = "UI_TF_eff_axeswing",
       note = "UI_TF_note_axeswing" },
     { id = "treedamage", kind = "pct", value = 50,  text = "UI_TF_eff_treedamage",
@@ -146,19 +175,44 @@ TF.Static["axeman"] = {
 -- Gewicht (Bericht "Nahkampf, Kraft, Tragen", "Ausdauer", "Klettern")
 -- ---------------------------------------------------------------------------
 
+-- Nahkampfschaden: CombatManager Z. 819-821 multipliziert den Schaden jedes
+-- Nahkampftreffers mit getTraitDamageDealtReductionModifier. Ein Tritt auf
+-- einen liegenden Zombie (isAimAtFloor und isDoShove) ueberschreibt
+-- damageSplit danach mit eigener Formel (Z. 846-850), der Trait faellt dort
+-- weg; ein Stoss im Stehen macht ohnehin keinen Schaden (Z. 593-595). Darum
+-- die Fussnote (Faktensweep 2, 23.09.2026).
 TF.Static["underweight"] = {
     { id = "meleedamage", kind = "pct", value = -20, text = "UI_TF_eff_meleedamage",
-      probe = "damageDealt" },
+      probe = "damageDealt", note = "UI_TF_note_meleeswings" },
 }
 
 -- Stolpern: ClimbOverFenceState.shouldFallAfterVaultOver wuerfelt Rand.Next(100)
 -- gegen einen Zaehler, Basis 0 (10 beim Sprinten), also Prozentpunkte. Der
 -- Engine-Bug ist im Bericht belegt: VERY_UNDERWEIGHT wird zweimal abgefragt
 -- (+20, dann +10), gemeint war vermutlich UNDERWEIGHT. Effektiv +30.
+-- Der Wurf ist Rand.Next(100) < Zaehler - Fitness (Z. 529): ein negativer
+-- Zaehler wirkt wie 0. Im Laufen ohne Moodles liegt die Basis schon ab
+-- Fitness 1 unter 0 und schluckt einen Teil der Trait-Punkte. Die Gewichts-
+-- Traits senken dazu die Start-Fitness (XPBoosts Fitness -1 bzw. -2). Neue
+-- Figur, Laufen/Sprinten: ohne Trait 0/5 %, High Weight 6/16 %, Very High
+-- Weight 17/27 %, Very Low Weight 27/37 %, Graceful 0/0 %, Clumsy 5/15 %.
+-- Die Beispiele stehen je Trait als hint, damit die Uebersicht die Punkte
+-- mehrerer Traits weiter in einer Zeile summiert (Faktensweep 2, 23.09.2026).
 --
 -- Klettern: IsoGameCharacter.getClimbingFailChanceFloat ist trotz des Namens
--- ein Sicherheitswert (hoeher = seltener Absturz vom Bettlaken-Seil), Basis
--- Fitness x 2 + Strength x 2 + Nimble x 2, bei einer neuen Figur 20.
+-- ein Sicherheitswert, Basis Fitness x 2 + Strength x 2 + Nimble x 2, bei
+-- einer neuen Figur 20, davon die ganzzahlige Wurzel. Verbraucht wird er vor
+-- allem an hohen Zaeunen (ClimbOverWallState Z. 296-311): scheitern mit 1 zu
+-- Wurzel; bei Wurzel 0 gelingt es nur mit (Strength + 1) %, mit Schwerer Last
+-- nie, und die Wegfindung fuehrt nicht mehr ueber hohe Zaeune
+-- (PathFindRequest Z. 77). Wurzel 1 (Summe 1 bis 3) scheitert immer, weil
+-- Rand.NextBool(1) immer wahr ist (RandInterface Z. 24-25), schlechter als 0
+-- (Spielfehler kletterwert-eins). Am Bettlaken-Seil oeffnet der Sturzwurf
+-- erst nach (Wurzel + 1) x 100 x Seiltempo Stockwerken am Stueck
+-- (ClimbSheetRopeState Z. 76, 83, 261-266), bei einer neuen Figur 40
+-- Stockwerke, runter das Dreifache: dort wirkt der Wert praktisch nie
+-- (Faktensweep 2, 23.09.2026; bis dahin stand hier "seltener Absturz vom
+-- Bettlaken-Seil").
 -- getClimbRopeSpeed nimmt max(Strength, Fitness) und rechnet die Trait-Stufen
 -- dazu; die Stufe bestimmt das Klettertempo.
 -- IsoGameCharacter.attackFromWindowsLunge: springt ein Zombie, der gerade
@@ -172,19 +226,24 @@ TF.Static["underweight"] = {
 -- und Nimble x1, das Ergebnis nie unter 5. Das ist ein anderer Wurf als die
 -- Stolperchance aus ClimbOverFenceState, darum eine eigene Zeile.
 -- IsoGameCharacter.handleLandingImpact: nach einem schaedigenden Sturz
+-- entscheidet zuerst Rand.Next(100) < Schaden (Z. 2119), ob er ueberhaupt
+-- verletzt; der Schaden haengt an Fallhoehe, Inventarlast (leeres Inventar:
+-- 0) und den Gewichts-Traits (x1.2 / x1.4, eigene Zeile falldamage). Erst dann
 -- entscheidet ein zweiter Wurf ueber Knochenbruch, tiefe Wunde oder nur
--- Steifheit. Die Schwelle beginnt bei Sturzhoehe x 55, plus bis zu 20, wenn
+-- Steifheit. Die Schwelle beginnt bei (Aufprallgeschwindigkeit / Schwelle
+-- harter Sturz)^2 x 55, also Fallhoehe / 1,5 x 55 (bis zum Faktensweep 2,
+-- 23.09.2026, stand hier "Sturzhoehe x 55"), plus bis zu 20, wenn
 -- das Inventar fast voll ist, minus 1,5 je Fitness-Stufe ueber 4 und je
 -- Nimble-Stufe. Der Bruchwurf ist Rand.Next(100) < Schwelle, der Wundwurf
 -- laeuft mit Schwelle + 10 nur, wenn der Bruchwurf danebenging.
 TF.Static["veryunderweight"] = {
     { id = "meleedamage",  kind = "pct",  value = -40,  text = "UI_TF_eff_meleedamage",
-      probe = "damageDealt" },
+      probe = "damageDealt", note = "UI_TF_note_meleeswings" },
     { id = "grapple",      kind = "mult", value = 0.8,  text = "UI_TF_eff_grapple",
       dead = true, note = "UI_TF_note_deadgrapple" },
     { id = "trip",         kind = "flat", value = 30,   text = "UI_TF_eff_trip",
       unit = "UI_TF_unit_of100", note = "UI_TF_note_tripbase",
-      hint = "UI_TF_note_enginebug" },
+      hint = "UI_TF_note_triplow" },
     -- Auch hier steht die Abfrage zweimal hintereinander im Code, +20 und
     -- dann +10; wie beim Zaun sieht das nach einem Versehen aus.
     { id = "lungefall",    kind = "flat", value = 30,   text = "UI_TF_eff_lungefall",
@@ -198,7 +257,7 @@ TF.Static["veryunderweight"] = {
 
 TF.Static["emaciated"] = {
     { id = "meleedamage",  kind = "pct",  value = -60,  text = "UI_TF_eff_meleedamage",
-      probe = "damageDealt" },
+      probe = "damageDealt", note = "UI_TF_note_meleeswings" },
     { id = "grapple",      kind = "mult", value = 0.6,  text = "UI_TF_eff_grapple",
       dead = true, note = "UI_TF_note_deadgrapple" },
     { id = "falldamage",   kind = "pct",  value = 40,   text = "UI_TF_eff_falldamage" },
@@ -228,15 +287,24 @@ TF.Static["overweight"] = {
     -- Richtungen, All Thumbs -1, High Weight -1 und Very High Weight -2 nur
     -- hoch, Clumsy gar nicht. Die acht Stufen-Traits und die drei
     -- Untergewichts-Traits aendern an Sicherheit und Seil nichts.
+    -- Seit dem Faktensweep 2 (23.09.2026) je Trait eine Fussnote mit dem
+    -- Ergebnis an hohen Zaeunen: eine neue Figur mit High Weight hat Fitness 4
+    -- (XPBoosts Fitness=-1), also 18 - 15 = 3, Wurzel 1, und scheitert immer;
+    -- mit Very High Weight (Fitness 3) 16 - 25, Wurzel 0, rund 94 %.
     { id = "climb",         kind = "flat", value = -15,  text = "UI_TF_eff_climb",
       unit = "UI_TF_unit_points", note = "UI_TF_note_climbweight" },
     -- getClimbRopeSpeed zieht das Gewicht nur im Zweig !down ab, also nur
     -- beim Hochklettern. Eigene Fussnote, damit die Uebersicht es nicht mit
     -- Gymnasts +1 (hoch und runter) zu null verrechnet (Audit 12.09.2026).
+    -- Die Stufen 4 und 5 haben dasselbe Tempo (kein case 4/5, Z. 14827-14865):
+    -- eine neue Figur ohne Handschuhe (Stufe 5) verliert mit -1 nichts,
+    -- Very High Weight (5 -> 3) klettert rund 56 % langsamer (Faktensweep 2,
+    -- 23.09.2026).
     { id = "climbstrength", kind = "flat", value = -1,   text = "UI_TF_eff_climbstrength",
       unit = "UI_TF_unit_levels", note = "UI_TF_note_climbup" },
     { id = "trip",          kind = "flat", value = 10,   text = "UI_TF_eff_trip",
-      unit = "UI_TF_unit_of100", note = "UI_TF_note_tripbase" },
+      unit = "UI_TF_unit_of100", note = "UI_TF_note_tripbase",
+      hint = "UI_TF_note_triphigh" },
     { id = "lungefall",     kind = "flat", value = -5,   text = "UI_TF_eff_lungefall",
       unit = "UI_TF_unit_of100", note = "UI_TF_note_lungebase" },
     { id = "falldamage",    kind = "pct",  value = 20,   text = "UI_TF_eff_falldamage" },
@@ -253,11 +321,12 @@ TF.Static["obese"] = {
     { id = "sprintspeed",   kind = "pct",  value = -15,  text = "UI_TF_eff_sprintspeed",
       dead = true, note = "UI_TF_note_deadspeed" },
     { id = "climb",         kind = "flat", value = -25,  text = "UI_TF_eff_climb",
-      unit = "UI_TF_unit_points", note = "UI_TF_note_climbweight" },
+      unit = "UI_TF_unit_points", note = "UI_TF_note_climbobese" },
     { id = "climbstrength", kind = "flat", value = -2,   text = "UI_TF_eff_climbstrength",
-      unit = "UI_TF_unit_levels", note = "UI_TF_note_climbup" },
+      unit = "UI_TF_unit_levels", note = "UI_TF_note_climbupobese" },
     { id = "trip",          kind = "flat", value = 20,   text = "UI_TF_eff_trip",
-      unit = "UI_TF_unit_of100", note = "UI_TF_note_tripbase" },
+      unit = "UI_TF_unit_of100", note = "UI_TF_note_tripbase",
+      hint = "UI_TF_note_tripveryhigh" },
     { id = "lungefall",     kind = "flat", value = -10,  text = "UI_TF_eff_lungefall",
       unit = "UI_TF_unit_of100", note = "UI_TF_note_lungebase" },
     { id = "falldamage",    kind = "pct",  value = 40,   text = "UI_TF_eff_falldamage" },
@@ -280,7 +349,10 @@ TF.Static["obese"] = {
 -- Rand.Next(100) > Summe, ohne Verletzung bleibt man also mit (Summe + 1) %.
 -- Von vorn gegen einen Zombie unbewaffnet 10 -> 13 (Thick) bzw. 7 (Thin),
 -- 11 % -> 14 % bzw. 8 %, je +27 % und -27 %; mit Waffenskill (Summe 13 bis
--- 22) +21 bis +29 % und -21 bis -27 %. Die frueheren +30 / -23 waren die
+-- 22) +21 bis +29 % und -21 bis -26 % (die Summen sind 13 und 15 bis 22,
+-- getMeleeCombatMod Z. 10074-10106; bis zum Faktensweep 2, 23.09.2026, stand
+-- hier -27, das gaebe nur die unerreichbare 14; seitdem je Trait eine
+-- Fussnote). Die frueheren +30 / -23 waren die
 -- Faktoren x1.3 und /1.3 auf den inneren Wert (Faktensweep 23.09.2026; bis
 -- dahin stand hier auch Seite und hinten vertauscht und "16 % auf 20 %", das
 -- ist Summe 15). Von der Seite oder gegen drei liegt die Summe schon bei 0,
@@ -293,7 +365,7 @@ TF.Static["thickskinned"] = {
 
 TF.Static["thinskinned"] = {
     { id = "zombieinjury", kind = "pct", value = -27,  text = "UI_TF_eff_zombieinjury",
-      note = "UI_TF_note_zombieinjury" },
+      note = "UI_TF_note_zombieinjury_thin" },
     { id = "treescratch",  kind = "pct", value = 100,  text = "UI_TF_eff_treescratch" },
 }
 
@@ -381,11 +453,15 @@ TF.Static["pacifist"] = {
 -- Treffer- und Kritchance rechnet die Engine auf einer 0-100-Skala; die
 -- Boni sind Additionen darauf. Die Basis haengt an Waffe, Distanz und
 -- Skill, deshalb "+20 von 100" mit Beispiel statt Vorher/Nachher.
+-- Kritchance: IsoPlayer.calculateCritChance klemmt nach dem +10 auf 10 bis 90
+-- (Z. 3689). Eine Schrotflinte (CriticalChance 70) liegt aus der Naehe schon
+-- ohne Trait bei 90, dort bringt Marksman nichts; darum seit dem Faktensweep
+-- 2 (23.09.2026) eine eigene Fussnote.
 TF.Static["marksman"] = {
     { id = "hitchance",   kind = "flat", value = 20,  text = "UI_TF_eff_hitchance",
       unit = "UI_TF_unit_of100", note = "UI_TF_note_hitexample" },
     { id = "critchance",  kind = "flat", value = 10,  text = "UI_TF_eff_critchance",
-      unit = "UI_TF_unit_of100", note = "UI_TF_note_rangedonly" },
+      unit = "UI_TF_unit_of100", note = "UI_TF_note_critcap" },
     { id = "windpenalty", kind = "pct",  value = -40, text = "UI_TF_eff_windpenalty" },
     -- IsoGameCharacter.updateAimingDelay: die aimingDelay faellt je Tick um
     -- 0.625 x Multiplier x (1.0 + 0.05 x Aiming + 0.1 mit Marksman). Der
@@ -421,7 +497,8 @@ TF.Static["dextrous"] = {
     { id = "canwound", kind = "fromto", value = { 20, 10 }, text = "UI_TF_eff_canwound",
       note = "UI_TF_note_cooking1" },
     { id = "climb",    kind = "flat", value = 4,    text = "UI_TF_eff_climb",
-      unit = "UI_TF_unit_points", note = "UI_TF_note_climbbase" },
+      unit = "UI_TF_unit_points", note = "UI_TF_note_climbbase",
+      hint = "UI_TF_note_climbalone" },
     -- getClimbRopeSpeed: All Thumbs --effectiveStrength, Dextrous ++, im
     -- selben if-else. Die Sonde dazu gab es schon, benutzt hat sie niemand.
     { id = "climbstrength", kind = "flat", value = 1, text = "UI_TF_eff_climbstrength",
@@ -445,7 +522,8 @@ TF.Static["allthumbs"] = {
     { id = "jam",      kind = "fromto", value = { 92, 90 }, text = "UI_TF_eff_jam",
       note = "UI_TF_note_aiming0" },
     { id = "climb",    kind = "flat", value = -4,   text = "UI_TF_eff_climb",
-      unit = "UI_TF_unit_points", note = "UI_TF_note_climbbase" },
+      unit = "UI_TF_unit_points", note = "UI_TF_note_climbbase",
+      hint = "UI_TF_note_climbalone" },
     { id = "climbstrength", kind = "flat", value = -1, text = "UI_TF_eff_climbstrength",
       unit = "UI_TF_unit_levels", note = "UI_TF_note_climbstrengthbase" },
 }
@@ -613,6 +691,11 @@ TF.Static["irongut"] = {
     -- BodyDamage.JustAteFood: der Faktor wirkt nur im Wurf fuer verdorbenes
     -- Essen. Rohes gefaehrliches Essen vergiftet immer mit 15 x Portion,
     -- sobald die Chance ueber 0 liegt, mit und ohne Trait (Audit 12.09.2026).
+    -- Verdorbenes Essen vergiftet immer (Z. 625-639): der Wurf entscheidet nur
+    -- zwischen der schweren Dosis (5 x Hunger x 10 x Portion) und der leichten
+    -- (2 x ...). Die Zeile heisst darum seit dem Faktensweep 2 (23.09.2026)
+    -- "Chance auf die schwere Dosis". Erwartetes Gift 2 + 3c: bei c = 40 %
+    -- mit Iron Gut rund -20 %, mit Weak Stomach rund +40 %.
     { id = "foodsick", kind = "mult", value = 0.5, text = "UI_TF_eff_foodsick",
       note = "UI_TF_note_spoiledonly" },
     -- IsoGameCharacter.DrinkFluid(FluidContainer, float, boolean), Z. 5496-5506:
@@ -674,10 +757,20 @@ TF.Static["pronetoillness"] = {
 TF.Static["outdoorsman"] = {
     { id = "cold",         kind = "mult", value = 0.25, text = "UI_TF_eff_cold" },
     { id = "coldmild",     kind = "info", text = "UI_TF_eff_coldmild", note = "UI_TF_note_gamequirk" },
-    { id = "firelight",    kind = "mult", value = 2.0,   text = "UI_TF_eff_firelight",
-      note = "UI_TF_note_bbqonly", case = "UI_TF_note_bbqonly" },
-    { id = "kindling",     kind = "mult", value = 0.667, text = "UI_TF_eff_kindling",
-      note = "UI_TF_note_bbqonly", case = "UI_TF_note_bbqonly" },
+    -- Je Versuch statt je Wurf (Faktensweep 2, 23.09.2026): ISBBQLightFromKindle
+    -- wuerfelt ab 20 % Fortschritt jeden Tick erst Zuenden (1/300, mit Trait
+    -- 1/150), nur wenn das nicht trifft das Brechen (1/300, mit Trait 1/450);
+    -- isValid beendet die Aktion, sobald das Feuer brennt oder der Stock weg
+    -- ist. Das ist ein Wettlauf: je Versuch brennt es ohne Trait in 300/599 =
+    -- 50 %, mit Trait in 450/599 = 75 %, der Stock bricht in 50 % bzw. 25 %.
+    -- Also x1.5 und x0.5 je Versuch; bis dahin standen hier die Wurffaktoren
+    -- x2.0 und x0.667. Die Zeit bis zum Feuer halbiert sich.
+    { id = "firelight",    kind = "mult", value = 1.5,   text = "UI_TF_eff_firelight",
+      note = "UI_TF_note_bbqonly", case = "UI_TF_note_bbqonly",
+      hint = "UI_TF_note_firelightrace" },
+    { id = "kindling",     kind = "mult", value = 0.5,   text = "UI_TF_eff_kindling",
+      note = "UI_TF_note_bbqonly", case = "UI_TF_note_bbqonly",
+      hint = "UI_TF_note_kindlingrace" },
     -- getTraitWeatherPenaltyModifier liefert 1.0 statt 1.5, also exakt zwei
     -- Drittel. Als gerundete -33 % hat die Selbstpruefung angeschlagen; der
     -- Faktor ist der genauere Eintrag. Einzige Aufrufstelle ist
@@ -756,11 +849,17 @@ TF.Static["weightloss"] = {
 -- Am 10.09.2026 zusaetzlich im Verhalten bestaetigt, weil eine "tot"-Aussage
 -- die Aufruferliste braucht und nicht nur die Fundstelle (Lehre aus Handys
 -- Bauwerks-Gesundheit). Drei Sprintlaeufe an einer lebenden Figur, je Phase
--- 100 sprintende Ticks, Trait an und aus im Wechsel, Ausdauer gehalten:
--- Athletic 1.0495, 0.9966 und 0.9940, Unfit 1.0112, 1.0082 und 0.9878 (Lauf d
--- ohne Aufwaermen und ohne Streuungsschaetzung; bis zum Faktensweep 23.09.2026
--- stand hier 1.0073 statt 1.0082 und ein gepaartes 1.0007 / 0.9993, das kein
--- Bericht enthaelt). Massgeblich ist der Lauf vom 13.09.2026
+-- 100 (Lauf d: 120) sprintende Ticks, Trait an und aus im Wechsel, Ausdauer
+-- gehalten ab Lauf f (d und e loggen sie nicht): Athletic 1.0495, 0.9966 und
+-- 0.9940, Unfit 1.0112, 1.0082 und 0.9878 (Verhaeltnis der Summen, wie das
+-- Log es druckt; Lauf d ohne Aufwaermen und ohne Streuungsschaetzung). Bis zum
+-- Faktensweep 23.09.2026 stand hier fuer Lauf e Unfit 1.0073, das Mittel der
+-- Paarquotienten statt des geloggten Summenverhaeltnisses, und ein gepaartes
+-- 1.0007 / 0.9993 aus den ruckelfreien Paaren von Lauf f (Athletic 3/2; Unfit
+-- 9/8 und 13/12; die none-Phasen 4, 6 und 10 haben Ticks ueber 0.19), so
+-- auch in docs/berichte/2026-09-10-lua-abgleich.md. Die Klammer nannte beides
+-- bis zum Faktensweep 2 (23.09.2026) unbelegt; das war falsch, beide Zahlen
+-- stehen in den Logs. Massgeblich ist der Lauf vom 13.09.2026
 -- (docs/messungen/messung-2026-09-13-sprint.txt): Athletic 1.0012, Unfit
 -- 0.9988. Ein Faktor 1.2 laege weit ausserhalb jeder dieser Streuungen.
 -- Berichte in docs/messungen/messung-2026-09-10{d,e,f}-sprint.txt.
@@ -947,25 +1046,42 @@ TF.Static["sundaydriver"] = {
       note = "UI_TF_note_reversespeedsunday" },
 }
 
+-- Gymnast bringt Nimble +1 mit (XPBoosts), also 22 + 4 = 26, Wurzel 5: eine
+-- neue Figur scheitert an hohen Zaeunen mit 20 statt 25 %. Dextrous, Burglar
+-- und All Thumbs allein aendern bei 20 nichts (24 und 16 bleiben Wurzel 4),
+-- darum je ein hint; die gemeinsame Fussnote bleibt, damit die Uebersicht
+-- die Punkte weiter summiert (Faktensweep 2, 23.09.2026).
 TF.Static["gymnast"] = {
     { id = "climb",         kind = "flat", value = 4, text = "UI_TF_eff_climb",
-      unit = "UI_TF_unit_points", note = "UI_TF_note_climbbase" },
+      unit = "UI_TF_unit_points", note = "UI_TF_note_climbbase",
+      hint = "UI_TF_note_climbgymnast" },
     { id = "climbstrength", kind = "flat", value = 1, text = "UI_TF_eff_climbstrength",
       unit = "UI_TF_unit_levels", note = "UI_TF_note_climbstrengthbase" },
 }
 
+-- Schritte: DoFootstepSound (IsoGameCharacter Z. 5297-5344) gibt FMOD die
+-- Lautstaerke vor den Trait-Faktoren (parameterVolume, Z. 5306/5325); was
+-- der Spieler hoert, bleibt gleich. Der Faktor trifft nur den Radius, den
+-- Zombies hoeren: ceil(Lautstaerke x 10), drinnen halbiert und abgeschnitten.
+-- Mit Schuhen draussen, Schleichen/Gehen/Laufen/Sprinten: ohne 4/7/11/14,
+-- Graceful 2/5/7/9, Clumsy 4/9/13/17 Felder. Bis zum Faktensweep 2
+-- (23.09.2026) hiess die Zeile "Schrittlautstaerke", ohne Fussnote.
 TF.Static["graceful"] = {
-    { id = "footsteps", kind = "pct",  value = -40, text = "UI_TF_eff_footsteps" },
+    { id = "footsteps", kind = "pct",  value = -40, text = "UI_TF_eff_footsteps",
+      note = "UI_TF_note_footgraceful" },
     { id = "trip",      kind = "flat", value = -10, text = "UI_TF_eff_trip",
-      unit = "UI_TF_unit_of100", note = "UI_TF_note_tripbase" },
+      unit = "UI_TF_unit_of100", note = "UI_TF_note_tripbase",
+      hint = "UI_TF_note_tripgraceful" },
     { id = "lungefall", kind = "flat", value = -10, text = "UI_TF_eff_lungefall",
       unit = "UI_TF_unit_of100", note = "UI_TF_note_lungebase" },
 }
 
 TF.Static["clumsy"] = {
-    { id = "footsteps", kind = "pct",  value = 20, text = "UI_TF_eff_footsteps" },
+    { id = "footsteps", kind = "pct",  value = 20, text = "UI_TF_eff_footsteps",
+      note = "UI_TF_note_footclumsy" },
     { id = "trip",      kind = "flat", value = 10, text = "UI_TF_eff_trip",
-      unit = "UI_TF_unit_of100", note = "UI_TF_note_tripbase" },
+      unit = "UI_TF_unit_of100", note = "UI_TF_note_tripbase",
+      hint = "UI_TF_note_tripclumsy" },
     { id = "lungefall", kind = "flat", value = 10, text = "UI_TF_eff_lungefall",
       unit = "UI_TF_unit_of100", note = "UI_TF_note_lungebase" },
     -- getClimbingFailChanceFloat: failChance /= 2, also die halbe Sicherheit.
@@ -1022,9 +1138,15 @@ TF.Static["insomniac"] = {
       unit = "UI_TF_unit_minutes", note = "UI_TF_note_fallasleepbase" },
 }
 
+-- SleepingEvent.doDelayToSleep (Z. 144-182): Night Owl halbiert vor dem
+-- Deckel 2.0 und vor den Schlaftabletten (die setzen 0.1). Liegt die
+-- Wartezeit ohne Night Owl ueber 2 Stunden (Schmerz, Boden, Stress), bleibt
+-- weniger als die Haelfte, mit Tabletten nichts. Fussnote seit dem
+-- Faktensweep 2 (23.09.2026).
 TF.Static["nightowl"] = {
     { id = "sleeprecovery", kind = "pct", value = 40,  text = "UI_TF_eff_sleeprecovery" },
-    { id = "fallasleep",    kind = "pct", value = -50, text = "UI_TF_eff_fallasleep" },
+    { id = "fallasleep",    kind = "pct", value = -50, text = "UI_TF_eff_fallasleep",
+      note = "UI_TF_note_nightowlcap" },
 }
 
 -- ---------------------------------------------------------------------------
@@ -1089,8 +1211,13 @@ TF.Static["hardofhearing"] = {
     -- Lautstaerke zu aendern. Den gedaempften Klang setzt ParameterHardOfHearing,
     -- nur an oder aus, ohne die 4.5. Bis zum Faktensweep 23.09.2026 hiess die
     -- Zeile "Geraeusche wirken weiter weg", die Fussnote nannte die Daempfung.
+    -- Ein getragener oder mitgefuehrter Wecker klingelt auf dem Feld der Figur
+    -- (getAlarmSquare, AlarmClock Z. 78-94), Abstand 0, und weckt immer; die
+    -- 4.5 zaehlt nur fuer einen abgelegten Wecker weiter als Radius / 4.5
+    -- (Wecker 15 -> 3,3 Felder, Uhr 7 -> 1,6). Die Probe hearDistance stand
+    -- hier ohne Eintrag in TF.Probes und lief nie (Faktensweep 2, 23.09.2026).
     { id = "hearing",   kind = "mult", value = 4.5,  text = "UI_TF_eff_hearing",
-      probe = "hearDistance", note = "UI_TF_note_hearingalarm" },
+      note = "UI_TF_note_hearingalarm" },
 }
 
 -- Sichtfeld: im Einzelspiel und auf dem Client kommt der Kegel aus
@@ -1112,15 +1239,26 @@ TF.Static["hardofhearing"] = {
 TF.Static["eagleeyed"] = {
     { id = "lightcone",   kind = "flat", value = 36, unit = "UI_TF_sym_deg",
       text = "UI_TF_eff_lightcone", note = "UI_TF_note_conedeg" },
-    { id = "weaponsight", kind = "mult", value = 1.2, text = "UI_TF_eff_weaponsight" },
+    -- getMaxSightRange x 1.2 (HandWeapon Z. 1491). Treffer- und Kritchance
+    -- rechnen damit ein Glockenband um (min + max) / 2 (CombatManager Z.
+    -- 2031-2042): das Band rueckt nach aussen, nah am unteren Ende sinkt der
+    -- Bonus (Pistole, Aiming 0: schlechter von 2 bis rund 4 Feldern).
+    -- Fussnote seit dem Faktensweep 2 (23.09.2026).
+    { id = "weaponsight", kind = "mult", value = 1.2, text = "UI_TF_eff_weaponsight",
+      note = "UI_TF_note_weaponsight" },
     { id = "fadein",      kind = "mult", value = 1.5, text = "UI_TF_eff_fadein" },
 }
 
 -- Registry-Name NIGHT_VISION, im Spiel "Cat's Eyes".
 -- Cat's Eyes kommt nur in LightingJNI.calculateVisionCone vor, und das ist im
--- Einzelspiel der Wahrnehmungskegel (siehe Eagle Eyed): nachts 18 auf 54
--- Grad, der Zuschlag verblasst mit dem Tageslicht. Bis 0.1.22 stand hier,
--- er weite nur den gezeichneten Kegel; das galt nur fuer den Server.
+-- Einzelspiel der Wahrnehmungskegel (siehe Eagle Eyed): zu Fuss nachts 18
+-- auf 54 Grad, der Zuschlag verblasst mit dem Tageslicht. Bis 0.1.22 stand
+-- hier, er weite nur den gezeichneten Kegel; das galt nur fuer den Server.
+-- Im Fahrzeug (LightingJNI Z. 433-454) beginnt der Kegel bei 324 - 540 x
+-- Dunkelheit, nachts also -216, mit Trait -180; beides hebt die Scheinwerfer-
+-- Untergrenze 36 oder die Klemme 18 auf denselben Wert. Dort wirkt Cat's
+-- Eyes nur in der Daemmerung, hoechstens rund +20 Grad (Faktensweep 2,
+-- 23.09.2026; bis dahin sagte die Fussnote "auch im Fahrzeug").
 TF.Static["nightvision"] = {
     { id = "nightcone", kind = "flat", value = 36, unit = "UI_TF_sym_deg",
       text = "UI_TF_eff_nightcone", note = "UI_TF_note_conenight" },
@@ -1202,7 +1340,9 @@ TF.Static["handy"] = {
     -- Nur aus dem Code gelesen, nicht im Spiel nachgebaut. Auf einem
     -- MP-Server rechnet der Server die Dauer selbst (BuildAction.getDuration:
     -- 200 - 5 x Carpentry, Handy -50), dort -25 bis -33 % (Faktensweep
-    -- 23.09.2026).
+    -- 23.09.2026). Das gilt auch beim Hosten, denn dort laeuft ein eigener
+    -- Server-Prozess; seit dem Faktensweep 2 (23.09.2026) sagt es die Fussnote,
+    -- vorher nannte sie das "sofort" ohne Einschraenkung.
     { id = "buildtime",   kind = "pct",  value = -25, text = "UI_TF_eff_buildtime",
       note = "UI_TF_note_buildflat" },
     -- buildUtil.getWoodHealth: Carpentry x 50, mit Handy + 100. Gelesen nur
@@ -1241,11 +1381,17 @@ TF.Static["nutritionist"] = {
 -- ueber TF_Live; hier fehlte nur die Naehrwertzeile.
 TF.Static["nutritionist2"] = TF.Static["nutritionist"]
 
+-- ISLightFromKindle: derselbe Wettlauf wie am Grill (siehe Outdoorsy), mit
+-- forceComplete bei beidem Ausgang; perform stellt den naechsten Versuch mit
+-- dem naechsten Stock an, solange das Feuer aus ist. Je Stock 50 % -> 75 %
+-- gezuendet, 50 % -> 25 % gebrochen (Faktensweep 2, 23.09.2026).
 TF.Static["wildernessknowledge"] = {
-    { id = "firelight", kind = "mult", value = 2.0,   text = "UI_TF_eff_firelight",
-      note = "UI_TF_note_campfireonly", case = "UI_TF_note_campfireonly" },
-    { id = "kindling",  kind = "mult", value = 0.667, text = "UI_TF_eff_kindling",
-      note = "UI_TF_note_campfireonly", case = "UI_TF_note_campfireonly" },
+    { id = "firelight", kind = "mult", value = 1.5,   text = "UI_TF_eff_firelight",
+      note = "UI_TF_note_campfireonly", case = "UI_TF_note_campfireonly",
+      hint = "UI_TF_note_firelightrace" },
+    { id = "kindling",  kind = "mult", value = 0.5,   text = "UI_TF_eff_kindling",
+      note = "UI_TF_note_campfireonly", case = "UI_TF_note_campfireonly",
+      hint = "UI_TF_note_kindlingrace" },
 }
 
 -- Registry-Pfad "formerscout", im Spiel "Former Scout". Das Java-Feld heisst
@@ -1254,20 +1400,30 @@ TF.Static["wildernessknowledge"] = {
 -- Bis zum Review am 10.09.2026 stand hier "scout", und der Trait fand seine
 -- beiden Zeilen nie. Einziger Trait, bei dem Feld und Pfad auseinanderliegen.
 TF.Static["formerscout"] = {
-    { id = "firelight", kind = "mult", value = 2.0,   text = "UI_TF_eff_firelight",
-      note = "UI_TF_note_campfireonly", case = "UI_TF_note_campfireonly" },
-    { id = "kindling",  kind = "mult", value = 0.667, text = "UI_TF_eff_kindling",
-      note = "UI_TF_note_campfireonly", case = "UI_TF_note_campfireonly" },
+    { id = "firelight", kind = "mult", value = 1.5,   text = "UI_TF_eff_firelight",
+      note = "UI_TF_note_campfireonly", case = "UI_TF_note_campfireonly",
+      hint = "UI_TF_note_firelightrace" },
+    { id = "kindling",  kind = "mult", value = 0.5,   text = "UI_TF_eff_kindling",
+      note = "UI_TF_note_campfireonly", case = "UI_TF_note_campfireonly",
+      hint = "UI_TF_note_kindlingrace" },
 }
 
 TF.Static["burglar"] = {
     -- OpenWindowState: Rand.Next(100) < 10, mit Burglar 5, nur fuer ein
-    -- verschlossenes Fenster, das von aussen aufgebrochen wird.
-    { id = "windowlock", kind = "pct",  value = -50, text = "UI_TF_eff_windowlock",
+    -- verschlossenes Fenster, das von aussen aufgebrochen wird. Gewuerfelt
+    -- wird je Versuch (onAttemptFinished Z. 153-190, bei jedem Durchlauf der
+    -- Schleife "trying"), und die Figur versucht es weiter, bis das Fenster
+    -- aufgeht oder klemmt. Je Fenster also p / (p + (1 - p) x s), s = Chance,
+    -- dass ein Versuch es oeffnet (Strength 5: 1 - 0.94 x 0.96 x 0.98 =
+    -- 11,6 %): ohne Trait 49 %, mit Burglar 31 %. Strength 0-1: 85 -> 73 %,
+    -- ab 8: 23 -> 13 %. Seit dem Faktensweep 2 (23.09.2026) zeigt die Zeile
+    -- das je Fenster fuer eine neue Figur; bis dahin -50 % je Versuch.
+    { id = "windowlock", kind = "fromto", value = { 49, 31 }, text = "UI_TF_eff_windowlock",
       note = "UI_TF_note_windowforced" },
     { id = "hotwire",    kind = "info", text = "UI_TF_eff_hotwire" },
     { id = "climb",      kind = "flat", value = 4,   text = "UI_TF_eff_climb",
-      unit = "UI_TF_unit_points", note = "UI_TF_note_climbbase" },
+      unit = "UI_TF_unit_points", note = "UI_TF_note_climbbase",
+      hint = "UI_TF_note_climbalone" },
     { id = "climbstrength", kind = "flat", value = 1, text = "UI_TF_eff_climbstrength",
       unit = "UI_TF_unit_levels", note = "UI_TF_note_climbstrengthbase" },
 }

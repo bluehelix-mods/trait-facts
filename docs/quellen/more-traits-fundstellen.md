@@ -1,7 +1,7 @@
 # More Traits Definitive: Fundstellen je Zeile des Datenpakets
 
-Stand 21.09.2026, nachgetragen nach dem Faktensweep vom 23.09.2026 (Abschnitt
-unten). Geprüft wurde jede Zeile von
+Stand 21.09.2026, nachgetragen nach den beiden Faktensweeps vom 23.09.2026
+(Abschnitte unten). Geprüft wurde jede Zeile von
 `mod/42/media/lua/shared/TraitFacts/packs/TF_Pack_MoreTraits.lua` gegen den
 installierten Code von More Traits Definitive (Workshop 3799050151). Die Zahlen
 sind aus dessen Code gelesen, nicht gemessen.
@@ -113,7 +113,7 @@ beim Tritt (Schubser zum Boden) kommt er obendrauf. Darum ohne den Vergleich.
 | batteringram / mtram | ohne Fußnote | Fußnote zum Zusatzschaden mit Martial (0,1 bis 0,6, ohne MartialWeapons nur unbewaffnet). Der Geistermodus steht im Kopf des Pakets als absichtlich fehlend: PlayerCheats nimmt INVISIBLE nur im Mehrspieler oder mit -debug an | S/MT_Combat.lua:486-490, :537-556, :571; PlayerCheats.java:25-41 |
 | burned / mtfire, mtmolotov (neu) | eine Zeile, die Option schalte alles ab | zwei Zeilen: Feuer und Leichen (Option Burned Ward Fire Aversion), Molotow und Flammenfallen in der Haupthand (immer) | MT_BurnWard.lua:4, :101-113; S/MT_Combat.lua:722-737 |
 | amputee / mtarm | "heilen von selbst" | im Nu vollständig, Bisse eingeschlossen, alle 31 Bilder; nicht mit dem Mod Amputation | S/MT_Combat.lua:669-694 |
-| leadfoot / mtstomp | x2 | +140 bis +225 % (x2,4 schwere Stiefel, x3 normale Schuhe, x3,25 Hausschuhe) | S/MT_World.lua:256; Clothing.java:75 |
+| leadfoot / mtstomp | x2 | +140 bis +225 % (x2,4 schwere Stiefel, x3 normale Schuhe, x3,25 Hausschuhe); im Faktensweep 2 berichtigt, siehe dort | S/MT_World.lua:256 |
 | fast, gimp / mtmove | kind range, ohne Vorzeichen und Farbe | kind pctrange | - |
 | packmule, packmouse / mtcarry | +2 / -2 Tragekapazität | Spanne der wirklichen Änderung, +2 bis +10 / -5 bis -2: die Mod setzt die Basis, Stärke vervielfacht sie (0,8 bis 2,5) | S/MT_Weight.lua:7-18; BodyDamage.java:1779; IsoGameCharacter.java:4372-4405 |
 | evasive / mtdodge | "neue Verletzung ganz verschwindet", "je neu verletztem Körperteil" | "neue Wunde verschwindet"; gewürfelt nur in der Trefferreaktion bei einem Schadensereignis: Schnitte und Bisse bluten, ein einfacher Kratzer meist nicht; verlorene Gesundheit bleibt, außer bei Bissen | S/MT_State.lua:86-173; BodyPart.java:161-164, :719-745 |
@@ -137,7 +137,7 @@ beim Tritt (Schubser zum Boden) kommt er obendrauf. Darum ohne den Vergleich.
 | bouncer / mtbounce | "6 von 100 je Versuch" | je Bild für jeden Zombie ab dem dritten, danach 60 Bilder Pause | S/MT_State.lua:514-549; Tick:42 |
 | gymgoer / mtstiff | "kein anhaltender Muskelkater", Option "No Exercise Fatigue" | wird gelöscht, sobald etwa die Hälfte eingesetzt hat (removeStiffnessValue mit Körperteilnamen statt der Schlüssel arms/legs/chest/abs); Option "Gym Goer Exercise Fatigue", abschalten durch Abwählen | S/MT_XP.lua:143-221; Fitness.java:264-266 |
 | ingenuitive / mtrecipes | "jedes Rezept" | jedes Handwerksrezept; nicht die 32 geschweißten Bauten aus Entity-Komponenten; Limit-Optionen genannt | S/MT_Creation.lua:246-282; ScriptManager.java:876, :985-986 |
-| quickworker, slowworker / mtaction | "jede Handlung" | beim Umlagern mehrerer Stücke nur das erste; die Fußnoten nennen den Glückswurf in beide Richtungen (11 von 100, mit Lucky und Dextrous sofort) | S/MT.lua:288-343; client/MT/MT_QuickSlowWorker.lua:22-37 |
+| quickworker, slowworker / mtaction | "jede Handlung" | beim Umlagern mehrerer Stücke nur das erste; die Fußnoten nennen den Glückswurf in beide Richtungen (11 von 100, mit Lucky und Dextrous sofort); das Lesen seit dem Faktensweep 2 | S/MT.lua:288-343; client/MT/MT_QuickSlowWorker.lua:22-37 |
 | expertdriver, poordriver / mtbrake, mtspeed | wie die Motorkraft | eigene Fußnote: Bremskraft bis zum ersten Verschleiß oder Laden, Höchstgeschwindigkeit bis zum Laden | S/MT_World.lua:186-216; BaseVehicle.java:878, :8205 |
 | kind range in der Übersicht | ohne Richtung, farblos | TF.Summary.direction behandelt range wie pctrange (beide Enden auf einer Seite der Null) | TF_Summary.lua, direction |
 
@@ -156,6 +156,39 @@ Biss-Animation von Unwavering (nach dem ersten Laden weg), die
 bildtaktgebundenen Nebenwirkungen von Alcoholic, die Nebenwirkungen der
 Fahrer-Traits (Qualität, Offroad je Modell, Tempomat, Lautstärke, die bei
 Student Driver sinkt statt steigt) und die mögliche Kette von Made of Glass.
+Seit dem Faktensweep 2 dazu: die Nebenwirkung des Mundane-Handlers für alle
+Figuren (siehe unten).
+
+## Faktensweep 2, 23.09.2026
+
+Grundlage: `docs/berichte/2026-09-23-faktensweep-2.md` (Pakete fix-mtd und
+mtd-coverage). Jeder Fund ist noch einmal gegen den Code der Mod und das
+dekompilierte Spiel gelesen; weiter alles aus dem Code, nicht gemessen. Das
+Paket hat jetzt 133 Zeilen: dazu kommen zwei an Vanilla-Traits (Tailor,
+Smoker), weiter für 93 Traits der Mod.
+
+| Trait / Zeile | bis 0.14.0 | jetzt | Fundstelle |
+| --- | --- | --- | --- |
+| leadfoot / mtstomp | +140 bis +225 %, "+200 % bei normalen Schuhen" nach Clothing.java:75 | +120 bis +225 %. Clothing.java:75 ist nur der Vorgabewert, Item.java:1616/:1760 setzt den Script-Wert. Normale Schuhe 2,1 (x2,48, +148 %), Sneakers 1,8 (+156 %), BlackBoots und RidingBoots 2,2 (+145 %), schwerste Stiefel 2,5 (+140 %), Antique Boots der Mod 5,0 (x2,2, +120 %), Fußwickel ohne Wert 1,0 (+200 %), Hausschuhe und Flip-Flops 0,8 (+225 %) | S/MT_World.lua:250-259; clothing.txt; ToadTems.txt AntiqueBoots |
+| leadfoot / mtstomp | als bleibende Wirkung | Fußnote: einmal je Paar gesetzt, nach dem Laden weg. stompPower steht nicht in Clothing.save (Clothing.java:595-670), das Flag stompState in modData schon, und es verhindert das Neusetzen | S/MT_World.lua:250-259; InventoryItem.java:1551, :1822 |
+| terminator / mtjam | "Chance, dass die Waffe klemmt" x0,5 | "Eigener Klemmwert der Waffe" x0,5 mit Fußnote: checkJam rechnet Verschleiß und schwache Hand dazu, die bleiben; Wert 0 klemmt nie; jamGunChance steht nicht in HandWeapon.save, MTstate schon, also nach dem Laden weg | S/MT_Combat.lua:389-396, :441-447; HandWeapon.java:2022-2034 |
+| Pro-Traits, Tavern Brawler, Action Hero, Unwavering / Vergleich (rollcompare) | "7 bis 44 % (Waffenskill 0 bis 10), also 2- bis 15-mal" | von vorn bei halber Reichweite 7 bis 29 %, x1,5 von hinten oder der Seite; Entfernungsfaktor 0,3 bis 2; Krit und Angriff auf einen Zombie am Boden nur auf den normalen Treffer. Das "2- bis 15-mal" ist gestrichen (tatsächlich etwa 1- bis 50-mal) | IsoGameCharacter.java:5705, :5765, :5789-5799, :5803-5806; CombatManager.java:830-833, :3195-3214 |
+| immunocompromised / mtinfect | "Wurf, wenn ein Treffer eine neue Wunde macht" | nur in der Trefferreaktion bei einem Schadensereignis: Schnitte und Bisse bluten und werden gewürfelt, ein einfacher Kratzer meist nicht (setScratched startet keine Blutung); mit Evasive nie, dessen Schleife nimmt jede neue Wunde zuerst | S/MT_State.lua:104-199; Tick:77-79, :160; BodyPart.java:161-164, :719-744 |
+| quickworker, slowworker / mtaction | Lesen nicht erwähnt | beim Lesen mit Fast Reader x0,375 / x1,375, mit Slow Reader x0,625 / x1,625 (Vorgabe 50), auf die schon vom Leser-Trait geänderte Lesezeit | S/MT.lua:308-316; ISReadABook.lua:443-466, :509 |
+| mundane / mtcritfix | "ab dem zweiten Treffer" | dazu "nach jedem Laden erneut": criticalChance steht nicht in HandWeapon.save | S/MT_Combat.lua:197-207 |
+| unwavering / mtdamage | Stufen 150/200 % nur nach Ausdauer | auch mit Müdigkeit 70/80 % oder Schmerz 50/75 | S/MT_Combat.lua:232-237 |
+| base:tailor, base:smoker / mtgear (neu) | fehlte | Tailor bekommt immer ein Nähset (Schere, Nadel, 4 Faden), Smoker eine Zigarettenschachtel und ein Feuerzeug, abschaltbar mit SmokerStart | S/MT_Creation.lua:221-243; SBX:23-27 |
+
+Neu im Kopf des Pakets unter den Nebenwirkungen: der Mundane-Handler
+(S/MT_Combat.lua:184-208) läuft bei jedem Treffer jeder Figur, auch ohne
+Mundane. Er friert die Kritisch-Chance einer Waffe auf den Wert beim ersten
+Treffer ein, bei Klingen samt Schärfe (HandWeapon.java:1136-1141); danach
+zählt die Schärfe doppelt, und Gordanites Krit-Zuwachs durch spätere Stufen
+(S/MT_Weapons.lua:55-101) geht beim nächsten Treffer verloren.
+
+Offen, im Spiel zu messen: Lead Foot und Terminator nach dem Laden, der
+Kratzer bei Immunocompromised, der Mundane-Handler bei stumpfen Klingen
+(Messvorschläge im Bericht, Abschnitt "Messen").
 
 ## Fundstelle je Zeile
 
@@ -174,7 +207,7 @@ Kampf
 - unwavering / mtdamage: S/MT_Combat.lua:229-238, :244; SBX:200
 - mundane / mtcritfix: S/MT_Combat.lua:184-208; IsoPlayer.java:3631, :3672, :3689; CombatManager.java:2754, :2764-2768
 - mundane / mtproff: S/MT_Combat.lua:22, :176, :290
-- terminator / mtgundmg: S/MT_Combat.lua:445-446; mtrange :443; mtjam :444; mtaim :442
+- terminator / mtgundmg: S/MT_Combat.lua:445-446; mtrange :443; mtjam :444 (einmal je Waffe, Flag MTstate :389-396, :447; HandWeapon.checkJam :2022-2034); mtaim :442
 - terminator / mtpanic: S/MT_Combat.lua:415-417, :429; je Spielminute, Tick:107
 - terminator / mtlevels: S/MT_Creation.lua:398-402
 - antigun / mtrange: S/MT_Combat.lua:450; mtaim :449; mtmood :419-421, :435; mtxp S/MT_XP.lua:92-94
@@ -184,7 +217,7 @@ Kampf
 - burned / mtfire: media/lua/shared/TimedActions/MT_BurnWard.lua:1-15, :101-113; SBX:283
 - burned / mtmolotov: S/MT_Combat.lua:710-738 (nur OnEquipPrimary)
 - burned / mtinjury: S/MT_Creation.lua:355-364
-- leadfoot / mtstomp: S/MT_World.lua:256-257
+- leadfoot / mtstomp: S/MT_World.lua:250-259 (einmal je Paar, Flag stompState); StompPower je Schuh in media/scripts/generated/items/clothing.txt, Antique Boots media/scripts/ToadTems.txt (StompPower 5.0), Fund S/MT_Containers.lua:295-313
 
 Bewegung und Tragen
 - fast / mtmove: S/MT_World.lua:138-145, :173-175; SBX:304/309/314
@@ -199,7 +232,7 @@ Gesundheit
 - thickblood / mtbleed: S/MT_State.lua:642-647, :671
 - idealweight / mtcal: S/MT_Nutrition.lua:254-261
 - superimmune / mtfever: S/MT_SuperImmune.lua:31-52; SBX:240/245
-- immunocompromised / mtinfect: S/MT_State.lua:182-192; SBX:265; mtwound :688, :696-702
+- immunocompromised / mtinfect: S/MT_State.lua:175-199 (nur in PlayerHitReactionState, aus OnPlayerGetDamage, Tick:77-79, :160; Evasive davor :104-172); SBX:265; mtwound :688, :696-702
 - glassbody / mtglass: S/MT_State.lua:34-56
 - selfdestructive / mtharm: S/MT_State.lua:362-366, :374
 - badteeth / mteat: media/lua/server/MT_EatFood.lua:25-26; zweite Quelle S/MT_State.lua:420-456, Tick:43
@@ -248,10 +281,12 @@ Nur Boosts
 
 Handwerk und Start
 - ingenuitive / mtrecipes: S/MT_Creation.lua:246-282, :366-369; Tick:135-138
-- quickworker / mtaction: S/MT.lua:288-343; media/lua/client/MT/MT_QuickSlowWorker.lua:9-20; der Patch auf ISInventoryTransferAction:new (:22-37) erreicht zusammengelegte Stücke nicht; SBX:180
-- slowworker / mtaction: S/MT.lua:305, :337-339; SBX:185
+- quickworker / mtaction: S/MT.lua:288-343, Lesen :308-316; media/lua/client/MT/MT_QuickSlowWorker.lua:9-20; der Patch auf ISInventoryTransferAction:new (:22-37) erreicht zusammengelegte Stücke nicht; SBX:180
+- slowworker / mtaction: S/MT.lua:305, Lesen :308-316, :337-339; SBX:185
 - preparedfood / mtgear: S/MT_Creation.lua:21-41; preparedammo :42-63; preparedweapon :64-68; preparedmedical :69-97; preparedrepair :98-115; preparedcamp :116-144; preparedpack :145-149; preparedcar :150-177; preparedcoordination :178-215
 - deprived / mtbare: S/MT_Creation.lua:11-19; SBX:220
+- base:tailor / mtgear: S/MT_Creation.lua:221-236 (ohne Option)
+- base:smoker / mtgear: S/MT_Creation.lua:238-243; SBX:23-27 (SmokerStart, Vorgabe an)
 
 Fahrzeuge
 - expertdriver / mtengine: S/MT_World.lua:202; mtspeed :203; mtbrake :201
@@ -261,7 +296,19 @@ Fahrzeuge
 ## Traits ohne eigene Zeile
 
 Die Mod meldet 99 Traits an, 96 davon mit Definition. Drei haben keine eigene
-Zeile und lesen ihre Werte live aus dem Spiel: Gun Specialist (DEF:349-359, nur
-XP-Boosts), Natural (DEF:489-498, XP-Boosts) und Generator (DEF:271-281, nur ein
-Rezept). Ohne Definition und darum nicht wählbar: brooding, heavydrinker,
+Zeile und lesen ihre Werte live aus dem Spiel: Gun Specialist (DEF:349-359,
+XP-Boosts; Sammeln media/lua/shared/Foraging/MT_ForageDefinitions.lua:118-128),
+Natural (DEF:489-498, XP-Boosts; Sammeln ebenda :73-86) und Generator
+(DEF:271-281, nur ein Rezept). Ohne Definition und darum nicht wählbar: brooding, heavydrinker,
 lightdrinker.
+
+Die beiden Untermods auf demselben Workshop-Eintrag,
+`moreTraitsDefinitive_DisablePrepared` und `_DisableSpecialization`, bringen
+keinen eigenen Code. Die Mod selbst entfernt mit ihnen beim Spielstart die 9
+Prepared- und die 6 Specialization-Traits aus der Registry
+(`client/CharacterCreation/MT_HideTraits.lua:16-26`, `:31-58`, OnGameBoot
+`:72`); mit beiden gibt es 81 Traits. Trait Facts zeigt Zeilen nur zu Traits,
+die in der Registry stehen (TF.Mods.entriesFor je traitDef), die entfernten
+tauchen also nirgends auf. Dieselbe Datei entfernt Expert Driver mit dem Mod
+Driving Skill und Scrounger mit ScavengingSkill (Faktensweep 2, 23.09.2026,
+mtd-coverage).

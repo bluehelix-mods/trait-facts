@@ -20,8 +20,12 @@
 -- Multiplikatoren des Spiels uebergibt (IsoGameCharacter.java:5705 gegen
 -- processHitDamage :5758ff und hitConsequences :5817); MT.KillZombie zieht ihn
 -- direkt mit setHealth ab (MT.lua:271-276). Ein normaler Nahkampftreffer nimmt
--- nur 1.5 x (0.3 + 0.1 x Stufe) x 0.15 dieses Wurfs, also etwa 7 bis 44 %.
--- Eigene Zeile "Zusatzschaden je Treffer" mit Einheit "% des Schadenswurfs"
+-- modDelta x 1.5 x (0.3 + 0.1 x Stufe) x 0.15 dieses Wurfs, x1.5 von hinten
+-- oder der Seite (IsoGameCharacter.java:5789-5799); bei halber Reichweite von
+-- vorn (modDelta 1) 7 bis 29 %, insgesamt 2 bis 88 % (Entfernungsfaktor 0.3
+-- bis 2, CombatManager.java:830-833). Bis 0.14.0 stand hier "7 bis 44 %", und
+-- die Fussnote schrieb die ganze Spanne dem Waffenskill zu (Faktensweep 2,
+-- 23.09.2026). Eigene Zeile "Zusatzschaden je Treffer" mit Einheit "% des Schadenswurfs"
 -- und dem Vergleich als condition. Dazu: die Krit-Wuerfe der Mod sind eigene
 -- Wuerfe auf ihren Zusatzschaden, Mundane laesst dem Spiel mindestens 10 von
 -- 100, Action Hero hat keine Obergrenze, Lead Foot ist x2.4 bis x3.25, Pack
@@ -82,6 +86,17 @@
 --   Gesamtwert (getOverallBodyHealth vor calculateOverallHealth), der eigene
 --   Zusatzschaden zaehlt beim naechsten Ereignis also wieder als Verlust. Nur
 --   aus dem Code gelesen, nicht gemessen; die Fussnote nennt es nicht.
+-- * Nebenwirkung fuer alle, auch ohne Mundane: der Mundane-Handler
+--   (MT_Combat.lua:184-208) laeuft bei jedem Treffer jeder Figur. Er merkt
+--   sich beim ersten Treffer getCriticalChance() der Waffe, bei Klingen also
+--   schon mal Schaerfe (HandWeapon.java:1136-1141), und setzt den Grundwert
+--   danach bei jeder Abweichung darauf zurueck; die Schaerfe zaehlt dann
+--   doppelt (Wert x Schaerfe beim ersten Treffer x Schaerfe jetzt). Eine
+--   stumpf zuerst benutzte Klinge behaelt den Abzug auch nach dem Schleifen,
+--   nach jedem Laden neu (criticalChance steht nicht in HandWeapon.save).
+--   Gordanites Krit-Zuwachs durch spaetere Stufen (MT_Weapons.lua:55-101)
+--   setzt derselbe Handler beim naechsten Treffer zurueck. Kein Trait, darum
+--   keine Zeile; nur aus dem Code gelesen (Faktensweep 2, 23.09.2026).
 --
 -- Gym-Goer steht mit dem, was der Code tut (+10 % XP beim Training), nicht
 -- mit dem, was die Beschreibung verspricht ("doppelt so wirksam").
@@ -218,8 +233,15 @@ rows["toadtraits:terminator"] = {
     { id = "mtrange",  kind = "flat", value = 5,   text = "UI_TF_eff_mt_gunrange",
       unit = "UI_TF_unit_tiles", note = "UI_TF_note_mt_terminator",
       better = "up", group = "combat" },
+    -- MT_Combat.lua:441-447 halbiert nur jamGunChance, den eigenen Wert der
+    -- Waffe. HandWeapon.checkJam (HandWeapon.java:2022-2034) rechnet dazu
+    -- 0.5 fuer schwache Hand (Aiming und Strength niedrig) und den Verschleiss;
+    -- die bleiben. Eine Waffe mit Wert 0 klemmt nie. jamGunChance steht nicht
+    -- in HandWeapon.save, das Flag MTstate in modData schon: nach dem Laden
+    -- ist der Wert zurueck, und die Mod setzt ihn fuer diese Waffe nie wieder
+    -- (Faktensweep 2, 23.09.2026, nur aus dem Code gelesen).
     { id = "mtjam",    kind = "mult", value = 0.5, text = "UI_TF_eff_mt_jamchance",
-      better = "down", group = "combat" },
+      note = "UI_TF_note_mt_jam", better = "down", group = "combat" },
     { id = "mtaim",    kind = "mult", value = 2,   text = "UI_TF_eff_aimdelay" },
     { id = "mtpanic",  kind = "flat", value = -10, text = "UI_TF_eff_mt_aimpanic",
       unit = "UI_TF_unit_points", note = "UI_TF_note_mt_aimcalm",
@@ -275,11 +297,21 @@ rows["toadtraits:burned"] = {
       note = "UI_TF_note_mt_inj_burned", better = "down", group = "health" },
 }
 
--- Lead Foot (MT_World.lua:256): Trittkraft x 2 + 1. Normale Schuhe haben 1.0
--- (Clothing.java:75), also x3; die schwersten Stiefel 2.5, also x2.4; Hausschuhe
--- und Flip-Flops 0.8, also x3.25. Bis 0.13.9 stand x2, das bei keinem Schuh gilt.
+-- Lead Foot (MT_World.lua:256): Trittkraft x 2 + 1. Normale Schuhe haben
+-- StompPower 2.1 (clothing.txt; Item.java:1760 setzt den Script-Wert,
+-- Clothing.java:75 ist nur der Vorgabewert), also x2.48; Turnschuhe 1.8
+-- x2.56; BlackBoots und RidingBoots 2.2 x2.45; die schwersten Stiefel 2.5
+-- x2.4; die Antique Boots der Mod (ToadTems.txt, StompPower 5.0, Fund fuer
+-- Antique Collector) x2.2; die Wickel ohne Wert 1.0 x3; Hausschuhe und
+-- Flip-Flops 0.8 x3.25. Bis 0.13.9 stand x2, das bei keinem Schuh gilt; bis
+-- 0.14.0 "+200 % bei normalen Schuhen" und +140 als Untergrenze (Faktensweep 2,
+-- 23.09.2026).
+-- Die Mod setzt den Wert einmal je Paar und merkt sich das in modData
+-- (stompState, MT_World.lua:250-259); stompPower steht nicht in
+-- Clothing.save, also ist er nach dem Laden zurueck, und das Flag verhindert
+-- das Neusetzen. Nur aus dem Code gelesen; die Fussnote sagt es.
 rows["toadtraits:leadfoot"] = {
-    { id = "mtstomp", kind = "pctrange", value = { 140, 225 }, text = "UI_TF_eff_mt_stomp",
+    { id = "mtstomp", kind = "pctrange", value = { 120, 225 }, text = "UI_TF_eff_mt_stomp",
       note = "UI_TF_note_mt_stomp", better = "up", group = "combat" },
 }
 
@@ -630,6 +662,12 @@ rows["toadtraits:ingenuitive"] = {
       note = "UI_TF_note_mt_allrecipes", better = "up", group = "crafting" },
 }
 
+-- Beim Lesen aendert die Mod den Faktor noch einmal (S/MT.lua:308-316): mit
+-- Fast Reader x1.25 (Quick Worker) bzw. x0.75 (Slow Worker), mit Slow Reader
+-- umgekehrt. Bei der Vorgabe 50 also x0.375 / x0.625 und x1.375 / x1.625,
+-- auf die Lesezeit, die der Leser-Trait schon geaendert hat
+-- (ISReadABook.lua:443-466 getDuration, :509). Steht in den
+-- Fussnoten (Faktensweep 2, 23.09.2026).
 rows["toadtraits:quickworker"] = {
     { id = "mtaction", kind = "mult", value = 0.5, text = "UI_TF_eff_mt_actiontime",
       note = "UI_TF_note_mt_worker", better = "down", group = "crafting" },
@@ -657,6 +695,20 @@ for key, note in pairs(GEAR) do
         { id = "mtgear", kind = "info", text = "UI_TF_eff_mt_startgear", note = note },
     }
 end
+
+-- Zwei Vanilla-Traits bekommen von der Mod Startausruestung
+-- (S/MT_Creation.lua:221-243, aus onNewGame :445): Tailor immer ein Naehset
+-- mit Schere, Nadel und 4 Faeden, Smoker eine Packung Zigaretten und ein
+-- Feuerzeug, solange die Option SmokerStart an ist (Vorgabe an). Paketzeilen
+-- an Vanilla-Traits nennen ihr Paket (TF.Summary.gather); seit dem
+-- Faktensweep 2 (23.09.2026).
+rows["base:tailor"] = {
+    { id = "mtgear", kind = "info", text = "UI_TF_eff_mt_startgear", note = "UI_TF_note_mt_gear_tailor" },
+}
+
+rows["base:smoker"] = {
+    { id = "mtgear", kind = "info", text = "UI_TF_eff_mt_startgear", note = "UI_TF_note_mt_gear_smoker" },
+}
 
 rows["toadtraits:deprived"] = {
     { id = "mtbare", kind = "info", text = "UI_TF_eff_mt_startbare",

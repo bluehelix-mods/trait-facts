@@ -394,6 +394,51 @@ function TF.Live.relations(traitDef, useTag, font, excludesMode)
     return lines
 end
 
+--- Die freien Rezepte einer Definition als Zaehl-Eintraege.
+--
+-- Nur die Anzahl: Tailor und Gardener bringen je rund 60 Eintraege mit, eine
+-- Namensliste waere im Tooltip unlesbar.
+--
+-- getGrantedRecipes() liefert eine ArrayList<String>, und darin steckt
+-- zweierlei. Neben echten Bauanleitungen stehen dort die Anbauzeiten aus
+-- SeasonRecipe, registriert als "Carrot Growing Season" und so weiter. Bei
+-- Gardener sind 49 von 64 Eintraegen solche Anbauzeiten - "Rezepte: 64"
+-- waere schlicht falsch. Beide werden deshalb getrennt gezaehlt.
+--
+-- Die Namen laufen als Menge mit: in der Gesamtuebersicht lehren zwei
+-- Traits oft dieselben Rezepte, und die Figur lernt jedes einmal. Trait- und
+-- Berufsdefinition fuehren dieselbe Methode (CharacterTraitDefinition und
+-- CharacterProfessionDefinition, je ArrayList<String>), darum eine Funktion
+-- fuer beide (Faktensweep 2, 23.09.2026).
+-- @param def  Trait- oder Berufsdefinition
+-- @param out  Liste, an die die Eintraege angehaengt werden
+local function recipeEntries(def, out)
+    local recipes, seasons = 0, 0
+    local recipeSet, seasonSet = {}, {}
+    for _, entry in ipairs(toList(call(def, "getGrantedRecipes"))) do
+        local name = TF.normalize(entry)
+        if name and name:sub(-13) == "growingseason" then
+            if not seasonSet[name] then
+                seasonSet[name] = true
+                seasons = seasons + 1
+            end
+        elseif name then
+            if not recipeSet[name] then
+                recipeSet[name] = true
+                recipes = recipes + 1
+            end
+        end
+    end
+    if recipes > 0 then
+        out[#out + 1] = { id = "recipes", kind = "count", value = recipes,
+                          text = "UI_TF_live_recipes", items = recipeSet }
+    end
+    if seasons > 0 then
+        out[#out + 1] = { id = "seasons", kind = "count", value = seasons,
+                          text = "UI_TF_live_seasons", items = seasonSet }
+    end
+end
+
 --- Die live gelesenen Werte als Eintraege, in derselben Form wie TF_Static.
 --
 -- Daraus baut TF.Live.effects seine Tooltip-Zeilen und TF.Summary seine
@@ -419,35 +464,8 @@ function TF.Live.entries(traitDef)
                           items = items }
     end
 
-    -- Nur die Anzahl: Tailor und Gardener bringen je rund 60 Eintraege mit, eine
-    -- Namensliste waere im Tooltip unlesbar.
-    --
-    -- getGrantedRecipes() liefert eine ArrayList<String>, und darin steckt
-    -- zweierlei. Neben echten Bauanleitungen stehen dort die Anbauzeiten aus
-    -- SeasonRecipe, registriert als "Carrot Growing Season" und so weiter. Bei
-    -- Gardener sind 49 von 64 Eintraegen solche Anbauzeiten - "Rezepte: 64"
-    -- waere schlicht falsch. Beide werden deshalb getrennt gezaehlt.
-    --
-    -- Die Namen laufen als Menge mit: in der Gesamtuebersicht lehren zwei
-    -- Traits oft dieselben Rezepte, und die Figur lernt jedes einmal.
-    local recipes, seasons = 0, 0
-    local recipeSet, seasonSet = {}, {}
-    for _, entry in ipairs(toList(call(traitDef, "getGrantedRecipes"))) do
-        local name = TF.normalize(entry)
-        if name and name:sub(-13) == "growingseason" then
-            if not seasonSet[name] then
-                seasonSet[name] = true
-                seasons = seasons + 1
-            end
-        elseif name then
-            if not recipeSet[name] then
-                recipeSet[name] = true
-                recipes = recipes + 1
-            end
-        end
-    end
-    add("recipes", "UI_TF_live_recipes", "count", recipes, nil, nil, nil, recipeSet)
-    add("seasons", "UI_TF_live_seasons", "count", seasons, nil, nil, nil, seasonSet)
+    -- Freie Rezepte und Anbauzeiten (recipeEntries).
+    recipeEntries(traitDef, out)
 
     -- Startstufen in Strength und Fitness, gelesen wie Vanillas checkXPBoost:
     -- getXpBoosts ist eine Map Perk -> Integer. Bis 0.1.14 stand bei den
@@ -509,6 +527,18 @@ function TF.Live.entries(traitDef)
             "UI_TF_unit_tiles",
             gated and "UI_TF_live_sight_noglasses" or "UI_TF_live_sight_note",
             gated and "foragenoglasses" or "forageradius")
+        -- Ein Abzug trifft auf die Untergrenze von 3 Kacheln: ISBaseIcon
+        -- klemmt 3 + 0.5 x Stufe + Boni auf mindestens 3 (ISBaseIcon.lua:
+        -- 318-331). Short Sighted (-2) und Agoraphobic (-1.5) tun bei
+        -- Nahrungssuche 0 also nichts und wirken erst ab Stufe 4 bzw. 3 ganz
+        -- (Faktensweep 2, 23.09.2026). Eine condition, keine Fussnote: die
+        -- Fussnote bestimmt den Eimer der Uebersicht, und Agoraphobic muss
+        -- mit den positiven Radien zusammen rechnen. TF.Summary nimmt die
+        -- Bedingung wieder heraus, wenn die Summe nicht mehr negativ ist.
+        local last = out[#out]
+        if last and last.id == "forageRadius" and last.value < 0 then
+            last.condition = "UI_TF_note_sightfloor"
+        end
         -- weatherEffect und darknessEffect sind Prozentwerte, um die die Strafe
         -- *sinkt*, deshalb mit umgekehrtem Vorzeichen anzeigen.
         add("forageWeather", "UI_TF_live_weather", "pct", -(forage.weatherEffect or 0))
@@ -589,17 +619,27 @@ end
 --- Was der Beruf selbst zur Uebersicht beitraegt (seit 0.12.0).
 --
 -- Die gewaehrten Traits des Berufs stehen schon in der Liste der gewaehlten
--- Traits. Es fehlten seine Foraging-Werte und seine Startstufen: forageSystem
+-- Traits. Es fehlten seine Foraging-Werte, seine Startstufen und seine
+-- Rezepte (unten): forageSystem
 -- addiert den Beruf in Sichtradius, Wetter, Dunkelheit und jede Kategorie
 -- mit den Traits zusammen (getProfessionVisionBonus, getCategoryBonus), und
 -- die 75er-Kappe lag bis 0.11.0 auf einer Summe ohne ihn (Audit 20.09.2026,
 -- L1). Dieselben Texte, Einheiten, Fussnoten und Geltungsbereiche wie in
 -- TF.Live.entries, damit die Zeilen mit denen der Traits zusammenfallen.
 -- Skills ausser Strength und Fitness zeigt die Startskill-Liste.
+--
+-- Seit dem Faktensweep 2 (23.09.2026) auch die freien Rezepte des Berufs:
+-- das Spiel lernt sie beim Start aus der Berufsdefinition (IsoWorld.java:
+-- 2212-2215, im Mehrspieler applyProfessionRecipes), nicht aus dessen
+-- gewaehrten Traits. 15 Vanilla-Berufe tun das; Chef, Mechanic, Metalworker
+-- und Smither lernen ihre Rezepte nur so (Cook2, Mechanics2, Blacksmith2 haben
+-- keine), und die Uebersicht zeigte bei ihnen keine Zeile "Freie Rezepte".
+-- Die Namensmengen fallen in TF.Summary.merge mit denen der Traits zusammen.
 -- @return table  Liste von Eintraegen, moeglicherweise leer
 function TF.Live.professionEntries(profDef)
     if not profDef then return {} end
     local out = {}
+    recipeEntries(profDef, out)
     local boosts = call(profDef, "getXpBoosts")
     if boosts ~= nil and Perks and transformIntoKahluaTable then
         local ok, map = pcall(transformIntoKahluaTable, boosts)

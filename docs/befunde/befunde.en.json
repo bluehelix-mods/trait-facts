@@ -1,10 +1,10 @@
 {
  "findings": {
   "strong/knockback": {
-   "code": "IsoGameCharacter.processHitDamage (lines 5773-5777), melee only",
-   "note": "Measured on 2026-09-13 (code values): without 0.4000, with 0.5600, factor 1.4000.",
+   "code": "IsoGameCharacter.processHitDamage (lines 5773-5777), melee only; read in single player only as the 0.4 threshold of the stagger animation (AnimSets/zombie/staggerback/defaultStaggerBack.xml against GeneralStagger.xml and smallFromFront.xml), and only without a ZombieHitReaction (CombatManager lines 2410-2416), so on shoves",
+   "note": "Measured on 2026-09-13 (code values): without 0.4000, with 0.5600, factor 1.4000. What was measured is the getter getHitForce, not a push distance. In single player hitForce is only read as a threshold: above 0.4 the zombie plays the long shove stagger (Zombie_ShoveStagger_2m), below it the short one. Only a hit without a ZombieHitReaction takes this path, and every melee swing animation sets one; that leaves shoves. The push distance proportional to the force (calcHitDir, lines 13628-13643) is only called by HitReactionNetworkAI in multiplayer. So since fact sweep 2 (2026-09-23) the row says \"Hit force\" instead of \"Knockback\", with the threshold in the note; \"measured\" covers the hit force factor, how often a shove with Strong crosses the threshold is not measured.",
    "method": "Code values, measure mod 6.22.0: IsoGameCharacter.processHitDamage triggered with a spawned baseball bat, the character hits itself, then getHitForce read; without and with Strong, factor with/without, tolerance 0.006.",
-   "src": "6287c2632d"
+   "src": "e512e30042"
   },
   "strong/carryweight": {
    "code": "IsoPlayer constructors (lines 592-600, 656-664) set maxWeightDelta; read in BodyDamage.UpdateStrength (line 1731; delta read in line 1785)",
@@ -25,10 +25,10 @@
    "src": "971febaabd"
   },
   "weak/knockback": {
-   "code": "IsoGameCharacter.processHitDamage (lines 5773-5777), melee only",
-   "note": "Measured on 2026-09-13 (code values): without 0.4000, with 0.2400, factor 0.6000.",
+   "code": "IsoGameCharacter.processHitDamage (lines 5773-5777), melee only; read in single player only as the 0.4 threshold of the stagger animation (AnimSets/zombie/staggerback/defaultStaggerBack.xml against GeneralStagger.xml and smallFromFront.xml), and only without a ZombieHitReaction (CombatManager lines 2410-2416), so on shoves",
+   "note": "Measured on 2026-09-13 (code values): without 0.4000, with 0.2400, factor 0.6000. What was measured is the getter getHitForce, not a push distance. In single player hitForce is only read as a threshold: above 0.4 the zombie plays the long shove stagger (Zombie_ShoveStagger_2m), below it the short one. Only a hit without a ZombieHitReaction takes this path, and every melee swing animation sets one; that leaves shoves. The push distance proportional to the force (calcHitDir, lines 13628-13643) is only called by HitReactionNetworkAI in multiplayer. So since fact sweep 2 (2026-09-23) the row says \"Hit force\" instead of \"Knockback\", with the threshold in the note; \"measured\" covers the hit force factor, how often a shove with Puny crosses the threshold is not measured.",
    "method": "Code values, measure mod 6.22.0: IsoGameCharacter.processHitDamage triggered with a spawned baseball bat, the character hits itself, then getHitForce read; without and with Puny, factor with/without, tolerance 0.006.",
-   "src": "8595c7b5e1"
+   "src": "6c1d001654"
   },
   "weak/carryweight": {
    "code": "IsoPlayer constructors (lines 592-600, 656-664) set maxWeightDelta; read in BodyDamage.UpdateStrength (line 1731; delta read in line 1785)",
@@ -44,15 +44,15 @@
   },
   "axeman/chopspeed": {
    "code": "IsoGameCharacter.getChopTreeSpeed (line 12388); felling animation AnimSets/player/actions/chop_tree.xml (m_SpeedScale ChopTreeSpeed, hit at 0.35), clip Bob_IdleChopDownTree 1.0 s; the game reads the speed only when the animation node starts (AnimLayer.startLiveNodeTracks, line 831)",
-   "note": "Per code +25%: getChopTreeSpeed returns 1.0 instead of 0.8 with Ax-pert (measured on 2026-09-10 and 2026-09-13), and the felling animation runs at that value; the clip lasts 1.0 s, so one hit every 1.0 s instead of every 1.25 s. The measurement of 2026-09-13 cannot decide this: in all three runs the gap was about 1250 ms with and without Ax-pert, which is the tempo without Ax-pert. The game reads the speed only when the animation node starts, and the test switched the trait while the node kept running (queue cleared and felling restarted in the same tick); so every phase ran at the tempo of the first, which was always without Ax-pert. A character who has Ax-pert when felling starts was never measured. A new measurement is planned, with Ax-pert set before the start and a pause between phases until the felling animation has ended (measure mod 6.43.0). Until 2026-09-23 the value was listed as having no effect; that was a wrong conclusion from this measurement.",
+   "note": "Per code +25%: getChopTreeSpeed returns 1.0 instead of 0.8 with Ax-pert (measured on 2026-09-10 and 2026-09-13), and the felling animation runs at that value; the clip lasts 1.0 s, so one hit every 1.0 s instead of every 1.25 s. The measurement of 2026-09-13 cannot decide this: in all three runs the gap was about 1250 ms with and without Ax-pert, which is the tempo without Ax-pert. The game reads the speed only when the animation node starts, and the test switched the trait while the node kept running (queue cleared and felling restarted in the same tick); so every phase ran at the tempo of the first, which was always without Ax-pert. A character who has Ax-pert when felling starts was never measured. A new measurement is planned, with Ax-pert set before the start and a pause between phases until the felling animation has ended (measure mod 6.43.0). Until 2026-09-23 the value was listed as having no effect; that was a wrong conclusion from this measurement. This holds in single player only (fact sweep 2, 2026-09-23): in multiplayer, also when hosting, the server lands the hits itself (ISChopTreeAction.lua lines 64-68 only without isClient, serverStart lines 108-111 emulateAnimEvent with 1500 ms, LuaManager lines 9585-9589, AnimEventEmulator.update repeats every 1500 ms): one hit every 1.5 s, with or without Ax-pert. The x1.5 tree damage still applies there. Not checked on a server.",
    "method": "Axe: Ax-pert, measure mod 6.18.0 to 6.21.0 (three runs): gap between two swings in milliseconds compared with and without Ax-pert; in the first run the trait was switched mid-action, after that 8 phases each with a new action, whose first swing does not count as run-up.",
-   "src": "9c82dc82ad"
+   "src": "16985060fb"
   },
   "axeman/axeswing": {
    "code": "IsoGameCharacter.calculateCombatSpeed (line 8836), CombatManager.pressedAttack (line 2660)",
-   "note": "Hit duration with/without 0.79, 0.80, 0.79 across three runs, at axe skill 3. Not a fixed factor: in calculateCombatSpeed the 0.8 without Ax-pert only hits the base term (0.8 x the weapon's BaseSpeed); after that come terms without any trait: +0.03 per weapon level, +0.02 per Fitness level and -0.07 per level of exhaustion and overload, then a random 1.1 to 1.2 and the clamp 0.8 to 1.6. Per code for the axe (BaseSpeed 1.0) that is about -18% for a new character (Axe 0, Fitness 5), -16% at Axe 3 and -12% at Axe 10 and Fitness 10. Measured at Axe 3, though, were -20 to -21%; so hit duration does not follow 1/CombatSpeed exactly, and the test character's Fitness is not in the log. Trait Facts shows the measured -20% for a new character and says in the note that it gets smaller with Axe and Fitness. A measurement at Axe 10 and Fitness 10 is still to come (checked again on 2026-09-23).",
+   "note": "Hit duration with/without 0.79, 0.80, 0.79 across three runs, at axe skill 3. Not a fixed factor: in calculateCombatSpeed the 0.8 without Ax-pert only hits the base term (0.8 x the weapon's BaseSpeed); after that come terms without any trait: +0.03 per weapon level, +0.02 per Fitness level and -0.07 per level of exhaustion and overload, then a random 1.1 to 1.2 and the clamp 0.8 to 1.6. Per code for the axe (BaseSpeed 1.0) that is about -17% for a new Lumberjack (Axe 2, Fitness 5; Ax-pert comes only with the Lumberjack occupation), -16% at Axe 3 and -12% at Axe 10 and Fitness 10. Slow weapons of the axe category sit at or near the lower limit 0.8 without the trait, so the model gives the trait less there: the Pickaxe (BaseSpeed 0.8) about -13% at Axe 2, -6% at Axe 0. Measured at Axe 3, though, were -20 to -21%; so hit duration does not follow 1/CombatSpeed exactly, and the test character's Fitness is not in the log. Trait Facts shows the measured -20% and gives the measured condition in the note (Firefighter Axe, Axe 3) and that per code it gets smaller with the Pickaxe and at high Axe and Fitness; until fact sweep 2 (2026-09-23) the note said \"for a new character\", though only Axe 3 was measured, and gave the -12% at Axe 10 as a fact. Measurements at Axe 2, at Axe 10 with Fitness 10 and with the Pickaxe are still to come.",
    "method": "Axe: Ax-pert, measure mod 6.18.0 to 6.21.0 (three runs): 20 swings into the air, Ax-pert toggled every two swings, swing rate and duration from OnWeaponSwing and OnPlayerAttackFinished compared against the values without the trait; axe skill fixed at 3, Fitness not logged.",
-   "src": "a4592a4471"
+   "src": "b32b11cef5"
   },
   "axeman/treedamage": {
    "code": "IsoTree.WeaponHit (lines 219-222), weapon category AXE only",
@@ -61,16 +61,16 @@
    "src": "58fb2eda50"
   },
   "underweight/meleedamage": {
-   "code": "CharacterTraits.getTraitDamageDealtReductionModifier (line 132)",
-   "note": "Getter with trait on and off, matched to the decimal place as in the code.",
+   "code": "CharacterTraits.getTraitDamageDealtReductionModifier (line 132); consumed in CombatManager (lines 819-821), melee only, not when stomping (lines 846-850)",
+   "note": "Getter with trait on and off, matched to the decimal place as in the code. Stomping a downed zombie then overwrites the damage with its own formula (lines 846-850), and the trait drops out there; a standing shove does no damage anyway (lines 593-595). Panic and stress subtract 0.1 per level after the factor. The note says so since fact sweep 2 (2026-09-23).",
    "method": "World entry: getTraitDamageDealtReductionModifier() read without and with Low Weight, value compared to the decimal place as in the code; early measure mod runs before version numbering began (10, 10b, 10c) and a later world-entry run (13-sprint), traits saved beforehand and reset afterward.",
-   "src": "71ef64bcc8"
+   "src": "1ec874f9e2"
   },
   "veryunderweight/meleedamage": {
-   "code": "CharacterTraits.getTraitDamageDealtReductionModifier (line 132)",
-   "note": "Getter with trait on and off, matched to the decimal place as in the code.",
+   "code": "CharacterTraits.getTraitDamageDealtReductionModifier (line 132); consumed in CombatManager (lines 819-821), melee only, not when stomping (lines 846-850)",
+   "note": "Getter with trait on and off, matched to the decimal place as in the code. Stomping a downed zombie then overwrites the damage with its own formula (lines 846-850), and the trait drops out there; a standing shove does no damage anyway (lines 593-595). Panic and stress subtract 0.1 per level after the factor. The note says so since fact sweep 2 (2026-09-23).",
    "method": "World entry: getTraitDamageDealtReductionModifier() read without and with Very Low Weight, value compared to the decimal place as in the code; early measure mod runs before version numbering began (10, 10b, 10c) and a later world-entry run (13-sprint), traits saved beforehand and reset afterward.",
-   "src": "e7683f9881"
+   "src": "636ab37de9"
   },
   "veryunderweight/grapple": {
    "code": "IsoGameCharacter.calculateGrappleEffectivenessFromTraits (lines 7917-7946); callers IsoGameCharacter.pickUpCorpse (lines 7912-7913) and SwipeStatePlayer (lines 524-530); read only in BaseGrappleable.Grappled (line 75) and IsoDeadBody.Grappled (line 1775) as a threshold below 0.5",
@@ -79,10 +79,10 @@
    "src": "303ce3176a"
   },
   "veryunderweight/trip": {
-   "code": "ClimbOverFenceState.shouldFallAfterVaultOver (line 493; traits lines 511-526)",
-   "note": "Measured on 2026-09-14 (code values, measure mod 6.26.2): tripped without 9.9333%, with 39.6333%, difference 29.7000 points, 3000 samples per case over 70 ticks. According to the code +30, because Very Low Weight (VERY_UNDERWEIGHT in the game code) is checked twice (+20 and +10, game bug zaun-veryunderweight).",
+   "code": "ClimbOverFenceState.shouldFallAfterVaultOver (line 493; traits lines 511-528; roll against the counter minus Fitness line 529)",
+   "note": "Measured on 2026-09-14 (code values, measure mod 6.26.2): tripped without 9.9333%, with 39.6333%, difference 29.7000 points, 3000 samples per case over 70 ticks. According to the code +30, because Very Low Weight (VERY_UNDERWEIGHT in the game code) is checked twice (+20 and +10, see the game bug on the Very Low Weight double check when climbing fences). The roll is Rand.Next(100) < counter - Fitness (line 529): a negative counter acts as 0. The measurement ran sprinting at Fitness 0, where the full value applies; at a run the base is below 0 from Fitness 1 on and absorbs part of the points. The weight traits also lower starting Fitness. Per code new character with Very Low Weight (Fitness 3): 27% at a run, 37% sprinting, instead of 0% and 5%; the note gives it since fact sweep 2 (2026-09-23).",
    "method": "Code values, measure mod 6.26.2: ClimbOverFenceState.enter triggered with VaultOverSprint on the standing character, Fitness 0; \"fall\" outcome counted, without and with Very Low Weight, 3000 samples each alternating over several ticks, difference of shares with minus without, tolerance 4 points.",
-   "src": "fee01d5dc2"
+   "src": "f13db7c2f0"
   },
   "veryunderweight/lungefall": {
    "code": "IsoGameCharacter.attackFromWindowsLunge (line 12875; traits lines 12900-12915; stagger and roll lines 12919-12924); triggered only by the climbing zombie: ClimbOverFenceState (lines 367-371), ClimbThroughWindowState (lines 290-294), GrappledThrownOutWindowState (lines 267-271)",
@@ -92,9 +92,9 @@
   },
   "veryunderweight/fallinjury": {
    "code": "IsoGameCharacter.handleLandingImpact (line 2056): injury roll lines 2121-2140, weight traits lines 2127-2130",
-   "note": "Measured on 2026-09-14 (code values, measure mod 6.26.2): share of fractures among the injured samples without 31.7273%, with 42.7469%, difference 11.0196 points (according to the code +10; without the trait the code gives 32%, with the trait 42%: PZMath.lerpFunc_EaseOutQuad computes x squared, the names are swapped in the game, so rand = (int)(0.6 x 55) = 32; the test plan had expected 52%), 4000 samples per case over 163 ticks.",
+   "note": "Measured on 2026-09-14 (code values, measure mod 6.26.2): share of fractures among the injured samples without 31.7273%, with 42.7469%, difference 11.0196 points (according to the code +10; without the trait the code gives 32%, with the trait 42%: PZMath.lerpFunc_EaseOutQuad computes x squared, the names are swapped in the game, so rand = (int)(0.6 x 55) = 32; the test plan had expected 52%), 4000 samples per case over 163 ticks. The measurement counts fractures among the injured samples, which is exactly the row's value. Whether a fall injures at all is decided before that by Rand.Next(100) < damage (line 2119); the damage depends on fall height and inventory load (empty inventory: no damage) and rises with the same trait (row falldamage). If the fracture roll misses, the game rolls a deep wound at threshold + 10, and that also gets likelier. Since fact sweep 2 (2026-09-23) the row says \"Chance of a fracture when a fall injures you\" instead of \"Fracture or deep wound after a fall\".",
    "method": "Code values, measure mod 6.26.2: IsoGameCharacter.DoLand(3.0) as with fall damage (God Mode on, invisible off, Fitness and Nimble 0), without and with Very Low Weight the same 4000 samples per case; share of fractures among the injuries, difference with minus without, tolerance 6 points.",
-   "src": "af6bc939fe"
+   "src": "cc61e7a07c"
   },
   "veryunderweight/falldamage": {
    "code": "IsoGameCharacter.handleLandingImpact (line 2056): healthReduction x1.4 or x1.2 in lines 2083-2086",
@@ -109,10 +109,10 @@
    "src": "0601bf4d53"
   },
   "emaciated/meleedamage": {
-   "code": "CharacterTraits.getTraitDamageDealtReductionModifier (line 132)",
-   "note": "Getter with trait on and off, matched to the decimal place as in the code.",
+   "code": "CharacterTraits.getTraitDamageDealtReductionModifier (line 132); consumed in CombatManager (lines 819-821), melee only, not when stomping (lines 846-850)",
+   "note": "Getter with trait on and off, matched to the decimal place as in the code. Stomping a downed zombie then overwrites the damage with its own formula (lines 846-850), and the trait drops out there; a standing shove does no damage anyway (lines 593-595). Panic and stress subtract 0.1 per level after the factor. The note says so since fact sweep 2 (2026-09-23).",
    "method": "World entry: getTraitDamageDealtReductionModifier() read without and with Emaciated, value compared to the decimal place as in the code; early measure mod runs before version numbering began (10, 10b, 10c) and a later world-entry run (13-sprint), traits saved beforehand and reset afterward.",
-   "src": "acf05da5ee"
+   "src": "682183ea2f"
   },
   "emaciated/grapple": {
    "code": "IsoGameCharacter.calculateGrappleEffectivenessFromTraits (lines 7917-7946); callers IsoGameCharacter.pickUpCorpse (lines 7912-7913) and SwipeStatePlayer (lines 524-530); read only in BaseGrappleable.Grappled (line 75) and IsoDeadBody.Grappled (line 1775) as a threshold below 0.5",
@@ -128,9 +128,9 @@
   },
   "emaciated/fallinjury": {
    "code": "IsoGameCharacter.handleLandingImpact (line 2056): injury roll lines 2121-2140, weight traits lines 2127-2130",
-   "note": "Measured on 2026-09-14 (code values, measure mod 6.26.2): share of fractures among the injured samples without 31.7273%, with 52.6826%, difference 20.9553 points (according to the code +20; without the trait the code gives 32%, with the trait 52%: PZMath.lerpFunc_EaseOutQuad computes x squared, the names are swapped in the game, so rand = (int)(0.6 x 55) = 32; the test plan had expected 52%), 4000 samples per case over 163 ticks.",
+   "note": "Measured on 2026-09-14 (code values, measure mod 6.26.2): share of fractures among the injured samples without 31.7273%, with 52.6826%, difference 20.9553 points (according to the code +20; without the trait the code gives 32%, with the trait 52%: PZMath.lerpFunc_EaseOutQuad computes x squared, the names are swapped in the game, so rand = (int)(0.6 x 55) = 32; the test plan had expected 52%), 4000 samples per case over 163 ticks. The measurement counts fractures among the injured samples, which is exactly the row's value. Whether a fall injures at all is decided before that by Rand.Next(100) < damage (line 2119); the damage depends on fall height and inventory load (empty inventory: no damage) and rises with the same trait (row falldamage). If the fracture roll misses, the game rolls a deep wound at threshold + 10, and that also gets likelier. Since fact sweep 2 (2026-09-23) the row says \"Chance of a fracture when a fall injures you\" instead of \"Fracture or deep wound after a fall\".",
    "method": "Code values, measure mod 6.26.2: IsoGameCharacter.DoLand(3.0) as with fall damage (God Mode on, invisible off, Fitness and Nimble 0), without and with Emaciated the same 4000 samples per case; share of fractures among the injuries, difference with minus without, tolerance 6 points.",
-   "src": "24f3f2ca0b"
+   "src": "edb7e45dab"
   },
   "emaciated/enduranceregen": {
    "code": "IsoGameCharacter.getRecoveryMod (lines 4309-4356)",
@@ -151,22 +151,22 @@
    "src": "7759dd8b4e"
   },
   "overweight/climb": {
-   "code": "IsoGameCharacter.getClimbingFailChanceFloat (line 14718; traits lines 14727-14748); consumed in ClimbSheetRopeState (line 263, roll line 84)",
-   "note": "651 points across 21 cases, none deviates from the formula.",
+   "code": "IsoGameCharacter.getClimbingFailChanceFloat (line 14718; traits lines 14727-14748); consumed mainly on tall fences in ClimbOverWallState (lines 296-311), also in ClimbSheetRopeState (line 263, roll line 84) and ClimbDownSheetRopeState (line 130)",
+   "note": "651 points across 21 cases, none deviates from the formula. On tall fences the character fails with 1 in the root of the score (ClimbOverWallState lines 296-311). A new character with High Weight has Fitness 4 (XPBoosts Fitness=-1), so 8 + 10 - 15 = 3, root 1: Rand.NextBool(1) is always true, so it fails every time instead of 25% without the trait (see the game bug on a climbing score of one); pathfinding still routes over tall fences (PathFindRequest line 77, score from 1). Someone who only gets High Weight in play and keeps Fitness 5 ends at 5, root 2, 50%. On sheet ropes the fall roll only opens after (root + 1) x 100 x rope speed floors of continuous climbing (ClimbSheetRopeState lines 76, 83, 261-266; down x300, ClimbDownSheetRopeState lines 128-134), 40 floors for a new character; at double game speed and above the whole-number multiplier divides the threshold. Since fact sweep 2 (2026-09-23) the row names only tall fences.",
    "method": "Climbing, measure mod 6.19.0: getClimbingFailChanceFloat read across 21 trait cases, including High Weight; for each case Fitness, Strength and Nimble individually from 0 to 10, the others at 0. The test notes deviations against the case without the trait, the formula was then checked.",
-   "src": "1325719ec0"
+   "src": "db4ce795f4"
   },
   "overweight/climbstrength": {
    "code": "IsoGameCharacter.getClimbRopeSpeed (line 14799; traits lines 14803-14817); read in ClimbSheetRopeState (lines 71, 116)",
-   "note": "Rope speed per level matches the code.",
+   "note": "Rope speed per level matches the code. Levels 4 and 5 have the same rope speed (0.08; no case 4/5, IsoGameCharacter lines 14827-14865). A new character with High Weight has max(Strength 5, Fitness 4) = 5, so 4 with -1: no difference; with ordinary gloves (level 6 -> 5) -11%.",
    "method": "Climbing, measure mod 6.19.0: getClimbRopeSpeed up and down read across 21 trait cases, including High Weight; for each case Fitness, Strength and Nimble individually from 0 to 10, the others at 0. Deviations against the case without the trait, then matched per level against the code.",
-   "src": "f3843812c7"
+   "src": "d1b6a944c3"
   },
   "overweight/trip": {
-   "code": "ClimbOverFenceState.shouldFallAfterVaultOver (line 493; traits lines 511-526)",
-   "note": "Measured on 2026-09-14 (code values, measure mod 6.26.2): tripped without 9.9333%, with 18.6667%, difference 8.7333 points (according to the code +10), 3000 samples per case over 50 ticks.",
+   "code": "ClimbOverFenceState.shouldFallAfterVaultOver (line 493; traits lines 511-528; roll against the counter minus Fitness line 529)",
+   "note": "Measured on 2026-09-14 (code values, measure mod 6.26.2): tripped without 9.9333%, with 18.6667%, difference 8.7333 points (according to the code +10), 3000 samples per case over 50 ticks. The roll is Rand.Next(100) < counter - Fitness (line 529): a negative counter acts as 0. The measurement ran sprinting at Fitness 0, where the full value applies; at a run the base is below 0 from Fitness 1 on and absorbs part of the points. The weight traits also lower starting Fitness. Per code new character with High Weight (Fitness 4): 6% at a run, 16% sprinting, instead of 0% and 5%; the note gives it since fact sweep 2 (2026-09-23).",
    "method": "Code values, measure mod 6.26.2: ClimbOverFenceState.enter triggered with VaultOverSprint on the standing character, Fitness 0; \"fall\" outcome counted, without and with High Weight, 3000 samples each alternating over several ticks, difference of shares with minus without, tolerance 4 points.",
-   "src": "f8841676e6"
+   "src": "d13cb3af5e"
   },
   "overweight/lungefall": {
    "code": "IsoGameCharacter.attackFromWindowsLunge (line 12875; traits lines 12900-12915; stagger and roll lines 12919-12924); triggered only by the climbing zombie: ClimbOverFenceState (lines 367-371), ClimbThroughWindowState (lines 290-294), GrappledThrownOutWindowState (lines 267-271)",
@@ -182,9 +182,9 @@
   },
   "overweight/fallinjury": {
    "code": "IsoGameCharacter.handleLandingImpact (line 2056): injury roll lines 2121-2140, weight traits lines 2127-2130",
-   "note": "Measured on 2026-09-14 (code values, measure mod 6.26.2): share of fractures among the injured samples without 31.7273%, with 42.3871%, difference 10.6599 points (according to the code +10; without the trait the code gives 32%, with the trait 42%: PZMath.lerpFunc_EaseOutQuad computes x squared, the names are swapped in the game, so rand = (int)(0.6 x 55) = 32; the test plan had expected 52%), 4000 samples per case over 163 ticks.",
+   "note": "Measured on 2026-09-14 (code values, measure mod 6.26.2): share of fractures among the injured samples without 31.7273%, with 42.3871%, difference 10.6599 points (according to the code +10; without the trait the code gives 32%, with the trait 42%: PZMath.lerpFunc_EaseOutQuad computes x squared, the names are swapped in the game, so rand = (int)(0.6 x 55) = 32; the test plan had expected 52%), 4000 samples per case over 163 ticks. The measurement counts fractures among the injured samples, which is exactly the row's value. Whether a fall injures at all is decided before that by Rand.Next(100) < damage (line 2119); the damage depends on fall height and inventory load (empty inventory: no damage) and rises with the same trait (row falldamage). If the fracture roll misses, the game rolls a deep wound at threshold + 10, and that also gets likelier. Since fact sweep 2 (2026-09-23) the row says \"Chance of a fracture when a fall injures you\" instead of \"Fracture or deep wound after a fall\".",
    "method": "Code values, measure mod 6.26.2: IsoGameCharacter.DoLand(3.0) as with fall damage (God Mode on, invisible off, Fitness and Nimble 0), without and with High Weight the same 4000 samples per case; share of fractures among the injuries, difference with minus without, tolerance 6 points.",
-   "src": "f7a5d57e9e"
+   "src": "1fba468db9"
   },
   "overweight/enduranceloss": {
    "code": "IsoPlayer.updateEndurance (lines 3004-3016), enddelta",
@@ -211,22 +211,22 @@
    "src": "7759dd8b4e"
   },
   "obese/climb": {
-   "code": "IsoGameCharacter.getClimbingFailChanceFloat (line 14718; traits lines 14727-14748); consumed in ClimbSheetRopeState (line 263, roll line 84)",
-   "note": "651 points across 21 cases, none deviates from the formula.",
+   "code": "IsoGameCharacter.getClimbingFailChanceFloat (line 14718; traits lines 14727-14748); consumed mainly on tall fences in ClimbOverWallState (lines 296-311), also in ClimbSheetRopeState (line 263, roll line 84) and ClimbDownSheetRopeState (line 130)",
+   "note": "651 points across 21 cases, none deviates from the formula. On tall fences the character fails with 1 in the root of the score (ClimbOverWallState lines 296-311). A new character with Very High Weight has Fitness 3 (XPBoosts Fitness=-2), so 6 + 10 - 25, clamped to 0: at root 0 it only succeeds with Rand.Next(100) <= Strength, 6% at Strength 5, never with a heavy load, and pathfinding no longer routes over tall fences (PathFindRequest line 77). On sheet ropes the fall roll only opens after (root + 1) x 100 x rope speed floors of continuous climbing (ClimbSheetRopeState lines 76, 83, 261-266; down x300, ClimbDownSheetRopeState lines 128-134), 40 floors for a new character, 3.5 with Very High Weight (root 0, rope level 3); at double game speed and above the whole-number multiplier divides the threshold. Since fact sweep 2 (2026-09-23) the row names only tall fences.",
    "method": "Climbing, measure mod 6.19.0: getClimbingFailChanceFloat read across 21 trait cases, including Very High Weight; for each case Fitness, Strength and Nimble individually from 0 to 10, the others at 0. The test notes deviations against the case without the trait, the formula was then checked.",
-   "src": "305f3d756d"
+   "src": "4ad0fcc763"
   },
   "obese/climbstrength": {
    "code": "IsoGameCharacter.getClimbRopeSpeed (line 14799; traits lines 14803-14817); read in ClimbSheetRopeState (lines 71, 116)",
-   "note": "Rope speed per level matches the code.",
+   "note": "Rope speed per level matches the code. A new character with Very High Weight has max(Strength 5, Fitness 3) = 5, so 3 with -2: rope speed 0.035 instead of 0.08, about 56% slower climbing up (without gloves; with ordinary gloves 6 -> 4, -11%).",
    "method": "Climbing, measure mod 6.19.0: getClimbRopeSpeed up and down read across 21 trait cases, including Very High Weight; for each case Fitness, Strength and Nimble individually from 0 to 10, the others at 0. Deviations against the case without the trait, then matched per level against the code.",
-   "src": "4cfa720c66"
+   "src": "1f8cfbf273"
   },
   "obese/trip": {
-   "code": "ClimbOverFenceState.shouldFallAfterVaultOver (line 493; traits lines 511-526)",
-   "note": "Measured on 2026-09-14 (code values, measure mod 6.26.2): tripped without 9.9333%, with 30.2667%, difference 20.3333 points (according to the code +20), 3000 samples per case over 50 ticks.",
+   "code": "ClimbOverFenceState.shouldFallAfterVaultOver (line 493; traits lines 511-528; roll against the counter minus Fitness line 529)",
+   "note": "Measured on 2026-09-14 (code values, measure mod 6.26.2): tripped without 9.9333%, with 30.2667%, difference 20.3333 points (according to the code +20), 3000 samples per case over 50 ticks. The roll is Rand.Next(100) < counter - Fitness (line 529): a negative counter acts as 0. The measurement ran sprinting at Fitness 0, where the full value applies; at a run the base is below 0 from Fitness 1 on and absorbs part of the points. The weight traits also lower starting Fitness. Per code new character with Very High Weight (Fitness 3): 17% at a run, 27% sprinting, instead of 0% and 5%; the note gives it since fact sweep 2 (2026-09-23).",
    "method": "Code values, measure mod 6.26.2: ClimbOverFenceState.enter triggered with VaultOverSprint on the standing character, Fitness 0; \"fall\" outcome counted, without and with Very High Weight, 3000 samples each alternating over several ticks, difference of shares with minus without, tolerance 4 points.",
-   "src": "2399f94b49"
+   "src": "cff2e27831"
   },
   "obese/lungefall": {
    "code": "IsoGameCharacter.attackFromWindowsLunge (line 12875; traits lines 12900-12915; stagger and roll lines 12919-12924); triggered only by the climbing zombie: ClimbOverFenceState (lines 367-371), ClimbThroughWindowState (lines 290-294), GrappledThrownOutWindowState (lines 267-271)",
@@ -242,9 +242,9 @@
   },
   "obese/fallinjury": {
    "code": "IsoGameCharacter.handleLandingImpact (line 2056): injury roll lines 2121-2140, weight traits lines 2127-2130",
-   "note": "Measured on 2026-09-14 (code values, measure mod 6.26.2): share of fractures among the injured samples without 31.7273%, with 51.5573%, difference 19.8301 points (according to the code +20; without the trait the code gives 32%, with the trait 52%: PZMath.lerpFunc_EaseOutQuad computes x squared, the names are swapped in the game, so rand = (int)(0.6 x 55) = 32; the test plan had expected 52%), 4000 samples per case over 163 ticks.",
+   "note": "Measured on 2026-09-14 (code values, measure mod 6.26.2): share of fractures among the injured samples without 31.7273%, with 51.5573%, difference 19.8301 points (according to the code +20; without the trait the code gives 32%, with the trait 52%: PZMath.lerpFunc_EaseOutQuad computes x squared, the names are swapped in the game, so rand = (int)(0.6 x 55) = 32; the test plan had expected 52%), 4000 samples per case over 163 ticks. The measurement counts fractures among the injured samples, which is exactly the row's value. Whether a fall injures at all is decided before that by Rand.Next(100) < damage (line 2119); the damage depends on fall height and inventory load (empty inventory: no damage) and rises with the same trait (row falldamage). If the fracture roll misses, the game rolls a deep wound at threshold + 10, and that also gets likelier. Since fact sweep 2 (2026-09-23) the row says \"Chance of a fracture when a fall injures you\" instead of \"Fracture or deep wound after a fall\".",
    "method": "Code values, measure mod 6.26.2: IsoGameCharacter.DoLand(3.0) as with fall damage (God Mode on, invisible off, Fitness and Nimble 0), without and with Very High Weight the same 4000 samples per case; share of fractures among the injuries, difference with minus without, tolerance 6 points.",
-   "src": "6904814bed"
+   "src": "91d50904dc"
   },
   "obese/enduranceregen": {
    "code": "IsoGameCharacter.getRecoveryMod (lines 4309-4356)",
@@ -254,9 +254,9 @@
   },
   "thickskinned/zombieinjury": {
    "code": "BodyDamage.AddRandomDamageFromZombie (line 1101; traits lines 1125-1130; direction lines 1143-1177; roll line 1228)",
-   "note": "Measured on 2026-09-20 (code values): no injury without the trait 11.1083%, with 13.5917%, difference 2.4833 points, 12000 samples per case. Per code the internal value 10 becomes 13; injury happens when Rand.Next(100) > value, so the chance of no injury is (value + 1)%: 11% to 14%, +27%. Measured +22.4%, within sampling noise. With weapon skill (internal value 13 to 22) +21 to +29%, never +30%; until 2026-09-23 Trait Facts showed the +30 of the internal value.",
+   "note": "Measured on 2026-09-20 (code values): no injury without the trait 11.1083%, with 13.5917%, difference 2.4833 points, 12000 samples per case. Per code the internal value 10 becomes 13; injury happens when Rand.Next(100) > value, so the chance of no injury is (value + 1)%: 11% to 14%, +27%. Measured +22.4%, within sampling noise. With weapon skill (internal value 13 and 15 to 22) +21 to +29%, never +30%; until 2026-09-23 Trait Facts showed the +30 of the internal value.",
    "method": "Code values: BodyDamage.AddRandomDamageFromZombie on a stand-in character outside the world, one zombie from the front, no weapon (base chance 15 - 5); share of attacks without injury counted, without and with Thick-skinned, 12000 samples per case over 120 ticks alternating, difference of shares with minus without.",
-   "src": "a972d948a8"
+   "src": "3b7dad838a"
   },
   "thickskinned/treescratch": {
    "code": "IsoGameCharacter.damageWhileInTrees (line 3850; traits lines 3859-3868)",
@@ -266,9 +266,9 @@
   },
   "thinskinned/zombieinjury": {
    "code": "BodyDamage.AddRandomDamageFromZombie (line 1101; traits lines 1125-1130; direction lines 1143-1177; roll line 1228)",
-   "note": "Measured on 2026-09-20 (code values): no injury without the trait 11.1083%, with 8.0750%, difference -3.0333 points, 12000 samples per case. Per code the internal value 10 becomes 7 (rounded down); injury happens when Rand.Next(100) > value, so the chance of no injury is (value + 1)%: 11% to 8%, -27%, measured -27.3%. With weapon skill (internal value 13 to 22) -21 to -27%; until 2026-09-23 Trait Facts showed the -23 from /1.3 without rounding down.",
+   "note": "Measured on 2026-09-20 (code values): no injury without the trait 11.1083%, with 8.0750%, difference -3.0333 points, 12000 samples per case. Per code the internal value 10 becomes 7 (rounded down); injury happens when Rand.Next(100) > value, so the chance of no injury is (value + 1)%: 11% to 8%, -27%, measured -27.3%. With weapon skill (internal value 13 and 15 to 22, getMeleeCombatMod lines 10074-10106; 14 does not occur) -21 to -26%; until 2026-09-23 Trait Facts showed the -23 from /1.3 without rounding down. Until fact sweep 2 (2026-09-23) this said -27, and the note shared with Thick-skinned said \"21 to 29%\"; since then each trait has its own.",
    "method": "Code values: BodyDamage.AddRandomDamageFromZombie on a stand-in character outside the world, one zombie from the front, no weapon (base chance 15 - 5); share of attacks without injury counted, without and with Thin-skinned, 12000 samples per case over 120 ticks alternating, difference of shares with minus without.",
-   "src": "161d9ec9c9"
+   "src": "ce2bf532ce"
   },
   "thinskinned/treescratch": {
    "code": "IsoGameCharacter.damageWhileInTrees (line 3850; traits lines 3859-3868)",
@@ -380,9 +380,9 @@
   },
   "marksman/critchance": {
    "code": "IsoPlayer.calculateCritChance (line 3599; Marksman lines 3645-3646), ranged only",
-   "note": "Measured on 2026-09-13 (code values, measure mod 6.24.1): pistol in hand, target the character itself, Aiming 0: critical chance 60 without, 70 with Marksman, +10 (IsoPlayer.calculateCritChance, without randomness, clamped to 10-90). The run before it with Aiming 5 was at the 90 clamp both without and with the trait.",
+   "note": "Measured on 2026-09-13 (code values, measure mod 6.24.1): pistol in hand, target the character itself, Aiming 0: critical chance 60 without, 70 with Marksman, +10 (IsoPlayer.calculateCritChance, without randomness, clamped to 10-90). The run before it with Aiming 5 was at the 90 clamp both without and with the trait. The 10 to 90 clamp comes after the +10 (IsoPlayer line 3689): a shotgun (CriticalChance 70) is already at 90 without the trait up close with the bonus of up to +40, a hunting rifle at Aiming 6 at its best distance at 81 (+9). The note gives the clamp since fact sweep 2 (2026-09-23).",
    "method": "Code values, measure mod 6.24.1: IsoPlayer.calculateCritChance read with a pistol in hand, target the character itself, Aiming 0, plus the smallest aim delay at which the chance without Marksman is at most 70; difference with minus without. The game clamps the chance to 10-90.",
-   "src": "1e1504d702"
+   "src": "6dbe253a26"
   },
   "marksman/windpenalty": {
    "code": "CombatManager.getWeatherPenalty (line 2065; Marksman line 2074); WIND_INTENSITY_TO_HIT_MINIMUM_MARKSMAN_MODIFIER = 0.6 (CombatConfigKey line 48)",
@@ -422,15 +422,15 @@
   },
   "dextrous/climb": {
    "code": "IsoGameCharacter.getClimbingFailChanceFloat (line 14718; traits lines 14727-14748); consumed in ClimbSheetRopeState (line 263, roll line 84), ClimbDownSheetRopeState (line 130) and on tall fences in ClimbOverWallState (line 296)",
-   "note": "651 points across 21 cases, none deviates from the formula.",
+   "note": "651 points across 21 cases, none deviates from the formula. A new character without gloves has 20, with Dextrous 24: both root 4, so the trait alone changes nothing; with ordinary gloves (+4) 28, root 5. The note says so since fact sweep 2 (2026-09-23).",
    "method": "Climbing, measure mod 6.19.0: getClimbingFailChanceFloat read in 21 trait cases, including Dextrous; per case Fitness, Strength and Nimble each from 0 to 10 individually, the others at 0. The test records deviations against the case without the trait; the formula was then checked.",
-   "src": "9694ae3664"
+   "src": "f549c7cdb1"
   },
   "dextrous/climbstrength": {
    "code": "IsoGameCharacter.getClimbRopeSpeed (line 14799; traits lines 14803-14817); read in ClimbSheetRopeState (lines 71, 116)",
-   "note": "Rope speed per level as in the code.",
+   "note": "Rope speed per level as in the code. Levels 4 and 5 have the same rope speed (IsoGameCharacter lines 14827-14865): for a new character without gloves (level 5) +1 gives about +12.5% and -1 nothing; the note says so since fact sweep 2 (2026-09-23).",
    "method": "Climbing, measure mod 6.19.0: getClimbRopeSpeed up and down read in 21 trait cases, including Dextrous; per case Fitness, Strength and Nimble each from 0 to 10 individually, the others at 0. Deviations against the case without the trait, then matched against the code per level.",
-   "src": "66a15872c1"
+   "src": "7cd23cb9ee"
   },
   "allthumbs/transfer": {
    "code": "client/TimedActions/ISInventoryTransferAction.lua (lines 764-862)",
@@ -458,21 +458,21 @@
   },
   "allthumbs/climb": {
    "code": "IsoGameCharacter.getClimbingFailChanceFloat (line 14718; traits lines 14727-14748); consumed in ClimbSheetRopeState (line 263, roll line 84), ClimbDownSheetRopeState (line 130) and on tall fences in ClimbOverWallState (line 296)",
-   "note": "651 points across 21 cases, none deviates from the formula.",
+   "note": "651 points across 21 cases, none deviates from the formula. A new character without gloves has 20, with All Thumbs 16: both root 4, so the trait alone changes nothing. The note says so since fact sweep 2 (2026-09-23).",
    "method": "Climbing, measure mod 6.19.0: getClimbingFailChanceFloat read in 21 trait cases, including All Thumbs; per case Fitness, Strength and Nimble each from 0 to 10 individually, the others at 0. The test records deviations against the case without the trait; the formula was then checked.",
-   "src": "b6396c9f1f"
+   "src": "d2b2cf9cb4"
   },
   "allthumbs/climbstrength": {
    "code": "IsoGameCharacter.getClimbRopeSpeed (line 14799; traits lines 14803-14817); read in ClimbSheetRopeState (lines 71, 116)",
-   "note": "Rope speed per level as in the code.",
+   "note": "Rope speed per level as in the code. Levels 4 and 5 have the same rope speed (IsoGameCharacter lines 14827-14865): for a new character without gloves (level 5) +1 gives about +12.5% and -1 nothing; the note says so since fact sweep 2 (2026-09-23).",
    "method": "Climbing, measure mod 6.19.0: getClimbRopeSpeed up and down read in 21 trait cases, including All Thumbs; per case Fitness, Strength and Nimble each from 0 to 10 individually, the others at 0. Deviations against the case without the trait, then matched against the code per level.",
-   "src": "7b8aca67d9"
+   "src": "e6abaa6748"
   },
   "shortsighted/sightrange": {
    "code": "HandWeapon.getMaxSightRange (lines 1488-1489) returns getMinSightRange without glasses",
-   "note": "Measured on 2026-09-14 (code values, measure mod 6.26.2): sight range without 10.0000, with 2.0000, factor 0.2000; per code, the maximum range without glasses equals the minimum range (factor min/max).",
+   "note": "Measured on 2026-09-14 (code values, measure mod 6.26.2): sight range without 10.0000, with 2.0000, factor 0.2000; per code, the maximum range without glasses equals the minimum range (factor min/max). Beyond the maximum range CombatManager.getDistanceModifier (lines 2031-2044) subtracts (d - max) x (4 + (d - max) x 0.3), and getAimDelayPenalty (lines 2051-2058) grows: hunting rifle, Aiming 0, 8 squares: normally +7, without glasses -34.8, about 42 points less hit and crit chance. The row says so since fact sweep 2 (2026-09-23); before, it only said the sights \"lose their range bonus\".",
    "method": "Code values, measure mod 6.26.2: HandWeapon.getMaxSightRange(character) read on a spawned hunting rifle, the character without glasses, without and with Short Sighted; factor with/without against getMinSightRange/getMaxSightRange per code, tolerance 0.006.",
-   "src": "93aee10cae"
+   "src": "35286e0be9"
   },
   "shortsighted/blur": {
    "code": "IsoGameCharacter.updateVisionEffects (lines 14112-14116), getBlurFactor (line 14118)",
@@ -595,10 +595,10 @@
    "src": "4922081294"
   },
   "irongut/foodsick": {
-   "code": "BodyDamage.JustAteFood (lines 611-627)",
-   "note": "Measured from 2026-09-13 to 2026-09-21 (code values): n = 1000 per case, 8 runs, pooled factor 0.478, range 0.41 to 0.55, expected 0.50. Share of poisonings over all runs: without 0.407, with Iron Gut 0.195. Factors of the single runs: 0.4136, 0.4518, 0.5236, 0.4590, 0.5495, 0.5048, 0.4703, 0.4564.",
+   "code": "BodyDamage.JustAteFood (lines 611-641; heavy dose lines 627-629, light dose line 638)",
+   "note": "Measured from 2026-09-13 to 2026-09-21 (code values): n = 1000 per case, 8 runs, pooled factor 0.478, range 0.41 to 0.55, expected 0.50. Share of poisonings over all runs: without 0.407, with Iron Gut 0.195. Factors of the single runs: 0.4136, 0.4518, 0.5236, 0.4590, 0.5495, 0.5048, 0.4703, 0.4564. The counted events are heavy doses: spoiled food always poisons, and the roll only picks between 5 x and 2 x (hunger x 10 x portion). The expected poison is 2 + 3c; at c = 40% with Iron Gut about -20% (at most -30%). So since fact sweep 2 (2026-09-23) the row says \"Chance of the heavy dose from spoiled food\" instead of \"Chance of food illness\".",
    "method": "Code values (eight runs): per run and case 1000 rotten apples via BodyDamage.JustAteFood, share of poisonings without and with Iron Gut; factor with/without, tolerance 20% per run. The pooled factor is the sum of poisonings with the trait divided by the sum without (1556 / 3256).",
-   "src": "c954274c33"
+   "src": "0ad17b6f1f"
   },
   "irongut/taintedwater": {
    "code": "IsoGameCharacter.DrinkFluid (lines 5496-5509)",
@@ -619,10 +619,10 @@
    "src": "6f8cd75940"
   },
   "weakstomach/foodsick": {
-   "code": "BodyDamage.JustAteFood (lines 611-627)",
-   "note": "Measured from 2026-09-13 to 2026-09-21 (code values): n = 1000 per case, 8 runs, pooled factor 1.974, range 1.88 to 2.10, expected 2.00. Share of poisonings over all runs: without 0.407, with Weak Stomach 0.803. Factors of the single runs: 1.9757, 1.8776, 2.0199, 1.8806, 2.0469, 1.8923, 2.1034, 2.0150. The doubled chance stops at 100%: the base chance is (days past rotten, 1 to 5) / (DaysTotallyRotten - DaysFresh) x 100, and for most food the span is 2 to 4 days; a day or two after it rots the base chance there is already 50% or more, and Weak Stomach changes nothing any more. The measurement sat at about 40%, where x2 applies in full (checked again on 2026-09-23).",
+   "code": "BodyDamage.JustAteFood (lines 611-641; heavy dose lines 627-629, light dose line 638)",
+   "note": "Measured from 2026-09-13 to 2026-09-21 (code values): n = 1000 per case, 8 runs, pooled factor 1.974, range 1.88 to 2.10, expected 2.00. Share of poisonings over all runs: without 0.407, with Weak Stomach 0.803. Factors of the single runs: 1.9757, 1.8776, 2.0199, 1.8806, 2.0469, 1.8923, 2.1034, 2.0150. The doubled chance stops at 100%: the base chance is (days past rotten, 1 to 5) / (DaysTotallyRotten - DaysFresh) x 100, and for most food the span is 2 to 4 days; a day or two after it rots the base chance there is already 50% or more, and Weak Stomach changes nothing any more. The measurement sat at about 40%, where x2 applies in full (checked again on 2026-09-23). The counted events are heavy doses: spoiled food always poisons, and the roll only picks between 5 x and 2 x (hunger x 10 x portion). The expected poison is 2 + 3c; at c = 40% with Weak Stomach about +40% (at most +43%). So since fact sweep 2 (2026-09-23) the row says \"Chance of the heavy dose from spoiled food\" instead of \"Chance of food illness\".",
    "method": "Code values (eight runs): per run and case 1000 rotten apples via BodyDamage.JustAteFood, share of poisonings without and with Weak Stomach; factor with/without, tolerance 20% per run. The pooled factor is the sum of poisonings with the trait divided by the sum without (6426 / 3256).",
-   "src": "d878013d42"
+   "src": "e318186d01"
   },
   "weakstomach/taintedwater": {
    "code": "IsoGameCharacter.DrinkFluid (lines 5496-5509)",
@@ -632,7 +632,7 @@
   },
   "resilient/cold": {
    "code": "BodyDamage, catching a cold (lines 731-743)",
-   "note": "Measured on 2026-09-20 (code values): gain without 1.0000, with 0.4500, factor 0.4500. Below delta 0.22 it stays at 0 with Resilient (game bug erkaeltung-schwelle).",
+   "note": "Measured on 2026-09-20 (code values): gain without 1.0000, with 0.4500, factor 0.4500. Below delta 0.22 it stays at 0 with Resilient (see the game bug on the cold threshold).",
    "method": "Code values: skin of the character cooled for one tick (core 25 degrees, air 0 degrees) until Thermoregulator.getCatchAColdDelta is above 0.45; per case setCatchACold(0), BodyDamage.UpdateWetness, getCatchACold read and divided by 0.003 x delta x Multiplier; without and with Resilient, tolerance 0.006. Afterwards Thermoregulator.reset and all values as before.",
    "src": "e3a9fe567b"
   },
@@ -692,27 +692,27 @@
   },
   "outdoorsman/cold": {
    "code": "BodyDamage, catching a cold (lines 731-743)",
-   "note": "Measured on 2026-09-20 (code values): gain without 1.0000, with 0.2500, factor 0.2500. Below delta 0.4 it stays at 0 with Outdoorsy (game bug erkaeltung-schwelle).",
+   "note": "Measured on 2026-09-20 (code values): gain without 1.0000, with 0.2500, factor 0.2500. Below delta 0.4 it stays at 0 with Outdoorsy (see the game bug on the cold threshold).",
    "method": "Code values: skin of the character cooled for one tick (core 25 degrees, air 0 degrees) until Thermoregulator.getCatchAColdDelta is above 0.45; per case setCatchACold(0), BodyDamage.UpdateWetness, getCatchACold read and divided by 0.003 x delta x Multiplier; without and with Outdoorsy, tolerance 0.006. Afterwards Thermoregulator.reset and all values as before.",
    "src": "0eb38a920a"
   },
   "outdoorsman/firelight": {
    "code": "shared/TimedActions/ISBBQLightFromKindle.lua (lines 36-38, 104-106; set at line 154): ignition chance 1/150 instead of 1/300 at barbecues, fireplaces, stoves and braziers, not at campfires (isFireInteractionObject: IsoFireplace or IsoBarbecue, IsoObject lines 6214-6215)",
-   "note": "Measured on 2026-09-13 (code values, measure mod 6.24.0): ISBBQLightFromKindle:update rolls ZombRand(150) instead of 300, x2.0000. Applies at barbecues, fireplaces, stoves and braziers; campfires are lit by ISLightFromKindle, which has no Outdoorsy check (checked again on 2026-09-23).",
+   "note": "Measured on 2026-09-13 (code values, measure mod 6.24.0): ISBBQLightFromKindle:update rolls ZombRand(150) instead of 300, x2.0000. Applies at barbecues, fireplaces, stoves and braziers; campfires are lit by ISLightFromKindle, which has no Outdoorsy check (checked again on 2026-09-23). What was measured are the roll limits per tick. From 20% progress lighting and breaking race each other, the break is only rolled when lighting misses, and either ends the attempt. Per attempt: 300/599 = 50% lit without the trait, 450/599 = 75% with it, so x1.5; the time to a fire halves. Since fact sweep 2 (2026-09-23) Trait Facts shows x1.5 per attempt instead of x2.0 per roll; the value is computed from the code, hence status code.",
    "method": "Code values, measure mod 6.24.0: ISBBQLightFromKindle:update triggered without a queue and with the ground under the character instead of a grill; ZombRand returns 1 and also writes the limit, nothing ignites. Ignition chance 1/limit without and with Outdoorsy, factor with/without.",
-   "src": "f46b914f5a"
+   "src": "0b2deb309d"
   },
   "outdoorsman/kindling": {
    "code": "shared/TimedActions/ISBBQLightFromKindle.lua (lines 36-38, 104-106; set at line 154): kindling breaks 1/450 instead of 1/300 at barbecues, fireplaces, stoves and braziers, not at campfires (isFireInteractionObject: IsoFireplace or IsoBarbecue, IsoObject lines 6214-6215)",
-   "note": "Measured on 2026-09-13 (code values, measure mod 6.24.0): ISBBQLightFromKindle:update rolls ZombRand(450) instead of 300, x0.6667. Applies at barbecues, fireplaces, stoves and braziers; campfires are lit by ISLightFromKindle, which has no Outdoorsy check (checked again on 2026-09-23).",
+   "note": "Measured on 2026-09-13 (code values, measure mod 6.24.0): ISBBQLightFromKindle:update rolls ZombRand(450) instead of 300, x0.6667. Applies at barbecues, fireplaces, stoves and braziers; campfires are lit by ISLightFromKindle, which has no Outdoorsy check (checked again on 2026-09-23). What was measured are the roll limits per tick. Lighting and breaking race each other (see firelight): per attempt the stick breaks in 299/599 = 50% without the trait and in 149/599 = 25% with it, so x0.5; per lit fire about 1 instead of 0.33 sticks break. Since fact sweep 2 (2026-09-23) Trait Facts shows x0.5 per attempt instead of x0.667 per roll; the value is computed from the code, hence status code.",
    "method": "Code values, measure mod 6.24.0: ISBBQLightFromKindle:update triggered without a queue and with the ground under the character instead of a grill; ZombRand returns 1 and also writes the limit. Second call: kindling breaks, chance 1/limit without and with Outdoorsy, factor with/without.",
-   "src": "0feaac6641"
+   "src": "f1506c9ef4"
   },
   "outdoorsman/weatherpen": {
    "code": "CharacterTraits.getTraitWeatherPenaltyModifier (line 150); only caller CombatManager.getWeatherPenalty",
-   "note": "getTraitWeatherPenaltyModifier 1.5 -> 1.0.",
+   "note": "getTraitWeatherPenaltyModifier 1.5 -> 1.0. What was measured is the getter; that it scales the wind and rain penalty when aiming (hit and crit chance) is from the code (CombatManager.getWeatherPenalty, called from calculateHitChanceData and IsoPlayer.calculateCritChance).",
    "method": "World entry: getTraitWeatherPenaltyModifier() read without and with Outdoorsy, value compared to the decimal place as in the code; early measure mod runs before version numbering began (10, 10b, 10c) and a later world-entry run (13-sprint), traits saved beforehand and reset afterward.",
-   "src": "30257c509d"
+   "src": "fee7897487"
   },
   "outdoorsman/treescratch": {
    "code": "IsoGameCharacter.damageWhileInTrees (line 3850; traits lines 3859-3868)",
@@ -829,10 +829,10 @@
    "src": "bc35ba6f9a"
   },
   "sundaydriver/engineforce": {
-   "code": "CarController.control_ForwardNew (line 582; Sunday Driver line 586), engineForce x0.75; called from update (line 236). The force depends on RPM via 0.3 + RPM/30000 (offsets 674-695)",
+   "code": "CarController.control_ForwardNew (line 582; Sunday Driver line 586, factor lines 663-667), engineForce x0.75; called from update (line 236). The force depends on RPM via 0.3 + RPM/30000 (offsets 674-695)",
    "note": "Measured on 2026-09-11, evaluated on 2026-09-13: in eight windows in first gear on SportsCar and PickUpVan 0.7500 after correcting for RPM and speed. Raw values in the report are 0.761 to 0.785, because RPM is higher with the trait. Just above 0.6 x maxSpeed the force with the trait is higher than without, per code: the factor jumps from 0.75 to 0.75 x (0.15 x maxSpeed + 20) / 20, x1.09 on the PickUpVan (maxSpeed 60), x1.26 at maxSpeed 90, x1.43 at 120, and only drops below 1 above 0.75 x maxSpeed - 6.7 km/h (CarController lines 663-667). The measurement windows do not resolve this.",
    "method": "Cars (acceleration test), measure mod 6.11.0 (SportsCar, 10 km/h window) and 6.15.0 (PickUpVan, 5 km/h window): force (getForce) per speed window with Sunday Driver against the phase without the trait; corrected for RPM and speed on 2026-09-13, eight windows in first gear.",
-   "src": "226383b486"
+   "src": "b632ae4234"
   },
   "sundaydriver/topspeed": {
    "code": "CarController.control_ForwardNew (offsets 826-978)",
@@ -841,10 +841,10 @@
    "src": "3370a286f3"
   },
   "sundaydriver/reverseforce": {
-   "code": "CarController.control_Reverse (line 686; Sunday Driver line 690), engineForce x0.7; called from update (line 233)",
+   "code": "CarController.control_Reverse (line 686; Sunday Driver line 690, factor lines 703-707), engineForce x0.7; called from update (line 233)",
    "note": "Measured on 2026-09-11, evaluated on 2026-09-13: in the 2 to 4 km/h window 0.7000 (SportsCar) and 0.7004 (PickUpVan). Above that, the reduction applies up to 10 km/h.",
    "method": "Cars (acceleration test), measure mod 6.11.0 (SportsCar) and 6.15.0 (PickUpVan): force (getForce) in reverse in the 2 to 4 km/h window with Sunday Driver read against the phase without the trait; above that, the trait already reduces force with speed.",
-   "src": "633c8e76b3"
+   "src": "e5e5da9587"
   },
   "sundaydriver/reversespeed": {
    "code": "CarController.control_Reverse (offsets 271-311)",
@@ -854,27 +854,27 @@
   },
   "gymnast/climb": {
    "code": "IsoGameCharacter.getClimbingFailChanceFloat (line 14718; traits lines 14727-14748); used in ClimbSheetRopeState (line 263, roll line 84), ClimbDownSheetRopeState (line 130) and on tall fences in ClimbOverWallState (line 296)",
-   "note": "651 data points across 21 cases, none deviates from the formula.",
+   "note": "651 data points across 21 cases, none deviates from the formula. Gymnast brings Nimble +1: a new character has 22 + 4 = 26, root 5, and fails tall fences 20% of the time instead of 25%. The note says so since fact sweep 2 (2026-09-23).",
    "method": "Climbing, measure mod 6.19.0: getClimbingFailChanceFloat read in 21 trait cases, including Gymnast; per case Fitness, Strength and Nimble each individually from 0 to 10, the others at 0. The test notes deviations against the case without the trait, the formula was then checked.",
-   "src": "75adb4dbc5"
+   "src": "7ab2b7d883"
   },
   "gymnast/climbstrength": {
    "code": "IsoGameCharacter.getClimbRopeSpeed (line 14799; traits lines 14803-14817); read in ClimbSheetRopeState (lines 71, 116)",
-   "note": "Rope speed per level as in the code.",
+   "note": "Rope speed per level as in the code. Levels 4 and 5 have the same rope speed (IsoGameCharacter lines 14827-14865): for a new character without gloves (level 5) +1 gives about +12.5% and -1 nothing; the note says so since fact sweep 2 (2026-09-23).",
    "method": "Climbing, measure mod 6.19.0: getClimbRopeSpeed up and down read in 21 trait cases, including Gymnast; per case Fitness, Strength and Nimble each individually from 0 to 10, the others at 0. Deviations against the case without the trait, then matched to the code per level.",
-   "src": "7dec6ef1e4"
+   "src": "dccd989b33"
   },
   "graceful/footsteps": {
    "code": "IsoGameCharacter.DoFootstepSound (lines 5310-5314)",
-   "note": "Measured on 2026-09-14 (code values, measure mod 6.26.2): footstep sound radius without 10.0000, with 6.0000, factor 0.6000. The game rounds the radius zombies hear up to whole tiles (ceil(volume x 10), line 5329); the test chose a volume with a radius of exactly 10. With shoes in play, per code: walking 7 to 5, running 11 to 7, sprinting 14 to 9 tiles.",
+   "note": "Measured on 2026-09-14 (code values, measure mod 6.26.2): footstep sound radius without 10.0000, with 6.0000, factor 0.6000. The game rounds the radius zombies hear up to whole tiles (ceil(volume x 10), line 5329); the test chose a volume with a radius of exactly 10. With shoes in play, per code: walking 7 to 5, running 11 to 7, sprinting 14 to 9 tiles. The sound the player hears stays the same: FMOD gets the volume before the trait factors (parameterVolume, lines 5306 and 5325). So since fact sweep 2 (2026-09-23) the row says \"Footstep noise radius for zombies\" instead of \"Footstep loudness\", and the note gives the whole squares (walking 7 to 5, running 11 to 7, sprinting 14 to 9 squares).",
    "method": "Code values, measure mod 6.26.2, game with -debug: DoFootstepSound on the character, WorldSound.radius of the new sound read via reflection; invisible off, Lightfoot and Nimble 0, not sneaking, without and with Graceful; factor with/without, tolerance 0.006.",
-   "src": "abd40735b7"
+   "src": "8c15717013"
   },
   "graceful/trip": {
-   "code": "ClimbOverFenceState.shouldFallAfterVaultOver (line 493; traits lines 511-526)",
-   "note": "Measured on 2026-09-14 (code values, measure mod 6.26.2): tripped without 9.9333%, with 0.0000%, difference -9.9333 points (per code -10, at Fitness 0 the chance therefore drops to 0), per case 3000 samples over 50 ticks.",
+   "code": "ClimbOverFenceState.shouldFallAfterVaultOver (line 493; traits lines 511-528; roll against the counter minus Fitness line 529)",
+   "note": "Measured on 2026-09-14 (code values, measure mod 6.26.2): tripped without 9.9333%, with 0.0000%, difference -9.9333 points (per code -10, at Fitness 0 the chance therefore drops to 0), per case 3000 samples over 50 ticks. The roll is Rand.Next(100) < counter - Fitness (line 529): a negative counter acts as 0. The measurement ran sprinting at Fitness 0, where the full value applies; at a run the base is below 0 from Fitness 1 on and absorbs part of the points. The weight traits also lower starting Fitness. Per code new character (Fitness 5): 0% at a run with and without the trait, sprinting 5% to 0%; the note gives it since fact sweep 2 (2026-09-23).",
    "method": "Code values, measure mod 6.26.2: ClimbOverFenceState.enter triggered with VaultOverSprint on the standing character, Fitness 0; outcome \"fall\" counted, without and with Graceful, 3000 samples each over several ticks alternating, difference in shares with minus without, tolerance 4 points.",
-   "src": "49a7014cfd"
+   "src": "2975d0fcb1"
   },
   "graceful/lungefall": {
    "code": "IsoGameCharacter.attackFromWindowsLunge (line 12875; traits lines 12900-12915; stagger and roll lines 12919-12924); triggered only by the climbing zombie: ClimbOverFenceState (lines 367-371), ClimbThroughWindowState (lines 290-294), GrappledThrownOutWindowState (lines 267-271)",
@@ -884,15 +884,15 @@
   },
   "clumsy/footsteps": {
    "code": "IsoGameCharacter.DoFootstepSound (lines 5310-5314)",
-   "note": "Measured on 2026-09-14 (code values, measure mod 6.26.2): footstep sound radius without 10.0000, with 12.0000, factor 1.2000. The game rounds the radius zombies hear up to whole tiles (ceil(volume x 10), line 5329); the test chose a volume with a radius of exactly 10. With shoes in play, per code: walking 7 to 9, running 11 to 13 tiles.",
+   "note": "Measured on 2026-09-14 (code values, measure mod 6.26.2): footstep sound radius without 10.0000, with 12.0000, factor 1.2000. The game rounds the radius zombies hear up to whole tiles (ceil(volume x 10), line 5329); the test chose a volume with a radius of exactly 10. With shoes in play, per code: walking 7 to 9, running 11 to 13 tiles. The sound the player hears stays the same: FMOD gets the volume before the trait factors (parameterVolume, lines 5306 and 5325). So since fact sweep 2 (2026-09-23) the row says \"Footstep noise radius for zombies\" instead of \"Footstep loudness\", and the note gives the whole squares (walking 7 to 9, running 11 to 13, sprinting 14 to 17 squares, sneaking 4 to 4).",
    "method": "Code values, measure mod 6.26.2, game with -debug: DoFootstepSound on the character, WorldSound.radius of the new sound read via reflection; invisible off, Lightfoot and Nimble 0, not sneaking, without and with Clumsy; factor with/without, tolerance 0.006.",
-   "src": "354e8528e6"
+   "src": "b95302baa5"
   },
   "clumsy/trip": {
-   "code": "ClimbOverFenceState.shouldFallAfterVaultOver (line 493; traits lines 511-526)",
-   "note": "Measured on 2026-09-14 (code values, measure mod 6.26.2): tripped without 9.9333%, with 19.0333%, difference 9.1000 points (per code +10), per case 3000 samples over 50 ticks.",
+   "code": "ClimbOverFenceState.shouldFallAfterVaultOver (line 493; traits lines 511-528; roll against the counter minus Fitness line 529)",
+   "note": "Measured on 2026-09-14 (code values, measure mod 6.26.2): tripped without 9.9333%, with 19.0333%, difference 9.1000 points (per code +10), per case 3000 samples over 50 ticks. The roll is Rand.Next(100) < counter - Fitness (line 529): a negative counter acts as 0. The measurement ran sprinting at Fitness 0, where the full value applies; at a run the base is below 0 from Fitness 1 on and absorbs part of the points. The weight traits also lower starting Fitness. Per code new character (Fitness 5): 0% to 5% at a run, 5% to 15% sprinting; the note gives it since fact sweep 2 (2026-09-23).",
    "method": "Code values, measure mod 6.26.2: ClimbOverFenceState.enter triggered with VaultOverSprint on the standing character, Fitness 0; outcome \"fall\" counted, without and with Clumsy, 3000 samples each over several ticks alternating, difference in shares with minus without, tolerance 4 points.",
-   "src": "cd1bf968b9"
+   "src": "33da8b9a11"
   },
   "clumsy/lungefall": {
    "code": "IsoGameCharacter.attackFromWindowsLunge (line 12875; traits lines 12900-12915; stagger and roll lines 12919-12924); triggered only by the climbing zombie: ClimbOverFenceState (lines 367-371), ClimbThroughWindowState (lines 290-294), GrappledThrownOutWindowState (lines 267-271)",
@@ -974,15 +974,15 @@
   },
   "nightowl/fallasleep": {
    "code": "SleepingEvent.doDelayToSleep (line 144; Restless Sleeper line 147, Night Owl line 172)",
-   "note": "Measured on 2026-09-13 (Sleep, measure mod 6.23.4): wait time cap 0.1203 against 0.2403 hours without trait in a good bed, x0.5005 (code x0.5); 300 samples each, cases alternating. The two runs before that gave exactly x0.4832; that was an interval search error in the measure mod up to 6.23.3 (the sample was on the midpoint instead of one step below it, at 0.0093 hours per tick).",
+   "note": "Measured on 2026-09-13 (Sleep, measure mod 6.23.4): wait time cap 0.1203 against 0.2403 hours without trait in a good bed, x0.5005 (code x0.5); 300 samples each, cases alternating. The two runs before that gave exactly x0.4832; that was an interval search error in the measure mod up to 6.23.3 (the sample was on the midpoint instead of one step below it, at 0.0093 hours per tick). Night Owl halves before the 2-hour cap and before the sleeping tablets (SleepingEvent lines 172-180): if the delay without Night Owl is above 2 hours (for example pain level 2 on the floor: 2.72 -> 1.36 against 2.0, -32%), less than half remains, and with sleeping tablets nothing. The note says so since fact sweep 2 (2026-09-23).",
    "method": "Sleep (falling asleep), measure mod 6.23.4: wait time cap determined via interval search, 300 samples alternating with the case without trait, estimated from the largest value; a search error up to 6.23.3 had previously distorted Night Owl's tight cap.",
-   "src": "9895da2e68"
+   "src": "b9be4f761d"
   },
   "deaf/detection": {
    "code": "IsoGameCharacter.getDetectionRange (line 13952), TestIfSeen",
-   "note": "getDetectionRange with trait on and off; the distance is correct, the base value depends on the character's state.",
+   "note": "getDetectionRange with trait on and off; the distance is correct, the base value depends on the character's state. What was measured is the getter; that TestIfSeen perceives within that radius is from the code. The part above 2 squares is scaled by the hearing multiplier of worn headgear (IsoGameCharacter lines 13952-13959; HearingModifier 0.75 on 28 items, 0.5 on 3), so with a 0.75 helmet Keen Hearing adds +2.25 instead of +3; the note says so since fact sweep 2 (2026-09-23).",
    "method": "World entry: getDetectionRange() read without and with Deaf, distance compared to the decimal place as in the code; early measure mod runs before version numbering began (10, 10b, 10c) and a later world-entry run (13-sprint), traits backed up beforehand and reset afterwards.",
-   "src": "19db9b7040"
+   "src": "4f283fa966"
   },
   "deaf/noise": {
    "code": "IsoGameCharacter.calculateVisibilityData (line 15169; noiseDistance lines 15173-15191); read only in IsoGridSquare.CalcVisibility (lines 7729-7735, Deaf line 7732) inside if (!GameServer.server); only caller ServerLOS (lines 271, 277), started only in GameServer.main (line 831); LightingJNI.updatePlayer (lines 481-484) passes on only the cone and getDetectionRange",
@@ -998,9 +998,9 @@
   },
   "keenhearing/detection": {
    "code": "IsoGameCharacter.getDetectionRange (line 13952), TestIfSeen",
-   "note": "getDetectionRange with trait on and off; the distance is correct, the base value depends on the character's state.",
+   "note": "getDetectionRange with trait on and off; the distance is correct, the base value depends on the character's state. What was measured is the getter; that TestIfSeen perceives within that radius is from the code. The part above 2 squares is scaled by the hearing multiplier of worn headgear (IsoGameCharacter lines 13952-13959; HearingModifier 0.75 on 28 items, 0.5 on 3), so with a 0.75 helmet Keen Hearing adds +2.25 instead of +3; the note says so since fact sweep 2 (2026-09-23).",
    "method": "World entry: getDetectionRange() read without and with Keen Hearing, distance compared to the decimal place as in the code; early measure mod runs before version numbering began (10, 10b, 10c) and a later world-entry run (13-sprint), traits backed up beforehand and reset afterwards.",
-   "src": "a17113943c"
+   "src": "f5eb421b70"
   },
   "keenhearing/noise": {
    "code": "IsoGameCharacter.calculateVisibilityData (line 15169; noiseDistance lines 15173-15191); read only in IsoGridSquare.CalcVisibility (lines 7729-7735, Deaf line 7732) inside if (!GameServer.server); only caller ServerLOS (lines 271, 277), started only in GameServer.main (line 831); LightingJNI.updatePlayer (lines 481-484) passes on only the cone and getDetectionRange",
@@ -1010,9 +1010,9 @@
   },
   "hardofhearing/detection": {
    "code": "IsoGameCharacter.getDetectionRange (line 13952), TestIfSeen",
-   "note": "getDetectionRange with trait on and off; the distance is correct, the base value depends on the character's state.",
+   "note": "getDetectionRange with trait on and off; the distance is correct, the base value depends on the character's state. What was measured is the getter; that TestIfSeen perceives within that radius is from the code. The part above 2 squares is scaled by the hearing multiplier of worn headgear (IsoGameCharacter lines 13952-13959; HearingModifier 0.75 on 28 items, 0.5 on 3), so with a 0.75 helmet Keen Hearing adds +2.25 instead of +3; the note says so since fact sweep 2 (2026-09-23).",
    "method": "World entry: getDetectionRange() read without and with Hard of Hearing, distance compared to the decimal place as in the code; early measure mod runs before version numbering began (10, 10b, 10c) and a later world-entry run (13-sprint), traits backed up beforehand and reset afterwards.",
-   "src": "f18b6ab77e"
+   "src": "a8ef56e535"
   },
   "hardofhearing/noise": {
    "code": "IsoGameCharacter.calculateVisibilityData (line 15169; noiseDistance lines 15173-15191); read only in IsoGridSquare.CalcVisibility (lines 7729-7735, Deaf line 7732) inside if (!GameServer.server); only caller ServerLOS (lines 271, 277), started only in GameServer.main (line 831); LightingJNI.updatePlayer (lines 481-484) passes on only the cone and getDetectionRange",
@@ -1022,9 +1022,9 @@
   },
   "hardofhearing/hearing": {
    "code": "IsoGameCharacter.getHearDistanceModifier (line 13934); in single player only AlarmClock (line 181) and AlarmClockClothing (line 191) read it; FMODParameterUtils.getClosestListener (line 40) and ParameterFirearmInside.getClosestListener (line 77) use it only to pick the listener when there are several local players (split screen); the muffled sound comes from ParameterHardOfHearing (line 22), only on or off",
-   "note": "getHearDistanceModifier 1.0 -> 4.5. In play this means: an alarm clock wakes the character only from 1/4.5 of its range. The muffling of sounds is a separate switch without the 4.5 (checked again on 2026-09-23).",
+   "note": "getHearDistanceModifier 1.0 -> 4.5. In play this means: an alarm clock placed in the world wakes the character only from 1/4.5 of its range (alarm clock SoundRadius 15, so 3.3 squares; watch 7, so 1.6). A clock in the inventory or a watch worn rings on the character's own square (getAlarmSquare, AlarmClock lines 78-94), distance 0, and always wakes (in the note since fact sweep 2, 2026-09-23). The muffling of sounds is a separate switch without the 4.5 (checked again on 2026-09-23).",
    "method": "World entry: getHearDistanceModifier() read without and with Hard of Hearing, value compared to the decimal place as in the code; early measure mod runs before version numbering began (10, 10b, 10c) and a later world-entry run (13-sprint), traits backed up beforehand and reset afterwards.",
-   "src": "d306553af0"
+   "src": "0c55342289"
   },
   "eagleeyed/lightcone": {
    "code": "LightingJNI.calculateVisionCone (lines 428-432)",
@@ -1034,9 +1034,9 @@
   },
   "eagleeyed/weaponsight": {
    "code": "HandWeapon.getMaxSightRange (line 1488)",
-   "note": "Measured on 2026-09-13 (code values): without 10.0000, with 12.0000, factor 1.2000.",
+   "note": "Measured on 2026-09-13 (code values): without 10.0000, with 12.0000, factor 1.2000. Hit and crit chance use the maximum range as the edge of a bell band around (min + max) / 2 (CombatManager lines 2031-2042, consumers lines 2177-2190 and IsoPlayer lines 3639-3641): the band moves outward and widens. Pistol (min 2, max 6), Aiming 0, no aim delay: at 4 squares the bonus goes 15 -> 12.7, at 5 squares 7 -> 14; worse from 2 to about 4.3 squares. The note says so since fact sweep 2 (2026-09-23); only the getter is measured.",
    "method": "Code values, measure mod 6.22.0: HandWeapon.getMaxSightRange(character) read on a spawned hunting rifle that is not held in hand; without and with Eagle Eyed, factor with/without, tolerance 0.006.",
-   "src": "c8526a7111"
+   "src": "a5aa528a1d"
   },
   "eagleeyed/fadein": {
    "code": "IsoGameCharacter.getAlphaUpdateRateMul (line 6278), the camera's character",
@@ -1045,10 +1045,10 @@
    "src": "5482a4fd8e"
   },
   "nightvision/nightcone": {
-   "code": "LightingJNI.calculateVisionCone (lines 428-432)",
-   "note": "Not measured: the game calculates the vision cone in a part Lua cannot read, and smooths it over time. It could only be measured indirectly and only at night through the visible squares on open ground, with walls and sight lines as disturbances.",
+   "code": "LightingJNI.calculateVisionCone (on foot lines 426-432, in vehicles lines 433-454)",
+   "note": "Not measured: the game calculates the vision cone in a part Lua cannot read, and smooths it over time. It could only be measured indirectly and only at night through the visible squares on open ground, with walls and sight lines as disturbances. In a vehicle the cone starts at 324 - 540 x darkness, so -216 at night, -180 with the trait; the headlight floor 36 or the clamp 18 lifts both to the same value. Cat's Eyes only works there at dusk, at most about +20 degrees. Until fact sweep 2 (2026-09-23) the note said \"full in darkness ... also in vehicles\".",
    "method": "",
-   "src": "a77b829c6c"
+   "src": "9c0958bd8d"
   },
   "nightvision/ambient": {
    "code": "RenderSettings.PlayerRenderSettings.updateRenderSettings (line 131; NIGHT_VISION line 176)",
@@ -1058,15 +1058,15 @@
   },
   "inconspicuous/spotted": {
    "code": "IsoZombie.spotted (line 2321) branches into: spottedNew (line 1660; traits lines 1809-1812), spottedOld (line 1965; traits lines 2166-2169)",
-   "note": "Not measured: after each spotting the zombie remembers the character, every further roll then counts five times, and this cannot be reset. That leaves one sample per zombie, and the chance also depends on light, viewing angle, movement, distance and sneaking.",
+   "note": "Not measured: after each spotting the zombie remembers the character, every further roll then counts five times, and this cannot be reset. That leaves one sample per zombie, and the chance also depends on light, viewing angle, movement, distance and sneaking. The factor hits a raw score that the game caps at 400 and divides by 400 (IsoZombie lines 1835-1843): a zombie seeing the character from the front in daylight is far above that and spots it at once with or without the trait; from behind it is 0. The trait can only matter where the zombie is unsure (darkness, sneaking, edge of its view, distance); the note says so since fact sweep 2 (2026-09-23).",
    "method": "",
-   "src": "3e65e264a8"
+   "src": "d6c311b66e"
   },
   "conspicuous/spotted": {
    "code": "IsoZombie.spotted (line 2321) branches into: spottedNew (line 1660; traits lines 1809-1812), spottedOld (line 1965; traits lines 2166-2169)",
-   "note": "Not measured: after each spotting the zombie remembers the character, every further roll then counts five times, and this cannot be reset. That leaves one sample per zombie, and the chance also depends on light, viewing angle, movement, distance and sneaking.",
+   "note": "Not measured: after each spotting the zombie remembers the character, every further roll then counts five times, and this cannot be reset. That leaves one sample per zombie, and the chance also depends on light, viewing angle, movement, distance and sneaking. The factor hits a raw score that the game caps at 400 and divides by 400 (IsoZombie lines 1835-1843): a zombie seeing the character from the front in daylight is far above that and spots it at once with or without the trait; from behind it is 0. The trait can only matter where the zombie is unsure (darkness, sneaking, edge of its view, distance); the note says so since fact sweep 2 (2026-09-23).",
    "method": "",
-   "src": "3e65e264a8"
+   "src": "d6c311b66e"
   },
   "smoker/nicotine": {
    "code": "BodyDamage (line 765; lines 886-905: cough every 43200 to 129600 in-game seconds without a cold, also while smoking; line 1719: withdrawal), RecipeCodeOnEat (line 29)",
@@ -1094,15 +1094,15 @@
   },
   "handy/buildtime": {
    "code": "client/BuildingObjects/TimedActions/ISBuildAction.lua (lines 257-272), ISBuildIsoEntity",
-   "note": "Measured on 2026-09-13 (code values): without 200.0000, with 150.0000, factor 0.7500. Reproduced in play on 2026-09-21: a planks barricade through the build menu is timed at 200, with Handy 150, at Carpentry 1. Handy takes a flat 50 time units off, with no lower limit (ISBuildAction lines 268-270): builds with a recipe time of 50, about half of the build menu including all furniture, go to 0 and finish on the first tick (from the code, not rebuilt in play). On an MP server the server times the action itself (BuildAction.getDuration, lines 91-102: 200 - 5 x Carpentry, Handy -50), so there it is -25 to -33%; not checked on a server.",
+   "note": "Measured on 2026-09-13 (code values): without 200.0000, with 150.0000, factor 0.7500. Reproduced in play on 2026-09-21: a planks barricade through the build menu is timed at 200, with Handy 150, at Carpentry 1. Handy takes a flat 50 time units off, with no lower limit (ISBuildAction lines 268-270): builds with a recipe time of 50, about half of the build menu including all furniture, go to 0 and finish on the first tick (from the code, not rebuilt in play). On an MP server, also when hosting (a separate server process runs there), the server times the action itself (BuildAction.getDuration, lines 91-102: 200 - 5 x Carpentry, Handy -50), so there it is -25 to -33% on every build and nothing is instant; not checked on a server. Since fact sweep 2 (2026-09-23) the note says so; before, it gave the instant builds without that limit.",
    "method": "Code values, measure mod 6.22.0: ISBuildAction:new built on the character at a base time of 200, maxTime read; without and with Handy, factor with/without, tolerance 0.006.",
-   "src": "8cdbedd233"
+   "src": "578a01481f"
   },
   "handy/durability": {
    "code": "server/BuildingObjects/ISBuildUtil.lua: getWoodHealth (line 39, Handy lines 48-49); only reader in the build menu ISBuildIsoEntity:getHealth (lines 38-43) has no caller",
-   "note": "Caller list on 2026-09-12 (audit); the Lua comparison from 2026-09-10 still considered the value live.",
-   "method": "",
-   "src": "bbf3c533f7"
+   "note": "Caller list on 2026-09-12 (audit); the Lua comparison from 2026-09-10 still considered the value live. Measured on 2026-09-20 and 2026-09-21 (code values): a wooden wall gets 470 health through setInfo with and without Handy; getWoodHealth itself gives the +100, but the build menu does not read it (see the game bug on Handy's build health).",
+   "method": "Code values, measure mod 6.32.0 and 6.40.1: ISBuildIsoEntity:setInfo called directly, as create does when building (wooden wall WoodenWallLvl1 on a square next to the character), getMaxHealth of the new wall without and with Handy: 470 and 470; control check buildUtil.getWoodHealth 50 and 150. A function call, not a build in play.",
+   "src": "14ebb12032"
   },
   "handy/barricade": {
    "code": "shared/TimedActions/ISBarricadeAction.lua (lines 175-194)",
@@ -1130,33 +1130,33 @@
   },
   "wildernessknowledge/firelight": {
    "code": "shared/Camping/TimedActions/ISLightFromKindle.lua (lines 38-41): ignition chance 1/150 instead of 1/300, campfire only",
-   "note": "Measured on 2026-09-13 (code values, measure mod 6.24.0): ISLightFromKindle:updateKindling rolls ZombRand(150) instead of 300, x2.0000. Campfire.",
+   "note": "Measured on 2026-09-13 (code values, measure mod 6.24.0): ISLightFromKindle:updateKindling rolls ZombRand(150) instead of 300, x2.0000. Campfire. What was measured are the roll limits per tick. From 20% progress lighting and breaking race each other, the break is only rolled when lighting misses, and either ends the attempt. Per attempt: 300/599 = 50% lit without the trait, 450/599 = 75% with it, so x1.5; the time to a fire halves. Since fact sweep 2 (2026-09-23) Trait Facts shows x1.5 per attempt instead of x2.0 per roll; the value is computed from the code, hence status code.",
    "method": "Code values, measure mod 6.24.0: ISLightFromKindle:updateKindling triggered without a queue and without a real campfire; ZombRand returns 1 and records the bound along with it, nothing ignites. Ignition chance 1/bound without and with Bushcrafter, factor with/without.",
-   "src": "4980ab31e5"
+   "src": "df64fbdd8e"
   },
   "wildernessknowledge/kindling": {
    "code": "shared/Camping/TimedActions/ISLightFromKindle.lua (lines 38-41): tinder breaks 1/450 instead of 1/300, campfire only",
-   "note": "Measured on 2026-09-13 (code values, measure mod 6.24.0): ISLightFromKindle:updateKindling rolls ZombRand(450) instead of 300, x0.6667. Campfire.",
+   "note": "Measured on 2026-09-13 (code values, measure mod 6.24.0): ISLightFromKindle:updateKindling rolls ZombRand(450) instead of 300, x0.6667. Campfire. What was measured are the roll limits per tick. Lighting and breaking race each other (see firelight): per attempt the stick breaks in 299/599 = 50% without the trait and in 149/599 = 25% with it, so x0.5; per lit fire about 1 instead of 0.33 sticks break. Since fact sweep 2 (2026-09-23) Trait Facts shows x0.5 per attempt instead of x0.667 per roll; the value is computed from the code, hence status code.",
    "method": "Code values, measure mod 6.24.0: ISLightFromKindle:updateKindling triggered without a queue and without a real campfire; ZombRand returns 1 and records the bound along with it. Second call: tinder breaks, chance 1/bound without and with Bushcrafter, factor with/without.",
-   "src": "9d069f473f"
+   "src": "69a357eeef"
   },
   "formerscout/firelight": {
    "code": "shared/Camping/TimedActions/ISLightFromKindle.lua (lines 38-41): ignition chance 1/150 instead of 1/300, campfire only",
-   "note": "Measured on 2026-09-13 (code values, measure mod 6.24.0): ISLightFromKindle:updateKindling rolls ZombRand(150) instead of 300, x2.0000. Campfire.",
+   "note": "Measured on 2026-09-13 (code values, measure mod 6.24.0): ISLightFromKindle:updateKindling rolls ZombRand(150) instead of 300, x2.0000. Campfire. What was measured are the roll limits per tick. From 20% progress lighting and breaking race each other, the break is only rolled when lighting misses, and either ends the attempt. Per attempt: 300/599 = 50% lit without the trait, 450/599 = 75% with it, so x1.5; the time to a fire halves. Since fact sweep 2 (2026-09-23) Trait Facts shows x1.5 per attempt instead of x2.0 per roll; the value is computed from the code, hence status code.",
    "method": "Code values, measure mod 6.24.0: ISLightFromKindle:updateKindling triggered without a queue and without a real campfire; ZombRand returns 1 and records the bound along with it, nothing ignites. Ignition chance 1/bound without and with Former Scout, factor with/without.",
-   "src": "6cd1807ee5"
+   "src": "3553be3f5a"
   },
   "formerscout/kindling": {
    "code": "shared/Camping/TimedActions/ISLightFromKindle.lua (lines 38-41): tinder breaks 1/450 instead of 1/300, campfire only",
-   "note": "Measured on 2026-09-13 (code values, measure mod 6.24.0): ISLightFromKindle:updateKindling rolls ZombRand(450) instead of 300, x0.6667. Campfire.",
+   "note": "Measured on 2026-09-13 (code values, measure mod 6.24.0): ISLightFromKindle:updateKindling rolls ZombRand(450) instead of 300, x0.6667. Campfire. What was measured are the roll limits per tick. Lighting and breaking race each other (see firelight): per attempt the stick breaks in 299/599 = 50% without the trait and in 149/599 = 25% with it, so x0.5; per lit fire about 1 instead of 0.33 sticks break. Since fact sweep 2 (2026-09-23) Trait Facts shows x0.5 per attempt instead of x0.667 per roll; the value is computed from the code, hence status code.",
    "method": "Code values, measure mod 6.24.0: ISLightFromKindle:updateKindling triggered without a queue and without a real campfire; ZombRand returns 1 and records the bound along with it. Second call: tinder breaks, chance 1/bound without and with Former Scout, factor with/without.",
-   "src": "f008299ffa"
+   "src": "ef0d33030d"
   },
   "burglar/windowlock": {
-   "code": "OpenWindowState (lines 163-168)",
-   "note": "Not measured: the roll only happens at the end of the real window animation, and the test mod cannot trigger it directly. Telling 10% from 5% would need about 1000 attempts per case at 2 to 3 seconds each.",
+   "code": "OpenWindowState.onAttemptFinished (lines 153-190; roll lines 163-168, success lines 177-190), once per loop of \"trying\" (AnimSets/player/openwindow/trying.xml)",
+   "note": "Not measured: the roll only happens at the end of the real window animation, and the test mod cannot trigger it directly. Telling 10% from 5% would need about 1000 attempts per case at 2 to 3 seconds each. The roll is made per attempt, and the character keeps trying until the window opens or locks. Per window that is p / (p + (1 - p) x s), s = chance that one attempt opens it: Strength 5 (s = 11.6%) 49% without, 31% with Burglar; Strength 0-1 85% to 73%; from Strength 8 23% to 13%. Since fact sweep 2 (2026-09-23) the row shows 49% to 31% per window for a new character, before -50% per attempt.",
    "method": "",
-   "src": "8ef678bd13"
+   "src": "3302bdc7ea"
   },
   "burglar/hotwire": {
    "code": "client/Vehicles/ISUI/ISVehicleMenu.lua (line 116): hotwiring without Electrical 1 and Mechanics 2",
@@ -1166,15 +1166,15 @@
   },
   "burglar/climb": {
    "code": "IsoGameCharacter.getClimbingFailChanceFloat (line 14718; traits lines 14727-14748); used in ClimbSheetRopeState (line 263, roll line 84), ClimbDownSheetRopeState (line 130) and on tall fences in ClimbOverWallState (line 296)",
-   "note": "651 data points across 21 cases, none deviates from the formula.",
+   "note": "651 data points across 21 cases, none deviates from the formula. A new character without gloves has 20, with Burglar 24: both root 4, so the trait alone changes nothing; with ordinary gloves (+4) 28, root 5. The note says so since fact sweep 2 (2026-09-23).",
    "method": "Climbing, measure mod 6.19.0: getClimbingFailChanceFloat read in 21 trait cases, including Burglar; for each case Fitness, Strength and Nimble individually from 0 to 10, the others at 0. The test notes deviations against the case without trait; the formula was checked afterwards.",
-   "src": "bb34c85aa0"
+   "src": "bc57c73499"
   },
   "burglar/climbstrength": {
    "code": "IsoGameCharacter.getClimbRopeSpeed (line 14799; traits lines 14803-14817); read in ClimbSheetRopeState (lines 71, 116)",
-   "note": "Rope speed per level as in the code.",
+   "note": "Rope speed per level as in the code. Levels 4 and 5 have the same rope speed (IsoGameCharacter lines 14827-14865): for a new character without gloves (level 5) +1 gives about +12.5% and -1 nothing; the note says so since fact sweep 2 (2026-09-23).",
    "method": "Climbing, measure mod 6.19.0: getClimbRopeSpeed up and down read in 21 trait cases, including Burglar; for each case Fitness, Strength and Nimble individually from 0 to 10, the others at 0. Deviations against the case without trait, then compared per level against the code.",
-   "src": "d890c8d657"
+   "src": "6100730ffc"
   },
   "inventive/autolearn": {
    "code": "IsoGameCharacter.isInventive (line 15232); CraftRecipe.validateHasAutoLearnAnySkill (lines 905, 910) and validateHasAutoLearnAllSkill (lines 921, 926)",
@@ -1214,13 +1214,13 @@
   },
   "resilient/coldmild": {
    "code": "BodyDamage.UpdateWetness (build-up lines 731-743, decay lines 751-756); CatchAColdDecreaseRate 0.175 (shared/defines.lua:40, without Multiplier)",
-   "note": "Measured on 2026-09-20 (code values): at delta 0.12 to 0.2 gain without trait 1.0000, with Resilient 0.0000; with the trait the risk only grows from delta 0.22 (game bug erkaeltung-schwelle).",
+   "note": "Measured on 2026-09-20 (code values): at delta 0.12 to 0.2 gain without trait 1.0000, with Resilient 0.0000; with the trait the risk only grows from delta 0.22 (see the game bug on the cold threshold).",
    "method": "Code values: skin cooled in small steps only to delta 0.12 to 0.2, then setCatchACold(0), UpdateWetness, getCatchACold; without trait and with Resilient.",
    "src": "1d59a6448b"
   },
   "outdoorsman/coldmild": {
    "code": "BodyDamage.UpdateWetness (build-up lines 731-743, decay lines 751-756); CatchAColdDecreaseRate 0.175 (shared/defines.lua:40, without Multiplier)",
-   "note": "Measured on 2026-09-20 (code values): at delta 0.12 to 0.2 gain without trait 1.0000, with Outdoorsy 0.0000; with the trait the risk only grows from delta 0.4 (game bug erkaeltung-schwelle).",
+   "note": "Measured on 2026-09-20 (code values): at delta 0.12 to 0.2 gain without trait 1.0000, with Outdoorsy 0.0000; with the trait the risk only grows from delta 0.4 (see the game bug on the cold threshold).",
    "method": "Code values: skin cooled in small steps only to delta 0.12 to 0.2, then setCatchACold(0), UpdateWetness, getCatchACold; without trait and with Outdoorsy.",
    "src": "88f5567a71"
   }
@@ -1284,10 +1284,10 @@
   },
   "handy-haltbarkeit": {
    "title": "Handy's +100 health for what you build is never used",
-   "consequence": "Reachable only through ISBuildIsoEntity:getHealth, which has no caller, and through legacy classes the build menu no longer creates.",
+   "consequence": "Reachable only through ISBuildIsoEntity:getHealth, which has no caller, and through legacy classes the build menu no longer creates. Measured on 2026-09-20 and 2026-09-21 (code values, as a function call): a wooden wall through setInfo has 470 health with and without Handy.",
    "code": "server/BuildingObjects/ISBuildUtil.lua: getWoodHealth (line 39, Handy lines 48-49); ISBuildIsoEntity:getHealth (lines 38-43), no caller",
-   "method": "",
-   "src": "9223f31936"
+   "method": "Code values, measure mod 6.32.0 and 6.40.1: ISBuildIsoEntity:setInfo called directly, as create does when building (wooden wall WoodenWallLvl1 on a square next to the character), getMaxHealth of the new wall without and with Handy: 470 and 470; control check buildUtil.getWoodHealth 50 and 150. A function call, not a build in play.",
+   "src": "9710f8fc76"
   },
   "speeddemon-vorwaerts": {
    "title": "Speed Demon's faster rev build-up only works in reverse",
@@ -1333,10 +1333,10 @@
   },
   "unfallbruch": {
    "title": "Fractures from car crashes ignore Fast Healer and Slow Healer",
-   "consequence": "IsoPlayer and BaseVehicle call generateFracture directly, without checking the trait. Measured on 2026-09-14 (Code values, measure mod 6.26.2): mean fracture time without trait 37.6784, with Fast Healer 35.1779 (factor 0.9336), with Slow Healer 40.9039 (factor 1.0856), 1200 samples over 72 ticks per case, measured when hit by a car (IsoPlayer.applyDamageFromVehicleHit); per code, 0.9202 and 1.0798, purely through the damage, instead of 0.6 and 1.8 from generateFractureNew. In a crash while driving (BaseVehicle line 8531) the trait factor is missing as well, but that path has its own fracture rule (damage over 50, a 1 in 10 roll) and time formula; it is not measured.",
+   "consequence": "IsoPlayer and BaseVehicle call generateFracture directly, without checking the trait. Measured on 2026-09-14 (Code values, measure mod 6.26.2): mean fracture time without trait 37.6784, with Fast Healer 35.1779 (factor 0.9336), with Slow Healer 40.9039 (factor 1.0856), 1200 samples over 72 ticks per case, measured when hit by a car (IsoPlayer.applyDamageFromVehicleHit); per code, 0.9202 and 1.0798, purely through the damage, instead of 0.6 and 1.8 from generateFractureNew. In a crash while driving (BaseVehicle lines 8528-8532) the trait factor is missing as well, but that path has its own fracture rule (damage over 50, a 1 in 10 roll, only if the deep wound roll before it missed) and time formula; it is not measured.",
    "code": "IsoPlayer (lines 1984-1990) and BaseVehicle (line 8532) call BodyPart.generateFracture (line 818) directly; only falls (IsoGameCharacter lines 2139, 2151) go through generateFractureNew (line 828)",
    "method": "Code values, measure mod 6.26.2: same samples as the accident damage (IsoPlayer.applyDamageFromVehicleHit, CarNormal alongside, God Mode off, sandbox set to Normal), fracture time of all fractures averaged per case; factor with/without checked against the value per code without the trait factor, tolerance 4%.",
-   "src": "55df575ac0"
+   "src": "6edf9549dd"
   },
   "erkaeltung-schwelle": {
    "title": "Resilient and Outdoorsy: no risk of a cold at all in mild cold",
@@ -1358,6 +1358,13 @@
    "code": "shared/Foraging/forageSystem.lua (line 1869, without :getName(); weather line 1820, sight radius line 1910 and categories line 1711 with :getName()); table keyed by name: forageSkills.lua (line 5), addSkillDef (line 1629)",
    "method": "",
    "src": "e3277d5600"
+  },
+  "kletterwert-eins": {
+   "title": "A climbing score of 1 to 3 always fails at tall fences, worse than 0",
+   "consequence": "At tall fences the game rolls 1 in the root of the climbing score. At root 1 (a sum of 1 to 3) Rand.NextBool(1) is always true, so the character fails every time. At root 0, though, it succeeds with Rand.Next(100) <= Strength, 6 times in 100 at Strength 5. Pathfinding routes over tall fences from a score of 1, so it sends the character to fences where it always fails. This hits for example a new character with High Weight (Fitness 4, 18 - 15 = 3) or Clumsy with High Weight. From the code, not measured in play.",
+   "code": "ClimbOverWallState (lines 296-311, roll line 306); RandInterface.NextBool (lines 24-25), RandAbstract.Next (lines 20-23); IsoGameCharacter.getClimbingFailChanceFloat (lines 14718-14754, root line 14753); PathFindRequest (line 77)",
+   "method": "",
+   "src": "ead69c8ba0"
   }
  },
  "reports": {
@@ -1553,7 +1560,7 @@
   },
   "messung-2026-09-20-werte.txt": {
    "test": "Code values",
-   "content": "Seventh run, with -debug: 132 values, 131 match, none deviates. Newly measured corpse sickness, catching a cold including the game bug erkaeltung-schwelle, Medical Check, cut when opening a can, injury from zombies, wooden wall. All Thumbs while walking remains not measurable.",
+   "content": "Seventh run, with -debug: 132 values, 131 match, none deviates. Newly measured corpse sickness, catching a cold including the game bug on the cold threshold, Medical Check, cut when opening a can, injury from zombies, wooden wall. All Thumbs while walking remains not measurable.",
    "src": "7b0a1a2516"
   },
   "messung-2026-09-20-blut.txt": {
@@ -1683,7 +1690,7 @@
   {
    "key": "Klettern",
    "name": "Climbing",
-   "measures": "The chance to fail and the speed on sheet ropes, for Fitness, Strength and Nimble at every level, and for traits like Clumsy, Gymnast or the weight traits.",
+   "measures": "The climbing score, which decides how often you fail to climb a tall fence, and the climbing speed on sheet ropes, for Fitness, Strength and Nimble at every level, and for traits like Clumsy, Gymnast or the weight traits. It reads the game's numbers; it does not make the character climb or fall.",
    "how": "The test mod steps each skill from 0 to 10 and compares the game's numbers with the formula."
   },
   {
