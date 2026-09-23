@@ -1,0 +1,16 @@
+# Von Hand im Spiel geprüft, 23. und 24.09.2026
+# Trait Facts 0.14.2 (Workshop-Kopie), Mess-Mod 6.43.1 geladen, Spiel 42.20.4, Spiel englisch
+# Konsole: Lua Command Line im Debug-Modus; "Von Hand": im Spiel nachgestellt und abgelesen
+
+[ergebnis]
+skillname|von hand|Skills-Reiter, englisches Spiel|der Skill Sprinting heisst "Running"
+startstufe|von hand|Fitness Instructor + Athletic, Skills-Reiter nach dem Start|Fitness 10 (nicht 12)
+illiterate|von hand|Figur mit Illiterate, Buch und Comic per Cheat Menu|Buecher lassen sich nicht lesen; Comics bieten "Look at pictures"
+sammeln-dunkelheit-beruf|konsole|Park Ranger ohne Traits mit Dunkelheits-Bonus: print(forageSystem.getDarknessEffectReduction(getPlayer()))|1 (zweimal, zwei Figuren); mit wirksamem Berufsbonus waere es 0.85
+berufsrezepte|konsole|Chef ohne Rezept-Traits: print(getPlayer():getKnownRecipes():size())|20 (so viele wie in der Berufsdefinition)
+leadfoot|konsole|More Traits, Lead Foot, normale Schuhe (Strapped Shoes, StompPower 2.1): print(getPlayer():getClothingItem_Feet():getStompPower())|nach dem Erstellen 5.1999998; nach Speichern und Laden 2.0999999
+terminator|konsole|More Traits, Terminator + Park Ranger, M9 Pistol (JamGunChance 1) in der Haupthand: print(getPlayer():getPrimaryHandItem():getJamGunChance())|1 bei modData.MTstate = "Terminator" (nach Speichern und Laden); MTstate auf "Normal" gesetzt, MT.Combat.TerminatorGun von Hand aufgerufen: 0.5
+
+[lesart]
+leadfoot|More Traits setzt den Stampfwert einmal (2.1 x 2 + 1 = 5.2) und merkt es sich in der modData des Schuhs; der Wert selbst wird nicht gespeichert, nach dem Laden steht der Grundwert da, und der Merker verhindert das erneute Setzen
+terminator|dasselbe fuer die Ladehemmung: der Merker MTstate bleibt, der halbierte Wert nicht; die Funktion selbst halbiert, sobald der Merker zurueckgesetzt ist

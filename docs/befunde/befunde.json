@@ -2933,17 +2933,18 @@
     },
     {
       "id": "illiterate/reading",
-      "stand": "code",
+      "stand": "gemessen",
       "code": "shared/TimedActions/ISReadABook.lua (Z. 129); client/ISUI/ISInventoryPaneContextMenu.lua (Z. 549 Medienbeschriftung, Z. 588 Notizbuch, 1043-1089, 2815); client/ISUI/Maps/ISWorldMapSymbols.lua (Z. 1367-1373: Kartennotizen setzen und ändern gesperrt; bestehende Beschriftungen bleiben lesbar) ; Food.DoTooltip (Z. 1363-1366, 1387-1391); ItemContainer.hasRecipe (Z. 3446-3453); CraftRecipe.couldBenefitFromRecipeAtHand/hasRecipeAtHand (Z. 1456-1507)",
       "berichte": [
         "docs/berichte/2026-09-08-extraktion.md",
         "tools/measure-mod/README.md"
       ],
       "messungen": [
-        "messung-2026-09-13b-werte.txt"
+        "messung-2026-09-13b-werte.txt",
+        "messung-2026-09-24-von-hand.txt"
       ],
-      "notiz": "Aus dem Spielcode, nicht gemessen: im Kontextmenü ist Lesen ausgegraut, mit dem Hinweis, dass die Figur nicht lesen kann, für jedes Buch, Heft und jede Notiz ohne die Markierung PictureBook oder Picture (ISInventoryPaneContextMenu Z. 1054-1059, 2815), ein Doppelklick überspringt sie (ISInventoryPane Z. 1102). Gesperrt sind auch \"Beschriftung lesen\" bei Medien (Z. 549), das Notizbuch (Z. 588) und die Knöpfe für Kartennotizen (ISWorldMapSymbols Z. 1367-1373). Auf verpackten Lebensmitteln fehlen die Nährwerte (Food.DoTooltip Z. 1363-1391), und ein Rezeptmagazin in Reichweite hilft nicht, ein gelerntes Rezept eine Stufe zu früh herzustellen (ItemContainer.hasRecipe Z. 3446-3453, außer mit PictureBook). Das Zurücksetzen der gelesenen Seiten in ISReadABook.checkLevel (Z. 129), am 13.09.2026 gemessen (5 auf 0), erreicht eine Figur mit Illiterate im Spiel nicht; darum seit dem Faktensweep 3 (23.09.2026) Stand code statt gemessen. Die Zeile nennt seitdem auch Packungen und das Rezept in Reichweite.",
-      "methode": "Code-Werte, Mess-Mod 6.24.0: ISReadABook.checkLevel mit 5 gelesenen Seiten an einem Buch ausgelöst (Carpentry-Stufe auf 0 gesetzt), der Lesestand danach gelesen; ohne und mit Illiterate, Faktor mit/ohne."
+      "notiz": "Von Hand im Spiel geprüft am 23.09.2026: eine Figur mit Illiterate kann Bücher nicht lesen, Comics bieten stattdessen \"Look at pictures\". Laut Code: im Kontextmenü ist Lesen ausgegraut, mit dem Hinweis, dass die Figur nicht lesen kann, für jedes Buch, Heft und jede Notiz ohne die Markierung PictureBook oder Picture (ISInventoryPaneContextMenu Z. 1054-1059, 2815), ein Doppelklick überspringt sie (ISInventoryPane Z. 1102). Gesperrt sind auch \"Beschriftung lesen\" bei Medien (Z. 549), das Notizbuch (Z. 588) und die Knöpfe für Kartennotizen (ISWorldMapSymbols Z. 1367-1373). Auf verpackten Lebensmitteln fehlen die Nährwerte (Food.DoTooltip Z. 1363-1391), und ein Rezeptmagazin in Reichweite hilft nicht, ein gelerntes Rezept eine Stufe zu früh herzustellen (ItemContainer.hasRecipe Z. 3446-3453, außer mit PictureBook). Das Zurücksetzen der gelesenen Seiten in ISReadABook.checkLevel (Z. 129), am 13.09.2026 gemessen (5 auf 0), erreicht eine Figur mit Illiterate im Spiel nicht; darum seit dem Faktensweep 3 (23.09.2026) Stand code statt gemessen. Die Zeile nennt seitdem auch Packungen und das Rezept in Reichweite.",
+      "methode": "Von Hand: Figur mit Illiterate, ein Buch und ein Comic per Cheat Menu erzeugt, Kontextmenü an beiden geöffnet (docs/messungen/messung-2026-09-24-von-hand.txt). Die Kartennotizen, Medienbeschriftungen und Packungsangaben sind nur aus dem Code gelesen."
     },
     {
       "id": "nutritionist/nutrition",
@@ -3581,14 +3582,18 @@
       "titel": "Die Berufe verringern die Dunkelheitsstrafe beim Sammeln nie",
       "folge": "getDarknessEffectReduction schlägt die Berufsdefinition mit dem CharacterProfession-Objekt nach statt mit seinem Namen. Die Tabelle ist nach Namen angelegt, der Treffer bleibt also immer leer, und es zählt nur der Anteil der Traits (etwa Outdoorsy -5 %). Betroffen sind Park Ranger, Veteran, Lumberjack und Burglar (-15 %), Farmer, Fisherman, Security Guard, Police Officer und Fire Officer (-10 %) und Unemployed (-5 %). Die Schwesterfunktionen für Wetter, Sichtradius und Kategorien nehmen :getName() und wirken. Auch der Sammel-Tooltip des Spiels (ISZoneDisplay) liest dieselbe Funktion und nennt nur den Anteil der Traits. Trait Facts lässt die Berufszeile aus der Übersicht und der Summe.",
       "code": "shared/Foraging/forageSystem.lua (Z. 1869, ohne :getName(); Wetter Z. 1820, Sichtradius Z. 1910 und Kategorien Z. 1711 mit :getName()); Tabelle nach Namen: forageSkills.lua (Z. 5), addSkillDef (Z. 1629)",
-      "stand": "code",
+      "stand": "gemessen",
       "umgang": "nicht gezeigt",
       "traits": [],
       "werte": [],
       "berichte": [
         "docs/berichte/2026-09-23-faktensweep.md",
         "mod/42/media/lua/client/TraitFacts/TF_Live.lua"
-      ]
+      ],
+      "messungen": [
+        "messung-2026-09-24-von-hand.txt"
+      ],
+      "methode": "Konsole, 23. und 24.09.2026: zwei Figuren als Park Ranger ohne Traits mit Dunkelheits-Bonus, print(forageSystem.getDarknessEffectReduction(getPlayer())) gibt 1; mit wirksamem Berufsbonus wären es 0.85 (docs/messungen/messung-2026-09-24-von-hand.txt)."
     },
     {
       "id": "kletterwert-eins",
@@ -3981,6 +3986,12 @@
       "test": "Axt: Ax-pert",
       "fassung": "6.43.1",
       "inhalt": "Nachmessung mit Pause zwischen den Phasen, Phase 1 mit Ax-pert: Fällen mit/ohne 0,7982 (997,6 gegen 1249,9 ms, alle acht Phasen mit ausgeschalteter Animation vor dem Neustart), Schaden je Hieb 53 gegen 35 (x1,5143), Schlagtakt in der Luft 0,8002, Schwungdauer 0,7949. Bestätigt die +25 % Fälltempo; die Läufe vom 13.09.2026 waren ein Messfehler."
+    },
+    {
+      "datei": "messung-2026-09-24-von-hand.txt",
+      "test": "Von Hand und Konsole",
+      "fassung": "6.43.1",
+      "inhalt": "Skill Sprinting heißt im englischen Spiel Running; Fitness Instructor mit Athletic startet bei Fitness 10; Illiterate kann Bücher nicht lesen, Comics bieten \"Look at pictures\"; getDarknessEffectReduction gibt als Park Ranger 1 (Spielfehler bestätigt); Chef kennt beim Start 20 Rezepte; More Traits: Lead Foot 5.2 nach dem Erstellen, 2.1 nach dem Laden; Terminator: Ladehemmung der M9 nach dem Laden 1 bei Merker \"Terminator\", von Hand neu angewendet 0.5."
     }
   ]
 }

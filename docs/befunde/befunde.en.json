@@ -1118,9 +1118,9 @@
   },
   "illiterate/reading": {
    "code": "shared/TimedActions/ISReadABook.lua (line 129); client/ISUI/ISInventoryPaneContextMenu.lua (line 549 media label, line 588 notebook, 1043-1089, 2815); client/ISUI/Maps/ISWorldMapSymbols.lua (lines 1367-1373: adding and editing map notes blocked; existing labels stay readable) ; Food.DoTooltip (lines 1363-1366, 1387-1391); ItemContainer.hasRecipe (lines 3446-3453); CraftRecipe.couldBenefitFromRecipeAtHand/hasRecipeAtHand (lines 1456-1507)",
-   "note": "From the game code, not measured: the context menu shows Read greyed out, with a tooltip saying the character cannot read, for every book, magazine and note that is not tagged PictureBook or Picture (ISInventoryPaneContextMenu lines 1054-1059, 2815), and double-click skips them (ISInventoryPane line 1102). Also blocked: \"read label\" on media (line 549), the notebook (line 588) and the map note buttons (ISWorldMapSymbols lines 1367-1373). Packaged food shows no nutrition values (Food.DoTooltip lines 1363-1391), and a recipe magazine at hand does not let the character craft a learned recipe one level early (ItemContainer.hasRecipe lines 3446-3453, except with PictureBook). The reset of pages read in ISReadABook.checkLevel (line 129), measured on 2026-09-13 (5 to 0), cannot be reached by a character with Illiterate in play; so since fact sweep 3 (2026-09-23) the status is code instead of measured. Since then the row also names packaging and the recipe at hand.",
-   "method": "Code values, measure mod 6.24.0: ISReadABook.checkLevel triggered on a book with 5 pages read (Carpentry level set to 0), the reading progress read afterwards; without and with Illiterate, factor with/without.",
-   "src": "ffe9f0d4e8"
+   "note": "Checked by hand in the game on 2026-09-23: a character with Illiterate cannot read books; comics offer \"Look at pictures\" instead. Per code: the context menu shows Read greyed out, with a tooltip saying the character cannot read, for every book, magazine and note that is not tagged PictureBook or Picture (ISInventoryPaneContextMenu lines 1054-1059, 2815), and double-click skips them (ISInventoryPane line 1102). Also blocked: \"read label\" on media (line 549), the notebook (line 588) and the map note buttons (ISWorldMapSymbols lines 1367-1373). Packaged food shows no nutrition values (Food.DoTooltip lines 1363-1391), and a recipe magazine at hand does not let the character craft a learned recipe one level early (ItemContainer.hasRecipe lines 3446-3453, except with PictureBook). The reset of pages read in ISReadABook.checkLevel (line 129), measured on 2026-09-13 (5 to 0), cannot be reached by a character with Illiterate in play; so since fact sweep 3 (2026-09-23) the status is code instead of measured. Since then the row also names packaging and the recipe at hand.",
+   "method": "By hand: a character with Illiterate, a book and a comic spawned with Cheat Menu, context menu opened on both (docs/messungen/messung-2026-09-24-von-hand.txt). Map notes, media labels and package labels are read from the code only.",
+   "src": "346324e298"
   },
   "nutritionist/nutrition": {
    "code": "Food.DoTooltip (line 1241; NUTRITIONIST or NUTRITIONIST2 in line 1372)",
@@ -1356,8 +1356,8 @@
    "title": "Professions never reduce the foraging darkness penalty",
    "consequence": "getDarknessEffectReduction looks up the profession definition with the CharacterProfession object instead of its name. The table is keyed by name, so the lookup always comes back empty, and only the share from traits counts (for example Outdoorsy -5%). This affects Park Ranger, Veteran, Lumberjack and Burglar (-15%), Farmer, Fisherman, Security Guard, Police Officer and Fire Officer (-10%) and Unemployed (-5%). The sister functions for weather, sight radius and categories use :getName() and work. The game's own foraging tooltip (ISZoneDisplay) reads the same function and also shows only the share from traits. Trait Facts leaves the profession row out of the overview and its total.",
    "code": "shared/Foraging/forageSystem.lua (line 1869, without :getName(); weather line 1820, sight radius line 1910 and categories line 1711 with :getName()); table keyed by name: forageSkills.lua (line 5), addSkillDef (line 1629)",
-   "method": "",
-   "src": "e3277d5600"
+   "method": "Console, 2026-09-23 and 24: two Park Ranger characters without darkness traits, print(forageSystem.getDarknessEffectReduction(getPlayer())) returns 1; with a working occupation bonus it would be 0.85 (docs/messungen/messung-2026-09-24-von-hand.txt).",
+   "src": "7010ab94e0"
   },
   "kletterwert-eins": {
    "title": "A climbing score of 1 to 3 always fails at tall fences, worse than 0 (without a heavy load)",
@@ -1677,6 +1677,11 @@
    "test": "Axe: Ax-pert",
    "content": "Re-measurement with a pause between phases, phase 1 with Ax-pert: felling with/without 0.7982 (997.6 against 1249.9 ms, the animation off before every restart in all eight phases), damage per hit 53 against 35 (x1.5143), swing rhythm in the air 0.8002, swing duration 0.7949. Confirms the +25% felling speed; the runs of 2026-09-13 were a measurement error.",
    "src": "105961d923"
+  },
+  "messung-2026-09-24-von-hand.txt": {
+   "test": "By hand and console",
+   "content": "The skill Sprinting is called Running in the English game; Fitness Instructor with Athletic starts at Fitness 10; Illiterate cannot read books, comics offer \"Look at pictures\"; getDarknessEffectReduction returns 1 as Park Ranger (game bug confirmed); a Chef knows 20 recipes at the start; More Traits: Lead Foot 5.2 after creation, 2.1 after loading a save; Terminator: jam value of the M9 after loading 1 with the flag \"Terminator\", applied again by hand 0.5.",
+   "src": "ff7ed1b53b"
   }
  },
  "tests": [
