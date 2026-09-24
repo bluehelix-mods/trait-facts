@@ -10,7 +10,9 @@ sammeln-dunkelheit-beruf|konsole|Park Ranger ohne Traits mit Dunkelheits-Bonus: 
 berufsrezepte|konsole|Chef ohne Rezept-Traits: print(getPlayer():getKnownRecipes():size())|20 (so viele wie in der Berufsdefinition)
 leadfoot|konsole|More Traits, Lead Foot, normale Schuhe (Strapped Shoes, StompPower 2.1): print(getPlayer():getClothingItem_Feet():getStompPower())|nach dem Erstellen 5.1999998; nach Speichern und Laden 2.0999999
 terminator|konsole|More Traits, Terminator + Park Ranger, M9 Pistol (JamGunChance 1) in der Haupthand: print(getPlayer():getPrimaryHandItem():getJamGunChance())|1 bei modData.MTstate = "Terminator" (nach Speichern und Laden); MTstate auf "Normal" gesetzt, MT.Combat.TerminatorGun von Hand aufgerufen: 0.5
+tragekraft-strong|mess-befehl|Strong (Kraft 9) und Short Sighted, nach Speichern und Laden, Befehl maxweight ueber TraitFacts_befehle.txt; Mess-Mod 6.45.0, Trait Facts 0.14.12|mit God Mode (vom Mess-Mod beim Start gesetzt) 8, delta 1; nach God Mode aus 18 (vom Spieler im Inventar abgelesen)
 
 [lesart]
 leadfoot|More Traits setzt den Stampfwert einmal (2.1 x 2 + 1 = 5.2) und merkt es sich in der modData des Schuhs; der Wert selbst wird nicht gespeichert, nach dem Laden steht der Grundwert da, und der Merker verhindert das erneute Setzen
 terminator|dasselbe fuer die Ladehemmung: der Merker MTstate bleibt, der halbierte Wert nicht; die Funktion selbst halbiert, sobald der Merker zurueckgesetzt ist
+tragekraft-strong|die Kapazitaet folgt der Kraftstufe allein: (int)(8 x 2.26) = 18 bei Kraft 9, der x1.5 von Strong wirkt nicht (dead, carryweight); mit God Mode kehrt BodyDamage.Update vor UpdateStrength zurueck, nach dem Laden bleibt dann der Startwert 8 stehen. Kein Befund fuer Spieler ohne God Mode
