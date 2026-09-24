@@ -494,7 +494,53 @@ local function gearButton(view)
     if b.setTooltip then b:setTooltip(TF.fmt.text("UI_TF_opt_title")) end
     if TF.Panel and TF.Panel.quietTooltipAfterClick then TF.Panel.quietTooltipAfterClick(b) end
     view:addChild(b)
+    TF.safe("charwin:gearprobe", CW.probeGear, view, b)
     return b
+end
+
+--- VORUEBERGEHEND (0.14.10, Diagnose 24.09.2026): Im Spiel oeffnete das
+-- Zahnrad im Reiter nichts, ohne Fehler im Log; im Nachbau oeffnet es. Die
+-- Zeilen zeigen, wie weit ein echter Klick kommt. Nach dem Befund entfernen.
+function CW.probeGear(view, b)
+    local function state()
+        local p = view.tfOptionsPopup
+        if not p then return "kein Fenster" end
+        local ok, text = pcall(function()
+            return string.format("Fenster sichtbar=%s bei %d,%d (abs %d,%d) %dx%d; Reiter %dx%d; Zahnrad %d,%d",
+                tostring(p:isVisible()), p:getX(), p:getY(), p:getAbsoluteX(), p:getAbsoluteY(),
+                p:getWidth(), p:getHeight(), view:getWidth(), view:getHeight(), b:getX(), b:getY())
+        end)
+        return ok and text or ("Zustand unlesbar: " .. tostring(text))
+    end
+    local down, up, click = b.onMouseDown, b.onMouseUp, b.onclick
+    b.onMouseDown = function(btn, ...)
+        TF.log("Zahnrad-Diagnose: Maus runter")
+        return down(btn, ...)
+    end
+    b.onMouseUp = function(btn, ...)
+        TF.log("Zahnrad-Diagnose: Maus hoch, pressed=" .. tostring(btn.pressed) .. " enable=" .. tostring(btn.enable))
+        return up(btn, ...)
+    end
+    b.onclick = function(target, btn, ...)
+        TF.log("Zahnrad-Diagnose: Klick, vorher " .. state())
+        local result = click(target, btn, ...)
+        TF.log("Zahnrad-Diagnose: nachher " .. state())
+        local p = view.tfOptionsPopup
+        if p and not p.tfProbed then
+            p.tfProbed = true
+            local render = p.render
+            p.render = function(pp, ...)
+                TF.logOnce("gearprobe:render", "Zahnrad-Diagnose: Fenster wird gezeichnet")
+                return render(pp, ...)
+            end
+            local setVisible = p.setVisible
+            p.setVisible = function(pp, v, ...)
+                TF.log("Zahnrad-Diagnose: Fenster setVisible(" .. tostring(v) .. ")")
+                return setVisible(pp, v, ...)
+            end
+        end
+        return result
+    end
 end
 
 --- Legt den Reiter an: ein ISPanelJoypad wie Vanillas Reiter, mit der
@@ -711,6 +757,7 @@ local GROUP_GOLD = { 0.71, 0.64, 0.42 }
 local WEIGHT_TRAITS = { overweight = true, obese = true, underweight = true, veryunderweight = true }
 local UI_BORDER = 10   -- UI_BORDER_SPACING in ISCharacterScreen
 local ICON_GAP = 4     -- Abstand der Symbole in ISCharacterScreen:render
+local SEPARATOR_EXTRA = 6 -- mehr Luft an jeder Grenze zweier Gruppen (Strich, 0.14.10)
 
 function CW.groupLabel(group)
     local key = "UI_TF_charGroup_" .. group
@@ -823,15 +870,35 @@ function CW.planTraits(screen)
         run.row = rows
         rows = rows + math.ceil((run.to - run.from + 1) / perRow)
     end
+    -- Die Luft der Striche, als ganze Zeilen aufgerundet: so viele Zeilen
+    -- mehr setzt Vanilla, und die Frisur rueckt um sie tiefer.
+    local extraRows = math.ceil((#runs - 1) * SEPARATOR_EXTRA / (size + ICON_GAP))
     local spacers = {}
     local function noop() end
     local function getTexture() return texture end
     local function setY(s, y) s.y = y end
-    for i = 1, (rows - 1) * perRow + 1 do
+    for i = 1, (rows + extraRows - 1) * perRow + 1 do
         spacers[i] = { setX = noop, setY = setY, setVisible = noop, getTexture = getTexture }
     end
     return { real = screen.traits, spacers = spacers, runs = runs, perRow = perRow,
              size = size, x0 = x0 }
+end
+
+--- Zwischen zwei Gruppen ein feiner Strich wie unter dem Namen (Wunsch vom
+-- 24.09.2026, 0.14.10): 1 px in Vanillas Rahmenfarbe (ISCharacterScreen:
+-- render, drawRect unter dem Namen), von der Kante des Namens bis zum rechten
+-- Rand, in der Mitte der Luecke. Die Luecke ist SEPARATOR_EXTRA px groesser
+-- als zwischen zwei Zeilen; die Hoehe dafuer reserviert planTraits als ganze
+-- Zeilen bei Vanilla, denn unter der letzten Zeile laesst Vanilla nur 12 px
+-- bis zur Frisur, und davon bleibt so nichts weg.
+local AVATAR_BORDER = 2   -- wie in ISCharacterScreen
+
+local function drawSeparator(screen, y)
+    local x0 = (screen.avatarX or 0) + (screen.avatarWidth or 0) + AVATAR_BORDER + UI_BORDER
+    local x1 = screen:getWidth() - UI_BORDER
+    if x1 <= x0 then return end
+    local c = screen.borderColor or { r = 0.4, g = 0.4, b = 0.4, a = 1 }
+    screen:drawRect(x0, math.floor(y), x1 - x0, 1, c.a, c.r, c.g, c.b)
 end
 
 --- Setzt die echten Symbole und schreibt die Beschriftungen, nach render.
@@ -841,8 +908,9 @@ function CW.placeTraits(screen, plan)
     local size, step = plan.size, plan.size + ICON_GAP
     local fontH = getTextManager():getFontHeight(UIFont.Small)
     local offset = (fontH - size) / 2 + 1
-    for _, run in ipairs(plan.runs) do
-        local y = firstY + run.row * step
+    for index, run in ipairs(plan.runs) do
+        local y = firstY + run.row * step + (index - 1) * SEPARATOR_EXTRA
+        if index > 1 then drawSeparator(screen, y - (ICON_GAP + SEPARATOR_EXTRA) / 2) end
         local c = groupColor(run.group)
         screen:drawTextRight(CW.groupLabel(run.group), screen.xOffset, y - offset, c[1], c[2], c[3], 1, UIFont.Small)
         local col = 0
