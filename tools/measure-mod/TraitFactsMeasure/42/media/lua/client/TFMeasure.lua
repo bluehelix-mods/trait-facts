@@ -62,7 +62,7 @@ TFMeasure.Fenster = nil
 -- Mod-Waehler zeigt nur mod.info an, und eine Nummer, die nie wandert, sagt
 -- nichts darueber, welcher Code wirklich geladen ist. Deshalb steht sie
 -- zusaetzlich in der ersten Logzeile und im Kopf des Berichts.
-TFMeasure.VERSION = "6.47.3"
+TFMeasure.VERSION = "6.48.0"
 
 --- Ausgabedatei, liegt danach in Zomboid/Lua/.
 TFMeasure.FILE = "TraitFacts_measure.txt"

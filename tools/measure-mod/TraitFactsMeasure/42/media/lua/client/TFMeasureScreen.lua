@@ -62,7 +62,7 @@ function M.fontLabel()
     return groesse .. ", Tooltip " .. tooltip
 end
 
-M.VERSION = "6.47.3"
+M.VERSION = "6.48.0"
 M.LOGFILE = "TraitFacts_screen.txt"
 M.RESTOREFILE = "TraitFacts_screen_restore.txt"
 
@@ -170,8 +170,48 @@ function M.restoreOptions()
     M.savedShowDead = nil
 end
 
+--- Der Tooltip einer Trait-Liste so, wie das Spiel ihn ohne Trait Facts zeigt
+-- (seit 6.48.0, Vorher-Nachher-Bild, Wunsch 24.09.2026). Trait Facts merkt
+-- sich je Eintrag den Text des Spiels (item.tfVanilla) und haengt seine Huelle
+-- (Abdunkeln, Kaestchen, Streifen) als Instanzfeld an updateTooltip der Liste;
+-- Vanilla setzt dort nichts. Fuer die Aufnahme: der Text des Spiels, die
+-- Methode der Klasse, ein frischer Tooltip. M.restoreVanilla stellt alles
+-- zurueck, closeAll ruft es vor jeder Aufnahme und am Ende des Laufs.
+local function dropTooltip(list)
+    local tip = list and list.tooltipUI
+    if tip then
+        pcall(function()
+            tip:setVisible(false)
+            tip:removeFromUIManager()
+        end)
+    end
+    if list then list.tooltipUI = nil end
+end
+
+function M.vanillaTooltip(list, index)
+    local item = list and list.items and list.items[index]
+    if type(item) ~= "table" or type(item.tfVanilla) ~= "string" then return false end
+    M.restoreVanilla()
+    M.vanillaSaved = { list = list, item = item, tooltip = item.tooltip,
+                       update = rawget(list, "updateTooltip") }
+    item.tooltip = item.tfVanilla
+    rawset(list, "updateTooltip", nil)
+    dropTooltip(list)
+    return true
+end
+
+function M.restoreVanilla()
+    local saved = M.vanillaSaved
+    if not saved then return end
+    M.vanillaSaved = nil
+    saved.item.tooltip = saved.tooltip
+    rawset(saved.list, "updateTooltip", saved.update)
+    dropTooltip(saved.list)
+end
+
 local function closeAll(screen)
     M.unhover()
+    M.restoreVanilla()
     M.restoreOptions()
     local tf = TFX()
     if tf and tf.Build and tf.Build.closeMissing then pcall(tf.Build.closeMissing, screen) end
@@ -268,6 +308,18 @@ M.WORKSHOP = {
         -- Ohne Short Sighted und Keen Hearing (Laeufe 22.09.2026: die Spalte lief
         -- bei 1920x1080 um ein paar Zeilen ueber).
         return loadBuild(screen, "fireofficer;strong;brave;dextrous;outdoorsman;smoker;weakstomach")
+    end },
+    -- 02a Derselbe Tooltip so, wie das Spiel ihn ohne Trait Facts zeigt (seit
+    -- 6.48.0): die linke Haelfte des Vorher-Nachher-Bilds. Vor 02, damit keine
+    -- geaenderte Option die Liste neu anreichert, waehrend der Text des Spiels steht.
+    { name = "tooltip-strong-vanilla", run = function(screen)
+        loadBuild(screen, "fireofficer")
+        local index = traitIndex(screen.listboxTrait, "base:strong")
+        if not index then return false, "Strong nicht in der Liste" end
+        if not M.vanillaTooltip(screen.listboxTrait, index) then
+            return false, "kein Text des Spiels am Eintrag (tfVanilla)"
+        end
+        return M.hover(screen.listboxTrait, index)
     end },
     -- 02 Der Tooltip von Strong mit der grauen Zeile zur Tragkraft: Werte ohne
     -- Wirkung werden fuer die Aufnahme gezeigt und danach wieder wie vorher.
@@ -740,6 +792,8 @@ function M.finish(reason)
     if not run then return end
     M.run = nil
     M.hideProgress()
+    pcall(M.unhover)
+    pcall(M.restoreVanilla)
     local summary = string.format("%d Bilder, %d Pruefungen ok, %d FEHL, %d Szenarien entfallen",
         run.shots, run.passed, run.failed, run.skipped)
     pcall(function()
