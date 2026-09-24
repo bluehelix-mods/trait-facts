@@ -1,8 +1,9 @@
 # Trait Facts
 
-**What your traits actually do.** A Project Zomboid mod for Build 42 that shows,
-in the character creation screen, the real effect of every trait: the numbers the
-game uses, with unit and base, and an overview of what your whole build adds up to.
+**What your traits actually do.** A Project Zomboid mod for Build 42 that shows
+the real effect of every trait: the numbers the game uses, with unit and base,
+and an overview of what your whole build adds up to. In character creation, and
+in the game in the character window (C).
 
 Trait descriptions in the game say "faster" or "less". Trait Facts says by how
 much, and where the number comes from.
@@ -12,6 +13,19 @@ much, and where the number comes from.
   <https://bluehelix-mods.github.io/trait-facts/>
 - **Languages:** English, German, Russian, Simplified Chinese, Brazilian
   Portuguese, Spanish, French, Polish, Korean, Japanese, Turkish, Italian
+
+## What it shows
+
+- **Trait tooltips:** every effect as a number, with a short footnote in plain
+  words where it matters; every other row is shaded.
+- **Build overview:** everything added up, by section; click a section heading
+  to fold it, or fold them all at once.
+- **In the game:** the same tooltips on the trait icons in the character window,
+  the icons sorted into positive, negative and profession, and a Trait Facts tab
+  with the overview of your current character.
+- **Major Skills:** how fast each skill really levels with your boosts.
+- **Search, sharing, other mods:** a trait search, a short code to share a
+  build, and tags for traits from other mods.
 
 ## Where the numbers come from
 
