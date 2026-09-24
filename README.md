@@ -76,8 +76,8 @@ package through a small public API; see [`docs/api.md`](docs/api.md). Values for
 | `docs/messungen/` | raw test logs, with a reading guide in English |
 | `docs/api.md` | how another mod hands its numbers to Trait Facts |
 | `docs/uebersetzung/` | the game's own words per language, for translators |
-| `docs/workshop/` | the images of the Workshop page |
-| `tools/` | the translation check, the test mod, a demo data pack |
+| `docs/workshop/` | the two images the Workshop description loads |
+| `tools/` | the translation check and its helpers |
 
 Comments in the code and the evidence database are in German; the wiki shows
 the same content in English.

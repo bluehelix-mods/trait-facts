@@ -1,6 +1,6 @@
 # Measurement logs
 
-These files are the raw output of a separate test mod (`tools/measure-mod/`).
+These files are the raw output of a separate test mod (not published).
 The test mod runs inside Project Zomboid, reads values from a live character
 with and without a trait, and writes one text file per run. The evidence wiki
 links to these files as proof.
