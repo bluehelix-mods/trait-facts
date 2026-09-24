@@ -1,0 +1,78 @@
+# Axt: Ax-pert, Messung an einer lebenden Figur
+# Mess-Mod 6.51.0
+# Build 42.20
+# Axt Base.Axe (Baumschaden 35.00), Axt-Skill fest auf 3, Baumleben vor jedem Treffer auf 5000
+# Faellen: 8 Phasen im Wechsel mit/ohne (Phase 1 mit), je eine neue Aktion mit 3 Hieben; der erste ist Anlauf
+# zwischen den Phasen Pause, bis PerformingAction nicht mehr chop_tree ist, dann 120 Ticks; der Trait wird erst danach gesetzt
+# Schlaege: Ax-pert wechselt alle 2, Schlag 0 ist Warmlauf
+# erwartet laut Code: abstand 0.8, mit 1000 ms, ohne 1250 ms (ChopTreeSpeed 1.0 statt 0.8);
+#   13.09.2026 gemessen 1.00, aber mit Neustart im selben Tick (Animation lief weiter),
+#   schaden 1.5 vor dem (int),
+#   schwung: kein fester Faktor; calculateCombatSpeed (IsoGameCharacter:8825-8858) rechnet 0.8 x BaseSpeed x ChopTreeSpeed, dann Summanden (Last, Erschoepfung -0.07 je Stufe, Skill +0.03, Fitness +0.02), Zufall x1.1-1.2 und Klemme 0.8-1.6; 1.0 hiesse wirkungslos
+# Schlaege: Axt in beiden Haenden (ja), Fitness fest auf 5; Schlaege mit Last (HEAVY_LOAD > 0) zaehlen nicht (0 verworfen)
+
+[ergebnis]
+faellen|abstand|ohne_ms=1248.1|mit_ms=999.0|mit/ohne=0.8004|abstaende=8/8
+faellen|schaden|ohne=35.00|mit=53.00|mit/ohne=1.5143
+schwung|takt|ohne_ms=828.4|mit_ms=632.3|mit/ohne=0.7633|schlaege=10/10
+schwung|dauer|ohne_ms=819.1|mit_ms=622.3|mit/ohne=0.7597
+
+[phasen] phase|axeman|chopTreeSpeed|anim_war_aus|pause_ticks
+phase|1|1|1.00|1|0
+phase|2|0|0.80|1|121
+phase|3|1|1.00|1|121
+phase|4|0|0.80|1|121
+phase|5|1|1.00|1|121
+phase|6|0|0.80|1|121
+phase|7|1|1.00|1|121
+phase|8|0|0.80|1|121
+
+[hiebe] phase|nr|axeman|schaden|abstand_ms|abstand_ticks|baumschaden_axt
+hieb|1|1|1|53|-|-|35
+hieb|1|2|1|53|985|103|35
+hieb|1|3|1|53|1001|105|35
+hieb|2|1|0|35|-|-|35
+hieb|2|2|0|35|1245|126|35
+hieb|2|3|0|35|1250|123|35
+hieb|3|1|1|53|-|-|35
+hieb|3|2|1|53|1006|65|35
+hieb|3|3|1|53|998|104|35
+hieb|4|1|0|35|-|-|35
+hieb|4|2|0|35|1191|82|35
+hieb|4|3|0|35|1249|128|35
+hieb|5|1|1|53|-|-|35
+hieb|5|2|1|53|1004|106|35
+hieb|5|3|1|53|995|106|35
+hieb|6|1|0|35|-|-|35
+hieb|6|2|0|35|1248|130|35
+hieb|6|3|0|35|1297|115|35
+hieb|7|1|1|53|-|-|35
+hieb|7|2|1|53|1006|106|35
+hieb|7|3|1|53|997|104|35
+hieb|8|1|0|35|-|-|35
+hieb|8|2|0|35|1251|130|35
+hieb|8|3|0|35|1254|132|35
+
+[schlaege] nr|axeman|takt_ms|dauer_ms|last|verworfen
+schlag|0|0|806|798|0|0
+schlag|1|0|1025|1013|0|0
+schlag|2|0|782|776|0|0
+schlag|3|1|617|612|0|0
+schlag|4|1|644|632|0|0
+schlag|5|0|767|755|0|0
+schlag|6|0|772|766|0|0
+schlag|7|1|676|663|0|0
+schlag|8|1|604|590|0|0
+schlag|9|0|848|836|0|0
+schlag|10|0|788|783|0|0
+schlag|11|1|662|651|0|0
+schlag|12|1|616|605|0|0
+schlag|13|0|855|840|0|0
+schlag|14|0|829|817|0|0
+schlag|15|1|616|605|0|0
+schlag|16|1|622|618|0|0
+schlag|17|0|850|844|0|0
+schlag|18|0|768|761|0|0
+schlag|19|1|627|615|0|0
+schlag|20|1|639|632|0|0
+schlag|21|0|-|-|0|0

@@ -1,0 +1,73 @@
+# Adrenalin: Gehtempo bei Panik mit Adrenaline Junkie, Messung an einer lebenden Figur
+# Mess-Mod 6.51.0
+# Build 42.20
+# je Phase 300 gezaehlte Ticks Gehen (ohne Shift), nach jedem Umschalten und jeder Pause 15 Ticks Anlauf; Panik in jedem Tick auf 90 (Stufe 4), Ausdauer auf 1; God Mode aus
+# WalkSpeed ohne Trait im Mittel 0.8000 (0.8000 mit Schuhen, ohne Last, bei normaler Waerme)
+# tempo = Summe Strecke / Summe Multiplier; walkspeed und getmovespeed = Mittel der gezaehlten Ticks; felder_je_s aus der Uhr
+# faktor = Phase mit Trait / Mittel der Nachbarphasen ohne; Toleranz 3 %, WalkSpeed-Zeilen absolut 0.006
+# laut Code: calculateBaseSpeed (IsoGameCharacter Z. 8754-8764) 0.8, mit Adrenaline Junkie ab Panikstufe 3 +(Stufe+1)/20, auf Stufe 4 1.05; calculateWalkSpeed deckelt bei 1.0 (Z. 8985): WalkSpeed 1.0 statt 0.8
+# WalkSpeed ist m_Scalar2, die Blendlage zwischen Bob_WalkSlow (Y 0) und Bob_Walk (Y 1) (AnimSets/player/movement/defaultWalk.xml Z. 6, 8; run/defaultRun.xml Z. 8; sprint/defaultSprint.xml Z. 8), kein Tempofaktor: die Strecke hat darum keinen Code-Soll, nur den Wert von Trait Facts
+# laut Code: IsoPlayer.getMoveSpeed (Z. 1662-1666) x1.1 auf Stufe 4, gelesen nur von getPathSpeed (Z. 1024-1025) ohne Aufrufer (Spielfehler adrenaline-movespeed); wirkte sie, laege tempo 10 % ueber dem Wert von Trait Facts
+# Sprinting fest auf 0, Fitness fest auf 5 (Stufe und XP, jeden Tick gehalten); 4 Mal zurueckgesetzt; Ticks mit anderer Sprinting-Stufe zaehlen nicht (stufe_verworfen)
+
+[ergebnis]
+ergebnis|werte=13|stimmen=10|weichen_ab=3|nicht_messbar=0|phasen=34
+
+[werte] wert|groesse|trait|faktor|soll_mod|soll_code|urteil|phasen|notiz
+wert|walkspeed|adrenalinejunkie|1.2500|-|1.2500|stimmt|4|Animationsvariable WalkSpeed (Blendlage Bob_WalkSlow/Bob_Walk), gedeckelt bei 1.0
+wert|getmovespeed|adrenalinejunkie|1.1000|-|1.1000|stimmt|4|IsoPlayer.getMoveSpeed; zeigt, dass Panikstufe 4 stand
+wert|tempo|adrenalinejunkie|1.0802|1.0800|-|stimmt|4|Strecke je Multiplier: der reale Wert; kein Code-Soll, WalkSpeed ist eine Blendlage
+wert|walkspeed_stufe3|adrenalinejunkie|1.2500|-|1.2500|stimmt|2|Animationsvariable WalkSpeed auf Panikstufe 3: 0.8 + 0.20
+wert|tempo_stufe3|adrenalinejunkie|1.0802|1.0800|-|stimmt|2|Strecke je Multiplier, Gehen auf Stufe 3: der reale Wert; kein Code-Soll, WalkSpeed ist eine Blendlage
+wert|runspeed|adrenalinejunkie|1.5030|-|1.3846|weicht ab|2|Variable WalkSpeed beim Rennen (traegt das Renntempo), Sprinting 0
+wert|tempo_rennen|adrenalinejunkie|1.2028|1.1700|-|stimmt|2|Strecke je Multiplier, Rennen auf Stufe 4: der reale Wert; kein Code-Soll, WalkSpeed ist eine Blendlage
+wert|sprintspeed|adrenalinejunkie|1.2588|-|1.3846|weicht ab|2|Variable WalkSpeed beim Sprinten (traegt das Renntempo), Sprinting 0
+wert|tempo_sprint|adrenalinejunkie|1.0942|1.1500|-|weicht ab|2|Strecke je Multiplier, Sprinten auf Stufe 4: der reale Wert; kein Code-Soll, WalkSpeed ist eine Blendlage
+wert|runspeed_stufe3|adrenalinejunkie|1.3077|-|1.3077|stimmt|2|Variable WalkSpeed beim Rennen (traegt das Renntempo), Sprinting 0
+wert|tempo_rennen_stufe3|adrenalinejunkie|1.1360|1.1200|-|stimmt|2|Strecke je Multiplier, Rennen auf Stufe 3: der reale Wert; kein Code-Soll, WalkSpeed ist eine Blendlage
+wert|sprintspeed_stufe3|adrenalinejunkie|1.3077|-|1.3077|stimmt|2|Variable WalkSpeed beim Sprinten (traegt das Renntempo), Sprinting 0
+wert|tempo_sprint_stufe3|adrenalinejunkie|1.1239|1.1000|-|stimmt|2|Strecke je Multiplier, Sprinten auf Stufe 3: der reale Wert; kein Code-Soll, WalkSpeed ist eine Blendlage
+
+[teile] teil|id|gangart|panikstufe|phasen (seit 6.33.0; die Werte mit _stufe3 und _rennen gehoeren zu Teil 2 und 3)
+teil|gehen4|gehen|4|1-9
+teil|gehen3|gehen|3|10-14
+teil|rennen4|rennen|4|15-19
+teil|sprint4|sprint|4|20-24
+teil|rennen3|rennen|3|25-29
+teil|sprint3|sprint|3|30-34
+
+[phasen] phase|nr|adrenalinejunkie|ticks|tempo|felder_je_s|walkspeed|getmovespeed|nicht_gezaehlt|sprinting|sprinting_gesehen|fitness_gesehen|stufe_verworfen
+phase|1|0|300|0.045755|2.1958|0.8000|0.060000|72|0|0|5|0
+phase|2|1|300|0.048975|2.3506|1.0000|0.066000|0|0|0|5|0
+phase|3|0|300|0.045225|2.1688|0.8000|0.060000|0|0|0|5|0
+phase|4|1|300|0.049114|2.1838|1.0000|0.066000|0|0|0|5|0
+phase|5|0|300|0.045551|2.1871|0.8000|0.060000|0|0|0|5|0
+phase|6|1|300|0.049063|2.3547|1.0000|0.066000|0|0|0|5|0
+phase|7|0|300|0.045387|2.1799|0.8000|0.060000|0|0|0|5|0
+phase|8|1|300|0.049172|2.3599|1.0000|0.066000|0|0|0|5|0
+phase|9|0|300|0.045399|2.1787|0.8000|0.060000|0|0|0|5|0
+phase|10|0|300|0.045505|2.1839|0.8000|0.060000|0|0|0|5|0
+phase|11|1|300|0.049185|2.3618|1.0000|0.060000|0|0|0|5|0
+phase|12|0|300|0.045598|2.1924|0.8000|0.060000|0|0|0|5|0
+phase|13|1|300|0.049140|2.3590|1.0000|0.060000|0|0|0|5|0
+phase|14|0|300|0.045357|2.1769|0.8000|0.060000|0|0|0|5|0
+phase|15|0|300|0.087727|4.2101|0.6500|0.060000|2508|0|0|5|0
+phase|16|1|300|0.102847|4.9348|0.9000|0.066000|0|0|0|5|0
+phase|17|0|300|0.074414|3.2270|0.4358|0.060000|0|0|0|5|0
+phase|18|1|300|0.087993|4.2090|0.6500|0.066000|0|0|0|5|0
+phase|19|0|300|0.080381|3.8611|0.5283|0.060000|0|0|0|5|0
+phase|20|0|300|0.103987|4.9919|0.6025|0.060000|380|0|0|5|0
+phase|21|1|300|0.109940|5.2780|0.6500|0.066000|0|0|0|5|0
+phase|22|0|300|0.108341|5.1988|0.6017|0.060000|0|0|0|5|0
+phase|23|1|300|0.126015|5.6366|0.9000|0.066000|0|0|0|5|0
+phase|24|0|300|0.110285|5.2964|0.6500|0.060000|0|0|0|5|0
+phase|25|0|300|0.087384|4.1918|0.6500|0.060000|263|0|0|5|0
+phase|26|1|300|0.100004|4.7986|0.8500|0.060000|0|0|0|5|0
+phase|27|0|300|0.088365|4.2456|0.6500|0.060000|0|0|0|5|0
+phase|28|1|300|0.099894|4.7960|0.8500|0.060000|0|0|0|5|0
+phase|29|0|300|0.087805|4.2108|0.6500|0.060000|0|0|0|5|0
+phase|30|0|300|0.107675|5.1691|0.6500|0.060000|190|0|0|5|0
+phase|31|1|300|0.122750|5.8902|0.8500|0.060000|0|0|0|5|0
+phase|32|0|300|0.109672|5.2653|0.6500|0.060000|0|0|0|5|0
+phase|33|1|300|0.122734|5.8899|0.8500|0.060000|0|0|0|5|0
+phase|34|0|300|0.109855|5.2734|0.6500|0.060000|0|0|0|5|0

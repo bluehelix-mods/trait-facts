@@ -1,0 +1,35 @@
+# Feuer je Versuch: Anzuenden gegen Stockbruch, ausgespielt mit dem echten ZombRand
+# Mess-Mod 6.51.0
+# Datum 24.09.2026
+# Build 42.20
+# je Fall 500 Versuche; ein Versuch ist eine Aktion ISBBQLightFromKindle (Grill, Kamin, Feuerschale, Kochgrube) oder ISLightFromKindle (Lagerfeuer), Tick fuer Tick (Schritt 1 von 1500) bis Feuer, Bruch oder Ende
+# Soll je Fall aus dem Code: ohne Trait 300/599 = 0.5008 angezuendet, mit 450/599 = 0.7513; Bereiche nach Wilson: von/bis 95 %, von999/bis999 99,9 %
+# Werte: faktor = Anteil mit / ohne, Bereiche nach Katz (log); verglichen mit soll_mod (TF_Static), sonst soll_code
+# urteil stimmt, wenn das Soll im 99,9-%-Bereich liegt: 15 Pruefungen je Lauf, mit 95 % schluege fast jeder zweite Lauf irgendwo zufaellig an
+
+[ergebnis]
+ergebnis|werte=9|stimmen=8|weichen_ab=0|nicht_messbar=1|versuche_je_fall=500
+
+[faelle] id|ort|trait|versuche|an|bruch|weder|anteil_an|von|bis|von999|bis999|soll_an|urteil|wuerfe_je_versuch|einheiten_je_feuer
+fall|grill_ohne|grill|-|500|234|266|0|0.4680|0.4247|0.5118|0.3960|0.5413|0.5008|stimmt|147.2380|953.5000
+fall|grill_outdoorsman|grill|outdoorsman|500|378|122|0|0.7560|0.7165|0.7916|0.6878|0.8133|0.7513|stimmt|111.8840|543.4974
+fall|grill_wildernessknowledge|grill|wildernessknowledge|500|268|232|0|0.5360|0.4922|0.5793|0.4626|0.6078|0.5008|stimmt|146.4200|831.0075
+fall|lager_ohne|lager|-|500|272|228|0|0.5440|0.5002|0.5872|0.4706|0.6156|0.5008|stimmt|145.2380|816.6140
+fall|lager_wildernessknowledge|lager|wildernessknowledge|500|376|124|0|0.7520|0.7123|0.7878|0.6836|0.8097|0.7513|stimmt|111.8000|546.2766
+fall|lager_formerscout|lager|formerscout|500|388|112|0|0.7760|0.7374|0.8104|0.7092|0.8311|0.7513|stimmt|113.7120|531.8454
+fall|lager_outdoorsman|lager|outdoorsman|500|265|234|1|0.5300|0.4862|0.5734|0.4567|0.6020|0.5008|stimmt|158.3760|862.9736
+
+[werte] id|trait|ohne|mit|faktor|soll_mod|soll_code|urteil|notiz
+wert|versuchgrill|outdoorsman|0.4680|0.7560|1.6154|1.5000|1.5000|stimmt|95 %: 1.4531 bis 1.7958; Urteil mit 99,9 %: 1.3523 bis 1.9296; Anteil angezuendet je Versuch, 500 Versuche je Fall, ISBBQLightFromKindle; Zeit je Feuer mit/ohne 0.5700 (Code 0.6109)
+wert|versuchgrillbruch|outdoorsman|0.5320|0.2440|0.4586|0.5000|0.4983|stimmt|95 %: 0.3851 bis 0.5463; Urteil mit 99,9 %: 0.3420 bis 0.6151; Anteil Stock gebrochen je Versuch, 500 Versuche je Fall, ISBBQLightFromKindle
+wert|versuchlager|wildernessknowledge|0.5440|0.7520|1.3824|1.5000|1.5000|stimmt|95 %: 1.2574 bis 1.5197; Urteil mit 99,9 %: 1.1791 bis 1.6206; Anteil angezuendet je Versuch, 500 Versuche je Fall, ISLightFromKindle; Zeit je Feuer mit/ohne 0.6690 (Code 0.6109)
+wert|versuchlager|formerscout|0.5440|0.7760|1.4265|1.5000|1.5000|stimmt|95 %: 1.2997 bis 1.5656; Urteil mit 99,9 %: 1.2202 bis 1.6676; Anteil angezuendet je Versuch, 500 Versuche je Fall, ISLightFromKindle; Zeit je Feuer mit/ohne 0.6513 (Code 0.6109)
+wert|versuchlagerbruch|wildernessknowledge|0.4560|0.2480|0.5439|0.5000|0.4983|stimmt|95 %: 0.4542 bis 0.6512; Urteil mit 99,9 %: 0.4019 bis 0.7359; Anteil Stock gebrochen je Versuch, 500 Versuche je Fall, ISLightFromKindle
+wert|versuchlagerbruch|formerscout|0.4560|0.2240|0.4912|0.5000|0.4983|stimmt|95 %: 0.4066 bis 0.5935; Urteil mit 99,9 %: 0.3576 bis 0.6748; Anteil Stock gebrochen je Versuch, 500 Versuche je Fall, ISLightFromKindle
+wert|gegenprobegrill|wildernessknowledge|0.4680|0.5360|1.1453|-|1.0000|stimmt|95 %: 1.0117 bis 1.2965; Urteil mit 99,9 %: 0.9300 bis 1.4104; Anteil angezuendet je Versuch, 500 Versuche je Fall, ISBBQLightFromKindle; Gegenprobe, Soll 1.0 aus dem Code
+wert|gegenprobelager|outdoorsman|0.5440|0.5300|0.9743|-|1.0000|stimmt|95 %: 0.8683 bis 1.0931; Urteil mit 99,9 %: 0.8031 bis 1.1820; Anteil angezuendet je Versuch, 500 Versuche je Fall, ISLightFromKindle; Gegenprobe, Soll 1.0 aus dem Code
+wert|kochgrube|outdoorsman|-|-|-|-|1.0000|nicht messbar|keine Kochgrube (camping_03_16 oder camping_03_19) im Umkreis von 12 Feldern; B2 unbeantwortet, eine Kochgrube daneben bauen und den Test wiederholen
+
+[kochgrube] x|y|z|sprite|klasse|feuerobjekt|lagerfeuer|aktion|name
+# Umkreis 12 Felder um die Figur; feuerobjekt = isFireInteractionObject (ISBBQLightFromKindle, Outdoorsman), lagerfeuer = CCampfireSystem (ISLightFromKindle, Wilderness Knowledge und Former Scout)
+# kein camping_-Objekt im Umkreis; eine Kochgrube daneben bauen und den Test wiederholen

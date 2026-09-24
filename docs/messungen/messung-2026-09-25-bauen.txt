@@ -1,0 +1,13 @@
+# Bauen mit Handy: Bauzeit aus dem Baumenue ohne und mit Handy (A4)
+# Mess-Mod 6.51.0
+# Build 42.20
+# ISBuildIsoEntity:new und ISBuildAction:new wie in ISBuildingObject:tryBuild, maxTime gelesen; sofort: erster Tick der Aktionsschleife mit zur Baustelle gedrehter Figur: waitToStart, start (currentTime 0), finished (1 = fertig in dem Tick, in dem die Figur fertig gedreht ist)
+# soll laut Code: Rezeptzeit ohne, Rezeptzeit - 50 mit Handy (ISBuildAction.lua Z. 268-271); Wand dazu Faktor mit/ohne gegen TF_Static handy/buildtime
+
+[ergebnis]
+ergebnis|werte=3|stimmen=3|weichen_ab=0|nicht_messbar=0
+
+[bauen] wert|fall|bau|rezeptzeit|ohne|mit|soll_ohne|soll_mit|faktor|soll_mod|urteil|notiz
+wert|moebel|Wood_Chair_Lvl1|50.0000|50.0000|0.0000|50.0000|0.0000|-|-|stimmt|mit Handy 0: sofort fertig
+wert|wand|WoodenWallLvl1|200.0000|200.0000|150.0000|200.0000|150.0000|0.7500|0.7500|stimmt
+wert|sofort|Wood_Chair_Lvl1|50.0000|0.0000|1.0000|0.0000|1.0000|-|-|stimmt

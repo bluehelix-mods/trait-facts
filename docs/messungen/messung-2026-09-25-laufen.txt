@@ -1,0 +1,29 @@
+# Laufen: Ausdauerverlust beim Rennen, Messung an einer lebenden Figur
+# Mess-Mod 6.51.0
+# Build 42.20
+# je Phase 400 Ticks Rennen (Shift, nicht Sprint); Ausdauer in jedem Tick auf 0.9; God Mode aus
+# Last (Stufe HEAVY_LOAD) in allen gezaehlten Ticks: 0
+# rate = Summe Abzug / Summe Multiplier; median = Median der Einzelwerte Abzug / Multiplier
+# faktor = Phase mit Trait / Mittel der Nachbarphasen ohne, Toleranz 2 %; faktor_median ebenso aus median
+# laut Code: IsoPlayer.updateEndurance enddelta 1.4, Overweight 2.9, Athletic 0.8 (schlaegt Overweight); asth 0.7, Asthmatic 1.0
+# Fitness fest auf 5 (getPacingMod, IsoGameCharacter:4196): Ticks mit anderer Stufe und mit Hitzschlag (HYPERTHERMIA 4 verdoppelt, :4231-4236) zaehlen nicht; andere Stufe gesehen: nie
+
+[ergebnis]
+ergebnis|werte=4|stimmen=4|weichen_ab=0|nicht_messbar=0|phasen=9
+
+[werte] wert|trait|faktor|faktor_median|soll_mod|soll_code|urteil|phasen
+wert|overweight|2.0713|2.0713|2.0700|2.0714|stimmt|1
+wert|athletic|0.5715|0.5715|0.5700|0.5714|stimmt|1
+wert|asthmatic|1.4286|1.4286|1.4300|1.4286|stimmt|1
+wert|overweight+athletic|0.5715|0.5716|-|0.5714|stimmt|1
+
+[phasen] phase|nr|gruppe|ticks|rate|median|last|nicht_gezaehlt|davon_fitness|davon_hitze
+phase|1|ohne|400|0.0000351652|0.0000351659|0|0|0|0
+phase|2|dick|400|0.0000728379|0.0000728402|0|0|0|0
+phase|3|ohne|400|0.0000351639|0.0000351654|0|0|0|0
+phase|4|athlet|400|0.0000200947|0.0000200987|0|0|0|0
+phase|5|ohne|400|0.0000351645|0.0000351664|0|0|0|0
+phase|6|atem|400|0.0000502340|0.0000502342|0|0|0|0
+phase|7|ohne|400|0.0000351603|0.0000351602|0|0|0|0
+phase|8|beide|400|0.0000200957|0.0000200991|0|0|0|0
+phase|9|ohne|400|0.0000351618|0.0000351600|0|0|0|0
