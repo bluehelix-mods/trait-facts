@@ -62,7 +62,7 @@ TFMeasure.Fenster = nil
 -- Mod-Waehler zeigt nur mod.info an, und eine Nummer, die nie wandert, sagt
 -- nichts darueber, welcher Code wirklich geladen ist. Deshalb steht sie
 -- zusaetzlich in der ersten Logzeile und im Kopf des Berichts.
-TFMeasure.VERSION = "6.46.0"
+TFMeasure.VERSION = "6.47.0"
 
 --- Ausgabedatei, liegt danach in Zomboid/Lua/.
 TFMeasure.FILE = "TraitFacts_measure.txt"
@@ -1175,17 +1175,58 @@ local function schalterSetzen(player, cheat, an)
     return ok
 end
 
+--- Die vier Schalter ueber den Neustart hinaus (seit 6.47.0, Wunsch vom
+-- 24.09.2026). Bis 6.46.0 schaltete jeder Start und jedes Neuladen alle an;
+-- mit God Mode rechnet das Spiel das Tragegewicht nicht nach, und eine
+-- Messung nach dem Laden las 8 statt 18. Jetzt steht in
+-- Zomboid/Lua/TraitFacts_testfigur.txt, was im Messfenster zuletzt galt,
+-- eine Zeile je Schalter ("god=0"). Ohne Datei oder ohne Zeile: an, wie
+-- bisher. Tests, die einen Schalter brauchen, setzen ihn weiter selbst und
+-- geben danach diesen Stand zurueck (cheatStand).
+TFMeasure.CHEATFILE = "TraitFacts_testfigur.txt"
+
+function TFMeasure.cheatsLesen()
+    local gemerkt = {}
+    pcall(function()
+        local reader = getFileReader(TFMeasure.CHEATFILE, false)
+        if not reader then return end
+        while true do
+            local zeile = reader:readLine()
+            if zeile == nil then break end
+            local id, wert = string.match(zeile, "^([%w_]+)=([01])$")
+            if id then gemerkt[id] = wert == "1" end
+        end
+        reader:close()
+    end)
+    return gemerkt
+end
+
+function TFMeasure.cheatsSchreiben()
+    pcall(function()
+        local writer = getFileWriter(TFMeasure.CHEATFILE, true, false)
+        local nl = (lineSeparator and lineSeparator()) or "\r\n"
+        writer:write("# Trait Facts Measure: Schalter der Testfigur, zuletzt im Messfenster" .. nl)
+        for _, cheat in ipairs(TFMeasure.CHEATS) do
+            writer:write(cheat.id .. "=" .. (TFMeasure.cheatStand[cheat.id] == false and "0" or "1") .. nl)
+        end
+        writer:close()
+    end)
+end
+
 function TFMeasure.ungestoert(player)
     player = player or getSpecificPlayer(0)
     if not player then return {} end
+    local gemerkt = TFMeasure.cheatsLesen()
     local gesetzt = {}
     for _, cheat in ipairs(TFMeasure.CHEATS) do
-        local ok = schalterSetzen(player, cheat, true)
-        TFMeasure.cheatStand[cheat.id] = ok
-        gesetzt[#gesetzt + 1] = cheat.setter .. (ok and " an" or " fehlt")
+        local an = gemerkt[cheat.id] ~= false
+        local ok = schalterSetzen(player, cheat, an)
+        TFMeasure.cheatStand[cheat.id] = ok and an
+        gesetzt[#gesetzt + 1] = cheat.setter .. (ok and (an and " an" or " aus") or " fehlt")
     end
-    TFMeasure.ausdauerAus = false
-    log("Testfigur: " .. table.concat(gesetzt, ", ") .. ", Ausdauer wird jeden Tick aufgefuellt.")
+    TFMeasure.ausdauerAus = TFMeasure.cheatStand.ausdauer ~= true
+    log("Testfigur: " .. table.concat(gesetzt, ", ")
+        .. (TFMeasure.ausdauerAus and "." or ", Ausdauer wird jeden Tick aufgefuellt."))
     return gesetzt
 end
 
@@ -11419,6 +11460,7 @@ function TFMeasure.cheatSetzen(id, an)
             if id == "ausdauer" then TFMeasure.ausdauerAus = not an end
         end
     end
+    TFMeasure.cheatsSchreiben()
 end
 
 --- ---------------------------------------------------------------------------

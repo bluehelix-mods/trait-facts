@@ -1403,6 +1403,18 @@ als Kind in sie einhängt und je Bild an seinen Platz setzt, auch nach dem
 Ziehen der Konsole. Die Zeilen des Spiels selbst („LOG : General …“) tragen
 keine Uhrzeit, nur die Bildnummer; das setzt Java, nicht der Mod.
 
+Seit 6.47.0 fehlen in der Kopie die kurzen Doppel der Lua-Meldungen: die
+Konsole zeigt jede Lua-Ausgabe zweimal, als „:<Tab>Text“ und als
+„LOG  : Lua  f:N> :<Tab>Text“; kopiert wird nur die LOG-Zeile.
+
+## Schalter der Testfigur über den Neustart (seit 6.47.0)
+
+God Mode, unsichtbar, „Zombies greifen nicht an“ und „Ausdauer unbegrenzt“
+gelten, wie sie im Messfenster zuletzt standen, auch nach Neustart und Num 9;
+der Stand steht in `Zomboid/Lua/TraitFacts_testfigur.txt`. Ohne die Datei ist
+alles an wie bisher. Anlass: mit God Mode rechnet das Spiel das Tragegewicht
+nicht nach, eine Messung nach dem Laden las 8 statt 18.
+
 ## Neu laden ohne Spielneustart
 
 **F9** lädt das Mess-Mod zur Laufzeit neu und schaltet die Tests wieder scharf.

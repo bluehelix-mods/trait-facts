@@ -10,9 +10,13 @@
 -- Zeile "Output Log", ausserhalb des Randes, an dem die Konsole sich ziehen
 -- laesst, und folgt ihr je Bild, auch nach dem Ziehen.
 --
--- Kopiert wird der ganze Text des Output Logs, so wie die Konsole ihn fuehrt
--- (UITextBox2:getText): alles, was seit dem Start dort erschienen ist, auch
--- die Zeilen anderer Mods und des Spiels.
+-- Kopiert wird der ganze Text des Output Logs (UITextBox2:getText): alles,
+-- was seit dem Start dort erschienen ist, auch die Zeilen anderer Mods und
+-- des Spiels. Seit 6.47.0 ohne die Doppel der Lua-Meldungen: die Konsole
+-- bekommt jede Lua-Ausgabe zweimal, direkt als ":<Tab>Text" und als
+-- "LOG  : Lua  f:N> :<Tab>Text". Die kurze Zeile faellt weg, wenn dieselbe
+-- als LOG-Zeile im Text steht; die ohne LOG-Gegenstueck (vor dem Start des
+-- Logs) bleiben.
 
 TFMeasureKonsole = TFMeasureKonsole or {}
 local K = TFMeasureKonsole
@@ -47,6 +51,28 @@ function K.ausgabe(konsole)
     return beste
 end
 
+--- Der Text ohne die kurzen Doppel der Lua-Meldungen (siehe oben).
+function K.ohneDoppel(text)
+    local zeilen, lang = {}, {}
+    local pos = 1
+    while pos <= #text do
+        local stop = string.find(text, "\n", pos, true) or (#text + 1)
+        zeilen[#zeilen + 1] = string.sub(text, pos, stop - 1)
+        pos = stop + 1
+    end
+    for _, zeile in ipairs(zeilen) do
+        local inhalt = string.match(zeile, "^LOG%s+:%s+Lua%s+f:%d+>%s*:\t(.*)$")
+        if inhalt then lang[inhalt] = true end
+    end
+    local raus = {}
+    for _, zeile in ipairs(zeilen) do
+        local inhalt = string.match(zeile, "^:\t(.*)$")
+        if not (inhalt and lang[inhalt]) then raus[#raus + 1] = zeile end
+    end
+    local ende = (string.sub(text, -1) == "\n") and "\n" or ""
+    return table.concat(raus, "\n") .. ende
+end
+
 --- Legt den Output Log in die Zwischenablage. @return number|nil  Zeilen
 function K.kopieren(konsole)
     local feld = K.ausgabe(konsole)
@@ -54,6 +80,7 @@ function K.kopieren(konsole)
     local text = nil
     pcall(function() text = feld:getText() end)
     if type(text) ~= "string" then return nil end
+    text = K.ohneDoppel(text)
     local ok = pcall(function() Clipboard.setClipboard(text) end)
     if not ok then return nil end
     local _, zeilen = string.gsub(text, "\n", "")
