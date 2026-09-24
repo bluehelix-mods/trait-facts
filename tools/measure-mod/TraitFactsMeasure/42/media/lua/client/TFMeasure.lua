@@ -62,7 +62,7 @@ TFMeasure.Fenster = nil
 -- Mod-Waehler zeigt nur mod.info an, und eine Nummer, die nie wandert, sagt
 -- nichts darueber, welcher Code wirklich geladen ist. Deshalb steht sie
 -- zusaetzlich in der ersten Logzeile und im Kopf des Berichts.
-TFMeasure.VERSION = "6.45.0"
+TFMeasure.VERSION = "6.46.0"
 
 --- Ausgabedatei, liegt danach in Zomboid/Lua/.
 TFMeasure.FILE = "TraitFacts_measure.txt"
@@ -194,16 +194,11 @@ TFMeasure.DEFINITION_LISTS = {
     { id = "excludes", call = function(d) return d:getMutuallyExclusiveTraits() end },
 }
 
---- Meldungen mit Uhrzeit, gemerkt zum Kopieren (seit 6.45.0, Wunsch vom
--- 24.09.2026). Jede Meldung des Mess-Mods geht ueber TFMeasure.melde: in
--- die Command Console und console.txt wie bisher, jetzt mit der Uhrzeit
--- (Stunde, Minute, Sekunde) hinter dem Kennzeichen, und in eine Liste der
--- letzten LOG_MAX Zeilen. Die Command Console ist Java (UIDebugConsole);
--- einen Knopf kann das Mod dort nicht anbringen. Kopiert wird darum aus
--- dieser Liste, ueber den Knopf "Log kopieren" im Messfenster
--- (TFMeasure.logKopieren).
-TFMeasure.LOG_MAX = 2000
-TFMeasure.logZeilen = TFMeasure.logZeilen or {}
+--- Meldungen mit Uhrzeit (seit 6.45.0, Wunsch vom 24.09.2026). Jede Meldung
+-- des Mess-Mods geht ueber TFMeasure.melde: in die Command Console und
+-- console.txt wie bisher, jetzt mit der Uhrzeit (Stunde, Minute, Sekunde)
+-- hinter dem Kennzeichen. Kopieren laesst sich der Output Log seit 6.46.0
+-- in der Command Console selbst (TFMeasureKonsole).
 
 --- Die Uhrzeit des Rechners als "HH:MM:SS". os.date gibt es in Kahlua
 -- (Vanilla ISUsersList); sonst Calendar mit den Feldnummern von
@@ -219,29 +214,10 @@ function TFMeasure.uhrzeit()
     return "--:--:--"
 end
 
---- Gibt eine Meldung aus und merkt sie.
+--- Gibt eine Meldung mit Uhrzeit aus.
 -- @param kennung  z.B. "[TraitFactsMeasure]" oder "[TraitFactsMeasure] Menue:"
 function TFMeasure.melde(kennung, text)
-    local zeile = tostring(kennung) .. " " .. TFMeasure.uhrzeit() .. " " .. tostring(text)
-    print(zeile)
-    local liste = TFMeasure.logZeilen
-    liste[#liste + 1] = zeile
-    if #liste > TFMeasure.LOG_MAX then table.remove(liste, 1) end
-end
-
---- Die gemerkten Meldungen als ein Text, eine je Zeile.
-function TFMeasure.logText()
-    return table.concat(TFMeasure.logZeilen, "\n")
-end
-
---- Legt die gemerkten Meldungen in die Zwischenablage.
--- @return number|nil  Zahl der Zeilen, nil ohne Zwischenablage
-function TFMeasure.logKopieren()
-    if not (Clipboard and Clipboard.setClipboard) then return nil end
-    local text = TFMeasure.logText()
-    local ok = pcall(function() Clipboard.setClipboard(text) end)
-    if not ok then return nil end
-    return #TFMeasure.logZeilen
+    print(tostring(kennung) .. " " .. TFMeasure.uhrzeit() .. " " .. tostring(text))
 end
 
 local function log(text)
@@ -1716,7 +1692,8 @@ local function eigeneDateien()
 end
 
 --- Die Dateien des Mess-Mods neben dieser hier.
-TFMeasure.GESCHWISTER = { "TFMeasureMenu.lua", "TFMeasureScreen.lua", "TFMeasureNachstellen.lua", "TFMeasureBefehle.lua" }
+TFMeasure.GESCHWISTER = { "TFMeasureMenu.lua", "TFMeasureScreen.lua", "TFMeasureNachstellen.lua", "TFMeasureBefehle.lua",
+                          "TFMeasureKonsole.lua" }
 
 --- Laedt das Mess-Mod neu und schaltet die Tests wieder scharf.
 --
@@ -11606,13 +11583,6 @@ local function fensterKlasse()
         self.kettenKnopf:initialise()
         self.kettenKnopf.tooltip = T("knopf_kette_tipp")
         self:addChild(self.kettenKnopf)
-        -- Seit 6.45.0: die Meldungen des Mess-Mods in die Zwischenablage.
-        local logTitel = T("knopf_log")
-        self.logKnopf = ISButton:new(LISTE + 400, 0, textbreite(UIFont.Small, logTitel) + 24, knopfHoehe,
-            logTitel, self, F.onLogKopieren)
-        self.logKnopf:initialise()
-        self.logKnopf.tooltip = T("knopf_log_tipp")
-        self:addChild(self.logKnopf)
         self.cheatBoxen = {}
         local x = RAND + textbreite(UIFont.Small, T("fuss_testfigur")) + 12
         for _, cheat in ipairs(TFMeasure.CHEATS) do
@@ -11637,16 +11607,6 @@ local function fensterKlasse()
 
     function F:onKette()
         TFMeasure.ketteStarten()
-    end
-
-    function F:onLogKopieren()
-        local zeilen = TFMeasure.logKopieren()
-        local player = getPlayer and getPlayer()
-        if zeilen then
-            halo(player, T("log_kopiert", zeilen), true)
-        else
-            halo(player, T("log_nicht_kopiert"), false)
-        end
     end
 
     function F:onCheat(index, an, id)
@@ -11893,11 +11853,6 @@ local function fensterKlasse()
                 self.kettenKnopf:setY(y)
                 local kettenFrei = lauf == nil and TFMeasure.startGewuenscht == nil and TFMeasure.kette == nil
                 if self.kettenKnopf.enable ~= kettenFrei then self.kettenKnopf:setEnable(kettenFrei) end
-            end
-            if self.logKnopf then
-                local vorn = self.kettenKnopf or self.stopKnopf
-                self.logKnopf:setX(vorn:getX() + vorn:getWidth() + 8)
-                self.logKnopf:setY(y)
             end
             y = y + self.startKnopf:getHeight() + 8
         end
