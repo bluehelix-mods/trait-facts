@@ -369,10 +369,13 @@ end
 -- andere Tooltip-Schrift ergibt einen anderen Block. Beides ist der
 -- Schluessel beziehungsweise leert den Speicher.
 local cache = {}
+-- Die Streifen je Block im Speicher (TF.Tooltip.rowSpans), fuer rememberSpans.
+local cacheSpans = {}
 
 --- Vergisst alle fertigen Bloecke; TF.Probe.run ruft das vor jeder Messung.
 function TF.Tooltip.forget()
     cache = {}
+    cacheSpans = {}
     -- Dieselben Grundlagen tragen den Suchtext (TF_Search).
     if TF.Search and TF.Search.forget then TF.Search.forget() end
 end
@@ -639,27 +642,105 @@ local function build(traitDef, key, font, view)
 
     if #lines == 0 and #deadLines == 0 and #relations == 0 and #top == 0 and not deadGhost then return nil end
 
+    -- Der Block entsteht aus Stuecken mit ihrer Art, damit die Streifen
+    -- (seit 0.14.8, TF.Tooltip.drawStripes) wissen, welche Zeilen zu welcher
+    -- Wertzeile gehoeren; "sep" sind die Trenner dazwischen.
+    local parts = { { text = GAP, kind = "sep" } }
+    local function put(text, kind) parts[#parts + 1] = { text = text, kind = kind } end
     -- Die Leerzeile vorn trennt den Block von der Vanilla-Beschreibung; die
     -- Kopfzeilen stehen ohne Luecke ueber den Wertzeilen, wie im Mockup.
-    local body = {}
-    for _, line in ipairs(top) do body[#body + 1] = line end
-    for _, line in ipairs(lines) do body[#body + 1] = line end
-    local block = GAP .. table.concat(body, NL)
+    local filled = false
+    for _, line in ipairs(top) do
+        if filled then put(NL, "sep") end
+        put(line, "top")
+        filled = true
+    end
+    for _, line in ipairs(lines) do
+        if filled then put(NL, "sep") end
+        put(line, "row")
+        filled = true
+    end
     -- Eine Leerzeile vor jedem weiteren Abschnitt, aber nur, wenn darueber
     -- schon etwas steht: sonst klafften zwei Luecken uebereinander.
-    local filled = #body > 0
     if #deadLines > 0 then
-        local head = TF.fmt.join({ { text = TF.fmt.text("UI_TF_tip_nodead") .. ":", color = "note" } })
-        block = block .. (filled and GAP or "") .. head .. NL .. table.concat(deadLines, NL)
+        if filled then put(GAP, "sep") end
+        put(TF.fmt.join({ { text = TF.fmt.text("UI_TF_tip_nodead") .. ":", color = "note" } }), "heading")
+        for _, line in ipairs(deadLines) do
+            put(NL, "sep")
+            put(line, "dead")
+        end
         filled = true
     elseif deadGhost then
-        block = block .. (filled and GAP or "") .. TF.fmt.join({ { text = TF.fmt.text("UI_TF_tip_nodead"), color = "ghost" } })
+        if filled then put(GAP, "sep") end
+        put(TF.fmt.join({ { text = TF.fmt.text("UI_TF_tip_nodead"), color = "ghost" } }), "heading")
         filled = true
     end
     if #relations > 0 then
-        block = block .. (filled and GAP or "") .. table.concat(relations, NL)
+        if filled then put(GAP, "sep") end
+        for i, line in ipairs(relations) do
+            if i > 1 then put(NL, "sep") end
+            put(line, "relation")
+        end
     end
-    return block
+    local texts = {}
+    for i, part in ipairs(parts) do texts[i] = part.text end
+    return table.concat(texts), TF.Tooltip.rowSpans(parts)
+end
+
+--- Wie viele neue Zeilen ein Stueck Rich Text beginnt: je <LINE> und je
+-- <BR> eine, und je Zeilenumbruch, den paginate zu <LINE> macht. Die
+-- Leerzeile eines <BR> hat kein Segment und damit keinen eigenen lineY
+-- (Vanilla paginate: nur ein Tag oder ein Wort legt ein Segment an); sie
+-- zaehlt hier darum nicht mit, genau wie TF.Panel.lineYs sie nicht findet.
+local function lineBreaks(text)
+    local count = 0
+    for _, token in ipairs({ "<LINE>", "<BR>", "\n" }) do
+        local at = 1
+        while true do
+            local found = string.find(text, token, at, true)
+            if not found then break end
+            count = count + 1
+            at = found + #token
+        end
+    end
+    return count
+end
+
+--- Die Streifen eines Blocks, von hinten gezaehlt (seit 0.14.8).
+--
+-- Der Block steht im Tooltip immer am Ende, hinter der Vanilla-Beschreibung
+-- (TF_Hooks decorate, TF_CharWindow tipText). Wie viele Zeilen die
+-- Beschreibung ergibt, weiss nur das Panel: sie kann selbst umbrechen. Von
+-- hinten gezaehlt ist die Lage jeder Zeile des Blocks davon unabhaengig; der
+-- Block selbst bricht nicht um, seine Spalten sind vorab umbrochen und weit
+-- schmaler als maxLineWidth (1000 px mal Schriftmass, ISToolTip).
+--
+-- Wie in der Uebersicht (TF.Panel.compose) je Abschnitt neu: die erste
+-- Wertzeile bleibt frei, die zweite bekommt einen Streifen, und so fort;
+-- unter "No effect in the game" leiser (TF.Panel.STRIPE_ALPHA_QUIET).
+-- Beschreibung, Kopfzeilen, Ueberschrift und Ausschluesse bleiben frei.
+-- @param parts  Liste { text, kind } in der Reihenfolge des Blocks
+-- @return table { lines = Zeilen des Blocks, rows = { { back, backTo, stripe, dead, gapAfter } } }
+--   back und backTo zaehlen von der letzten Zeile (0) nach oben: die erste
+--   und die letzte Zeile der Wertzeile.
+function TF.Tooltip.rowSpans(parts)
+    local line, rows, stripe, section = 0, {}, false, nil
+    for index, part in ipairs(parts) do
+        local first = line
+        line = line + lineBreaks(part.text)
+        if part.kind == "row" or part.kind == "dead" then
+            if part.kind ~= section then stripe, section = false, part.kind end
+            local following = parts[index + 1]
+            rows[#rows + 1] = { from = first, to = line, stripe = stripe, dead = part.kind == "dead",
+                                gapAfter = following ~= nil and following.text == GAP }
+            stripe = not stripe
+        end
+    end
+    for _, entry in ipairs(rows) do
+        entry.back, entry.backTo = line - entry.from, line - entry.to
+        entry.from, entry.to = nil, nil
+    end
+    return { lines = line + 1, rows = rows }
 end
 
 -- Passt der Block nicht in die Hoehe des Bildschirms, eine Schrift kleiner
@@ -688,22 +769,112 @@ end
 
 --- Der Block, notfalls in kleinerer Schrift. Drei Viertel der Bildschirmhoehe
 -- bleiben ihm; der Rest gehoert der Vanilla-Beschreibung und dem Rand.
-local function fitHeight(traitDef, key, block, font, screenH)
-    if not block or not screenH then return block end
+-- Die Streifen reisen mit dem zweiten Rueckgabewert (TF.Tooltip.rowSpans);
+-- das <SIZE:>-Tag davor beginnt keine Zeile und aendert an ihnen nichts.
+local function fitHeight(traitDef, key, block, font, screenH, spans)
+    if not block or not screenH then return block, spans end
     local limit = screenH * 0.75
     local tag = nil
     while blockHeight(block, font) > limit do
         local smaller, smallerTag = smallerFont(font)
         if not smaller then break end
-        local rebuilt = build(traitDef, key, smaller)
+        local rebuilt, rebuiltSpans = build(traitDef, key, smaller)
         if not rebuilt then break end
-        block, font, tag = rebuilt, smaller, smallerTag
+        block, font, tag, spans = rebuilt, smaller, smallerTag, rebuiltSpans
     end
-    if not tag then return block end
+    if not tag then return block, spans end
     -- Hinter die Leerzeile, die den Block von der Beschreibung trennt:
     -- TF.stripLeadingGap erkennt sie nur am Anfang.
-    if block:sub(1, #GAP) == GAP then return GAP .. tag .. block:sub(#GAP + 1) end
-    return tag .. block
+    if block:sub(1, #GAP) == GAP then return GAP .. tag .. block:sub(#GAP + 1), spans end
+    return tag .. block, spans
+end
+
+--- Die Streifen je fertigem Block, unter dem Block ohne fuehrende Leerzeile:
+-- so steht er am Ende jedes Tooltips, der ihn traegt, mit oder ohne
+-- Vanilla-Beschreibung davor (TF.Tooltip.rowsFor). Die Streifen haengen nur
+-- am Text des Blocks; ein Eintrag wird darum nie falsch, nur alt. Er bleibt
+-- auch ueber TF.Tooltip.forget hinaus stehen, denn ein Listeneintrag traegt
+-- seinen Text weiter, bis die Liste neu angereichert wird. Damit die Tabelle
+-- nicht ohne Ende waechst, beginnt sie ab MAX_STRIPED neu.
+local striped, stripedCount = {}, 0
+local MAX_STRIPED = 2000
+
+local function rememberSpans(block, spans)
+    if not block or not spans then return end
+    local suffix = TF.stripLeadingGap(block)
+    if striped[suffix] then return end
+    if stripedCount >= MAX_STRIPED then striped, stripedCount = {}, 0 end
+    striped[suffix] = spans
+    stripedCount = stripedCount + 1
+end
+
+--- Die Streifen des Blocks, mit dem ein Tooltip-Text endet; nil, wenn er mit
+-- keinem bekannten Block endet (Startskill-Liste, fremde Tooltips). Bei
+-- mehreren Treffern gilt der laengste Block.
+function TF.Tooltip.rowsFor(text)
+    if type(text) ~= "string" or text == "" then return nil end
+    local best, bestLength = nil, 0
+    for suffix, spans in pairs(striped) do
+        local n = #suffix
+        if n > bestLength and n <= #text and string.sub(text, -n) == suffix then
+            best, bestLength = spans, n
+        end
+    end
+    return best
+end
+
+--- Die waagerechte Lage eines Elements auf dem Bildschirm.
+local function absoluteX(el)
+    if el.getAbsoluteX then
+        local ok, x = pcall(el.getAbsoluteX, el)
+        if ok and type(x) == "number" then return x end
+    end
+    return el.x or 0
+end
+
+--- Zeichnet die Streifen hinter die Wertzeilen eines Trait-Tooltips (seit
+-- 0.14.8, Wunsch nach den Screenshots vom 24.09.2026): je Wertzeile ein
+-- Streifen, abwechselnd wie in der Uebersicht und ueber alle Zeilen, die sie
+-- umbrochen belegt. Gezeichnet wird von TF.Panel.drawStripes, mit derselben
+-- Farbe und Deckung wie dort; nur die wirkungslosen Zeilen leiser.
+--
+-- Aufgerufen im prerender des descriptionPanel (TF.darkenTooltip): nach
+-- Vanillas Grund und unserem dunkleren (drawBackdrop), vor dem Text.
+-- ISToolTip:renderContents hat das Panel zu diesem Zeitpunkt schon an seine
+-- Stelle gesetzt, und layoutContents hat es in diesem Bild neu umbrochen.
+-- Die Breite ist die des Tooltips innerhalb seines Rahmens, nicht die des
+-- Panels: das ist so breit wie seine breiteste Zeile und steht 10 px vom
+-- Rand weg. Am Text aendert sich nichts, Breite und Hoehe misst Vanilla wie
+-- bisher.
+function TF.Tooltip.drawStripes(tip, panel)
+    if not (tip and panel and TF.Panel and TF.Panel.drawStripes and TF.Panel.lineYs) then return end
+    -- Welche Streifen, einmal je Text: dieselbe Beschreibung steht meist
+    -- viele Bilder lang.
+    if panel.tfStripeText ~= panel.text then
+        panel.tfStripeText = panel.text
+        panel.tfStripeRows = TF.Tooltip.rowsFor(panel.text)
+    end
+    local info = panel.tfStripeRows
+    if not info then return end
+    local ys = TF.Panel.lineYs(panel)
+    if not ys then return end
+    local count = #ys
+    local spans = {}
+    for _, entry in ipairs(info.rows) do
+        if entry.stripe then
+            local from, to = count - entry.back, count - entry.backTo
+            -- Weniger Zeilen als der Block braucht: dann stimmt die Zaehlung
+            -- nicht, und lieber kein Streifen als ein falscher.
+            if from < 1 then return end
+            spans[#spans + 1] = { kind = "entry", stripe = true, from = from, to = to, gapAfter = entry.gapAfter,
+                                  alpha = entry.dead and TF.Panel.STRIPE_ALPHA_QUIET or TF.Panel.STRIPE_ALPHA }
+        end
+    end
+    if #spans == 0 then return end
+    local x = absoluteX(tip) + 1 - absoluteX(panel)
+    local width = (tip.getWidth and tip:getWidth() or tip.width or 0) - 2
+    if width <= 0 then return end
+    TF.Panel.drawStripes(panel, spans, { x = x, width = width })
 end
 
 --- Baut den Zusatzblock fuer einen Trait.
@@ -734,11 +905,17 @@ function TF.buildBlock(traitDef)
     local known = cache[cacheKey]
     if known ~= nil then
         -- false steht fuer "nichts zu zeigen", damit auch das nicht jedes
-        -- Mal neu gesucht wird.
+        -- Mal neu gesucht wird. Die Streifen noch einmal ablegen: ihre
+        -- Tabelle kann inzwischen neu begonnen haben (MAX_STRIPED).
+        if known then rememberSpans(known, cacheSpans[cacheKey]) end
         return known or nil
     end
-    local block = fitHeight(traitDef, key, build(traitDef, key, font), font, screenH)
+    local built, spans = build(traitDef, key, font)
+    local block
+    block, spans = fitHeight(traitDef, key, built, font, screenH, spans)
+    rememberSpans(block, spans)
     cache[cacheKey] = block or false
+    cacheSpans[cacheKey] = spans
     return block
 end
 

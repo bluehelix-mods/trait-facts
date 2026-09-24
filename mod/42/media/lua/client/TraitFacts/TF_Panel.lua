@@ -29,6 +29,11 @@ local SCROLLBAR_WIDTH = 17
 -- dem halbtransparenten Schwarz des Panels. "Leicht" aus dem Mockup; "Hauch"
 -- (0.035) war im Spiel zu wenig Unterschied (Rueckmeldung vom 10.09.2026).
 local STRIPE_ALPHA = 0.05
+-- Seit 0.14.8 dieselben Streifen im Trait-Tooltip (TF.Tooltip.drawStripes):
+-- dort unter "No effect in the game" leiser, mit der Deckung "Hauch" aus
+-- demselben Mockup, damit eine graue Zeile nicht wie eine wirksame aussieht.
+TF.Panel.STRIPE_ALPHA = STRIPE_ALPHA
+TF.Panel.STRIPE_ALPHA_QUIET = 0.035
 
 -- Linie unter jeder Themen-Ueberschrift, in deren Blau (COLOR_HEADER), ein
 -- Pixel hoch. "Linie darunter" aus dem Mockup.
@@ -215,16 +220,11 @@ function TF.Panel.text(traits, withTitle, width, profession)
 end
 
 
---- Zeichnet die Streifen hinter jede zweite Zeile je Thema.
---
--- Laeuft im prerender, also nach Hintergrund und Rahmen und vor dem Text.
--- Der Stencil des Panels wird erst im render gesetzt; deshalb schneidet die
--- Funktion die Rechtecke selbst auf die Panelhoehe, sonst liefen sie beim
--- Scrollen ueber den Rand.
-local function drawStripes(panel)
-    local spans = panel.tfSpans
-    if not spans or not panel.lineY or not panel.lines then return end
-
+--- Die sichtbaren Zeilen eines Rich-Text-Panels: die verschiedenen lineY,
+-- aufsteigend. Oeffentlich seit 0.14.8, der Tooltip zaehlt damit seine
+-- Zeilen von hinten (TF.Tooltip.drawStripes).
+local function distinctYs(panel)
+    if type(panel.lineY) ~= "table" then return nil end
     -- Das Panel legt je Tag ein neues Segment an, nicht je Zeile: `lines`,
     -- `lineX` und `lineY` zaehlen Segmente (Vanilla paginate Z. 474,
     -- `lines = lines + 1` bei jedem Tag, auch bei <RGB:> und <SETX:>). Eine
@@ -250,6 +250,30 @@ local function drawStripes(panel)
         table.sort(ys)
         panel.tfYs, panel.tfYsFor = ys, panel.lineY
     end
+    return ys
+end
+TF.Panel.lineYs = distinctYs
+
+--- Zeichnet die Streifen hinter jede zweite Zeile je Thema.
+--
+-- Laeuft im prerender, also nach Hintergrund und Rahmen und vor dem Text.
+-- Der Stencil des Panels wird erst im render gesetzt; deshalb schneidet die
+-- Funktion die Rechtecke selbst auf die Panelhoehe, sonst liefen sie beim
+-- Scrollen ueber den Rand.
+--
+-- Seit 0.14.8 auch fuer den Trait-Tooltip (TF.Tooltip.drawStripes), mit
+-- demselben Rechteck in derselben Farbe. Dafuer darf der Aufrufer die Spannen
+-- selbst reichen (sonst panel.tfSpans) und in `opts` die Waagerechte setzen:
+-- { x, width }, sonst die volle Panelbreite. Eine Spanne kann ihre Deckung
+-- tragen (alpha, sonst STRIPE_ALPHA) und gapAfter: nach ihr folgt eine
+-- Leerzeile aus <BR>, die keinen eigenen lineY hat. Der Abstand zur
+-- naechsten Zeile ist dann zwei Zeilen hoch, und der Streifen nimmt nur die
+-- Haelfte (<BR> rueckt um genau zwei Zeilenhoehen vor, Vanilla processCommand).
+local function drawStripes(panel, spans, opts)
+    spans = spans or panel.tfSpans
+    if not spans or not panel.lineY or not panel.lines then return end
+    local ys = distinctYs(panel)
+    if not ys then return end
 
     -- Hat das Panel mehr Zeilen erzeugt als der Text ergab, ist irgendwo eine
     -- Zelle doch umgebrochen, und ab dort saessen die Streifen daneben.
@@ -270,15 +294,18 @@ local function drawStripes(panel)
     local scroll = panel:getYScroll() or 0
     local top = panel.marginTop or 0
     local height = panel:getHeight()
-    local width = panel:getWidth()
+    local x = (opts and opts.x) or 0
+    local width = (opts and opts.width) or panel:getWidth()
     local manager = getTextManager and getTextManager()
     local lineHeight = (manager and manager.getFontHeight
         and manager:getFontHeight(panel.font)) or 0
     -- Die Hoehe einer Zeile ist der Abstand zur naechsten; die letzte hat
     -- keine, fuer sie gilt die Schrifthoehe.
     local function lineTop(k) return top + ys[k] end
-    local function lineBottom(k)
-        local h = (ys[k + 1] and (ys[k + 1] - ys[k])) or lineHeight
+    local function lineBottom(k, gapAfter)
+        local nextY = ys[k + 1]
+        if nextY and gapAfter then return top + ys[k] + (nextY - ys[k]) / 2 end
+        local h = (nextY and (nextY - ys[k])) or lineHeight
         return top + ys[k] + h
     end
     -- Ein Rechteck, auf den sichtbaren Ausschnitt beschnitten; nil, wenn
@@ -292,23 +319,24 @@ local function drawStripes(panel)
     end
     for _, span in ipairs(spans) do
         if ys[span.from] and ys[span.to] then
-            local bottom = lineBottom(span.to)
+            local bottom = lineBottom(span.to, span.gapAfter)
             if span.kind == "entry" and span.stripe then
                 local y0, y1 = clipped(lineTop(span.from), bottom)
                 if y0 then
-                    panel:drawRect(0, y0, width, y1 - y0, STRIPE_ALPHA, 1, 1, 1)
+                    panel:drawRect(x, y0, width, y1 - y0, span.alpha or STRIPE_ALPHA, 1, 1, 1)
                 end
             elseif span.kind == "header" then
                 -- Ein Pixel unter der Ueberschrift, in ihrem Blau.
                 local y0, y1 = clipped(bottom - 1, bottom)
                 if y0 then
-                    panel:drawRect(0, y0, width, y1 - y0, HEADER_LINE_ALPHA,
+                    panel:drawRect(x, y0, width, y1 - y0, HEADER_LINE_ALPHA,
                         HEADER_LINE_R, HEADER_LINE_G, HEADER_LINE_B)
                 end
             end
         end
     end
 end
+TF.Panel.drawStripes = drawStripes
 
 --- Ob ein Kaestchen ganz im sichtbaren Ausschnitt liegt. Inhaltskoordinaten
 -- wie in drawStripes: sichtbar ist der Inhalt von -scroll bis height - scroll.

@@ -72,6 +72,28 @@ local function drawTagBoxes(tip)
     end
 end
 
+--- Streifen hinter den Wertzeilen des Tooltips (seit 0.14.8), wie in der
+-- Uebersicht. ISToolTip:renderContents ruft descriptionPanel:prerender()
+-- und render() von Hand, nachdem es das Panel an seine Stelle gesetzt hat;
+-- im prerender liegen die Streifen ueber dem Grund (drawBackdrop lief davor)
+-- und unter dem Text. Die Instanz bekommt eine Huelle, die das Original
+-- zuerst ruft, einmal je Panel. Was gestreift wird, entscheidet
+-- TF.Tooltip.drawStripes; ein Tooltip ohne Trait-Facts-Block (Startskill-
+-- Liste) bleibt, wie er ist.
+local function stripeTooltip(tip)
+    local panel = tip.descriptionPanel
+    if type(panel) ~= "table" or panel.tfStriped or type(panel.prerender) ~= "function" then return end
+    panel.tfStriped = true
+    local prerender = panel.prerender
+    panel.prerender = function(p, ...)
+        local ergebnis = prerender(p, ...)
+        TF.safe("tooltip:stripes", function()
+            if TF.Tooltip and TF.Tooltip.drawStripes then TF.Tooltip.drawStripes(tip, p) end
+        end)
+        return ergebnis
+    end
+end
+
 --- Dunkelt den Tooltip genau dieser Liste ab und rahmt seine Kuerzel.
 --
 -- Der Tooltip entsteht erst beim ersten Mouseover, in
@@ -102,6 +124,7 @@ function TF.darkenTooltip(list)
                 TF.safe("tooltip:tags", drawTagBoxes, t)
                 return ergebnis
             end
+            stripeTooltip(tip)
         end
     end
 end

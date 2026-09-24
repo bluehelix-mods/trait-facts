@@ -28,7 +28,16 @@
 -- Spielerin und Spieler (playerNum) und kommt beim Zurueckwechseln wieder;
 -- fuer Spieler 1 (playerNum 0) steht sie ausserdem im Layout-Speicher des
 -- Spiels (layout.ini ueber ISLayoutManager, dort meldet Vanilla nur dieses
--- eine Fenster an) und gilt damit auch nach dem Neustart.
+-- eine Fenster an) und gilt damit auch nach dem Neustart. Welcher Reiter
+-- offen war, merken wir nicht (seit 0.14.8): nach dem Laden zeigt das
+-- Fenster, wenn Vanilla es wieder oeffnet, Vanillas Reiter.
+--
+-- Reiterleiste: Vanilla rechnet die Mindestbreite des Fensters aus seinen
+-- eigenen fuenf Reitern (createChildren, tabTotalWidth), und jeder Reiter
+-- setzt in render die Breite nach seinem Inhalt. Mit unserem sechsten war
+-- die Leiste in manchen Reitern breiter als das Fenster, und ISTabPanel
+-- zeigte Pfeile zum Blaettern (Befund im Spiel 24.09.2026). Seit 0.14.8 ist
+-- das Fenster nie schmaler als die ganze Leiste (guardTabStrip).
 --
 -- Aktualitaet: Traits aendern sich im Spiel (Gewicht, Stufen-Traits, Mods,
 -- die Traits vergeben). Der Reiter liest den Stand neu, wenn er sichtbar
@@ -89,6 +98,39 @@ local function setSize(el, w, h)
     if h and el:getHeight() ~= h then el:setHeight(h) end
 end
 
+--- Die Breite der ganzen Reiterleiste eines ISTabPanel, mit dem einen Pixel
+-- Rand links und rechts, den ISTabPanel:render und ensureVisible abziehen
+-- (inset = 1). Aus getWidthOfAllTabs, sonst wie dort nachgerechnet: je
+-- Reiter seine gemessene Breite (addView: Text in UIFont.Small plus
+-- tabPadX, waechst also mit der Schriftgroesse), dazwischen je 1 px.
+-- @return number  0 ohne Reiter
+local function stripWidth(tabs)
+    if type(tabs) ~= "table" or type(tabs.viewList) ~= "table" or #tabs.viewList == 0 then return 0 end
+    local all = nil
+    if tabs.getWidthOfAllTabs then
+        local ok, w = pcall(tabs.getWidthOfAllTabs, tabs)
+        if ok and type(w) == "number" then all = w end
+    end
+    if not all then
+        all = #tabs.viewList - 1
+        for _, entry in ipairs(tabs.viewList) do
+            all = all + ((tabs.equalTabWidth and tabs.maxLength) or entry.tabWidth or 0)
+        end
+    end
+    return math.ceil(all) + 2
+end
+CW.stripWidth = stripWidth
+
+--- Die kleinste Breite des Hauptfensters: die ganze Reiterleiste, dort, wo
+-- das ISTabPanel im Fenster steht. 0 fuer ein Fenster ohne Reiterleiste
+-- (ein abgerissener Reiter haengt allein in einem ISCollapsableWindow).
+local function tabStripMin(win)
+    local tabs = win and win.panel
+    if type(tabs) ~= "table" or type(tabs.viewList) ~= "table" then return 0 end
+    local x = (tabs.getX and tabs:getX()) or tabs.x or 0
+    return x + stripWidth(tabs)
+end
+
 local function titleBar(win)
     if win.titleBarHeight then return win:titleBarHeight() end
     return 16
@@ -131,7 +173,8 @@ function CW.clamp(win, w, h, playerNum)
         local most = top + sh - win:getY()
         if h > most then h = math.floor(most) end
     end
-    if w < CW.MIN_W then w = CW.MIN_W end
+    local least = math.max(CW.MIN_W, tabStripMin(win))
+    if w < least then w = least end
     if h < CW.MIN_H then h = CW.MIN_H end
     return w, h
 end
@@ -238,6 +281,25 @@ end
 -- ---------------------------------------------------------------------------
 -- Groesse und Anordnung
 
+--- Die Scrollleiste an den rechten Rand der Liste, so hoch wie sie.
+--
+-- ISScrollBar:instantiate setzt x einmal auf die Breite, die das Panel beim
+-- Anhaengen hatte (addScrollBars in newSummaryPanel, da ist es 10 px
+-- breit), und der Anker rechts zog sie im Spiel nicht mit: nach dem Ziehen
+-- auf ein breiteres Fenster stand sie mitten in der Liste (Befund im Spiel
+-- 24.09.2026). Vanilla stellt sie bei eigenen Listen genauso von Hand um
+-- (ISCraftInventoryPanel, ISWidgetRecipeListPanel: vscroll:setX(Breite -
+-- vscroll:getWidth()), vscroll:setHeight(Hoehe)). Laeuft mit jedem
+-- layoutContent: Ziehen, gemerkte Groesse, Reiterwechsel, Abreissen.
+local function placeScrollBar(panel)
+    local bar = panel and panel.vscroll
+    if not bar then return end
+    local x = panel:getWidth() - bar:getWidth()
+    if bar:getX() ~= x then bar:setX(x) end
+    if bar:getY() ~= 0 then bar:setY(0) end
+    setSize(bar, nil, panel:getHeight())
+end
+
 --- Setzt Liste, Fusszeile und Zahnrad in die aktuelle Groesse des Reiters.
 local function layoutContent(view)
     local w, h = view:getWidth(), view:getHeight()
@@ -248,6 +310,7 @@ local function layoutContent(view)
         panel:setX(PAD)
         panel:setY(PAD)
         setSize(panel, math.max(10, w - 2 * PAD), math.max(10, footY - GAP - PAD))
+        placeScrollBar(panel)
     end
     view.tfFootY = footY
     local gear = view.tfGearButton
@@ -320,7 +383,7 @@ local function enter(view)
                          minW = win.minimumWidth, minH = win.minimumHeight }
     end
     if win.setResizable then win:setResizable(true) end
-    win.minimumWidth, win.minimumHeight = CW.MIN_W, CW.MIN_H
+    win.minimumWidth, win.minimumHeight = math.max(CW.MIN_W, tabStripMin(win)), CW.MIN_H
     if win.tfGrip then win.tfGrip:setVisible(true) end
     local size = CW.sizes[view.playerNum] or defaultSize(win)
     local w, h = CW.clamp(win, size.w, size.h, view.playerNum)
@@ -516,6 +579,38 @@ local function newGrip(win)
     return grip
 end
 
+--- Das Fenster nie schmaler als seine Reiterleiste (seit 0.14.8).
+--
+-- Jeder Vanilla-Reiter setzt in seinem render die Breite nach seinem Inhalt
+-- (setWidthAndParentWidth: erst der Reiter, dann ISTabPanel und Fenster mit
+-- setWidth); ISHealthPanel etwa ohne math.max, also auch schmaler als die
+-- Leiste. Eine Huelle um setWidth an ISTabPanel und Fenster hebt jede
+-- Breite auf die Leiste an. Der Reiter selbst behaelt seine Breite, sein
+-- Inhalt bleibt, wie Vanilla ihn setzt; nur der Rahmen darum ist breiter.
+-- Die Leiste wird bei jedem Aufruf neu gemessen: ein abgerissener oder
+-- wieder angedockter Reiter und eine groessere Schrift zaehlen sofort.
+-- Instanzfelder, einmal je Fenster; das Original laeuft immer.
+local function guardTabStrip(win)
+    local tabs = win and win.panel
+    if type(tabs) ~= "table" or win.tfStripGuard then return end
+    win.tfStripGuard = true
+    local tabsSetWidth, winSetWidth = tabs.setWidth, win.setWidth
+    if type(tabsSetWidth) ~= "function" or type(winSetWidth) ~= "function" then return end
+    tabs.setWidth = function(t, w, ...)
+        local ok, least = pcall(stripWidth, t)
+        if ok and type(w) == "number" and w < least then w = least end
+        return tabsSetWidth(t, w, ...)
+    end
+    win.setWidth = function(o, w, ...)
+        local ok, least = pcall(tabStripMin, o)
+        if ok and type(w) == "number" and w < least then w = least end
+        return winSetWidth(o, w, ...)
+    end
+    -- Einmal gleich: Vanilla hat die Breite in createChildren schon gesetzt.
+    tabs:setWidth(tabs:getWidth())
+    win:setWidth(win:getWidth())
+end
+
 --- Haengt den Reiter an zweiter Stelle ein. ISTabPanel:addView haengt ans
 -- Ende und vergibt die id nach der Laenge der Liste; der Eintrag wird danach
 -- nur in viewList verschoben, die id bleibt eindeutig (activateViewById).
@@ -534,11 +629,7 @@ function CW.addTab(win)
         table.insert(list, 2, last)
     end
     buildContent(view)
-    -- Stand der letzten Sitzung: war dieser Reiter offen, ist er es wieder.
-    if win.tfRestoreCurrent and panel.activateView then
-        win.tfRestoreCurrent = nil
-        panel:activateView(CW.tabName())
-    end
+    guardTabStrip(win)
 end
 
 -- ---------------------------------------------------------------------------
@@ -606,6 +697,13 @@ end
 --- Merkt die Groesse fuer den Layout-Speicher. Vanilla loescht width und
 -- height (die Groesse setzen die Reiter selbst); unsere steht unter
 -- eigenen Namen daneben.
+--
+-- Nur die Groesse. Bis 0.14.7 stand hier auch tfCurrent, und nach dem Laden
+-- oeffnete das Fenster mit unserem Reiter (Wunsch 24.09.2026: nicht mehr).
+-- Ob das Fenster sichtbar ist, stellt Vanilla wieder her
+-- (ISLayoutManager.DefaultRestoreWindow, layout.visible), welcher Reiter
+-- offen ist, auch (layout.current, nur Vanillas Reiter). Ein tfCurrent aus
+-- einer alten layout.ini wird nicht mehr gelesen.
 local function saveLayout(win, _, layout)
     if type(layout) ~= "table" then return end
     local s = CW.sizes[win.playerNum or 0]
@@ -613,10 +711,7 @@ local function saveLayout(win, _, layout)
         layout.tfWidth = tostring(math.floor(s.w))
         layout.tfHeight = tostring(math.floor(s.h))
     end
-    local view = win.tfView
-    local open = view and win.panel and view.parent == win.panel
-        and win.panel.getActiveView and win.panel:getActiveView() == view
-    layout.tfCurrent = open and "true" or nil
+    layout.tfCurrent = nil
 end
 
 local function restoreLayout(win, _, layout)
@@ -625,7 +720,6 @@ local function restoreLayout(win, _, layout)
     if w and h then
         CW.sizes[win.playerNum or 0] = { w = math.max(CW.MIN_W, w), h = math.max(CW.MIN_H, h) }
     end
-    win.tfRestoreCurrent = layout.tfCurrent == "true"
 end
 
 local function install()
