@@ -833,5 +833,10 @@ TraitFactsAPI.queue[#TraitFactsAPI.queue + 1] = {
     format = 1,
     source = "Trait Facts",
     modId  = "moreTraitsDefinitive",
+    -- Das Kuerzel des Mods, nicht eines aus "Trait Facts" (seit 0.14.14,
+    -- Befund im Spiel 24.09.2026): die Zeilen an Vanilla-Traits (Tailor,
+    -- Smoker: Startausruestung von More Traits) trugen sonst "TF". Gleich dem
+    -- Kuerzel des Mods teilen sich Paket und Mod eines (TF.Mods.accept).
+    tag    = "MTD",
     traits = rows,
 }
