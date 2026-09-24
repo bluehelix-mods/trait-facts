@@ -50,8 +50,20 @@ TF.Static = TF.Static or {}
 -- fromBehind.xml), dort sieht man keinen Unterschied; darum sagt die Fussnote
 -- seit dem Faktensweep 3 (23.09.2026) "von vorn oder von der Seite".
 -- StaggerBackState.getMaxStaggerTime liest hitForce ausserdem als 35 x Kraft,
--- geklemmt auf 20 bis 30 (Z. 57-65); bei Stosskraeften um 0.4 bis 0.56 greift
--- die Untergrenze 20, also ohne Wirkung. StaggerBack gibt es nur ohne
+-- geklemmt auf 20 bis 30 (Z. 57-65). Bis 0.14.14 stand hier, bei Stosskraeften
+-- um 0.4 bis 0.56 greife die Untergrenze 20: 0.4 / 0.56 waren aber im Zweig
+-- des Waffentreffers gemessen, der die Kraft fuer Spieler verdoppelt
+-- (IsoGameCharacter Z. 5786-5788); echte Stoesse liegen bei 0.04 bis 0.79.
+-- Im Spiel ausgespielt am 24. und 25.09.2026 (Test Schubsen, je 110 Stoesse,
+-- docs/messungen/messung-2026-09-25-schubsen.txt): die Schwelle 0.4
+-- entscheidet in 110 von 110 Stoessen zwischen langem und kurzem Taumel. Von
+-- vorn gegen einen bekleideten Zombie bekam der lange Taumel ohne Trait 13 %,
+-- mit Strong 50 %, mit Puny 0 %; Kleidung am getroffenen Teil schluckt den
+-- groessten Teil eines Stosses (CombatManager Z. 928-949, 3245-3300). Beide
+-- Taumel schieben den Zombie fast gleich weit, lang 0.66 m, kurz 0.59 m, beide
+-- rund 77 Ticks; der Clipname "2m" taeuscht. Die Fussnote sagte bis 0.14.14
+-- "etwa 2 m zurueck oder nur einen Schritt", seit 0.14.15 "etwa eine halbe
+-- Kachel". StaggerBack gibt es nur ohne
 -- ZombieHitReaction (CombatManager Z. 2410-2416), und jede Nahkampf-
 -- Schwunganimation setzt eine; es bleiben also die Stoesse. Die zur Kraft
 -- proportionale Schubstrecke (calcHitDir, Z. 13628-13643) ruft nur
@@ -131,7 +143,8 @@ TF.Static["feeble"] = {
 -- und die war immer ohne Ax-pert. Nachgemessen am 23.09.2026 mit Mess-Mod
 -- 6.43.1 (Trait vor dem Start, Pause bis die Animation aus ist,
 -- docs/messungen/messung-2026-09-23-axt.txt): mit 997,6 ms, ohne 1249,9 ms
--- je Hieb, 0.7982. Die +25 % stimmen, Stand gemessen.
+-- je Hieb, 0.7982. Die +25 % stimmen, Stand gemessen. Wiederholt am
+-- 25.09.2026 (messung-2026-09-25-axt.txt): 999.0 gegen 1248.1 ms, 0.8004.
 -- Das alles gilt nur im Einzelspiel (Faktensweep 2, 23.09.2026): im
 -- Multiplayer, auch beim Hosten, landet der Server die Hiebe selbst
 -- (ISChopTreeAction.lua Z. 64-68 nur `not isClient()`, serverStart Z. 108-111
@@ -140,7 +153,8 @@ TF.Static["feeble"] = {
 -- ein Hieb alle 1,5 s. Der Baumschaden x 1.5 laeuft dort ebenfalls auf dem
 -- Server und gilt weiter. Die Fussnote sagt es.
 -- Der Baumschaden steigt auf x 1.5, nur fuer Waffen der Kategorie AXE;
--- gemessen am 13.09.2026: 35 -> 53 je Hieb, 1.50 ueber 24 Hiebe.
+-- gemessen am 13.09.2026: 35 -> 53 je Hieb, 1.50 ueber 24 Hiebe; am
+-- 25.09.2026 wieder 35 -> 53.
 -- Axt-Schwungzeit: dieselbe 0.8 bremst ohne Ax-pert jeden Schlag mit einer
 -- Axt. calculateCombatSpeed (IsoGameCharacter:8836) multipliziert bei Aexten
 -- mit getChopTreeSpeed(), und CombatManager.pressedAttack (:2660) macht daraus
@@ -148,24 +162,21 @@ TF.Static["feeble"] = {
 -- Grundterm 0.8 x BaseSpeed; danach kommen ohne Trait-Bezug +0.03 je
 -- Waffenstufe, +0.02 je Fitness-Stufe und -0.07 je Stufe Erschoepfung und
 -- Ueberladung dazu, dann Rand.Next(1.1, 1.2) und die Klemme 0.8 bis 1.6.
--- Laut Code also kein fester Faktor: mit der Axt (BaseSpeed 1.0) rund -17 %
--- fuer einen neuen Holzfaeller (Axt 2, Fitness 5; Ax-pert gibt es nur ueber
--- den Beruf Lumberjack, character_professions.txt Z. 124-132), -16 % bei
--- Axt 3, -12 % bei Axt 10 und Fitness 10 (Faktensweep 23.09.2026; bis dahin
--- stand hier "ein Schlag dauert also x 0.8"). Bis zum Faktensweep 2
--- (23.09.2026) stand hier "-18 % bei einer neuen Figur (Axt 0)": das war der
--- falsche Ausgangspunkt, ohne den Beruf hat niemand Ax-pert. Langsame Waffen
--- der Kategorie Axt (Spitzhacke BaseSpeed 0.8, Cudgel 0.85, ScrapCleaver
--- 0.9) liegen ohne Trait an oder nahe der Klemme 0.8, dort bringt der Trait
--- laut Modell deutlich weniger (Spitzhacke rund -13 % bei Axt 2, -6 % bei
--- Axt 0).
--- Gemessen am 13.09.2026 (docs/messungen/messung-2026-09-13-axt.txt, Axt-Skill
--- fest auf 3, Fitness nicht mitgeschrieben): Schlagdauer mit/ohne 0.788, Takt
--- 0.792, also -20 %; das ist mehr, als das lineare Modell bei Axt 3 erwartet,
--- die Schlagdauer folgt 1/CombatSpeed also nicht genau. Die Zeile zeigt die
--- gemessenen -20 % mit der Bedingung der Messung (Axt 3); die Modellzahl
--- -12 % steht seit dem Faktensweep 2 nicht mehr in der Fussnote, gemessen
--- ist sie nicht. Bis 0.1.23
+-- Laut Code also kein fester Faktor. Ax-pert gibt es nur ueber den Beruf
+-- Lumberjack (character_professions.txt Z. 124-132). Langsame Waffen der
+-- Kategorie Axt (Spitzhacke BaseSpeed 0.8, Cudgel 0.85, ScrapCleaver 0.9)
+-- liegen ohne Trait an oder nahe der Klemme 0.8, dort bringt der Trait
+-- deutlich weniger.
+-- Bis 0.14.14 standen hier und in der Fussnote Zahlen aus diesem Modell
+-- (Axt 2 -17 %, Axt 3 -16 %, Axt 10 mit Fitness 10 -12 %, Spitzhacke -6 bis
+-- -13 %). Gemessen ist mehr: die Schwungdauer folgt 1/CombatSpeed nicht.
+-- Schlaege in die Luft, Takt mit/ohne (Axt: Ax-pert und Axt-Schwung bei
+-- anderem Skill, 13.09. bis 25.09.2026): Axt bei Axt 3 und Fitness 5 0.79 bis
+-- 0.80 (13. und 23.09.) und 0.763 (25.09.), bei Axt 0 und Fitness 5 0.790
+-- (25.09., am 24.09. 0.769), bei Axt 10 und Fitness 10 0.833 (am 24.09.
+-- 0.817); Spitzhacke bei Axt 0 und Fitness 5 0.934 (am 24.09. 0.919). Mit der
+-- Axt also -17 bis -24 %, mit der Spitzhacke -7 bis -8 %. Die Zeile zeigt
+-- weiter -20 %, die Fussnote seit 0.14.15 die gemessene Spanne. Bis 0.1.23
 -- stand hier -5 %, wirkungslos: die x 0.95 in HandWeapon.getSpeedMod hat
 -- wirklich keinen Aufrufer (Spielfehler speedmod-axeman), aber sie ist nicht
 -- der Weg, auf dem Ax-pert wirkt.
@@ -211,6 +222,10 @@ TF.Static["underweight"] = {
 -- ohne Trait 0/5 %, High Weight (neue Figur, Fitness 4) 6/16 %, Very High
 -- Weight bei Fitness 5 15/25 %, Very Low Weight bei Fitness 5 25/35 %,
 -- Graceful 0/0 %, Clumsy 5/15 %.
+-- Im Laufen gemessen am 24. und 25.09.2026 (Code-Werte, Gruppe zaunrennen,
+-- VaultOverRun bei Fitness 5, je 3000 Proben): ohne Trait 0 %, High Weight
+-- +5.1 und +5.2, Very High Weight +15.2 und +14.3, Very Low Weight +26.6 und
+-- +26.3, Clumsy +5.2 und +4.8, Graceful 0 Punkte (laut Code +5/+15/+25/+5/0).
 -- Der Zaehler steigt je Stufe des Erschoepfungs-Moodles (MoodleType.ENDURANCE,
 -- im Spiel "Ausser Atem" und schlimmer) um 10, nicht mit Muedigkeit; ab Stufe
 -- 3 ist isRunning() falsch und der Wurf im Laufen entfaellt (Faktensweep 3).
@@ -225,7 +240,12 @@ TF.Static["underweight"] = {
 -- nie, und die Wegfindung fuehrt nicht mehr ueber hohe Zaeune
 -- (PathFindRequest Z. 77). Wurzel 1 (Summe 1 bis 3) scheitert immer, weil
 -- Rand.NextBool(1) immer wahr ist (RandInterface Z. 24-25), schlechter als 0
--- (Spielfehler kletterwert-eins). Am Bettlaken-Seil oeffnet der Sturzwurf
+-- (Spielfehler kletterwert-eins). Mit echtem Wurf gemessen am 24. und
+-- 25.09.2026 (Code-Werte, Gruppen zaunhoch bis zaunhochneuwurf, Fitness 5,
+-- Strength 5, Nimble 0, ohne Handschuhe): Fehlschlag ohne Trait 25 %, High
+-- Weight 50 %, Very High Weight 94 %, Beruf Burglar 20 % (im Wurf 50.2, 94.0
+-- und 20.9 %); eine neue Figur mit High Weight (Fitness 4) scheitert immer.
+-- Am Bettlaken-Seil oeffnet der Sturzwurf
 -- erst nach (Wurzel + 1) x 100 x Seiltempo Stockwerken am Stueck
 -- (ClimbSheetRopeState Z. 76, 83, 261-266), bei einer neuen Figur 40
 -- Stockwerke, runter das Dreifache: dort wirkt der Wert praktisch nie
@@ -743,12 +763,33 @@ TF.Static["adrenalinejunkie"] = {
     -- 20.09.2026, 20:25 (Mess-Mod 6.37.0) mass Rennen x1.1305 auf Stufe 3 und
     -- x1.1661 auf Stufe 4, Sprinten x1.1028 und x1.1465 (davor x1.1336). Gehen
     -- ist auf beiden Stufen gleich (x1.0930 und x1.0855), darum eine Zahl.
-    -- Spannen seit 0.13.6 nach allen sauberen Laeufen (20. und 21.09.2026): Rennen
-    -- x1.1213 bis x1.1698, Sprinten x1.1028 bis x1.1465. Bis dahin 13-16 und 10-14:
-    -- die 13 kam aus einem Lauf, in dem der Sprinting-Skill mitten in der Phase stieg.
-    { id = "panicrun", kind = "pctrange", value = { 12, 17 }, text = "UI_TF_eff_panicrun",
+    -- Spannen von 0.13.6 bis 0.14.14 nach den Laeufen vom 20. und 21.09.2026:
+    -- Rennen 12-17, Sprinten 10-15. Bis dahin 13-16 und 10-14: die 13 kam aus
+    -- einem Lauf, in dem der Sprinting-Skill mitten in der Phase stieg.
+    -- Seit 0.14.15 nur Paare, in denen beide Phasen die WalkSpeed laut Code
+    -- zeigen (Sprinting 0: ohne 0.65, mit 0.90 auf Stufe 4, 0.85 auf Stufe 3),
+    -- jede Phase mit Trait gegen ihre sauberen Nachbarn ohne; Laeufe 20d,
+    -- 21.09., 25.09. und 25.09. nur Stufe 3. Rennen Stufe 3 x1.134-1.138, im
+    -- Mittel 1.136 (8 Paare), Stufe 4 x1.161-1.172, Mittel 1.169 (5 Paare);
+    -- Sprinten Stufe 3 x1.111-1.130, Mittel 1.119 (6 Paare), Stufe 4
+    -- x1.143-1.148, Mittel 1.145 (5 Paare). Die Spanne reicht von Mittel zu
+    -- Mittel: 14-17 und 12-15. Bestaetigt im Kontrolllauf vom 25.09.2026
+    -- (Mess-Mod 6.53.0, Grundtempo je Tick geprueft, kein Paar verworfen):
+    -- Rennen x1.1680 / x1.1339, Sprinten x1.1439 / x1.1147, Gehen x1.0825 /
+    -- x1.0807. Die alten Untergrenzen 12 und 10 kamen aus
+    -- Laeufen bei Sprinting 1 (x1.1213, x1.1028); hoeheres Sprinting senkt den
+    -- Anteil, das sagt die Fussnote, es setzt aber nicht die Spanne.
+    -- Nicht gewertet: am 25.09.2026 die Phasen 17-22 (Stufe 4, Rennen und
+    -- Sprinten); dort lag das Grundtempo tiefer (WalkSpeed ohne 0.44 bis 0.60,
+    -- mit 0.65), am ehesten nasser Naturboden im Freien (IsoGameCharacter
+    -- Z. 8787-8789, bis -0.25; Sand -0.05, Z. 8791-8792), also nicht x1.2028
+    -- und x1.0942. Modell: Renntempo = (0.8 + Zuschlag - 0.15) x fullSpeedMod +
+    -- Sprinting / 20, gedeckelt bei 1.0 (Z. 8964-8967, 8986), Zuschlag
+    -- (Stufe + 1) / 20 ab Stufe 3 (Z. 8761-8764); Rennen und Sprinten nehmen
+    -- denselben Wert (runOrSprint, Z. 8963, 9004).
+    { id = "panicrun", kind = "pctrange", value = { 14, 17 }, text = "UI_TF_eff_panicrun",
       note = "UI_TF_note_panicrun" },
-    { id = "panicsprint", kind = "pctrange", value = { 10, 15 }, text = "UI_TF_eff_panicsprint",
+    { id = "panicsprint", kind = "pctrange", value = { 12, 15 }, text = "UI_TF_eff_panicsprint",
       note = "UI_TF_note_panicrun" },
 }
 
@@ -866,6 +907,12 @@ TF.Static["outdoorsman"] = {
     -- jeder Versuch laeuft vorher 20 % seiner Dauer ohne Wurf (300 von 1500
     -- Einheiten), bei 2,0 statt 1,33 Versuchen sind es rund 0,6 der Zeit
     -- (Faktensweep 3, 23.09.2026; bis dahin stand hier "halbiert sich").
+    -- Im Spiel ausgespielt am 24.09.2026 (Test Feuer, je Fall 500 Versuche am
+    -- Grill mit dem echten ZombRand, zwei Laeufe): gezuendet 47 % ohne, 73 und
+    -- 76 % mit Outdoorsy; der Stock brach in 53 % ohne, 27 und 24 % mit; Zeit
+    -- je Feuer x0.58 und x0.57 (laut Code 0.61). Am Lagerfeuer bringt Outdoorsy
+    -- nichts (x0.98, x0.97). Die Kochgrube (isFireInteractionObject) ist nicht
+    -- gemessen, keine stand in der Naehe.
     { id = "firelight",    kind = "mult", value = 1.5,   text = "UI_TF_eff_firelight",
       note = "UI_TF_note_bbqonly", case = "UI_TF_note_bbqonly",
       hint = "UI_TF_note_firelightrace" },
@@ -1003,7 +1050,9 @@ TF.Static["outofshape"] = {
 -- aussen (OpenWindowState Z. 127-131), beim Schliessen ein dauerhaft
 -- verriegeltes oder eins, durch das jemand klettert (CloseWindowState Z.
 -- 117-121). Normales Oeffnen und Schliessen kostet keine Ausdauer; die
--- Fussnote sagt es seit dem Faktensweep 3 (23.09.2026).
+-- Fussnote sagt es seit dem Faktensweep 3 (23.09.2026). Im Spiel gespielt am
+-- 25.09.2026 (Test Fenster aufbrechen, Fitness 5): 0.0060 Ausdauer je
+-- Versuch ohne, 0.0054 mit Runner (x0.90); Oeffnen und Schliessen kostete 0.
 TF.Static["jogger"] = {
     { id = "enduranceloss", kind = "pct", value = -10, text = "UI_TF_eff_enduranceloss",
       note = "UI_TF_note_doorswindows", case = "UI_TF_note_doorswindows" },
@@ -1196,7 +1245,9 @@ TF.Static["gymnast"] = {
 -- Zombies hoeren: ceil(Lautstaerke x 10), drinnen halbiert und abgeschnitten.
 -- Mit Schuhen draussen bei Fertigkeit 0, Schleichen/Gehen/Laufen/Sprinten:
 -- ohne 4/7/11/14, Graceful 3/5/7/9, Clumsy 5/9/13/17 Felder (draussen;
--- drinnen (int)(x0.5): 2/3/5/7, 1/2/3/4, 2/4/6/8). Bis zum Faktensweep 3
+-- drinnen (int)(x0.5): 2/3/5/7, 1/2/3/4, 2/4/6/8). Die Werte draussen sind
+-- am 24.09.2026 im Spiel gemessen (Test Schritte, DoFootstepSound je Gangart,
+-- Schuhe, 15 von 15 wie laut Code). Bis zum Faktensweep 3
 -- (23.09.2026) stand hier Graceful 2 und Clumsy 4 beim Schleichen und in der
 -- Fussnote "beim Schleichen keine Aenderung": das liess den Faktor 1.2 in
 -- getSneakSpotMod aus (0.95 x 1.2 bei Sneak 0). Seitdem nennen die Fussnoten
@@ -1366,7 +1417,12 @@ TF.Static["hardofhearing"] = {
     -- Ein getragener oder mitgefuehrter Wecker klingelt auf dem Feld der Figur
     -- (getAlarmSquare, AlarmClock Z. 78-94), Abstand 0, und weckt immer; die
     -- 4.5 zaehlt nur fuer einen abgelegten Wecker weiter als Radius / 4.5
-    -- (Wecker 15 -> 3,3 Felder, Uhr 7 -> 1,6). Die Probe hearDistance stand
+    -- (Wecker 15 -> 3,3 Felder, Uhr 7 -> 1,6). Im Spiel gemessen am 24. und
+    -- 25.09.2026 (Test Wecker, je 23 von 23 Proben wie laut Code): abgestellte
+    -- Uhr weckt mit dem Trait bis 1 Feld, abgestellter Wecker bis 3 Felder,
+    -- getragen oder im Inventar immer. Die Fussnote sagte bis 0.14.14 "only
+    -- from about 3 tiles", das las sich wie "erst ab"; seit 0.14.15 "within".
+    -- Die Probe hearDistance stand
     -- hier ohne Eintrag in TF.Probes und lief nie (Faktensweep 2, 23.09.2026).
     -- Wecker wirken nur im Schlaf; auf Standard-Servern schlaeft niemand
     -- (siehe Schlaf), darum seit dem Faktensweep 3 (23.09.2026) die condition
@@ -1506,9 +1562,12 @@ TF.Static["handy"] = {
     -- Carpentry-Stufe; kurze Rezepte verlieren anteilig mehr, lange weniger
     -- (Audit 12.09.2026). 200 - 5 x Carpentry gilt nur noch in den Altklassen.
     -- ISBuildAction.lua Z. 268-270 zieht ohne Untergrenze ab: Rezepte mit Zeit
-    -- 50 (etwa die Haelfte des Baumenues, alle Moebel) landen bei 0, und
-    -- BaseAction.finished ist dann im ersten Tick wahr, der Bau geht sofort.
-    -- Nur aus dem Code gelesen, nicht im Spiel nachgebaut. Auf einem
+    -- 50 (etwa die Haelfte des Baumenues, alle Moebel) landen bei 0, und der
+    -- Bau ist fertig in dem Tick, in dem die Figur sich fertig zur Baustelle
+    -- gedreht hat (ISBuildAction.waitToStart gibt shouldBeTurning zurueck;
+    -- bis 0.14.14 stand hier "im ersten Tick"). Gemessen am 24. und 25.09.2026
+    -- (Test Bauen): Holzstuhl 50 -> 0, fertig im ersten Tick mit gedrehter
+    -- Figur; Holzwand 200 -> 150 (x0.75). Nur im Einzelspiel. Auf einem
     -- MP-Server rechnet der Server die Dauer selbst (BuildAction.getDuration:
     -- 200 - 5 x Carpentry, Handy -50), dort -25 bis -33 % (Faktensweep
     -- 23.09.2026). Das gilt auch beim Hosten, denn dort laeuft ein eigener
@@ -1563,7 +1622,11 @@ TF.Static["nutritionist2"] = TF.Static["nutritionist"]
 -- ISLightFromKindle: derselbe Wettlauf wie am Grill (siehe Outdoorsy), mit
 -- forceComplete bei beidem Ausgang; perform stellt den naechsten Versuch mit
 -- dem naechsten Stock an, solange das Feuer aus ist. Je Stock 50 % -> 75 %
--- gezuendet, 50 % -> 25 % gebrochen (Faktensweep 2, 23.09.2026).
+-- gezuendet, 50 % -> 25 % gebrochen (Faktensweep 2, 23.09.2026). Im Spiel
+-- ausgespielt am 24.09.2026 (Test Feuer, je Fall 500 Versuche am Lagerfeuer,
+-- zwei Laeufe): gezuendet 51 und 54 % ohne, 75 % mit Wilderness Knowledge,
+-- 76 und 78 % als Former Scout; gebrochen 49 und 46 % ohne, 25 und 22 bis
+-- 25 % mit. Am Grill bringt Wilderness Knowledge nichts (x1.08, x1.15).
 TF.Static["wildernessknowledge"] = {
     { id = "firelight", kind = "mult", value = 1.5,   text = "UI_TF_eff_firelight",
       note = "UI_TF_note_campfireonly", case = "UI_TF_note_campfireonly",
@@ -1597,6 +1660,11 @@ TF.Static["burglar"] = {
     -- 11,6 %): ohne Trait 49 %, mit Burglar 31 %. Strength 0-1: 85 -> 73 %,
     -- ab 8: 23 -> 13 %. Seit dem Faktensweep 2 (23.09.2026) zeigt die Zeile
     -- das je Fenster fuer eine neue Figur; bis dahin -50 % je Versuch.
+    -- Im Spiel gespielt am 24. und 25.09.2026 (Test Fenster aufbrechen, drei
+    -- Laeufe zu je 40 Fenstern ohne und 40 mit Burglar, Strength 5): 61 von
+    -- 120 = 51 % ohne, 31 von 120 = 26 % mit Burglar; je Versuch klemmte es in
+    -- 10 % ohne und 4 % mit Burglar (laut Code 10 und 5). Die Zeile zeigt
+    -- weiter die Werte aus dem Code.
     { id = "windowlock", kind = "fromto", value = { 49, 31 }, text = "UI_TF_eff_windowlock",
       note = "UI_TF_note_windowforced" },
     { id = "hotwire",    kind = "info", text = "UI_TF_eff_hotwire" },

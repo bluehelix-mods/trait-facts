@@ -64,8 +64,15 @@
 --   statt sie zu erhoehen (MT_Weapons.lua:43). Bis das im Spiel geprueft ist,
 --   steht hier keine Wirkung.
 -- * Amputee und die Zombie-Infektion: der Code loescht jede neue Infektion,
---   nicht nur am amputierten Arm (MT_Combat.lua:696). Zu gross, um es
---   ungeprueft als Tatsache hinzuschreiben.
+--   nicht nur am amputierten Arm (MT_Combat.lua:696), aber nur einmal.
+--   Gemessen am 24.09.2026 (docs/messungen/messung-2026-09-24-moretraits.txt):
+--   nach MT.Combat.Amputee ist die Figur nicht mehr infiziert, der Hals aber
+--   schon (ClearInfection setzt nur BodyDamage, MT.lua:152-156), und das
+--   naechste BodyDamage.Update setzt die Infektion wieder
+--   (BodyDamage.java:1857-1871). MT_Tick.lua:18-25 hat bWasInfected dann
+--   schon gesetzt und meldet keine neue Infektion mehr: der Schutz schiebt
+--   die Infektion um weniger als 31 Ticks hinaus, er verhindert sie nicht.
+--   Darum weiter keine Zeile.
 -- * Was im Code steht, aber nie greift: die Ausdauer- und Stresswerte von
 --   Gourmand (tote Variablen), SuperImmuneFirstInfectionBonus und
 --   QuickSuperImmune (nie geschrieben), die Scrounger-Hervorhebung.
@@ -118,7 +125,9 @@
 -- (doXPBoost false) noch einmal durch AddXP, und der Protein-Faktor x1.5
 -- (Proteine ueber 50 und unter 300) bzw. x0.7 (unter -300) steht dort vor
 -- dem doXPBoost-Block (IsoGameCharacter.java:15500-15508), auf einem Betrag,
--- der ihn schon enthaelt (:15622). Faktensweep 3, 23.09.2026.
+-- der ihn schon enthaelt (:15622). Faktensweep 3, 23.09.2026. Gemessen am
+-- 24.09.2026 (messung-2026-09-24-moretraits.txt): Fitness beim Training
+-- x1.10, ohne Training x1.0; Strength mit Proteinen nicht gemessen.
 --
 -- Sandbox-Optionen: die Werte unten sind die Vorgaben der Mod. Eine Zeile,
 -- die sich verstellen laesst, sagt das in ihrer Fussnote. Gerechnet wird
@@ -601,7 +610,10 @@ rows["toadtraits:drinker"] = {
 -- 95, :320); Perks ist eine Kahlua-Tabelle (CustomPerks.java:63), der
 -- Eintrag also nil, und ipairs (MT_XP.lua:74) bricht dort ab. Tracking,
 -- Husbandry und Butchering, die der Trait selbst mit +4 boostet
--- (ToadTraits.txt:910), verlieren darum auch 75 %. Nur aus dem Code gelesen.
+-- (ToadTraits.txt:910), verlieren darum auch 75 %. Gemessen am 24.09.2026
+-- (messung-2026-09-24-moretraits.txt, Perks.Foraging = nil): Tracking,
+-- Husbandry und Butchering x0.25, Fishing (fuenfte Stelle) x1.0. Fuer alle
+-- sechs Spezialisierungen dort ebenso: Skills ausserhalb x0.25, eigene x1.0.
 local SPEC_NOTE = { specfood = "UI_TF_note_mt_specxp_food" }
 for _, key in ipairs({ "specweapons", "specfood", "specguns", "specmove",
                        "speccrafting", "specaid" }) do

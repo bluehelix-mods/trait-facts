@@ -1,0 +1,48 @@
+# Adrenalin: Gehtempo bei Panik mit Adrenaline Junkie, Messung an einer lebenden Figur
+# Mess-Mod 6.53.0
+# Build 42.20
+# je Phase 300 gezaehlte Ticks Gehen (ohne Shift), nach jedem Umschalten und jeder Pause 15 Ticks Anlauf; Panik in jedem Tick auf 90 (Stufe 4), Ausdauer auf 1; God Mode aus
+# Anlauf beim Rennen und Sprinten nach jedem Gangwechsel und jeder Pause 60 Ticks (seit 25.09.2026; die erste Phase ohne nach dem Wechsel war mit 15 Ticks rund 2 % zu langsam)
+# Grundtempo je Tick (seit 25.09.2026): WalkSpeed laut Code Gehen min(1, 0.8 + Zuschlag), Rennen und Sprinten min(1, 0.65 + Zuschlag + Sprinting/20), Zuschlag (Stufe+1)/20 mit Trait ab Panikstufe 3 (IsoGameCharacter Z. 8754-8797, 8964-8967, Deckel Z. 8985-8986, runOrSprint Z. 8963/9004); weicht der gelesene Wert um mehr als 0.002 ab, zaehlt der Tick nicht (ws_verworfen), und der Anlauf beginnt neu
+# Stoerer des Grundtempos: draussen auf Naturboden Naesse x 0.25 (Z. 8787-8789), Sand 0.05 (Z. 8791-8792), Unterkuehlung oder Hitze ab Stufe 2 x0.66/x0.33/x0 (Z. 8987-8991, Thermoregulator Z. 318-337), Schuhe, Taschen, Verletzungen; ws_min/ws_max = alle gelesenen Werte der Phase, auch verworfene
+# WalkSpeed ohne Trait im Mittel 0.6500 (0.8000 mit Schuhen, ohne Last, bei normaler Waerme)
+# tempo = Summe Strecke / Summe Multiplier; walkspeed und getmovespeed = Mittel der gezaehlten Ticks; felder_je_s aus der Uhr
+# faktor = Phase mit Trait / Mittel der Nachbarphasen ohne; Toleranz 3 %, WalkSpeed-Zeilen absolut 0.006
+# seit 25.09.2026 nur saubere Paare: die Phase mit Trait und die Nachbarn ohne, die zaehlen, trafen im Mittel das Grundtempo laut Code; paare = gezaehlte Paare, paare_verworfen = Phasen mit Trait ohne sauberen Nachbarn
+# laut Code: calculateBaseSpeed (IsoGameCharacter Z. 8754-8764) 0.8, mit Adrenaline Junkie ab Panikstufe 3 +(Stufe+1)/20, auf Stufe 4 1.05; calculateWalkSpeed deckelt bei 1.0 (Z. 8985): WalkSpeed 1.0 statt 0.8
+# WalkSpeed ist m_Scalar2, die Blendlage zwischen Bob_WalkSlow (Y 0) und Bob_Walk (Y 1) (AnimSets/player/movement/defaultWalk.xml Z. 6, 8; run/defaultRun.xml Z. 8; sprint/defaultSprint.xml Z. 8), kein Tempofaktor: die Strecke hat darum keinen Code-Soll, nur den Wert von Trait Facts
+# laut Code: IsoPlayer.getMoveSpeed (Z. 1662-1666) x1.1 auf Stufe 4, gelesen nur von getPathSpeed (Z. 1024-1025) ohne Aufrufer (Spielfehler adrenaline-movespeed); wirkte sie, laege tempo 10 % ueber dem Wert von Trait Facts
+# Sprinting fest auf 0, Fitness fest auf 5 (Stufe und XP, jeden Tick gehalten); 5 Mal zurueckgesetzt; Ticks mit anderer Sprinting-Stufe zaehlen nicht (stufe_verworfen)
+
+[ergebnis]
+ergebnis|werte=4|stimmen=4|weichen_ab=0|nicht_messbar=0|phasen=18
+
+[werte] wert|groesse|trait|faktor|soll_mod|soll_code|urteil|paare|paare_verworfen|notiz
+wert|runspeed_stufe3|adrenalinejunkie|1.3077|-|1.3077|stimmt|4|0|Variable WalkSpeed beim Rennen (traegt das Renntempo), Sprinting 0
+wert|tempo_rennen_stufe3|adrenalinejunkie|1.1354|1.1200|-|stimmt|4|0|Strecke je Multiplier, Rennen auf Stufe 3: der reale Wert; kein Code-Soll, WalkSpeed ist eine Blendlage
+wert|sprintspeed_stufe3|adrenalinejunkie|1.3077|-|1.3077|stimmt|4|0|Variable WalkSpeed beim Sprinten (traegt das Renntempo), Sprinting 0
+wert|tempo_sprint_stufe3|adrenalinejunkie|1.1162|1.1000|-|stimmt|4|0|Strecke je Multiplier, Sprinten auf Stufe 3: der reale Wert; kein Code-Soll, WalkSpeed ist eine Blendlage
+
+[teile] teil|id|gangart|panikstufe|phasen (seit 6.33.0; die Werte mit _stufe3 und _rennen gehoeren zu Teil 2 und 3)
+teil|rennen3|rennen|3|1-9
+teil|sprint3|sprint|3|10-18
+
+[phasen] phase|nr|adrenalinejunkie|ticks|tempo|felder_je_s|walkspeed|getmovespeed|nicht_gezaehlt|sprinting|sprinting_gesehen|fitness_gesehen|stufe_verworfen|ws_verworfen|ws_min|ws_max
+phase|1|0|300|0.087943|4.2188|0.6500|0.060000|118|0|0|5|0|0|0.6500|0.6500
+phase|2|1|300|0.100115|4.7799|0.8500|0.060000|0|0|0|5|0|0|0.8500|0.8500
+phase|3|0|300|0.088016|4.2283|0.6500|0.060000|0|0|0|5|0|0|0.6500|0.6500
+phase|4|1|300|0.099907|4.7961|0.8500|0.060000|0|0|0|5|0|0|0.8500|0.8500
+phase|5|0|300|0.087949|4.2221|0.6500|0.060000|0|0|0|5|0|0|0.6500|0.6500
+phase|6|1|300|0.099689|4.1589|0.8500|0.060000|0|0|0|5|0|0|0.8500|0.8500
+phase|7|0|300|0.087933|4.2208|0.6500|0.060000|0|0|0|5|0|0|0.6500|0.6500
+phase|8|1|300|0.099731|4.7860|0.8500|0.060000|0|0|0|5|0|0|0.8500|0.8500
+phase|9|0|300|0.087862|4.2168|0.6500|0.060000|0|0|0|5|0|0|0.6500|0.6500
+phase|10|0|300|0.110089|5.2857|0.6500|0.060000|123|0|0|5|0|0|0.6500|0.6500
+phase|11|1|300|0.122550|5.8828|0.8500|0.060000|0|0|0|5|0|0|0.8500|0.8500
+phase|12|0|300|0.110112|5.2898|0.6500|0.060000|0|0|0|5|0|0|0.6500|0.6500
+phase|13|1|300|0.123009|5.9040|0.8500|0.060000|0|0|0|5|0|0|0.8500|0.8500
+phase|14|0|300|0.109764|5.2646|0.6500|0.060000|0|0|0|5|0|0|0.6500|0.6500
+phase|15|1|300|0.123100|5.9109|0.8500|0.060000|0|0|0|5|0|0|0.8500|0.8500
+phase|16|0|300|0.110387|5.2986|0.6500|0.060000|0|0|0|5|0|0|0.6500|0.6500
+phase|17|1|300|0.122818|5.8943|0.8500|0.060000|0|0|0|5|0|0|0.8500|0.8500
+phase|18|0|300|0.110044|5.2863|0.6500|0.060000|0|0|0|5|0|0|0.6500|0.6500
