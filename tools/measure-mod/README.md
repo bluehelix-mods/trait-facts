@@ -1395,9 +1395,10 @@ Rechners mit Sekunden, in der Command Console wie in `console.txt`:
     [TraitFactsMeasure] 14:03:22 Mess-Befehle aktiv: Zomboid/Lua/TraitFacts_befehle.txt
 
 Seit 6.46.0 hat die Command Console des Spiels (Debug-Modus, links unten)
-rechts in der Zeile „Output Log“ einen Knopf „Kopieren“: er legt den ganzen
-Output Log in die Zwischenablage, alles seit dem Start, auch die Zeilen des
-Spiels und anderer Mods, und zeigt kurz „Kopiert: N Zeilen“. Die Konsole ist
+rechts in der Zeile „Output Log“ einen Knopf „Kopieren“: er legt den Output
+Log in die Zwischenablage, auch die Zeilen des Spiels und anderer Mods, und
+zeigt kurz „Kopiert: N Zeilen“. Die Konsole hält nur die letzten 8192
+Zeichen; das ganze Log seit dem Start steht in `Zomboid/console.txt`. Die Konsole ist
 Java (`UIDebugConsole`); der Knopf ist ein ISButton, den `TFMeasureKonsole.lua`
 als Kind in sie einhängt und je Bild an seinen Platz setzt, auch nach dem
 Ziehen der Konsole. Die Zeilen des Spiels selbst („LOG : General …“) tragen

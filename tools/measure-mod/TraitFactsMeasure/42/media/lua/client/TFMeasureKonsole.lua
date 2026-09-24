@@ -10,9 +10,10 @@
 -- Zeile "Output Log", ausserhalb des Randes, an dem die Konsole sich ziehen
 -- laesst, und folgt ihr je Bild, auch nach dem Ziehen.
 --
--- Kopiert wird der ganze Text des Output Logs (UITextBox2:getText): alles,
--- was seit dem Start dort erschienen ist, auch die Zeilen anderer Mods und
--- des Spiels. Seit 6.47.0 ohne die Doppel der Lua-Meldungen: die Konsole
+-- Kopiert wird der Text des Output Logs (UITextBox2:getText), mit den Zeilen
+-- anderer Mods und des Spiels. Die Konsole haelt davon nur die letzten 8192
+-- Zeichen (UIDebugConsole.handleOutput); das ganze Log seit dem Start steht
+-- in Zomboid/console.txt. Seit 6.47.0 ohne die Doppel der Lua-Meldungen: die Konsole
 -- bekommt jede Lua-Ausgabe zweimal, direkt als ":<Tab>Text" und als
 -- "LOG  : Lua  f:N> :<Tab>Text". Die kurze Zeile faellt weg, wenn dieselbe
 -- als LOG-Zeile im Text steht; die ohne LOG-Gegenstueck (vor dem Start des
@@ -60,13 +61,17 @@ function K.ohneDoppel(text)
         zeilen[#zeilen + 1] = string.sub(text, pos, stop - 1)
         pos = stop + 1
     end
+    -- Verglichen ohne \r am Ende: die LOG-Zeilen kommen ueber System.out und
+    -- enden unter Windows auf \r\n, die kurzen ueber den Print-Rueckruf nur
+    -- auf \n (im Spiel am 24.09.2026, 6.47.0: 150 Zeilen, kein Doppel weg).
+    local function rein(zeile) return (string.gsub(zeile, "\r+$", "")) end
     for _, zeile in ipairs(zeilen) do
-        local inhalt = string.match(zeile, "^LOG%s+:%s+Lua%s+f:%d+>%s*:\t(.*)$")
+        local inhalt = string.match(rein(zeile), "^LOG%s+:%s+Lua%s+f:%d+>%s*:\t(.*)$")
         if inhalt then lang[inhalt] = true end
     end
     local raus = {}
     for _, zeile in ipairs(zeilen) do
-        local inhalt = string.match(zeile, "^:\t(.*)$")
+        local inhalt = string.match(rein(zeile), "^:\t(.*)$")
         if not (inhalt and lang[inhalt]) then raus[#raus + 1] = zeile end
     end
     local ende = (string.sub(text, -1) == "\n") and "\n" or ""
@@ -114,7 +119,7 @@ local function knopfBauen(konsole)
     b:instantiate()
     b.borderColor = { r = 0.7, g = 0.7, b = 1.0, a = 0.6 }
     b.backgroundColor = { r = 0.05, g = 0.05, b = 0.08, a = 0.9 }
-    b.tooltip = "Legt den ganzen Output Log der Command Console in die Zwischenablage."
+    b.tooltip = "Legt den Output Log der Command Console in die Zwischenablage (die letzten 8192 Zeichen)."
     konsole:AddChild(b.javaObject)
     return b
 end
