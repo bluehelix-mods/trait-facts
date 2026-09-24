@@ -1,6 +1,6 @@
 name=Trait Facts Measure (dev)
 id=TraitFactsMeasure
 description=Nimmt an einer lebenden Figur die Trait-Werte auf, die sich nicht statisch lesen lassen, und schreibt sie nach Zomboid/Lua/TraitFacts_measure.txt. Nur zum Messen, gehoert nicht in den Workshop.
-modversion=6.47.2
+modversion=6.47.3
 versionMin=42.20
 author=Bluehelix

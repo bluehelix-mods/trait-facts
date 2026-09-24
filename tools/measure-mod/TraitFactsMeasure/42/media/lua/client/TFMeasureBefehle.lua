@@ -251,10 +251,15 @@ B.BEFEHLE = {
         return "stufe=" .. zahl(p:getPerkLevel(a[1]))
     end },
 
+    -- Seit 6.47.3 mit God Mode: damit rechnet das Spiel das Tragegewicht
+    -- nicht nach, nach dem Laden steht dann 8 statt 18 (24.09.2026).
     maxweight = { args = {}, run = function(p)
-        local delta = nil
+        local delta, god = nil, nil
         pcall(function() delta = p:getMaxWeightDelta() end)
-        return "maxweight=" .. zahl(p:getMaxWeight()) .. " delta=" .. zahl(delta)
+        pcall(function() god = p:isGodMod() end)
+        local text = "maxweight=" .. zahl(p:getMaxWeight()) .. " delta=" .. zahl(delta)
+        if god ~= nil then text = text .. " god=" .. (god and "1" or "0") end
+        return text
     end },
 
     stomp = { args = {}, run = function(p) return stompText(p) end },
