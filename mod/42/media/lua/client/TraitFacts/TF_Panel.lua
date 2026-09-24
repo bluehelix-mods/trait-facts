@@ -638,6 +638,16 @@ local function newSummaryPanel(parent)
     -- clip schaltet im render das Stencil ein; ohne das malte der Text ueber
     -- den Panelrand hinaus, sobald er laenger ist als der Platz.
     panel.clip = true
+    -- Nach dem Zeichnen die Stencil-Flaeche zuruecksetzen (Vanilla
+    -- ISRichTextPanel:render, repaintStencilRect). Java zaehlt verschachtelte
+    -- Stencils hoch: setStencilRect erhoeht die Flaeche um eine Stufe,
+    -- clearStencilRect senkt nur den Zaehler. Steht das Panel in einem Fenster
+    -- mit eigenem Stencil (das Charakterfenster, ISCollapsableWindow), bliebe
+    -- seine Flaeche eine Stufe zu hoch, und alles, was danach dort zeichnet,
+    -- fiele weg: die Kuerzel-Kaestchen und das Fenster am Zahnrad (Befund im
+    -- Spiel 24.09.2026, 0.14.11). Ohne aeusseres Stencil (Charaktererstellung)
+    -- tut der Schalter nichts.
+    panel.doRepaintStencil = true
     panel.background = true
     panel.backgroundColor = { r = 0, g = 0, b = 0, a = 0.5 }
     panel.borderColor = { r = 0.4, g = 0.4, b = 0.4, a = 1 }
