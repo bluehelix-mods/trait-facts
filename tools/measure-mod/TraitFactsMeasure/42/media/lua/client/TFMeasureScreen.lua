@@ -62,7 +62,7 @@ function M.fontLabel()
     return groesse .. ", Tooltip " .. tooltip
 end
 
-M.VERSION = "6.47.1"
+M.VERSION = "6.47.2"
 M.LOGFILE = "TraitFacts_screen.txt"
 M.RESTOREFILE = "TraitFacts_screen_restore.txt"
 

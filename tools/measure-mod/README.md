@@ -1408,13 +1408,14 @@ Seit 6.47.0 fehlen in der Kopie die kurzen Doppel der Lua-Meldungen: die
 Konsole zeigt jede Lua-Ausgabe zweimal, als „:<Tab>Text“ und als
 „LOG  : Lua  f:N> :<Tab>Text“; kopiert wird nur die LOG-Zeile.
 
-## Schalter der Testfigur über den Neustart (seit 6.47.0)
+## Schalter der Testfigur (seit 6.47.2)
 
-God Mode, unsichtbar, „Zombies greifen nicht an“ und „Ausdauer unbegrenzt“
-gelten, wie sie im Messfenster zuletzt standen, auch nach Neustart und Num 9;
-der Stand steht in `Zomboid/Lua/TraitFacts_testfigur.txt`. Ohne die Datei ist
-alles an wie bisher. Anlass: mit God Mode rechnet das Spiel das Tragegewicht
-nicht nach, eine Messung nach dem Laden las 8 statt 18.
+Beim Spielstart sind God Mode, unsichtbar, „Zombies greifen nicht an“ und
+„Ausdauer unbegrenzt“ immer an. Num 9 behält den Stand der laufenden Sitzung:
+was im Messfenster abgeschaltet ist, bleibt beim Neuladen aus. Achtung bei
+Messungen: mit God Mode rechnet das Spiel das Tragegewicht nicht nach (nach
+dem Laden 8 statt 18). 6.47.0 und 6.47.1 hatten den Stand über den Neustart
+gemerkt; das ist wieder entfallen.
 
 ## Neu laden ohne Spielneustart
 
