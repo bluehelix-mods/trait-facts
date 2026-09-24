@@ -1,0 +1,38 @@
+# Wach: Muedigkeit, Durst, Hunger, Messung an einer lebenden Figur
+# Mess-Mod 6.52.0
+# Build 42.20
+# Spieltempo am Ende 3; je Phase 0.5 Spielstunden, Start Muedigkeit 0.2, Hunger 0.1, Durst 0.02
+# je Wert die Rate je Spielstunde; beim Hunger die von ln(1 - Hunger), weil er mit (1 - Hunger) waechst (getAppetiteMultiplier)
+# faktor = Phase mit Trait / Mittel der Nachbarphasen ohne, ueber alle Runden gemittelt; Toleranz 2 %
+# laut Code: updateStats_Awake Wakeful x0.7, Sleepyhead x1.3; updateThirst x2, x0.5; getAppetiteMultiplier x1.5, x0.75
+
+[ergebnis]
+ergebnis|werte=6|stimmen=6|weichen_ab=0|nicht_messbar=0|satt=steht|phasen=15|verworfen=0|davon_wert_gefallen=0
+
+[werte] wert|trait|faktor|soll_mod|soll_code|urteil|phasen
+wert|muede|needslesssleep|0.7016|0.7000|0.7000|stimmt|3
+wert|muede|needsmoresleep|1.3000|1.3000|1.3000|stimmt|3
+wert|durst|highthirst|2.0000|2.0000|2.0000|stimmt|3
+wert|durst|lowthirst|0.5000|0.5000|0.5000|stimmt|3
+wert|hunger|heartyappetite|1.5000|1.5000|1.5000|stimmt|3
+wert|hunger|lighteater|0.7500|0.7500|0.7500|stimmt|3
+
+[satt] Hunger je Spielstunde; stufe ist die Stimmung satt (FOOD_EATEN), steht = beide Raten unter 1 % der normalen
+satt|normal_ohne=0.0308|satt_ohne=0.0000|satt_hearty=0.0000|stufe_ohne=2|stufe_hearty=2|urteil=steht
+
+[phasen] nr|gruppe|stunden|muede_je_h|durst_je_h|hunger_je_h|hunger_ln_je_h|sitzt|satt_stufe
+phase|1|ohne|0.5003|0.0379|0.0288|0.0308|0.0346|0|0
+phase|2|b|0.5008|0.0269|0.0576|0.0461|0.0518|0|0
+phase|3|ohne|0.5003|0.0384|0.0288|0.0308|0.0346|0|0
+phase|4|c|0.5006|0.0499|0.0144|0.0232|0.0259|0|0
+phase|5|ohne|0.5008|0.0384|0.0288|0.0308|0.0346|0|0
+phase|6|b|0.5010|0.0269|0.0576|0.0461|0.0518|0|0
+phase|7|ohne|0.5013|0.0384|0.0288|0.0308|0.0346|0|0
+phase|8|c|0.5002|0.0499|0.0144|0.0232|0.0259|0|0
+phase|9|ohne|0.5048|0.0384|0.0288|0.0308|0.0346|0|0
+phase|10|b|0.5002|0.0269|0.0576|0.0460|0.0518|0|0
+phase|11|ohne|0.5010|0.0384|0.0288|0.0308|0.0346|0|0
+phase|12|c|0.5012|0.0499|0.0144|0.0232|0.0259|0|0
+phase|13|ohne|0.5002|0.0384|0.0288|0.0308|0.0346|0|0
+phase|14|satt|0.5010|0.0384|0.0288|0.0000|0.0000|0|2
+phase|15|sattb|0.5008|0.0384|0.0288|0.0000|0.0000|0|2
