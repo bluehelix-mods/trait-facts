@@ -62,7 +62,7 @@ function M.fontLabel()
     return groesse .. ", Tooltip " .. tooltip
 end
 
-M.VERSION = "6.48.0"
+M.VERSION = "6.49.0"
 M.LOGFILE = "TraitFacts_screen.txt"
 M.RESTOREFILE = "TraitFacts_screen_restore.txt"
 
@@ -112,6 +112,52 @@ end
 M.realMouseX = M.realMouseX or getMouseX
 M.realMouseY = M.realMouseY or getMouseY
 
+--- Der Zeiger des Spiels in den Aufnahmen (seit 6.49.0, Wunsch 24.09.2026).
+-- Das Spiel stellt seinen Zeiger als Zeiger des Betriebssystems ein
+-- (Mouse.initCustomCursor, cursor_white.png); den zeichnet Windows ueber das
+-- Bild, in einer Aufnahme des Spiels steht er nie. Die vorgetaeuschte Maus
+-- hatte darum keinen: der Tooltip wirkte, als klebe er unter der Zeile. Hier
+-- zeichnet ein eigenes Element dasselbe Bild an die Stelle der vorgetaeuschten
+-- Maus, wie Mouse.renderCursorTexture es tut (Spitze bei 1,1), nur waehrend
+-- der Workshop-Aufnahmen.
+M.CURSOR = "media/ui/cursor_white.png"
+
+local function zeigerZeigen()
+    if not (ISUIElement and M.run and M.run.workshop) then return end
+    local tex = getTexture and getTexture(M.CURSOR)
+    if not tex then return end
+    if not M.zeiger then
+        local el = ISUIElement:new(0, 0, 32, 32)
+        el:initialise()
+        el.prerender = function(self)
+            if not M.fakeMouse then return end
+            local p = M.fakePoint()
+            self:setX(p[1] - 1)
+            self:setY(p[2] - 1)
+            self:bringToTop()
+        end
+        el.render = function(self)
+            if M.fakeMouse then self:drawTexture(self.tex, 0, 0, 1, 1, 1, 1) end
+        end
+        el.tex = tex
+        M.zeiger = el
+    end
+    M.zeiger:setWidth(tex:getWidth())
+    M.zeiger:setHeight(tex:getHeight())
+    M.zeiger:addToUIManager()
+    if M.zeiger.setAlwaysOnTop then M.zeiger:setAlwaysOnTop(true) end
+    M.zeiger:setVisible(true)
+end
+
+local function zeigerWeg()
+    local el = M.zeiger
+    if not el then return end
+    pcall(function()
+        el:setVisible(false)
+        el:removeFromUIManager()
+    end)
+end
+
 --- Setzt die Maus scheinbar auf Zeile `index` der Liste, bis M.unhover().
 function M.hover(list, index)
     local item = list and list.items and list.items[index]
@@ -123,6 +169,7 @@ function M.hover(list, index)
     M.fakeMouse = { list = list, index = index }
     getMouseX = function() return M.fakeMouse and M.fakePoint()[1] or M.realMouseX() end
     getMouseY = function() return M.fakeMouse and M.fakePoint()[2] or M.realMouseY() end
+    pcall(zeigerZeigen)
     return true
 end
 
@@ -141,6 +188,7 @@ end
 function M.unhover()
     M.fakeMouse = nil
     getMouseX, getMouseY = M.realMouseX, M.realMouseY
+    pcall(zeigerWeg)
 end
 
 local function traitIndex(list, id)
