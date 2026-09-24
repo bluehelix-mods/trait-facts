@@ -677,6 +677,222 @@ function CW.decorateTraits(screen)
 end
 
 -- ---------------------------------------------------------------------------
+-- Trait-Symbole im Reiter Info nach Gruppen (seit 0.14.9)
+--
+-- Entscheidung 24.09.2026, Mockup docs/mockups/traits-sortiert-2026-09-24,
+-- Variante C: statt einer Zeile "Traits" in der Reihenfolge des Spiels je
+-- Gruppe eine beschriftete Zeile, wie im Erstellungsmenue getrennt.
+--
+--   positive    kostet in der Erstellung Punkte (getCost > 0)
+--   negative    bringt Punkte (getCost < 0), dazu die Gewichts-Traits: die
+--               kosten in B42 0 und kommen vom Gewicht, nicht vom Beruf
+--   profession  vergibt der Beruf der Figur (getGrantedTraits)
+--   other       alles Uebrige mit Kosten 0, etwa ein Berufs-Trait ohne den
+--               Beruf (Debug, Mods); die Zeile steht nur, wenn sie etwas hat
+--
+-- Innerhalb einer Gruppe bleibt die Reihenfolge des Spiels. Leere Gruppen
+-- bekommen keine Zeile.
+--
+-- Wie: Vanilla zeichnet die Symbole in ISCharacterScreen:render in einem Zug
+-- (eine Zeile, Umbruch an der Fensterbreite) und rechnet aus der letzten
+-- Zeile, wo Frisur und Bart darunter stehen. Wir lassen render laufen, reichen
+-- ihm fuer die Dauer des Aufrufs aber statt der Symbole unsichtbare Platzhalter,
+-- genau so viele, dass sein Umbruch so viele Zeilen ergibt wie unsere Gruppen.
+-- Damit ruecken Frisur und Bart von selbst tiefer. Danach setzen wir die
+-- echten Symbole Gruppe fuer Gruppe und schreiben die Beschriftungen davor;
+-- Vanillas Wort "Traits" entfaellt in diesem einen Aufruf.
+
+CW.GROUPS = { "positive", "negative", "profession", "other" }
+
+local GROUP_FALLBACK = { positive = "Positive", negative = "Negative", profession = "Profession", other = "Other" }
+-- Beruf in Gold wie im Mockup, das Uebrige im Grau der Fussnoten; positiv und
+-- negativ in den Farben des Schemas (TF.fmt.rgb, folgt den Spieloptionen).
+local GROUP_GOLD = { 0.71, 0.64, 0.42 }
+local WEIGHT_TRAITS = { overweight = true, obese = true, underweight = true, veryunderweight = true }
+local UI_BORDER = 10   -- UI_BORDER_SPACING in ISCharacterScreen
+local ICON_GAP = 4     -- Abstand der Symbole in ISCharacterScreen:render
+
+function CW.groupLabel(group)
+    local key = "UI_TF_charGroup_" .. group
+    local text = getTextOrNull and getTextOrNull(key) or nil
+    if type(text) ~= "string" or text == "" or text == key then return GROUP_FALLBACK[group] or group end
+    return text
+end
+
+local function groupColor(group)
+    local rgb = TF.fmt and TF.fmt.rgb or {}
+    if group == "positive" then return rgb.good or { 0.45, 0.72, 0.48 } end
+    if group == "negative" then return rgb.bad or { 0.82, 0.50, 0.47 } end
+    if group == "profession" then return GROUP_GOLD end
+    return rgb.note or { 0.55, 0.55, 0.55 }
+end
+
+--- Die Traits, die der Beruf der Figur vergibt, als Menge von Definitionen;
+-- einmal je Beruf gelesen.
+local function grantedSet(screen)
+    local prof = nil
+    pcall(function() prof = screen.char:getDescriptor():getCharacterProfession() end)
+    local key = tostring(prof)
+    if screen.tfGrantedKey == key and screen.tfGranted then return screen.tfGranted end
+    local set = {}
+    pcall(function()
+        local def = CharacterProfessionDefinition.getCharacterProfessionDefinition(prof)
+        local list = def and def:getGrantedTraits()
+        for i = 0, (list and list:size() or 0) - 1 do
+            local traitDef = CharacterTraitDefinition.getCharacterTraitDefinition(list:get(i))
+            if traitDef then set[traitDef] = true end
+        end
+    end)
+    screen.tfGrantedKey, screen.tfGranted = key, set
+    return set
+end
+
+--- Die Gruppe eines Traits (siehe oben).
+-- @param granted  Menge der Definitionen, die der Beruf vergibt
+function CW.traitGroup(def, granted)
+    if granted and granted[def] then return "profession" end
+    local ok, cost = pcall(function() return def:getCost() end)
+    if ok and type(cost) == "number" then
+        if cost > 0 then return "positive" end
+        if cost < 0 then return "negative" end
+    end
+    local key = TF.traitKey(def)
+    local ns = TF.traitNamespace and TF.traitNamespace(def) or "base"
+    if key and WEIGHT_TRAITS[key] and (ns == nil or ns == "base") then return "negative" end
+    return "other"
+end
+
+--- Nach setDisplayedTraits: dieselben Traits, nach Gruppen geordnet, sonst in
+-- der Reihenfolge des Spiels. Vanillas traitsChanged vergleicht die Liste je
+-- Bild Stelle fuer Stelle mit den Symbolen; beide entstehen hier, also in
+-- derselben Ordnung, und es wird nichts staendig neu geladen.
+function CW.sortDisplayed(screen)
+    local list = screen and screen.displayedTraits
+    if type(list) ~= "table" or #list < 2 then return end
+    local granted = grantedSet(screen)
+    local rank = {}
+    for i, g in ipairs(CW.GROUPS) do rank[g] = i end
+    local items = {}
+    for i, def in ipairs(list) do
+        items[i] = { def = def, rank = rank[CW.traitGroup(def, granted)], index = i }
+    end
+    table.sort(items, function(a, b)
+        if a.rank ~= b.rank then return a.rank < b.rank end
+        return a.index < b.index
+    end)
+    for i, item in ipairs(items) do list[i] = item.def end
+end
+
+--- Die Gruppen der geladenen Symbole als Laeufe: { group, from, to }.
+local function groupRuns(screen)
+    local granted = grantedSet(screen)
+    local runs = {}
+    for i, image in ipairs(screen.traits) do
+        local group = CW.traitGroup(image.trait, granted)
+        local last = runs[#runs]
+        if last and last.group == group then last.to = i
+        else runs[#runs + 1] = { group = group, from = i, to = i } end
+    end
+    return runs
+end
+
+--- Wie viele Symbole Vanilla in eine Zeile setzt: es bricht nach einem
+-- Symbol um, wenn das naechste nicht mehr vor den Rand passt.
+function CW.iconsPerRow(x0, size, width)
+    local k = 1
+    while k < 500 and x0 + k * (size + ICON_GAP) + size <= width - UI_BORDER do k = k + 1 end
+    return k
+end
+
+--- Plant einen Aufruf von render: Gruppen, Zeilen und die Platzhalter, die
+-- Vanilla bekommt. nil, wenn es nichts zu ordnen gibt; dann laeuft render
+-- wie ohne uns.
+function CW.planTraits(screen)
+    if type(screen.xOffset) ~= "number" or type(screen.traits) ~= "table" then return nil end
+    -- Wie Vanilla als Erstes in render; danach ist die Liste der Symbole
+    -- aktuell, und Vanillas eigener Vergleich faellt fuer diesen Aufruf aus.
+    if screen:traitsChanged() then screen:loadTraits() end
+    if #screen.traits == 0 then return nil end
+    local texture = screen.traits[1].getTexture and screen.traits[1]:getTexture()
+    if not texture then return nil end
+    local size = texture:getHeightOrig()
+    local x0 = screen.xOffset + UI_BORDER
+    local perRow = CW.iconsPerRow(x0, size, screen:getWidth())
+    local runs, rows = groupRuns(screen), 0
+    for _, run in ipairs(runs) do
+        run.row = rows
+        rows = rows + math.ceil((run.to - run.from + 1) / perRow)
+    end
+    local spacers = {}
+    local function noop() end
+    local function getTexture() return texture end
+    local function setY(s, y) s.y = y end
+    for i = 1, (rows - 1) * perRow + 1 do
+        spacers[i] = { setX = noop, setY = setY, setVisible = noop, getTexture = getTexture }
+    end
+    return { real = screen.traits, spacers = spacers, runs = runs, perRow = perRow,
+             size = size, x0 = x0 }
+end
+
+--- Setzt die echten Symbole und schreibt die Beschriftungen, nach render.
+function CW.placeTraits(screen, plan)
+    local firstY = plan.spacers[1] and plan.spacers[1].y
+    if type(firstY) ~= "number" then return end
+    local size, step = plan.size, plan.size + ICON_GAP
+    local fontH = getTextManager():getFontHeight(UIFont.Small)
+    local offset = (fontH - size) / 2 + 1
+    for _, run in ipairs(plan.runs) do
+        local y = firstY + run.row * step
+        local c = groupColor(run.group)
+        screen:drawTextRight(CW.groupLabel(run.group), screen.xOffset, y - offset, c[1], c[2], c[3], 1, UIFont.Small)
+        local col = 0
+        for i = run.from, run.to do
+            if col == plan.perRow then col, y = 0, y + step end
+            local image = plan.real[i]
+            image:setX(plan.x0 + col * step)
+            image:setY(y)
+            image:setVisible(true)
+            col = col + 1
+        end
+    end
+end
+
+--- Die Huelle um ISCharacterScreen:render.
+local function renderGrouped(screen, ...)
+    local original = TF._orig["charwin:render"]
+    local plan = TF.safe("charwin:plan", CW.planTraits, screen)
+    if not plan then return original(screen, ...) end
+    local traitsLabel = getText("IGUI_char_Traits")
+    local ownChanged, ownDraw = rawget(screen, "traitsChanged"), rawget(screen, "drawTextRight")
+    local drawTextRight = screen.drawTextRight
+    screen.traits = plan.spacers
+    screen.traitsChanged = function() return false end
+    screen.drawTextRight = function(s, text, ...)
+        if text == traitsLabel then return end
+        return drawTextRight(s, text, ...)
+    end
+    local ok, err = pcall(original, screen, ...)
+    screen.traits = plan.real
+    rawset(screen, "traitsChanged", ownChanged)
+    rawset(screen, "drawTextRight", ownDraw)
+    if not ok then error(err, 0) end
+    TF.safe("charwin:place", CW.placeTraits, screen, plan)
+end
+
+--- Nach create: die Spalte der Beschriftungen breit genug fuer unsere.
+-- Vanilla misst dort Alter, Gewicht, "Traits", Frisur und Bart.
+function CW.widenLabels(screen)
+    if type(screen.xOffset) ~= "number" or type(screen.avatarX) ~= "number" then return end
+    local tm = getTextManager()
+    local widest = 0
+    for _, group in ipairs(CW.GROUPS) do
+        widest = math.max(widest, tm:MeasureStringX(UIFont.Small, CW.groupLabel(group)))
+    end
+    local need = screen.avatarX + (screen.avatarWidth or 0) + UI_BORDER + 2 + widest
+    if need > screen.xOffset then screen.xOffset = need end
+end
+
+-- ---------------------------------------------------------------------------
 -- Einhaengen
 
 local function wrap(class, name, key, after)
@@ -725,6 +941,12 @@ end
 local function install()
     if ISCharacterScreen then
         wrap(ISCharacterScreen, "loadTraits", "charwin:loadTraits", CW.decorateTraits)
+        wrap(ISCharacterScreen, "setDisplayedTraits", "charwin:setDisplayedTraits", CW.sortDisplayed)
+        wrap(ISCharacterScreen, "create", "charwin:create", CW.widenLabels)
+        if not TF._orig["charwin:render"] and type(ISCharacterScreen.render) == "function" then
+            TF._orig["charwin:render"] = ISCharacterScreen.render
+            ISCharacterScreen.render = renderGrouped
+        end
     end
     if not ISCharacterInfoWindow then return end
     -- RestoreLayout laeuft innerhalb von createChildren (RegisterWindow),

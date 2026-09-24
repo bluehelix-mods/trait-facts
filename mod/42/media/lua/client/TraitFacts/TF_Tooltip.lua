@@ -715,21 +715,22 @@ end
 -- Block selbst bricht nicht um, seine Spalten sind vorab umbrochen und weit
 -- schmaler als maxLineWidth (1000 px mal Schriftmass, ISToolTip).
 --
--- Wie in der Uebersicht (TF.Panel.compose) je Abschnitt neu: die erste
--- Wertzeile bleibt frei, die zweite bekommt einen Streifen, und so fort;
--- unter "No effect in the game" leiser (TF.Panel.STRIPE_ALPHA_QUIET).
+-- Je Abschnitt neu, anders als in der Uebersicht (TF.Panel.compose): die
+-- erste Wertzeile bekommt einen Streifen, die zweite bleibt frei, und so fort
+-- (Wunsch vom 24.09.2026, 0.14.9: der Block soll hell beginnen); unter
+-- "No effect in the game" leiser (TF.Panel.STRIPE_ALPHA_QUIET).
 -- Beschreibung, Kopfzeilen, Ueberschrift und Ausschluesse bleiben frei.
 -- @param parts  Liste { text, kind } in der Reihenfolge des Blocks
 -- @return table { lines = Zeilen des Blocks, rows = { { back, backTo, stripe, dead, gapAfter } } }
 --   back und backTo zaehlen von der letzten Zeile (0) nach oben: die erste
 --   und die letzte Zeile der Wertzeile.
 function TF.Tooltip.rowSpans(parts)
-    local line, rows, stripe, section = 0, {}, false, nil
+    local line, rows, stripe, section = 0, {}, true, nil
     for index, part in ipairs(parts) do
         local first = line
         line = line + lineBreaks(part.text)
         if part.kind == "row" or part.kind == "dead" then
-            if part.kind ~= section then stripe, section = false, part.kind end
+            if part.kind ~= section then stripe, section = true, part.kind end
             local following = parts[index + 1]
             rows[#rows + 1] = { from = first, to = line, stripe = stripe, dead = part.kind == "dead",
                                 gapAfter = following ~= nil and following.text == GAP }

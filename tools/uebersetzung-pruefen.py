@@ -49,6 +49,7 @@ SELBE_TEXTE = {
     "UI_TF_sum_title", "UI_TF_sym_deg", "UI_TF_sym_gain", "UI_TF_sym_lose", "UI_TF_sym_open",
     "UI_TF_unit_hp", "UI_TF_unit_pct", "UI_TF_xp_speed_value", "UI_TF_fmt_range",
     "UI_TF_fmt_pct", "UI_TF_fmt_mult", "UI_TF_fmt_plus", "UI_TF_decimalsep",
+    "UI_TF_sep", "UI_TF_charTab",
     # "lvl" und "normal" stehen in vielen Sprachen genauso da; ob die eigene
     # eines davon uebersetzt, entscheidet der Uebersetzer.
     "UI_TF_unit_levels", "UI_TF_unit_levels_one", "UI_TF_xp_normal",
