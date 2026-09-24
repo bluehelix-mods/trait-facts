@@ -26,6 +26,11 @@ __pycache__/
 !/docs/messungen/
 !/docs/uebersetzung/
 !/docs/workshop/
+# Aus docs/workshop nur, was die Workshop-Beschreibung ueber GitHub einbindet;
+# die Galeriebilder gehen von Hand auf Steam, nicht ins Repo (24.09.2026).
+/docs/workshop/*
+!/docs/workshop/banner.gif
+!/docs/workshop/wiki-evidence.png
 !/docs/befunde/
 /docs/befunde/*
 !/docs/befunde/befunde.json
