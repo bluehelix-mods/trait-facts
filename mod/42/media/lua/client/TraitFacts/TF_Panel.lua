@@ -86,6 +86,82 @@ local function chosenTraits(self)
     return traits
 end
 
+--- Groesse des Pfeils vor jeder Themen-Ueberschrift (TF_Collapse), aus der
+-- Schrifthoehe der Uebersicht, und der Einzug des Namens dahinter.
+local function arrowSize()
+    local manager = getTextManager and getTextManager()
+    local h = manager and manager.getFontHeight and manager:getFontHeight(UIFont and UIFont.Small) or nil
+    if type(h) ~= "number" or h <= 0 then h = 19 end
+    return math.max(7, math.floor(h * 0.5 + 0.5))
+end
+function TF.Panel.arrowIndent()
+    return arrowSize() + 6
+end
+
+--- Die Themen-Ueberschriften, wie das Panel sie nach dem Umbruch gesetzt hat:
+-- { group, x, y, h, closed } in Inhaltskoordinaten. Gefunden am Namen und am
+-- Einzug (<SETX:>), der Reihe nach; einmal je paginate, wie die Kaestchen.
+function TF.Panel.headerBoxes(panel)
+    local heads = panel.tfHeads
+    if not heads or type(panel.lines) ~= "table" or not panel.lineY then return {} end
+    if panel.tfHeadBoxes and panel.tfHeadBoxesFor == panel.lineY then return panel.tfHeadBoxes end
+    local manager = getTextManager and getTextManager()
+    local h = (manager and manager.getFontHeight and manager:getFontHeight(panel.font)) or 19
+    local out, k = {}, 1
+    for i, seg in ipairs(panel.lines) do
+        local head = heads[k]
+        if not head then break end
+        -- Auch nur der Anfang des Namens: bricht er im schmalen Panel um,
+        -- steht in diesem Segment nur sein erster Teil.
+        if type(seg) == "string" and seg ~= "" and string.sub(head.title, 1, #seg) == seg
+                and panel.lineX and panel.lineX[i] == head.indent and panel.lineY[i] then
+            out[#out + 1] = { group = head.group, closed = head.closed,
+                              x = (panel.marginLeft or 0), y = (panel.marginTop or 0) + panel.lineY[i], h = h }
+            k = k + 1
+        end
+    end
+    panel.tfHeadBoxes, panel.tfHeadBoxesFor = out, panel.lineY
+    return out
+end
+
+--- Das Thema, dessen Ueberschrift unter dem Punkt liegt (Inhaltskoordinaten),
+-- oder nil. Die ganze Zeile zaehlt, nicht nur der Name.
+function TF.Panel.headerAt(panel, x, y)
+    if type(x) ~= "number" or type(y) ~= "number" then return nil end
+    if x < 0 or x > panel:getWidth() then return nil end
+    for _, box in ipairs(TF.Panel.headerBoxes(panel)) do
+        if y >= box.y and y < box.y + box.h then return box.group end
+    end
+    return nil
+end
+
+--- Die Pfeile vor den Ueberschriften, dazu ein Hauch Blau hinter der Zeile
+-- unter der Maus. Nach dem Text, im sichtbaren Ausschnitt.
+local function drawArrows(panel)
+    if not (TF.Collapse and TF.Collapse.drawArrow) then return end
+    local size = arrowSize()
+    local scroll = panel:getYScroll() or 0
+    local hover = panel.tfMouseIn and TF.Panel.headerAt(panel, panel:getMouseX(), panel:getMouseY()) or nil
+    for _, box in ipairs(TF.Panel.headerBoxes(panel)) do
+        if box.y >= -scroll and box.y + box.h <= panel:getHeight() - scroll then
+            if hover == box.group then
+                panel:drawRect(1, box.y, panel:getWidth() - 2, box.h, 0.07, 0.45, 0.72, 1.0)
+            end
+            local cx = box.x + 1 + size / 2
+            local cy = box.y + box.h / 2
+            TF.Collapse.drawArrow(panel, cx, cy, size, TF.Collapse.turn(box.group), 0.45, 0.72, 1.0, 1)
+        end
+    end
+end
+
+--- Die Themen, die die Uebersicht gerade zeigt, fuer "Collapse all" und
+-- "Expand all".
+function TF.Panel.shownGroups(panel)
+    local out = {}
+    for _, head in ipairs((panel and panel.tfHeads) or {}) do out[#out + 1] = head.group end
+    return out
+end
+
 --- Baut den Rich-Text der Uebersicht.
 -- @param traits Liste von CharacterTraitDefinition
 -- @param withTitle ob der Titel in den Text gehoert. In der eigenen Spalte
@@ -108,7 +184,7 @@ end
 -- @param opts table|nil  an TF.Summary.build durchgereicht ({ living = true }
 --              im Charakterfenster, TF_CharWindow)
 function TF.Panel.compose(traits, withTitle, width, profession, opts)
-    local pieces, kinds = {}, {}
+    local pieces, kinds, heads = {}, {}, {}
     local function push(text, kind)
         pieces[#pieces + 1] = text
         kinds[#kinds + 1] = kind
@@ -137,7 +213,7 @@ function TF.Panel.compose(traits, withTitle, width, profession, opts)
             end
             line = line + count
         end
-        return { text = table.concat(pieces, NL), spans = spans, lines = line - 1 }
+        return { text = table.concat(pieces, NL), spans = spans, lines = line - 1, heads = heads }
     end
 
     local palette = TF.fmt.palette or {}
@@ -201,9 +277,24 @@ function TF.Panel.compose(traits, withTitle, width, profession, opts)
         -- <LINE> zu einer leeren Zeile. Ohne Titel darueber entfaellt sie vor
         -- der ersten Gruppe, sonst begaenne die Spalte mit einer Luecke.
         if #pieces > 0 or index > 1 then push("", "blank") end
-        push(COLOR_HEADER .. TF.fmt.text("UI_TF_grp_" .. group.group), "header")
-        for _, line in ipairs(group.lines) do
-            push(line, "entry")
+        -- Seit 0.14.12 laesst sich jedes Thema einklappen (TF_Collapse): vor
+        -- dem Namen Platz fuer den Pfeil (<SETX:>), zugeklappt dahinter die
+        -- Zahl der Zeilen und keine Zeilen darunter. TF.Panel.headerBoxes
+        -- findet die Ueberschrift nach dem Umbruch an Name und Einzug wieder.
+        local title = TF.fmt.text("UI_TF_grp_" .. group.group)
+        local shut = TF.Collapse and TF.Collapse.isClosed and TF.Collapse.isClosed(group.group) or false
+        local indent = TF.Panel.arrowIndent()
+        local head = COLOR_HEADER .. " <SETX:" .. indent .. "> " .. title
+        if shut then
+            head = head .. (palette.note or "") .. " <SPACE> (" .. #group.lines .. ")"
+        end
+        heads[#heads + 1] = { group = group.group, title = title, indent = indent, closed = shut,
+                              count = #group.lines }
+        push(head, "header")
+        if not shut then
+            for _, line in ipairs(group.lines) do
+                push(line, "entry")
+            end
         end
     end
 
@@ -677,6 +768,21 @@ local function newSummaryPanel(parent)
     panel.render = function(box)
         if baseRender then baseRender(box) end
         TF.safe("summary:tags", function() drawTagLayer(box) end)
+        TF.safe("summary:arrows", function() drawArrows(box) end)
+    end
+    -- Ein Klick auf eine Themen-Ueberschrift klappt sie ein oder aus
+    -- (TF_Collapse, seit 0.14.12). Die Uebersicht setzt sich danach neu,
+    -- sobald ihr Halter TF.Collapse.epoch vergleicht.
+    local baseDown = panel.onMouseDown
+    panel.onMouseDown = function(box, x, y)
+        local group = TF.safe("summary:collapse", function()
+            return TF.Panel.headerAt(box, box:getMouseX(), box:getMouseY())
+        end)
+        if group and TF.Collapse then
+            TF.safe("summary:toggle", TF.Collapse.toggle, group)
+            return true
+        end
+        if baseDown then return baseDown(box, x, y) end
     end
     local baseMove = panel.onMouseMove
     panel.onMouseMove = function(box, dx, dy)
@@ -689,12 +795,13 @@ local function newSummaryPanel(parent)
             local mx, my = box:getMouseX(), box:getMouseY()
             box.tfHoverTag = TF.Panel.tagAt(box, mx, my)
             box.tfHoverX, box.tfHoverY = mx, my
+            box.tfMouseIn = true
         end)
     end
     local baseOut = panel.onMouseMoveOutside
     panel.onMouseMoveOutside = function(box, dx, dy)
         if baseOut then baseOut(box, dx, dy) end
-        TF.safe("summary:hover", function() box.tfHoverTag = nil end)
+        TF.safe("summary:hover", function() box.tfHoverTag = nil box.tfMouseIn = false end)
     end
     return panel
 end
@@ -915,6 +1022,8 @@ function TF.Panel.refresh(self)
         local block = TF.buildBlock and TF.safe("summary:focusblock", TF.buildBlock, focus) or nil
         panel:setText(COLOR_HEADER .. label .. (block and (NL .. block) or ""))
         panel.tfSpans, panel.tfExpectedLines = nil, nil
+        panel.tfHeads = nil
+        panel.tfCollapseEpoch = TF.Collapse and TF.Collapse.epoch or nil
         panel.tfComposedWidth = panel:getWidth()
         panel:paginate()
         if panel.setYScroll then panel:setYScroll(0) end
@@ -960,6 +1069,10 @@ function TF.Panel.fillWith(panel, traits, profession, opts)
     -- Fehler melden. Im Text scrollte er mit.
     local made = TF.Panel.compose(traits, false, nutzbar, profession, opts)
     panel:setText(made.text)
+    -- Die Ueberschriften zum Klicken und fuer die Pfeile, dazu der
+    -- Klapp-Stand, fuer den dieser Text gilt (TF_Collapse).
+    panel.tfHeads = made.heads
+    panel.tfCollapseEpoch = TF.Collapse and TF.Collapse.epoch or nil
     -- Streifen nur im Spaltensatz. Im durchlaufenden Satz bricht das Panel
     -- selbst um, die Zeilenzahl des Textes stimmt dann nicht, und
     -- drawStripes setzte mit einer Warnung aus - bei jedem schmalen
@@ -1715,6 +1828,18 @@ local function ensureButtons(self)
     if all.setTooltip then all:setTooltip(TF.fmt.text("UI_TF_sum_showall_tooltip")) end
     self:addChild(all)
     self.tfShowAllButton = all
+    -- Alle Themen der Uebersicht zu oder auf (TF_Collapse, seit 0.14.12). In
+    -- der Kopfzeile ist nur Platz fuer Symbole: zwei Pfeile nach rechts
+    -- (alles zu) und zwei nach unten (alles auf), mit Tooltip. Im
+    -- Charakterfenster stehen dieselben beiden als Textknoepfe (TF_CharWindow).
+    if TF.Collapse and TF.Panel.newCollapseButton then
+        self.tfCollapseAllButton = TF.Panel.newCollapseButton(self, true, headerHeight(), function(target)
+            return target.tfSummary
+        end)
+        self.tfExpandAllButton = TF.Panel.newCollapseButton(self, false, headerHeight(), function(target)
+            return target.tfSummary
+        end)
+    end
     -- Build als Text kopieren und einfuegen (TF_Build, seit 0.12.0).
     if TF.Build then
         self.tfCopyButton = iconButton("UI_TF_build_copy", ICON_COPY, function(target)
@@ -1723,6 +1848,79 @@ local function ensureButtons(self)
         self.tfPasteButton = iconButton("UI_TF_build_paste", ICON_PASTE, function(target)
             TF.safe("build:paste", TF.Build.paste, target)
         end)
+    end
+end
+
+--- Ein Knopf "Collapse all" (shut = true) oder "Expand all" fuer die
+-- Uebersicht, die `panelOf(target)` liefert. Ohne Titel ein Symbol: zwei
+-- kleine Pfeile uebereinander, wie die vor den Ueberschriften (nach rechts =
+-- zu, nach unten = auf); mit `withTitle` ein Textknopf (Charakterfenster).
+-- Grau, wenn es nichts zu tun gibt (alles schon zu oder schon offen).
+function TF.Panel.newCollapseButton(owner, shut, size, panelOf, withTitle)
+    if not ISButton then return nil end
+    local key = shut and "UI_TF_sum_collapseall" or "UI_TF_sum_expandall"
+    local title = withTitle and TF.fmt.text(key) or ""
+    local width = withTitle and (TF.fmt.measure(title, UIFont.Small) + 20) or size
+    local b = ISButton:new(0, 0, width, size, title, owner, function(target)
+        local panel = panelOf(target)
+        if panel and TF.Collapse then
+            TF.safe("collapse:all", TF.Collapse.setAll, TF.Panel.shownGroups(panel), shut)
+        end
+    end)
+    b:initialise()
+    b.borderColor = { r = 0.81, g = 0.82, b = 0.81, a = 0.55 }
+    b.backgroundColor = { r = 0.05, g = 0.05, b = 0.05, a = 1 }
+    if not withTitle and b.setTooltip then b:setTooltip(TF.fmt.text(key)) end
+    b.tfCollapseShut = shut
+    b.tfPanelOf = function() return panelOf(owner) end
+    b.tfTitle, b.tfTitleWidth, b.tfIcon = TF.fmt.text(key), width, not withTitle
+    do
+        local baseRender = b.render
+        b.render = function(btn, ...)
+            if baseRender then baseRender(btn, ...) end
+            if not btn.tfIcon then return end
+            TF.safe("collapse:icon", function()
+                local w, h = btn:getWidth(), btn:getHeight()
+                local s = math.max(5, math.floor(math.min(w, h) * 0.3))
+                local a = btn.enable == false and 0.35 or 0.9
+                local t = shut and 1 or 0
+                TF.Collapse.drawArrow(btn, w / 2, h / 2 - s * 0.45, s, t, 1, 1, 1, a)
+                TF.Collapse.drawArrow(btn, w / 2, h / 2 + s * 0.55, s, t, 1, 1, 1, a)
+            end)
+        end
+    end
+    if TF.Panel.quietTooltipAfterClick then TF.Panel.quietTooltipAfterClick(b) end
+    owner:addChild(b)
+    return b
+end
+
+--- Schaltet einen Textknopf aus newCollapseButton auf Symbol (compact) und
+-- zurueck: im schmalen Charakterfenster reicht die Fusszeile sonst nicht fuer
+-- Traits und Beruf.
+function TF.Panel.setCollapseCompact(b, compact, size)
+    if not b or b.tfIcon == compact then return end
+    b.tfIcon = compact
+    if compact then
+        if b.setTitle then b:setTitle("") end
+        b:setWidth(size)
+        if b.setTooltip then b:setTooltip(b.tfTitle) end
+    else
+        if b.setTitle then b:setTitle(b.tfTitle) end
+        b:setWidth(b.tfTitleWidth)
+        if b.setTooltip then b:setTooltip(nil) end
+    end
+end
+
+--- Setzt beide Knoepfe bedienbar oder grau, nach dem Stand der Uebersicht.
+function TF.Panel.updateCollapseButtons(...)
+    for _, b in ipairs({ ... }) do
+        if b and b.tfPanelOf then
+            local groups = TF.Panel.shownGroups(b.tfPanelOf())
+            local closedCount = TF.Collapse and TF.Collapse.countClosed(groups) or 0
+            local useful
+            if b.tfCollapseShut then useful = closedCount < #groups else useful = closedCount > 0 end
+            if b.enable ~= useful and b.setEnable then b:setEnable(useful) end
+        end
     end
 end
 
@@ -1745,6 +1943,8 @@ local function placeHeader(self)
     local row = { gear }
     if self.tfCopyButton then row[#row + 1] = self.tfCopyButton end
     if self.tfPasteButton then row[#row + 1] = self.tfPasteButton end
+    if self.tfCollapseAllButton then row[#row + 1] = self.tfCollapseAllButton end
+    if self.tfExpandAllButton then row[#row + 1] = self.tfExpandAllButton end
     local all = self.tfShowAllButton
     if not rect then
         for _, b in ipairs(row) do b:setVisible(false) end
@@ -1773,6 +1973,25 @@ local function placeHeader(self)
         end
         if not fits(size, bugGap) then bugGap = BUTTON_GAP end
         if not fits(size, bugGap) then size = largest(bugGap) end
+        -- Reicht das nicht, weichen zuerst die beiden Klapp-Symbole (seit
+        -- 0.14.12); die Ueberschriften bleiben einzeln klickbar.
+        if not fits(size, bugGap) and self.tfCollapseAllButton then
+            local kept = {}
+            for _, b in ipairs(row) do
+                if b == self.tfCollapseAllButton or b == self.tfExpandAllButton then
+                    b:setVisible(false)
+                else
+                    kept[#kept + 1] = b
+                end
+            end
+            row = kept
+            fixed = (#row - 1) * BUTTON_GAP + BUTTON_GAP + all:getWidth()
+            -- Ohne die beiden von vorn: volle Groesse und voller Abstand, wo
+            -- es reicht.
+            size, bugGap = rect.h, BUG_GAP
+            if not fits(size, bugGap) then bugGap = BUTTON_GAP end
+            if not fits(size, bugGap) then size = largest(bugGap) end
+        end
         if not fits(size, bugGap) then
             -- Letzter Ausweg: der Titel weicht, das "?" rueckt an den Anfang.
             -- Die Knoepfe tragen die Funktion, die Ueberschrift nur den Namen;
@@ -1794,6 +2013,7 @@ local function placeHeader(self)
         b:setVisible(true)
         x = x + size + BUTTON_GAP
     end
+    TF.safe("collapse:buttons", TF.Panel.updateCollapseButtons, self.tfCollapseAllButton, self.tfExpandAllButton)
     bug:setX(x - BUTTON_GAP + bugGap)
     bug:setY(y)
     bug:setWidth(size)
@@ -1902,8 +2122,9 @@ local function install()
         -- (TF.Panel.focusTrait); ohne Controller ist beides immer nil.
         local focused = TF.safe("summary:focus", TF.Panel.focusTrait, self)
         local focusId = focused and focused.id or nil
+        local collapsed = TF.Collapse and TF.Collapse.epoch or nil
         if changed or (panel and (panel.tfComposedWidth ~= panel:getWidth()
-                or panel.tfFocusId ~= focusId)) then
+                or panel.tfFocusId ~= focusId or panel.tfCollapseEpoch ~= collapsed)) then
             TF.safe("summary:refresh", TF.Panel.refresh, self)
         end
         -- Das Farbschema aus den Mod-Optionen, je Bild abgeglichen (ohne

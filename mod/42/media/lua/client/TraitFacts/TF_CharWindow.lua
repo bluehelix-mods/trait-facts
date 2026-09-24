@@ -266,6 +266,7 @@ function CW.refresh(view, force)
     if not (panel and TF.Panel and TF.Panel.fillWith) then return false end
     local traits, profession, sig = CW.readCharacter(view.playerNum)
     local key = sig .. "#" .. tostring(TF.viewKey and TF.viewKey() or "") .. "#" .. tostring(panel:getWidth())
+        .. "#" .. tostring(TF.Collapse and TF.Collapse.epoch or "")
     if not force and key == view.tfKey then return false end
     view.tfKey = key
     local scroll = panel.getYScroll and panel:getYScroll() or 0
@@ -319,6 +320,28 @@ local function layoutContent(view)
         gear:setY(footY)
         setSize(gear, fh, fh)
     end
+    -- "Collapse all" und "Expand all" links neben dem Zahnrad (seit 0.14.12,
+    -- Mockup kategorien-klappen-2026-09-24).
+    local right = gear and gear:getX() or (w - PAD)
+    -- Reicht der Rest nicht fuer die Fusszeile (Traits und Beruf), werden die
+    -- beiden zu Symbolen wie in der Charaktererstellung.
+    local pair = { view.tfExpandAllButton, view.tfCollapseAllButton }
+    if pair[1] and pair[2] and TF.Panel and TF.Panel.setCollapseCompact then
+        local need = TF.fmt.measure(view.tfFooter or "", UIFont and UIFont.Small) + 2 * PAD
+        local wide = right - 12 - pair[1].tfTitleWidth - pair[2].tfTitleWidth
+        local compact = wide < need
+        TF.Panel.setCollapseCompact(pair[1], compact, fh)
+        TF.Panel.setCollapseCompact(pair[2], compact, fh)
+    end
+    for _, b in ipairs(pair) do
+        if b then
+            right = right - 6 - b:getWidth()
+            b:setX(right)
+            b:setY(footY)
+            setSize(b, nil, fh)
+        end
+    end
+    view.tfFootRight = right
 end
 
 --- Stellt die Griffe an die Raender des Fensters: Vanillas Ecke und
@@ -423,13 +446,19 @@ function CW.frame(view)
     end
     remember(view.playerNum, w, h)
     local panel = view.tfPanel
+    if TF.Panel and TF.Panel.updateCollapseButtons then
+        TF.Panel.updateCollapseButtons(view.tfCollapseAllButton, view.tfExpandAllButton)
+    end
+    if panel and TF.Collapse and panel.tfCollapseEpoch ~= TF.Collapse.epoch then view.tfDirty = true end
     view.tfFrames = (view.tfFrames or 0) + 1
     local widthChanged = panel and panel.tfComposedWidth ~= panel:getWidth()
     if view.tfDirty or widthChanged or view.tfFrames >= CW.CHECK_FRAMES then
         local force = view.tfDirty
         view.tfDirty = false
         view.tfFrames = 0
-        CW.refresh(view, force)
+        -- Neuer Text, neue Fusszeile: ihre Laenge entscheidet, ob die
+        -- Klapp-Knoepfe Text oder Symbol sind (layoutContent).
+        if CW.refresh(view, force) then layoutContent(view) end
     end
 end
 
@@ -468,7 +497,7 @@ local function drawFooter(view)
     local text = view.tfFooter
     if not text or text == "" then return end
     local font = UIFont and UIFont.Small
-    local room = w - 3 * PAD - fh
+    local room = (view.tfFootRight or (w - PAD - fh)) - 2 * PAD
     if TF.fmt.kuerze and TF.fmt.measure(text, font) > room then text = TF.fmt.kuerze(text, room, font) end
     local c = (TF.fmt.rgb and TF.fmt.rgb.note) or { 0.55, 0.55, 0.55 }
     view:drawText(text, PAD, y + (fh - fontHeight(font)) / 2, c[1], c[2], c[3], 1, font)
@@ -551,6 +580,11 @@ local function buildContent(view)
         view.tfPanel = TF.Panel.newSummaryPanel(view)
     end
     view.tfGearButton = gearButton(view)
+    if TF.Panel and TF.Panel.newCollapseButton then
+        local function panelOf(v) return v.tfPanel end
+        view.tfCollapseAllButton = TF.Panel.newCollapseButton(view, true, footerHeight(), panelOf, true)
+        view.tfExpandAllButton = TF.Panel.newCollapseButton(view, false, footerHeight(), panelOf, true)
+    end
     layoutContent(view)
 end
 
