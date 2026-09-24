@@ -1,0 +1,44 @@
+# Wecker und Hard of Hearing: weckt ein klingelnder Wecker die schlafende Figur?
+# Mess-Mod 6.51.1
+# Build 42.20
+# laut Code: wach, wenn Abstand^2 x getHearDistanceModifier^2 <= SoundRadius^2 (AlarmClock Z. 180-181, AlarmClockClothing Z. 190-191); Deaf nie (Z. 177 / 187)
+# getHearDistanceModifier: 1.0, Hard of Hearing x4.5, x getWornItemsHearingModifier (IsoGameCharacter Z. 13934-13940); Radius Uhr 7, Wecker 15 (media/scripts)
+# Soll-Faktor Hard of Hearing 4.5000 aus TF_Static hardofhearing/hearing
+# Abstand 0: Uhr am Handgelenk, Wecker im Inventar (getAlarmSquare = Feld der Figur, Z. 78-95)
+# spiel = beobachtet: Wecker klingelt, Figur schlaeft, nach hoechstens 12 Ticks wach oder nicht; rechnung = Formel mit den Gettern im Spiel; soll = Formel laut Code
+
+[ergebnis]
+ergebnis|werte=23|stimmen=23|weichen_ab=0|nicht_messbar=0|faktor=4.5000|faktor_urteil=stimmt|fussnote=stimmt
+
+[faktor] getHearDistanceModifier ohne und mit Hard of Hearing, Soll aus TF_Static hardofhearing/hearing
+faktor|ohne=1.0000|mit=4.5000|taub=1.0000|kopf=1.0000|faktor=4.5000|soll=4.5000|urteil=stimmt
+
+[fussnote] UI_TF_note_hearingalarm, alle mit Hard of Hearing
+fussnote|uhr|0|soll=wach|spiel=wach
+fussnote|uhr|2|soll=schlaeft|spiel=schlaeft
+fussnote|wecker|3|soll=wach|spiel=wach
+
+[proben] probe|fall|gegenstand|abstand|abstand_q|radius|hdm|spiel|rechnung|soll|urteil|ticks|klingel_ticks|grund
+probe|1|ohne|leer|0|-|-|1.0000|schlaeft|schlaeft|schlaeft|stimmt|12|0|-
+probe|2|ohne|uhr|0|0|7|1.0000|wach|wach|wach|stimmt|1|0|-
+probe|3|ohne|uhr|1|1|7|1.0000|wach|wach|wach|stimmt|1|0|-
+probe|4|ohne|uhr|2|4|7|1.0000|wach|wach|wach|stimmt|1|0|-
+probe|5|ohne|uhr|7|49|7|1.0000|wach|wach|wach|stimmt|1|0|-
+probe|6|ohne|uhr|8|64|7|1.0000|schlaeft|schlaeft|schlaeft|stimmt|12|12|-
+probe|7|ohne|wecker|0|0|15|1.0000|wach|wach|wach|stimmt|1|0|-
+probe|8|ohne|wecker|3|9|15|1.0000|wach|wach|wach|stimmt|1|0|-
+probe|9|ohne|wecker|4|16|15|1.0000|wach|wach|wach|stimmt|1|0|-
+probe|10|ohne|wecker|15|225|15|1.0000|wach|wach|wach|stimmt|1|0|-
+probe|11|ohne|wecker|16|256|15|1.0000|schlaeft|schlaeft|schlaeft|stimmt|12|12|-
+probe|12|mit|leer|0|-|-|4.5000|schlaeft|schlaeft|schlaeft|stimmt|12|0|-
+probe|13|mit|uhr|0|0|7|4.5000|wach|wach|wach|stimmt|1|0|-
+probe|14|mit|uhr|1|1|7|4.5000|wach|wach|wach|stimmt|1|0|-
+probe|15|mit|uhr|2|4|7|4.5000|schlaeft|schlaeft|schlaeft|stimmt|12|12|-
+probe|16|mit|uhr|3|9|7|4.5000|schlaeft|schlaeft|schlaeft|stimmt|12|12|-
+probe|17|mit|wecker|0|0|15|4.5000|wach|wach|wach|stimmt|1|0|-
+probe|18|mit|wecker|1|1|15|4.5000|wach|wach|wach|stimmt|1|0|-
+probe|19|mit|wecker|2|4|15|4.5000|wach|wach|wach|stimmt|1|0|-
+probe|20|mit|wecker|3|9|15|4.5000|wach|wach|wach|stimmt|1|0|-
+probe|21|mit|wecker|4|16|15|4.5000|schlaeft|schlaeft|schlaeft|stimmt|12|12|-
+probe|22|taub|uhr|0|0|7|1.0000|schlaeft|schlaeft|schlaeft|stimmt|12|12|-
+probe|23|taub|wecker|0|0|15|1.0000|schlaeft|schlaeft|schlaeft|stimmt|12|12|-
