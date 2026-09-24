@@ -1,0 +1,135 @@
+# Schubsen: welcher Taumel nach einem Stoss, ohne Trait, mit Strong und mit Weak (Puny)
+# Mess-Mod 6.50.0
+# Build 42.20
+# Stoss aus Lua: setDoShove(true), AttemptAttack(); Haende leer, Strength 5, Abstand 0.700, Ausdauer 1, Panik/Stress/Muedigkeit 0 vor jedem Stoss
+# Zombie useless, Zombies greifen nicht an; kritische Stoesse zurueckgenommen (OnWeaponSwingHitPoint), gezaehlt in krit_wurf
+# gelesen: damageSplit und Abstand beim Treffer (OnWeaponHitCharacter), getHitForce im Tick danach,
+#   Knoten/Clip aus getAnimationDebug, Aktionszustand, groesster Weg in 150 Ticks
+# laut Code: hitforce > 0.4 -> fromFront Zombie_ShoveStagger_2m, < 0.4 -> smallFromFront Zombie_StaggerBack;
+#   von hinten beide Zombie_PushedFwd_FromBehind (AnimSets/zombie/staggerback);
+#   hitforce = min(1, damageSplit x rangeDel x 1.5 / 2.7 x ShovingMod) x 1.4 Strong / x 0.6 Weak
+#   (IsoGameCharacter.java:5701-5703, 5758-5788; CombatManager.java:789-833)
+# erwartet_lang = Mittel je Stoss des Anteils ueber 0.4 bei gleichverteiltem Schadenswurf 0.2..0.4; urteil: |anteil - erwartet| <= 2 sigma + 0.05
+# Stoesse ohne Treffer: 0; Zombies gesetzt: 1; Stellfehler: 0
+
+[ergebnis]
+ergebnis|stoesse=110|schwelle_stimmt=110|schwelle_n=110|kraft_stimmt=110|kraft_n=110|seite_anders=0
+
+[faelle] fall|seite|stoesse|lang|kurz|umgeworfen|anderes|anteil_lang|erwartet_lang|urteil|hitforce_mittel|hitforce_min|hitforce_max|weg_lang_m|weg_kurz_m|krit_wurf|clips
+fall|ohne|vorn|30|5|25|0|0|0.167|0.506|weicht_ab|0.191|0.054|0.502|0.840|0.822|15|Zombie_ShoveStagger_2m=5,Zombie_StaggerBack=25
+fall|strong|vorn|30|12|18|0|0|0.400|0.935|weicht_ab|0.311|0.083|0.721|0.844|0.819|16|Zombie_ShoveStagger_2m=12,Zombie_StaggerBack=18
+fall|weak|vorn|30|0|30|0|0|0.000|0.000|stimmt|0.134|0.038|0.298|-|0.821|10|Zombie_StaggerBack=30
+fall|ohne|hinten|10|1|9|0|0|0.100|0.508|weicht_ab|0.171|0.058|0.445|0.402|0.403|8|Zombie_PushedFwd_FromBehind=10
+fall|strong|hinten|10|3|7|0|0|0.300|0.935|weicht_ab|0.254|0.078|0.742|0.402|0.402|8|Zombie_PushedFwd_FromBehind=10
+
+[stoesse] nr|fall|seite|abstand|damage_split|hitforce|hitforce_soll|spanne|p_lang|position|knoten|clip|klasse|soll|weg_m|krit_wurf|krit|stoss|reaktion|ausdauer|moodles|zustaende
+stoss|1|ohne|vorn|0.634|0.116|0.074|0.074|0.256-0.512|0.438|FRONT|smallfromfront|Zombie_StaggerBack|kurz|kurz|0.857|0|0|1|-|0.997|p0,s0,a0,m0|staggerback>idle
+stoss|2|ohne|vorn|0.664|0.159|0.107|0.107|0.268-0.537|0.509|FRONT|smallfromfront|Zombie_StaggerBack|kurz|kurz|0.825|1|0|1|-|0.997|p0,s0,a0,m0|staggerback>idle
+stoss|3|ohne|vorn|0.665|0.158|0.106|0.106|0.269-0.537|0.511|FRONT|smallfromfront|Zombie_StaggerBack|kurz|kurz|0.820|1|0|1|-|0.997|p0,s0,a0,m0|staggerback>idle
+stoss|4|ohne|vorn|0.662|0.098|0.066|0.066|0.268-0.535|0.505|FRONT|smallfromfront|Zombie_StaggerBack|kurz|kurz|0.823|1|0|1|-|0.997|p0,s0,a0,m0|staggerback>idle
+stoss|5|ohne|vorn|0.666|0.090|0.061|0.061|0.269-0.538|0.514|FRONT|smallfromfront|Zombie_StaggerBack|kurz|kurz|0.820|1|0|1|-|0.997|p0,s0,a0,m0|staggerback>idle
+stoss|6|strong|vorn|0.668|0.111|0.105|0.105|0.378-0.756|0.941|FRONT|smallfromfront|Zombie_StaggerBack|kurz|kurz|0.820|0|0|1|-|0.997|p0,s0,a0,m0|staggerback>idle
+stoss|7|strong|vorn|0.661|0.766|0.716|0.716|0.374-0.748|0.930|FRONT|fromfront|Zombie_ShoveStagger_2m|lang|lang|0.847|0|0|1|-|0.997|p0,s0,a0,m0|staggerback>idle
+stoss|8|strong|vorn|0.659|0.143|0.133|0.133|0.373-0.746|0.927|FRONT|smallfromfront|Zombie_StaggerBack|kurz|kurz|0.818|0|0|1|-|0.997|p0,s0,a0,m0|staggerback>idle
+stoss|9|strong|vorn|0.663|0.270|0.253|0.253|0.375-0.750|0.934|FRONT|smallfromfront|Zombie_StaggerBack|kurz|kurz|0.823|1|0|1|-|0.997|p0,s0,a0,m0|staggerback>idle
+stoss|10|strong|vorn|0.665|0.089|0.084|0.084|0.376-0.752|0.937|FRONT|smallfromfront|Zombie_StaggerBack|kurz|kurz|0.809|0|0|1|-|0.997|p0,s0,a0,m0|staggerback>idle
+stoss|11|weak|vorn|0.665|0.099|0.040|0.040|0.161-0.322|0.000|FRONT|smallfromfront|Zombie_StaggerBack|kurz|kurz|0.815|0|0|1|-|0.997|p0,s0,a0,m0|staggerback>idle
+stoss|12|weak|vorn|0.661|0.624|0.250|0.250|0.160-0.321|0.000|FRONT|smallfromfront|Zombie_StaggerBack|kurz|kurz|0.824|1|0|1|-|0.997|p0,s0,a0,m0|staggerback>idle
+stoss|13|weak|vorn|0.664|0.095|0.038|0.038|0.161-0.322|0.000|FRONT|smallfromfront|Zombie_StaggerBack|kurz|kurz|0.821|0|0|1|-|0.997|p0,s0,a0,m0|staggerback>idle
+stoss|14|weak|vorn|0.661|0.281|0.113|0.113|0.160-0.321|0.000|FRONT|smallfromfront|Zombie_StaggerBack|kurz|kurz|0.825|1|0|1|-|0.997|p0,s0,a0,m0|staggerback>idle
+stoss|15|weak|vorn|0.665|0.124|0.050|0.050|0.161-0.322|0.000|FRONT|smallfromfront|Zombie_StaggerBack|kurz|kurz|0.827|0|0|1|-|0.997|p0,s0,a0,m0|staggerback>idle
+stoss|16|ohne|hinten|0.660|0.113|0.076|0.076|0.267-0.533|0.500|BEHIND|smallfrombehind|Zombie_PushedFwd_FromBehind|kurz|kurz|0.400|0|0|1|-|0.997|p0,s0,a0,m0|staggerback>idle
+stoss|17|ohne|hinten|0.660|0.568|0.379|0.379|0.267-0.533|0.500|BEHIND|smallfrombehind|Zombie_PushedFwd_FromBehind|kurz|kurz|0.406|1|0|1|-|0.997|p0,s0,a0,m0|staggerback>idle
+stoss|18|ohne|hinten|0.661|0.101|0.068|0.068|0.267-0.534|0.503|BEHIND|smallfrombehind|Zombie_PushedFwd_FromBehind|kurz|kurz|0.402|1|0|1|-|0.997|p0,s0,a0,m0|staggerback>idle
+stoss|19|ohne|hinten|0.669|0.086|0.058|0.058|0.270-0.541|0.520|BEHIND|smallfrombehind|Zombie_PushedFwd_FromBehind|kurz|kurz|0.404|1|0|1|-|0.997|p0,s0,a0,m0|staggerback>idle
+stoss|20|ohne|hinten|0.666|0.096|0.065|0.065|0.269-0.538|0.514|BEHIND|smallfrombehind|Zombie_PushedFwd_FromBehind|kurz|kurz|0.401|1|0|1|-|0.997|p0,s0,a0,m0|staggerback>idle
+stoss|21|strong|hinten|0.663|0.583|0.547|0.547|0.375-0.750|0.934|BEHIND|frombehind|Zombie_PushedFwd_FromBehind|lang|lang|0.398|1|0|1|-|0.997|p0,s0,a0,m0|staggerback>idle
+stoss|22|strong|hinten|0.663|0.106|0.099|0.099|0.375-0.750|0.934|BEHIND|smallfrombehind|Zombie_PushedFwd_FromBehind|kurz|kurz|0.404|1|0|1|-|0.997|p0,s0,a0,m0|staggerback>idle
+stoss|23|strong|hinten|0.667|0.146|0.138|0.138|0.377-0.755|0.940|BEHIND|smallfrombehind|Zombie_PushedFwd_FromBehind|kurz|kurz|0.399|1|0|1|-|0.997|p0,s0,a0,m0|staggerback>idle
+stoss|24|strong|hinten|0.668|0.121|0.114|0.114|0.378-0.756|0.941|BEHIND|smallfrombehind|Zombie_PushedFwd_FromBehind|kurz|kurz|0.400|1|0|1|-|0.997|p0,s0,a0,m0|staggerback>idle
+stoss|25|strong|hinten|0.660|0.102|0.095|0.095|0.373-0.747|0.929|BEHIND|smallfrombehind|Zombie_PushedFwd_FromBehind|kurz|kurz|0.402|0|0|1|-|0.997|p0,s0,a0,m0|staggerback>idle
+stoss|26|ohne|vorn|0.660|0.672|0.448|0.448|0.267-0.533|0.500|FRONT|fromfront|Zombie_ShoveStagger_2m|lang|lang|0.839|0|0|1|-|0.997|p0,s0,a0,m0|staggerback>idle
+stoss|27|ohne|vorn|0.666|0.528|0.355|0.355|0.269-0.538|0.514|FRONT|smallfromfront|Zombie_StaggerBack|kurz|kurz|0.820|0|0|1|-|0.997|p0,s0,a0,m0|staggerback>idle
+stoss|28|ohne|vorn|0.660|0.130|0.086|0.086|0.267-0.533|0.500|FRONT|smallfromfront|Zombie_StaggerBack|kurz|kurz|0.819|1|0|1|-|0.997|p0,s0,a0,m0|staggerback>idle
+stoss|29|ohne|vorn|0.665|0.103|0.069|0.069|0.269-0.537|0.511|FRONT|smallfromfront|Zombie_StaggerBack|kurz|kurz|0.828|0|0|1|-|0.997|p0,s0,a0,m0|staggerback>idle
+stoss|30|ohne|vorn|0.662|0.338|0.226|0.226|0.268-0.535|0.505|FRONT|smallfromfront|Zombie_StaggerBack|kurz|kurz|0.821|1|0|1|-|0.997|p0,s0,a0,m0|staggerback>idle
+stoss|31|strong|vorn|0.666|0.766|0.721|0.721|0.377-0.753|0.938|FRONT|fromfront|Zombie_ShoveStagger_2m|lang|lang|0.843|1|0|1|-|0.997|p0,s0,a0,m0|staggerback>idle
+stoss|32|strong|vorn|0.664|0.104|0.098|0.098|0.376-0.751|0.935|FRONT|smallfromfront|Zombie_StaggerBack|kurz|kurz|0.810|0|0|1|-|0.997|p0,s0,a0,m0|staggerback>idle
+stoss|33|strong|vorn|0.665|0.427|0.401|0.401|0.376-0.752|0.937|FRONT|fromfront|Zombie_ShoveStagger_2m|lang|lang|0.840|0|0|1|-|0.997|p0,s0,a0,m0|staggerback>idle
+stoss|34|strong|vorn|0.665|0.750|0.706|0.706|0.376-0.752|0.937|FRONT|fromfront|Zombie_ShoveStagger_2m|lang|lang|0.851|1|0|1|-|0.997|p0,s0,a0,m0|staggerback>idle
+stoss|35|strong|vorn|0.662|0.544|0.510|0.510|0.375-0.749|0.932|FRONT|fromfront|Zombie_ShoveStagger_2m|lang|lang|0.849|1|0|1|-|0.997|p0,s0,a0,m0|staggerback>idle
+stoss|36|weak|vorn|0.658|0.113|0.045|0.045|0.160-0.319|0.000|FRONT|smallfromfront|Zombie_StaggerBack|kurz|kurz|0.812|0|0|1|-|0.997|p0,s0,a0,m0|staggerback>idle
+stoss|37|weak|vorn|0.661|0.115|0.046|0.046|0.160-0.321|0.000|FRONT|smallfromfront|Zombie_StaggerBack|kurz|kurz|0.831|1|0|1|-|0.997|p0,s0,a0,m0|staggerback>idle
+stoss|38|weak|vorn|0.661|0.146|0.058|0.058|0.160-0.321|0.000|FRONT|smallfromfront|Zombie_StaggerBack|kurz|kurz|0.825|0|0|1|-|0.997|p0,s0,a0,m0|staggerback>idle
+stoss|39|weak|vorn|0.662|0.245|0.098|0.098|0.161-0.321|0.000|FRONT|smallfromfront|Zombie_StaggerBack|kurz|kurz|0.817|1|0|1|-|0.997|p0,s0,a0,m0|staggerback>idle
+stoss|40|weak|vorn|0.659|0.520|0.208|0.208|0.160-0.320|0.000|FRONT|smallfromfront|Zombie_StaggerBack|kurz|kurz|0.817|1|0|1|-|0.997|p0,s0,a0,m0|staggerback>idle
+stoss|41|ohne|hinten|0.662|0.554|0.371|0.371|0.268-0.535|0.505|BEHIND|smallfrombehind|Zombie_PushedFwd_FromBehind|kurz|kurz|0.404|0|0|1|-|0.997|p0,s0,a0,m0|staggerback>idle
+stoss|42|ohne|hinten|0.666|0.150|0.101|0.101|0.269-0.538|0.514|BEHIND|smallfrombehind|Zombie_PushedFwd_FromBehind|kurz|kurz|0.400|1|0|1|-|0.997|p0,s0,a0,m0|staggerback>idle
+stoss|43|ohne|hinten|0.662|0.666|0.445|0.445|0.268-0.535|0.505|BEHIND|frombehind|Zombie_PushedFwd_FromBehind|lang|lang|0.402|1|0|1|-|0.997|p0,s0,a0,m0|staggerback>idle
+stoss|44|ohne|hinten|0.664|0.118|0.079|0.079|0.268-0.537|0.509|BEHIND|smallfrombehind|Zombie_PushedFwd_FromBehind|kurz|kurz|0.401|1|0|1|-|0.997|p0,s0,a0,m0|staggerback>idle
+stoss|45|ohne|hinten|0.664|0.100|0.067|0.067|0.268-0.537|0.509|BEHIND|smallfrombehind|Zombie_PushedFwd_FromBehind|kurz|kurz|0.402|1|0|1|-|0.997|p0,s0,a0,m0|staggerback>idle
+stoss|46|strong|hinten|0.666|0.127|0.120|0.120|0.377-0.753|0.938|BEHIND|smallfrombehind|Zombie_PushedFwd_FromBehind|kurz|kurz|0.401|1|0|1|-|0.997|p0,s0,a0,m0|staggerback>idle
+stoss|47|strong|hinten|0.662|0.145|0.136|0.136|0.375-0.749|0.932|BEHIND|smallfrombehind|Zombie_PushedFwd_FromBehind|kurz|kurz|0.402|1|0|1|-|0.997|p0,s0,a0,m0|staggerback>idle
+stoss|48|strong|hinten|0.661|0.505|0.472|0.472|0.374-0.748|0.930|BEHIND|frombehind|Zombie_PushedFwd_FromBehind|lang|lang|0.401|1|0|1|-|0.997|p0,s0,a0,m0|staggerback>idle
+stoss|49|strong|hinten|0.662|0.083|0.078|0.078|0.375-0.749|0.932|BEHIND|smallfrombehind|Zombie_PushedFwd_FromBehind|kurz|kurz|0.403|1|0|1|-|0.997|p0,s0,a0,m0|staggerback>idle
+stoss|50|strong|hinten|0.665|0.789|0.742|0.742|0.376-0.752|0.937|BEHIND|frombehind|Zombie_PushedFwd_FromBehind|lang|lang|0.405|0|0|1|-|0.997|p0,s0,a0,m0|staggerback>idle
+stoss|51|ohne|vorn|0.660|0.638|0.426|0.426|0.267-0.533|0.500|FRONT|fromfront|Zombie_ShoveStagger_2m|lang|lang|0.843|0|0|1|-|0.997|p0,s0,a0,m0|staggerback>idle
+stoss|52|ohne|vorn|0.667|0.404|0.272|0.272|0.269-0.539|0.516|FRONT|smallfromfront|Zombie_StaggerBack|kurz|kurz|0.823|1|0|1|-|0.997|p0,s0,a0,m0|staggerback>idle
+stoss|53|ohne|vorn|0.660|0.098|0.065|0.065|0.267-0.533|0.500|FRONT|smallfromfront|Zombie_StaggerBack|kurz|kurz|0.824|0|0|1|-|0.997|p0,s0,a0,m0|staggerback>idle
+stoss|54|ohne|vorn|0.664|0.125|0.084|0.084|0.268-0.537|0.509|FRONT|smallfromfront|Zombie_StaggerBack|kurz|kurz|0.822|0|0|1|-|0.997|p0,s0,a0,m0|staggerback>idle
+stoss|55|ohne|vorn|0.667|0.536|0.361|0.361|0.269-0.539|0.516|FRONT|smallfromfront|Zombie_StaggerBack|kurz|kurz|0.821|1|0|1|-|0.997|p0,s0,a0,m0|staggerback>idle
+stoss|56|strong|vorn|0.666|0.516|0.486|0.486|0.377-0.753|0.938|FRONT|fromfront|Zombie_ShoveStagger_2m|lang|lang|0.837|1|0|1|-|0.997|p0,s0,a0,m0|staggerback>idle
+stoss|57|strong|vorn|0.660|0.141|0.131|0.131|0.373-0.747|0.929|FRONT|smallfromfront|Zombie_StaggerBack|kurz|kurz|0.824|0|0|1|-|0.997|p0,s0,a0,m0|staggerback>idle
+stoss|58|strong|vorn|0.661|0.363|0.340|0.340|0.374-0.748|0.930|FRONT|smallfromfront|Zombie_StaggerBack|kurz|kurz|0.816|0|0|1|-|0.997|p0,s0,a0,m0|staggerback>idle
+stoss|59|strong|vorn|0.663|0.119|0.112|0.112|0.375-0.750|0.934|FRONT|smallfromfront|Zombie_StaggerBack|kurz|kurz|0.818|0|0|1|-|0.997|p0,s0,a0,m0|staggerback>idle
+stoss|60|strong|vorn|0.666|0.116|0.109|0.109|0.377-0.753|0.938|FRONT|smallfromfront|Zombie_StaggerBack|kurz|kurz|0.824|1|0|1|-|0.997|p0,s0,a0,m0|staggerback>idle
+stoss|61|weak|vorn|0.665|0.120|0.048|0.048|0.161-0.322|0.000|FRONT|smallfromfront|Zombie_StaggerBack|kurz|kurz|0.823|0|0|1|-|0.997|p0,s0,a0,m0|staggerback>idle
+stoss|62|weak|vorn|0.660|0.588|0.235|0.235|0.160-0.320|0.000|FRONT|smallfromfront|Zombie_StaggerBack|kurz|kurz|0.819|0|0|1|-|0.997|p0,s0,a0,m0|staggerback>idle
+stoss|63|weak|vorn|0.668|0.717|0.290|0.290|0.162-0.324|0.000|FRONT|smallfromfront|Zombie_StaggerBack|kurz|kurz|0.814|0|0|1|-|0.997|p0,s0,a0,m0|staggerback>idle
+stoss|64|weak|vorn|0.667|0.618|0.250|0.250|0.162-0.323|0.000|FRONT|smallfromfront|Zombie_StaggerBack|kurz|kurz|0.826|1|0|1|-|0.997|p0,s0,a0,m0|staggerback>idle
+stoss|65|weak|vorn|0.661|0.137|0.055|0.055|0.160-0.321|0.000|FRONT|smallfromfront|Zombie_StaggerBack|kurz|kurz|0.823|0|0|1|-|0.997|p0,s0,a0,m0|staggerback>idle
+stoss|66|ohne|vorn|0.662|0.420|0.281|0.281|0.268-0.535|0.505|FRONT|smallfromfront|Zombie_StaggerBack|kurz|kurz|0.818|0|0|1|-|0.997|p0,s0,a0,m0|staggerback>idle
+stoss|67|ohne|vorn|0.665|0.100|0.067|0.067|0.269-0.537|0.511|FRONT|smallfromfront|Zombie_StaggerBack|kurz|kurz|0.821|1|0|1|-|0.997|p0,s0,a0,m0|staggerback>idle
+stoss|68|ohne|vorn|0.662|0.675|0.452|0.452|0.268-0.535|0.505|FRONT|fromfront|Zombie_ShoveStagger_2m|lang|lang|0.837|0|0|1|-|0.997|p0,s0,a0,m0|staggerback>idle
+stoss|69|ohne|vorn|0.662|0.127|0.085|0.085|0.268-0.535|0.505|FRONT|smallfromfront|Zombie_StaggerBack|kurz|kurz|0.813|1|0|1|-|0.997|p0,s0,a0,m0|staggerback>idle
+stoss|70|ohne|vorn|0.667|0.705|0.475|0.475|0.269-0.539|0.516|FRONT|fromfront|Zombie_ShoveStagger_2m|lang|lang|0.842|0|0|1|-|0.997|p0,s0,a0,m0|staggerback>idle
+stoss|71|strong|vorn|0.662|0.093|0.087|0.087|0.375-0.749|0.932|FRONT|smallfromfront|Zombie_StaggerBack|kurz|kurz|0.822|1|0|1|-|0.997|p0,s0,a0,m0|staggerback>idle
+stoss|72|strong|vorn|0.668|0.640|0.604|0.604|0.378-0.756|0.941|FRONT|fromfront|Zombie_ShoveStagger_2m|lang|lang|0.849|1|0|1|-|0.997|p0,s0,a0,m0|staggerback>idle
+stoss|73|strong|vorn|0.662|0.148|0.138|0.138|0.375-0.749|0.932|FRONT|smallfromfront|Zombie_StaggerBack|kurz|kurz|0.819|1|0|1|-|0.997|p0,s0,a0,m0|staggerback>idle
+stoss|74|strong|vorn|0.665|0.104|0.098|0.098|0.376-0.752|0.937|FRONT|smallfromfront|Zombie_StaggerBack|kurz|kurz|0.821|1|0|1|-|0.997|p0,s0,a0,m0|staggerback>idle
+stoss|75|strong|vorn|0.662|0.589|0.552|0.552|0.375-0.749|0.932|FRONT|fromfront|Zombie_ShoveStagger_2m|lang|lang|0.840|0|0|1|-|0.997|p0,s0,a0,m0|staggerback>idle
+stoss|76|weak|vorn|0.667|0.392|0.158|0.158|0.162-0.323|0.000|FRONT|smallfromfront|Zombie_StaggerBack|kurz|kurz|0.825|0|0|1|-|0.997|p0,s0,a0,m0|staggerback>idle
+stoss|77|weak|vorn|0.666|0.737|0.298|0.298|0.161-0.323|0.000|FRONT|smallfromfront|Zombie_StaggerBack|kurz|kurz|0.826|1|0|1|-|0.997|p0,s0,a0,m0|staggerback>idle
+stoss|78|weak|vorn|0.661|0.115|0.046|0.046|0.160-0.321|0.000|FRONT|smallfromfront|Zombie_StaggerBack|kurz|kurz|0.817|1|0|1|-|0.997|p0,s0,a0,m0|staggerback>idle
+stoss|79|weak|vorn|0.662|0.115|0.046|0.046|0.161-0.321|0.000|FRONT|smallfromfront|Zombie_StaggerBack|kurz|kurz|0.812|0|0|1|-|0.997|p0,s0,a0,m0|staggerback>idle
+stoss|80|weak|vorn|0.667|0.441|0.178|0.178|0.162-0.323|0.000|FRONT|smallfromfront|Zombie_StaggerBack|kurz|kurz|0.828|0|0|1|-|0.997|p0,s0,a0,m0|staggerback>idle
+stoss|81|ohne|vorn|0.667|0.108|0.073|0.073|0.269-0.539|0.516|FRONT|smallfromfront|Zombie_StaggerBack|kurz|kurz|0.824|1|0|1|-|0.997|p0,s0,a0,m0|staggerback>idle
+stoss|82|ohne|vorn|0.661|0.550|0.367|0.367|0.267-0.534|0.503|FRONT|smallfromfront|Zombie_StaggerBack|kurz|kurz|0.822|1|0|1|-|0.997|p0,s0,a0,m0|staggerback>idle
+stoss|83|ohne|vorn|0.661|0.081|0.054|0.054|0.267-0.534|0.503|FRONT|smallfromfront|Zombie_StaggerBack|kurz|kurz|0.810|0|0|1|-|0.997|p0,s0,a0,m0|staggerback>idle
+stoss|84|ohne|vorn|0.666|0.096|0.065|0.065|0.269-0.538|0.514|FRONT|smallfromfront|Zombie_StaggerBack|kurz|kurz|0.820|0|0|1|-|0.997|p0,s0,a0,m0|staggerback>idle
+stoss|85|ohne|vorn|0.667|0.137|0.092|0.092|0.269-0.539|0.516|FRONT|smallfromfront|Zombie_StaggerBack|kurz|kurz|0.823|1|0|1|-|0.997|p0,s0,a0,m0|staggerback>idle
+stoss|86|strong|vorn|0.662|0.096|0.090|0.090|0.375-0.749|0.932|FRONT|smallfromfront|Zombie_StaggerBack|kurz|kurz|0.813|1|0|1|-|0.997|p0,s0,a0,m0|staggerback>idle
+stoss|87|strong|vorn|0.665|0.612|0.576|0.576|0.376-0.752|0.937|FRONT|fromfront|Zombie_ShoveStagger_2m|lang|lang|0.847|1|0|1|-|0.997|p0,s0,a0,m0|staggerback>idle
+stoss|88|strong|vorn|0.664|0.125|0.117|0.117|0.376-0.751|0.935|FRONT|smallfromfront|Zombie_StaggerBack|kurz|kurz|0.823|1|0|1|-|0.997|p0,s0,a0,m0|staggerback>idle
+stoss|89|strong|vorn|0.668|0.125|0.118|0.118|0.378-0.756|0.941|FRONT|smallfromfront|Zombie_StaggerBack|kurz|kurz|0.819|0|0|1|-|0.997|p0,s0,a0,m0|staggerback>idle
+stoss|90|strong|vorn|0.668|0.646|0.610|0.610|0.378-0.756|0.941|FRONT|fromfront|Zombie_ShoveStagger_2m|lang|lang|0.840|0|0|1|-|0.997|p0,s0,a0,m0|staggerback>idle
+stoss|91|weak|vorn|0.663|0.127|0.051|0.051|0.161-0.321|0.000|FRONT|smallfromfront|Zombie_StaggerBack|kurz|kurz|0.822|0|0|1|-|0.997|p0,s0,a0,m0|staggerback>idle
+stoss|92|weak|vorn|0.660|0.527|0.211|0.211|0.160-0.320|0.000|FRONT|smallfromfront|Zombie_StaggerBack|kurz|kurz|0.818|0|0|1|-|0.997|p0,s0,a0,m0|staggerback>idle
+stoss|93|weak|vorn|0.661|0.430|0.172|0.172|0.160-0.321|0.000|FRONT|smallfromfront|Zombie_StaggerBack|kurz|kurz|0.815|0|0|1|-|0.997|p0,s0,a0,m0|staggerback>idle
+stoss|94|weak|vorn|0.666|0.127|0.051|0.051|0.161-0.323|0.000|FRONT|smallfromfront|Zombie_StaggerBack|kurz|kurz|0.821|1|0|1|-|0.997|p0,s0,a0,m0|staggerback>idle
+stoss|95|weak|vorn|0.667|0.287|0.116|0.116|0.162-0.323|0.000|FRONT|smallfromfront|Zombie_StaggerBack|kurz|kurz|0.822|0|0|1|-|0.997|p0,s0,a0,m0|staggerback>idle
+stoss|96|ohne|vorn|0.662|0.150|0.101|0.101|0.268-0.535|0.505|FRONT|smallfromfront|Zombie_StaggerBack|kurz|kurz|0.825|0|0|1|-|0.997|p0,s0,a0,m0|staggerback>idle
+stoss|97|ohne|vorn|0.663|0.749|0.502|0.502|0.268-0.536|0.507|FRONT|fromfront|Zombie_ShoveStagger_2m|lang|lang|0.840|0|0|1|-|0.997|p0,s0,a0,m0|staggerback>idle
+stoss|98|ohne|vorn|0.664|0.142|0.095|0.095|0.268-0.537|0.509|FRONT|smallfromfront|Zombie_StaggerBack|kurz|kurz|0.822|1|0|1|-|0.997|p0,s0,a0,m0|staggerback>idle
+stoss|99|ohne|vorn|0.661|0.091|0.061|0.061|0.267-0.534|0.503|FRONT|smallfromfront|Zombie_StaggerBack|kurz|kurz|0.826|1|0|1|-|0.997|p0,s0,a0,m0|staggerback>idle
+stoss|100|ohne|vorn|0.665|0.242|0.162|0.162|0.269-0.537|0.511|FRONT|smallfromfront|Zombie_StaggerBack|kurz|kurz|0.809|0|0|1|-|0.997|p0,s0,a0,m0|staggerback>idle
+stoss|101|strong|vorn|0.661|0.498|0.466|0.466|0.374-0.748|0.930|FRONT|fromfront|Zombie_ShoveStagger_2m|lang|lang|0.844|0|0|1|-|0.997|p0,s0,a0,m0|staggerback>idle
+stoss|102|strong|vorn|0.665|0.132|0.124|0.124|0.376-0.752|0.937|FRONT|smallfromfront|Zombie_StaggerBack|kurz|kurz|0.820|1|0|1|-|0.997|p0,s0,a0,m0|staggerback>idle
+stoss|103|strong|vorn|0.659|0.676|0.630|0.630|0.373-0.746|0.927|FRONT|fromfront|Zombie_ShoveStagger_2m|lang|lang|0.848|0|0|1|-|0.997|p0,s0,a0,m0|staggerback>idle
+stoss|104|strong|vorn|0.665|0.155|0.146|0.146|0.376-0.752|0.937|FRONT|smallfromfront|Zombie_StaggerBack|kurz|kurz|0.822|1|0|1|-|0.997|p0,s0,a0,m0|staggerback>idle
+stoss|105|strong|vorn|0.665|0.089|0.083|0.083|0.376-0.752|0.937|FRONT|smallfromfront|Zombie_StaggerBack|kurz|kurz|0.816|1|0|1|-|0.997|p0,s0,a0,m0|staggerback>idle
+stoss|106|weak|vorn|0.658|0.596|0.238|0.238|0.160-0.319|0.000|FRONT|smallfromfront|Zombie_StaggerBack|kurz|kurz|0.816|1|0|1|-|0.997|p0,s0,a0,m0|staggerback>idle
+stoss|107|weak|vorn|0.659|0.452|0.181|0.181|0.160-0.320|0.000|FRONT|smallfromfront|Zombie_StaggerBack|kurz|kurz|0.819|0|0|1|-|0.997|p0,s0,a0,m0|staggerback>idle
+stoss|108|weak|vorn|0.665|0.134|0.054|0.054|0.161-0.322|0.000|FRONT|smallfromfront|Zombie_StaggerBack|kurz|kurz|0.819|0|0|1|-|0.997|p0,s0,a0,m0|staggerback>idle
+stoss|109|weak|vorn|0.664|0.635|0.256|0.256|0.161-0.322|0.000|FRONT|smallfromfront|Zombie_StaggerBack|kurz|kurz|0.816|0|0|1|-|0.997|p0,s0,a0,m0|staggerback>idle
+stoss|110|weak|vorn|0.664|0.321|0.129|0.129|0.161-0.322|0.000|FRONT|smallfromfront|Zombie_StaggerBack|kurz|kurz|0.826|0|0|1|-|0.997|p0,s0,a0,m0|staggerback>idle

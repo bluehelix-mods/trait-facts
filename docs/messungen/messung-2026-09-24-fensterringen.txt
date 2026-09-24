@@ -1,0 +1,119 @@
+# Fenster aufbrechen: Runner (jogger) und Burglar am verriegelten Fenster
+# Mess-Mod 6.50.1
+# Build 42.20
+# gespielt, nicht aufgerufen: OpenWindowState.onAttemptFinished ist privat und nur ueber AnimEvent erreichbar
+# Fenster 10818,9444,0 N, Strength 5, Fitness 5, Alarm keiner
+# verglichen mit soll_mod (TF_Static), sonst soll_code; Toleranz je Zeile in der Notiz
+
+[ergebnis]
+ergebnis|werte=8|stimmen=3|weichen_ab=0|nicht_messbar=5|verworfen=0
+
+[werte] id|trait|ohne|mit|faktor|soll_mod|soll_code|urteil|notiz
+wert|normal|jogger|0.0000|0.0000|0.0000|-|0.0000|stimmt|Verlust je Oeffnen und Schliessen, faktor = der groessere; Abzuege ueber 0.001: 0 ohne, 0 mit Runner (soll 0)
+wert|aufbrechen|jogger|-|-|-|0.9000|0.9000|nicht messbar|Abzug je Versuch, 0 Versuche ohne, 0 mit Runner
+wert|aufbrechen_abzug|ohne|-|-|-|-|0.0060|nicht messbar|Abzug je Versuch bei Fitness 5, Toleranz 5 %
+wert|fensterklemmt|ohne|55.0000|-|55.0000|49.0000|48.9996|stimmt|Prozent der Fenster, die klemmen: 22 von 40; Strength 5, s = 11.56 %; Toleranz 2 Standardfehler
+wert|fensterklemmt|burglar|-|27.5000|27.5000|31.0000|31.2763|stimmt|Prozent der Fenster, die klemmen: 11 von 40; Strength 5, s = 11.56 %; Toleranz 2 Standardfehler
+wert|versuchklemmt|burglar|-|-|-|-|0.5000|nicht messbar|Prozent Klemmen je Versuch, 0 und 0 Versuche (soll 10 und 5, Z. 163-168); Toleranz 2 Standardfehler
+wert|versuchauf|ohne|-|-|-|-|11.5648|nicht messbar|Prozent Oeffnen je nicht klemmendem Versuch, -22 Versuche (Z. 177-188)
+wert|versuchauf|burglar|-|-|-|-|11.5648|nicht messbar|dasselbe mit Burglar, -11 Versuche; Burglar aendert s nicht
+
+[durchgaenge] nr|art|fall|ergebnis|ausgang|gilt|versuche|ticks|regen_je_tick|verlust|abzuege
+durchgang|1|oeffnen|ohne|auf|fertig|1|0|205|0.0000000|0.00000|
+durchgang|2|schliessen|ohne|zu|fertig|1|0|223|0.0000000|0.00000|
+durchgang|3|oeffnen|jogger|auf|fertig|1|0|198|0.0000000|0.00000|
+durchgang|4|schliessen|jogger|zu|fertig|1|0|249|0.0000000|0.00000|
+durchgang|5|oeffnen|ohne|auf|fertig|1|0|211|0.0000000|0.00000|
+durchgang|6|schliessen|ohne|zu|fertig|1|0|248|0.0000000|0.00000|
+durchgang|7|oeffnen|jogger|auf|fertig|1|0|211|0.0000000|0.00000|
+durchgang|8|schliessen|jogger|zu|fertig|1|0|252|0.0000000|0.00000|
+durchgang|9|ringen|ohne|auf|fertig|1|0|709|0.0000000|0.00000|
+durchgang|10|ringen|burglar|auf|fertig|1|0|1190|0.0000000|0.00000|
+durchgang|11|ringen|jogger|klemmt|fertig|1|0|349|0.0000000|0.00000|
+durchgang|12|ringen|ohne|klemmt|fertig|1|0|451|0.0000000|0.00000|
+durchgang|13|ringen|burglar|auf|fertig|1|0|707|0.0000000|0.00000|
+durchgang|14|ringen|jogger|klemmt|fertig|1|0|449|0.0000000|0.00000|
+durchgang|15|ringen|ohne|auf|fertig|1|0|607|0.0000000|0.00000|
+durchgang|16|ringen|burglar|auf|fertig|1|0|410|0.0000000|0.00000|
+durchgang|17|ringen|jogger|auf|fertig|1|0|301|0.0000000|0.00000|
+durchgang|18|ringen|ohne|auf|fertig|1|0|401|0.0000000|0.00000|
+durchgang|19|ringen|burglar|auf|fertig|1|0|397|0.0000000|0.00000|
+durchgang|20|ringen|jogger|klemmt|fertig|1|0|927|0.0000000|0.00000|
+durchgang|21|ringen|ohne|klemmt|fertig|1|0|1094|0.0000000|0.00000|
+durchgang|22|ringen|burglar|auf|fertig|1|0|843|0.0000000|0.00000|
+durchgang|23|ringen|jogger|auf|fertig|1|0|468|0.0000000|0.00000|
+durchgang|24|ringen|ohne|klemmt|fertig|1|0|217|0.0000000|0.00000|
+durchgang|25|ringen|burglar|klemmt|fertig|1|0|476|0.0000000|0.00000|
+durchgang|26|ringen|jogger|auf|fertig|1|0|398|0.0000000|0.00000|
+durchgang|27|ringen|ohne|klemmt|fertig|1|0|283|0.0000000|0.00000|
+durchgang|28|ringen|burglar|klemmt|fertig|1|0|269|0.0000000|0.00000|
+durchgang|29|ringen|jogger|auf|fertig|1|0|426|0.0000000|0.00000|
+durchgang|30|ringen|ohne|klemmt|fertig|1|0|75|0.0000000|0.00000|
+durchgang|31|ringen|burglar|klemmt|fertig|1|0|273|0.0000000|0.00000|
+durchgang|32|ringen|jogger|klemmt|fertig|1|0|222|0.0000000|0.00000|
+durchgang|33|ringen|ohne|auf|fertig|1|0|633|0.0000000|0.00000|
+durchgang|34|ringen|burglar|auf|fertig|1|0|796|0.0000000|0.00000|
+durchgang|35|ringen|jogger|klemmt|fertig|1|0|644|0.0000000|0.00000|
+durchgang|36|ringen|ohne|klemmt|fertig|1|0|1598|0.0000000|0.00000|
+durchgang|37|ringen|burglar|auf|fertig|1|0|1153|0.0000000|0.00000|
+durchgang|38|ringen|jogger|auf|fertig|1|0|882|0.0000000|0.00000|
+durchgang|39|ringen|ohne|klemmt|fertig|1|0|318|0.0000000|0.00000|
+durchgang|40|ringen|burglar|auf|fertig|1|0|305|0.0000000|0.00000|
+durchgang|41|ringen|ohne|klemmt|fertig|1|0|729|0.0000000|0.00000|
+durchgang|42|ringen|burglar|auf|fertig|1|0|604|0.0000000|0.00000|
+durchgang|43|ringen|ohne|klemmt|fertig|1|0|134|0.0000000|0.00000|
+durchgang|44|ringen|burglar|auf|fertig|1|0|1283|0.0000000|0.00000|
+durchgang|45|ringen|ohne|auf|fertig|1|0|746|0.0000000|0.00000|
+durchgang|46|ringen|burglar|auf|fertig|1|0|962|0.0000000|0.00000|
+durchgang|47|ringen|ohne|klemmt|fertig|1|0|333|0.0000000|0.00000|
+durchgang|48|ringen|burglar|auf|fertig|1|0|300|0.0000000|0.00000|
+durchgang|49|ringen|ohne|auf|fertig|1|0|426|0.0000000|0.00000|
+durchgang|50|ringen|burglar|klemmt|fertig|1|0|2247|0.0000000|0.00000|
+durchgang|51|ringen|ohne|klemmt|fertig|1|0|198|0.0000000|0.00000|
+durchgang|52|ringen|burglar|auf|fertig|1|0|352|0.0000000|0.00000|
+durchgang|53|ringen|ohne|klemmt|fertig|1|0|514|0.0000000|0.00000|
+durchgang|54|ringen|burglar|klemmt|fertig|1|0|511|0.0000000|0.00000|
+durchgang|55|ringen|ohne|auf|fertig|1|0|375|0.0000000|0.00000|
+durchgang|56|ringen|burglar|klemmt|fertig|1|0|1536|0.0000000|0.00000|
+durchgang|57|ringen|ohne|auf|fertig|1|0|520|0.0000000|0.00000|
+durchgang|58|ringen|burglar|auf|fertig|1|0|262|0.0000000|0.00000|
+durchgang|59|ringen|ohne|klemmt|fertig|1|0|257|0.0000000|0.00000|
+durchgang|60|ringen|burglar|auf|fertig|1|0|361|0.0000000|0.00000|
+durchgang|61|ringen|ohne|auf|fertig|1|0|908|0.0000000|0.00000|
+durchgang|62|ringen|burglar|auf|fertig|1|0|503|0.0000000|0.00000|
+durchgang|63|ringen|ohne|klemmt|fertig|1|0|295|0.0000000|0.00000|
+durchgang|64|ringen|burglar|auf|fertig|1|0|463|0.0000000|0.00000|
+durchgang|65|ringen|ohne|auf|fertig|1|0|696|0.0000000|0.00000|
+durchgang|66|ringen|burglar|auf|fertig|1|0|943|0.0000000|0.00000|
+durchgang|67|ringen|ohne|klemmt|fertig|1|0|672|0.0000000|0.00000|
+durchgang|68|ringen|burglar|auf|fertig|1|0|566|0.0000000|0.00000|
+durchgang|69|ringen|ohne|klemmt|fertig|1|0|770|0.0000000|0.00000|
+durchgang|70|ringen|burglar|klemmt|fertig|1|0|86|0.0000000|0.00000|
+durchgang|71|ringen|ohne|auf|fertig|1|0|264|0.0000000|0.00000|
+durchgang|72|ringen|burglar|auf|fertig|1|0|1683|0.0000000|0.00000|
+durchgang|73|ringen|ohne|auf|fertig|1|0|315|0.0000000|0.00000|
+durchgang|74|ringen|burglar|auf|fertig|1|0|356|0.0000000|0.00000|
+durchgang|75|ringen|ohne|klemmt|fertig|1|0|240|0.0000000|0.00000|
+durchgang|76|ringen|burglar|auf|fertig|1|0|430|0.0000000|0.00000|
+durchgang|77|ringen|ohne|klemmt|fertig|1|0|349|0.0000000|0.00000|
+durchgang|78|ringen|burglar|klemmt|fertig|1|0|768|0.0000000|0.00000|
+durchgang|79|ringen|ohne|klemmt|fertig|1|0|556|0.0000000|0.00000|
+durchgang|80|ringen|burglar|klemmt|fertig|1|0|308|0.0000000|0.00000|
+durchgang|81|ringen|ohne|klemmt|fertig|1|0|198|0.0000000|0.00000|
+durchgang|82|ringen|burglar|auf|fertig|1|0|903|0.0000000|0.00000|
+durchgang|83|ringen|ohne|auf|fertig|1|0|625|0.0000000|0.00000|
+durchgang|84|ringen|burglar|auf|fertig|1|0|483|0.0000000|0.00000|
+durchgang|85|ringen|ohne|auf|fertig|1|0|498|0.0000000|0.00000|
+durchgang|86|ringen|burglar|auf|fertig|1|0|222|0.0000000|0.00000|
+durchgang|87|ringen|ohne|klemmt|fertig|1|0|397|0.0000000|0.00000|
+durchgang|88|ringen|burglar|auf|fertig|1|0|1451|0.0000000|0.00000|
+durchgang|89|ringen|ohne|klemmt|fertig|1|0|447|0.0000000|0.00000|
+durchgang|90|ringen|burglar|auf|fertig|1|0|390|0.0000000|0.00000|
+durchgang|91|ringen|ohne|auf|fertig|1|0|1103|0.0000000|0.00000|
+durchgang|92|ringen|burglar|klemmt|fertig|1|0|559|0.0000000|0.00000|
+durchgang|93|ringen|ohne|auf|fertig|1|0|924|0.0000000|0.00000|
+durchgang|94|ringen|burglar|auf|fertig|1|0|451|0.0000000|0.00000|
+durchgang|95|ringen|ohne|auf|fertig|1|0|730|0.0000000|0.00000|
+durchgang|96|ringen|burglar|auf|fertig|1|0|373|0.0000000|0.00000|
+durchgang|97|ringen|ohne|auf|fertig|1|0|665|0.0000000|0.00000|
+durchgang|98|ringen|burglar|klemmt|fertig|1|0|419|0.0000000|0.00000|

@@ -1,0 +1,25 @@
+# Schritte: Radius des Schrittgeraeuschs mit Graceful und Clumsy (Messliste A13)
+# Mess-Mod 6.50.0
+# Build 42.20
+# IsoPlayer.DoFootstepSound(String) je Gangart, bis ein Weltgeraeusch entsteht; radius des WorldSound per Reflection
+# Lightfoot, Nimble, Sneak auf 0; Schuhe: Base.Shoes_Random; draussen; Soll aus IsoGameCharacter Z. 5297-5344 (42.20.4)
+
+[ergebnis]
+ergebnis|werte=15|stimmen=15|weichen_ab=0|nicht_messbar=0
+
+[schritte] schritt|gang|trait|radius|soll|urteil|versuche|notiz
+schritt|sneak_walk|ohne|4|4|stimmt|9
+schritt|sneak_run|ohne|4|4|stimmt|2
+schritt|walk|ohne|7|7|stimmt|1
+schritt|run|ohne|11|11|stimmt|4
+schritt|sprint|ohne|14|14|stimmt|1
+schritt|sneak_walk|graceful|3|3|stimmt|1
+schritt|sneak_run|graceful|3|3|stimmt|7
+schritt|walk|graceful|5|5|stimmt|1
+schritt|run|graceful|7|7|stimmt|1
+schritt|sprint|graceful|9|9|stimmt|1
+schritt|sneak_walk|clumsy|5|5|stimmt|3
+schritt|sneak_run|clumsy|5|5|stimmt|13
+schritt|walk|clumsy|9|9|stimmt|1
+schritt|run|clumsy|13|13|stimmt|1
+schritt|sprint|clumsy|17|17|stimmt|3

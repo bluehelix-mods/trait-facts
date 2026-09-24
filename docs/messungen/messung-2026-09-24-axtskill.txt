@@ -1,0 +1,82 @@
+# Axt-Schwung bei anderem Skill: Ax-pert, Messung an einer lebenden Figur (Messliste B17)
+# Mess-Mod 6.50.0, TFMeasureAxtSkill.lua
+# Build 42.20
+# Schalter: god=true ausdauer=true (Ausdauer unbegrenzt haelt das Moodle Erschoepfung auf 0)
+# je Teil 20 gemessene Schlaege in die Luft, Schlag 0 Warmlauf, Ax-pert wechselt alle 2
+# Waffe in beiden Haenden; Skill und Fitness vor jedem Schlag geprueft
+# schwung = Takt mit/ohne, dauer = Schwungdauer mit/ohne, tempo = CombatSpeed ohne/mit
+# erwartet = Modell calculateCombatSpeed (IsoGameCharacter:8825), Zeit mit/ohne,
+#   gemittelt ueber Rand.Next(1.1, 1.2), ohne Moodles; Liste B17: -18 %, -12 %, Spitzhacke -6 %
+
+[ergebnis]
+teil|axt0|waffe=Base.Axe|basis=1.000|axt=0|fitness=5|takt_ohne_ms=940.2|takt_mit_ms=723.2|schwung=0.7692|dauer=0.7655|tempo_ohne=0.8490|tempo_mit=1.0430|tempo=0.8140|erwartet=0.8222|erwartet_tempo_ohne=0.8510|erwartet_tempo_mit=1.0350|schlaege=10/10
+teil|axt10|waffe=Base.Axe|basis=1.000|axt=10|fitness=10|takt_ohne_ms=521.6|takt_mit_ms=426.0|schwung=0.8167|dauer=0.8121|tempo_ohne=1.3201|tempo_mit=1.5052|tempo=0.8770|erwartet=0.8769|erwartet_tempo_ohne=1.3110|erwartet_tempo_mit=1.4950|schlaege=10/10
+teil|picke|waffe=Base.PickAxe|basis=0.800|axt=0|fitness=5|takt_ohne_ms=1015.2|takt_mit_ms=933.0|schwung=0.9190|dauer=0.9182|tempo_ohne=0.8000|tempo_mit=0.8551|tempo=0.9356|erwartet=0.9407|erwartet_tempo_ohne=0.8000|erwartet_tempo_mit=0.8510|schlaege=10/10
+
+[schlaege] teil|nr|axeman|takt_ms|dauer_ms|combatspeed|erschoepfung|ueberladung|axt|fitness
+schlag|axt0|0|0|921|916|0.8582|0|0|0|5
+schlag|axt0|1|0|912|901|0.8727|0|0|0|5
+schlag|axt0|2|0|955|950|0.8346|0|0|0|5
+schlag|axt0|3|1|745|735|1.0260|0|0|0|5
+schlag|axt0|4|1|716|706|1.0424|0|0|0|5
+schlag|axt0|5|0|951|939|0.8441|0|0|0|5
+schlag|axt0|6|0|972|966|0.8230|0|0|0|5
+schlag|axt0|7|1|744|733|1.0258|0|0|0|5
+schlag|axt0|8|1|689|683|1.0763|0|0|0|5
+schlag|axt0|9|0|917|910|0.8688|0|0|0|5
+schlag|axt0|10|0|900|894|0.8788|0|0|0|5
+schlag|axt0|11|1|710|699|1.0614|0|0|0|5
+schlag|axt0|12|1|734|723|1.0264|0|0|0|5
+schlag|axt0|13|0|933|922|0.8557|0|0|0|5
+schlag|axt0|14|0|973|965|0.8228|0|0|0|5
+schlag|axt0|15|1|700|694|1.0683|0|0|0|5
+schlag|axt0|16|1|761|749|1.0091|0|0|0|5
+schlag|axt0|17|0|939|933|0.8462|0|0|0|5
+schlag|axt0|18|0|950|943|0.8430|0|0|0|5
+schlag|axt0|19|1|728|716|1.0368|0|0|0|5
+schlag|axt0|20|1|705|699|1.0573|0|0|0|5
+schlag|axt0|21|0|-|-|0.8212|0|0|0|5
+schlag|axt10|0|0|508|491|1.3568|0|0|10|10
+schlag|axt10|1|0|482|475|1.3677|0|0|10|10
+schlag|axt10|2|0|550|544|1.2688|0|0|10|10
+schlag|axt10|3|1|429|417|1.5190|0|0|10|10
+schlag|axt10|4|1|405|399|1.5432|0|0|10|10
+schlag|axt10|5|0|510|499|1.3521|0|0|10|10
+schlag|axt10|6|0|534|523|1.3022|0|0|10|10
+schlag|axt10|7|1|450|438|1.4449|0|0|10|10
+schlag|axt10|8|1|405|398|1.5532|0|0|10|10
+schlag|axt10|9|0|517|511|1.3237|0|0|10|10
+schlag|axt10|10|0|517|511|1.3337|0|0|10|10
+schlag|axt10|11|1|444|434|1.4645|0|0|10|10
+schlag|axt10|12|1|439|433|1.4742|0|0|10|10
+schlag|axt10|13|0|499|494|1.3617|0|0|10|10
+schlag|axt10|14|0|529|518|1.3066|0|0|10|10
+schlag|axt10|15|1|423|416|1.5090|0|0|10|10
+schlag|axt10|16|1|432|426|1.4866|0|0|10|10
+schlag|axt10|17|0|550|543|1.2675|0|0|10|10
+schlag|axt10|18|0|528|517|1.3172|0|0|10|10
+schlag|axt10|19|1|419|406|1.5234|0|0|10|10
+schlag|axt10|20|1|414|403|1.5344|0|0|10|10
+schlag|axt10|21|0|-|-|1.2806|0|0|10|10
+schlag|picke|0|0|1017|1004|0.8000|0|0|0|5
+schlag|picke|1|0|1015|1004|0.8000|0|0|0|5
+schlag|picke|2|0|1019|1007|0.8000|0|0|0|5
+schlag|picke|3|1|920|915|0.8591|0|0|0|5
+schlag|picke|4|1|912|900|0.8726|0|0|0|5
+schlag|picke|5|0|1016|1005|0.8000|0|0|0|5
+schlag|picke|6|0|1018|1005|0.8000|0|0|0|5
+schlag|picke|7|1|952|936|0.8456|0|0|0|5
+schlag|picke|8|1|919|915|0.8584|0|0|0|5
+schlag|picke|9|0|1017|1012|0.8000|0|0|0|5
+schlag|picke|10|0|1012|1000|0.8000|0|0|0|5
+schlag|picke|11|1|919|904|0.8694|0|0|0|5
+schlag|picke|12|1|931|919|0.8489|0|0|0|5
+schlag|picke|13|0|1004|999|0.8000|0|0|0|5
+schlag|picke|14|0|1018|1011|0.8000|0|0|0|5
+schlag|picke|15|1|966|959|0.8321|0|0|0|5
+schlag|picke|16|1|994|984|0.8179|0|0|0|5
+schlag|picke|17|0|1017|1006|0.8000|0|0|0|5
+schlag|picke|18|0|1016|1006|0.8000|0|0|0|5
+schlag|picke|19|1|890|885|0.8838|0|0|0|5
+schlag|picke|20|1|927|916|0.8629|0|0|0|5
+schlag|picke|21|0|-|-|0.8000|0|0|0|5

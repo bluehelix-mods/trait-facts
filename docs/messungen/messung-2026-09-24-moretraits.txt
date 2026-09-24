@@ -1,0 +1,34 @@
+# More Traits Definitive: Specialization, Gym Goer, Amputee an der Testfigur
+# Mess-Mod 6.50.0
+# Build 42.20, 24.09.2026
+# XP: je Fall AddXP(perk, 10, false, true, false) ohne und mit Trait, Skill auf Stufe 0 mit Boost 1; faktor = mit/ohne
+# Amputee: 1/0 = infiziert/nicht; faktor = Wert mit Trait
+# soll_mod aus dem Paket (TF_Pack_MoreTraits.lua), sonst soll_code; Toleranz 0.006
+# SpecializationXPPercent=75 GymGoerPercent=200 Perks.Foraging=nil Amputation=0
+
+[ergebnis]
+ergebnis|werte=22|stimmen=22|weichen_ab=0|nicht_messbar=0
+
+[werte] id|trait|ohne|mit|faktor|soll_mod|soll_code|urteil|notiz
+wert|mtxp_cooking|specweapons|10.0000|2.5000|0.2500|0.2500|0.2500|stimmt|Skill Cooking
+wert|mtxp_axe|specweapons|10.0000|10.0000|1.0000|-|1.0000|stimmt|Skill Axe
+wert|mtxp_fitness|specweapons|10.0000|10.0000|1.0000|-|1.0000|stimmt|Skill Fitness; Fitness ausgenommen (MT_XP.lua:61-63)
+wert|mtxp_woodwork|specfood|10.0000|2.5000|0.2500|0.2500|0.2500|stimmt|Skill Woodwork
+wert|mtxp_cooking|specfood|10.0000|10.0000|1.0000|-|1.0000|stimmt|Skill Cooking
+wert|mtxp_fishing|specfood|10.0000|10.0000|1.0000|-|1.0000|stimmt|Skill Fishing; Stelle 5 der Liste, die letzte vor Perks.Foraging
+wert|mtxp_tracking|specfood|10.0000|2.5000|0.2500|0.2500|0.2500|stimmt|Skill Tracking; Spielfehler specfood-foraging: Perks.Foraging=nil, ipairs bricht ab (MT_XP.lua:21, :74)
+wert|mtxp_husbandry|specfood|10.0000|2.5000|0.2500|0.2500|0.2500|stimmt|Skill Husbandry; Spielfehler specfood-foraging: Perks.Foraging=nil, ipairs bricht ab (MT_XP.lua:21, :74)
+wert|mtxp_butchering|specfood|10.0000|2.5000|0.2500|0.2500|0.2500|stimmt|Skill Butchering; Spielfehler specfood-foraging: Perks.Foraging=nil, ipairs bricht ab (MT_XP.lua:21, :74)
+wert|mtxp_cooking|specguns|10.0000|2.5000|0.2500|0.2500|0.2500|stimmt|Skill Cooking
+wert|mtxp_aiming|specguns|10.0000|10.0000|1.0000|-|1.0000|stimmt|Skill Aiming
+wert|mtxp_cooking|specmove|10.0000|2.5000|0.2500|0.2500|0.2500|stimmt|Skill Cooking
+wert|mtxp_sneak|specmove|10.0000|10.0000|1.0000|-|1.0000|stimmt|Skill Sneak
+wert|mtxp_cooking|speccrafting|10.0000|2.5000|0.2500|0.2500|0.2500|stimmt|Skill Cooking
+wert|mtxp_woodwork|speccrafting|10.0000|10.0000|1.0000|-|1.0000|stimmt|Skill Woodwork
+wert|mtxp_cooking|specaid|10.0000|2.5000|0.2500|0.2500|0.2500|stimmt|Skill Cooking
+wert|mtxp_doctor|specaid|10.0000|10.0000|1.0000|-|1.0000|stimmt|Skill Doctor
+wert|mtgym_uebung|gymgoer|10.0000|11.0000|1.1000|1.1000|1.1000|stimmt|Skill Fitness; FitnessState fuer den Aufruf vorgetaeuscht (MT_XP.lua:125-130)
+wert|mtgym_ohneuebung|gymgoer|10.0000|10.0000|1.0000|-|1.0000|stimmt|Skill Fitness; ohne Uebung laut Code kein Bonus (MT_XP.lua:128-130)
+wert|mtamputee_infektion|amputee|1.0000|0.0000|0.0000|-|0.0000|stimmt|1 = infiziert nach MT.Combat.Amputee(p, true), Infektion am Hals; laut Code geloescht (MT_Combat.lua:700-705); das Paket fuehrt es nicht (TF_Pack_MoreTraits.lua:66-68)
+wert|mtamputee_teil|amputee|1.0000|1.0000|1.0000|-|1.0000|stimmt|1 = Hals bleibt infiziert; ClearInfection setzt nur BodyDamage (MT.lua:152-156)
+wert|mtamputee_update|amputee|1.0000|1.0000|1.0000|-|1.0000|stimmt|1 = nach einem BodyDamage.Update wieder infiziert (BodyDamage.java:1857-1871); MT_Tick.lua:25 hat bWasInfected schon gesetzt, danach loescht MTD nicht mehr
