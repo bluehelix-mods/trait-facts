@@ -33,6 +33,7 @@ M.RANDOM_TRAITS = 8     -- Versuche je Zufalls-Build; was sich ausschliesst, fae
 M.TOOLTIP_MARGIN = 40   -- so viel Rand braucht ein Tooltip zum Fenster
 
 local function log(text)
+    if TFMeasure and TFMeasure.melde then return TFMeasure.melde("[TraitFactsMeasure] Menue:", text) end
     print("[TraitFactsMeasure] Menue: " .. tostring(text))
 end
 

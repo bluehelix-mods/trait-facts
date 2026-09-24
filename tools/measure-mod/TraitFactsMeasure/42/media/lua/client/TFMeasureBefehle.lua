@@ -43,6 +43,7 @@ B.ZEILE_MAX = 200
 B.ZEILEN_MAX = 500
 
 local function log(text)
+    if TFMeasure and TFMeasure.melde then return TFMeasure.melde("[TraitFactsMeasure]", text) end
     print("[TraitFactsMeasure] " .. tostring(text))
 end
 

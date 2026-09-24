@@ -17,6 +17,12 @@ TFMeasureNachstellen = TFMeasureNachstellen or {}
 local N = TFMeasureNachstellen
 N.DATEI = "TraitFacts_nachstellen.txt"
 
+--- Meldung mit Uhrzeit ueber TFMeasure.melde (seit 6.45.0), sonst wie bisher.
+local function melde(text)
+    if TFMeasure and TFMeasure.melde then return TFMeasure.melde("[TFMeasure] nachstellen:", text) end
+    print("[TFMeasure] nachstellen: " .. tostring(text))
+end
+
 local function keyOf(traitType)
     local ok, name = pcall(function() return traitType:getName() end)
     if not ok or not name then return nil end
@@ -39,7 +45,7 @@ local function schreiben(text)
         writer:write(text .. "\r\n")
         writer:close()
     end)
-    print("[TFMeasure] nachstellen: " .. text)
+    melde(text)
 end
 
 local function sagen(player, text)
@@ -233,10 +239,10 @@ function N.taste(key)
     if key ~= Keyboard.KEY_NUMPAD4 then return end
     -- Eine Zeile je Druck: so steht im Log, ob die Taste ankam und woran es sonst lag.
     local player = getSpecificPlayer(0)
-    print("[TFMeasure] nachstellen: Num 4, Figur " .. tostring(player ~= nil))
+    melde("Num 4, Figur " .. tostring(player ~= nil))
     if not player then return end
     local ok, fehler = pcall(N.fenster)
-    if not ok then print("[TFMeasure] nachstellen: Fenster FEHLGESCHLAGEN: " .. tostring(fehler)) end
+    if not ok then melde("Fenster FEHLGESCHLAGEN: " .. tostring(fehler)) end
 end
 
 if Events and Events.OnKeyPressed and not N.angemeldet then

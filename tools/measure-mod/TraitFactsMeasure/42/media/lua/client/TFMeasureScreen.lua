@@ -62,7 +62,7 @@ function M.fontLabel()
     return groesse .. ", Tooltip " .. tooltip
 end
 
-M.VERSION = "6.44.0"
+M.VERSION = "6.45.0"
 M.LOGFILE = "TraitFacts_screen.txt"
 M.RESTOREFILE = "TraitFacts_screen_restore.txt"
 
@@ -82,6 +82,7 @@ M.WAIT_SHOT = 500
 M.WAIT_FPS = 1000
 
 local function log(text)
+    if TFMeasure and TFMeasure.melde then return TFMeasure.melde("[TraitFactsMeasure] Bildschirm:", text) end
     print("[TraitFactsMeasure] Bildschirm: " .. tostring(text))
 end
 

@@ -1387,6 +1387,19 @@ Num 9 lädt `TFMeasureBefehle.lua` mit neu, sobald das Spiel sie einmal beim
 Start geladen hat; in einem Spiel, das vor 6.44.0 lief, braucht sie einen
 Neustart (sie steht noch nicht in `TFMeasure.GESCHWISTER`).
 
+## Meldungen mit Uhrzeit und „Log kopieren“ (seit 6.45.0)
+
+Jede Meldung des Mess-Mods trägt hinter ihrem Kennzeichen die Uhrzeit des
+Rechners mit Sekunden, in der Command Console wie in `console.txt`:
+
+    [TraitFactsMeasure] 14:03:22 Mess-Befehle aktiv: Zomboid/Lua/TraitFacts_befehle.txt
+
+Die letzten 2000 Meldungen merkt sich der Mess-Mod. Der Knopf „Log kopieren“
+im Messfenster (F8) legt sie in die Zwischenablage, eine je Zeile; über der
+Figur steht danach, wie viele Zeilen es waren. Die Command Console selbst ist
+Java-Code des Spiels, dort lässt sich kein Knopf anbringen; sie zeigt auch
+Meldungen anderer Mods, die hier nicht mitkommen.
+
 ## Neu laden ohne Spielneustart
 
 **F9** lädt das Mess-Mod zur Laufzeit neu und schaltet die Tests wieder scharf.
