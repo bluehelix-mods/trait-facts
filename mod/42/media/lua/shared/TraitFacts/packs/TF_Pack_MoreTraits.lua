@@ -70,8 +70,11 @@
 --   schon (ClearInfection setzt nur BodyDamage, MT.lua:152-156), und das
 --   naechste BodyDamage.Update setzt die Infektion wieder
 --   (BodyDamage.java:1857-1871). MT_Tick.lua:18-25 hat bWasInfected dann
---   schon gesetzt und meldet keine neue Infektion mehr: der Schutz schiebt
---   die Infektion um weniger als 31 Ticks hinaus, er verhindert sie nicht.
+--   schon gesetzt und meldet keine neue Infektion mehr: der Schutz verhindert
+--   die Infektion nicht. Laut Code (nicht gemessen) setzt dasselbe Update auch
+--   InfectionTime neu und wuerfelt pickMortalityDuration() noch einmal
+--   (BodyDamage.java:1868-1870, ClearInfection hatte beide auf -1 gesetzt):
+--   die Zeit bis zum Tod beginnt neu und ist neu gewuerfelt.
 --   Darum weiter keine Zeile.
 -- * Was im Code steht, aber nie greift: die Ausdauer- und Stresswerte von
 --   Gourmand (tote Variablen), SuperImmuneFirstInfectionBonus und

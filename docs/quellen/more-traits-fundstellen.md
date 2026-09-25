@@ -245,10 +245,10 @@ mit Trait, Skill auf Stufe 0 mit Boost 1; Vorgaben der Sandbox
 
 | Trait / Zeile | gemessen | Fundstelle |
 | --- | --- | --- |
-| alle sechs Specialization / mtxp | Skills außerhalb der Liste x0,25 (Cooking, Woodwork), eigene x1,0 (Axe, Fitness, Aiming, Sneak, Woodwork, Doctor, Cooking, Fishing) | S/MT_XP.lua:44-104 |
+| alle sechs Specialization / mtxp | Skills außerhalb der Liste x0,25 (Cooking, Woodwork), eigene x1,0 (Axe, Aiming, Sneak, Woodwork, Doctor, Cooking, Fishing); Fitness (im Lauf x1,0) ist kein eigener Skill, sondern wie Strength ganz ausgenommen | S/MT_XP.lua:44-104, Ausnahme :61-63 |
 | specfood / mtxp | auch Tracking, Husbandry und Butchering x0,25; Fishing (fünfte Stelle, die letzte vor `Perks.Foraging`) x1,0; `Perks.Foraging` ist im Spiel nil. Die Fußnote "More Traits bug" ist damit gemessen | S/MT_XP.lua:21, :74 |
 | gymgoer / mtxp | Fitness beim Training x1,1 (FitnessState für den Aufruf vorgetäuscht), ohne Training x1,0. Strength mit Proteinen ist nicht gemessen | S/MT_XP.lua:125-138 |
-| amputee (keine Zeile) | nach `MT.Combat.Amputee(p, true)` mit einer Infektion am Hals ist die Figur nicht mehr infiziert, der Hals aber schon (ClearInfection setzt nur BodyDamage); das nächste `BodyDamage.Update` setzt die Infektion wieder, und `MT_Tick.lua` hat `bWasInfected` dann schon gesetzt und meldet keine neue mehr. Der Schutz schiebt die Infektion also um weniger als 31 Ticks hinaus, er verhindert die Zombifizierung nicht. Weiter keine Zeile | S/MT_Combat.lua:696-705; S/MT.lua:152-156; Tick:18-25; BodyDamage.java:1857-1871 |
+| amputee (keine Zeile) | nach `MT.Combat.Amputee(p, true)` mit einer Infektion am Hals ist die Figur nicht mehr infiziert, der Hals aber schon (ClearInfection setzt nur BodyDamage); das nächste `BodyDamage.Update` setzt die Infektion wieder, und `MT_Tick.lua` hat `bWasInfected` dann schon gesetzt und meldet keine neue mehr. Gemessen ist nur dieser eine Schritt; dass die Figur infiziert bleibt, aus dem Code: der Schutz verhindert die Zombifizierung nicht. Dasselbe Update setzt auch InfectionTime neu und würfelt pickMortalityDuration() noch einmal (ClearInfection hatte beide auf -1 gesetzt), die Zeit bis zum Tod beginnt also neu gewürfelt von vorn. Weiter keine Zeile | S/MT_Combat.lua:696-705; S/MT.lua:152-156; Tick:18-25; BodyDamage.java:1857-1871, Neuwurf :1868-1870 |
 
 Die übrigen Zeilen des Pakets sind weiter aus dem Code gelesen, nicht gemessen.
 

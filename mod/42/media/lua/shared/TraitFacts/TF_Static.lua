@@ -53,7 +53,8 @@ TF.Static = TF.Static or {}
 -- geklemmt auf 20 bis 30 (Z. 57-65). Bis 0.14.14 stand hier, bei Stosskraeften
 -- um 0.4 bis 0.56 greife die Untergrenze 20: 0.4 / 0.56 waren aber im Zweig
 -- des Waffentreffers gemessen, der die Kraft fuer Spieler verdoppelt
--- (IsoGameCharacter Z. 5786-5788); echte Stoesse liegen bei 0.04 bis 0.79.
+-- (IsoGameCharacter Z. 5786-5788); echte Stoesse lagen gemessen bei 0.04 bis
+-- 0.74 (Schubsen: 0.038 bis 0.742 am 24.09., 0.080 bis 0.703 am 25.09.2026).
 -- Im Spiel ausgespielt am 24. und 25.09.2026 (Test Schubsen, je 110 Stoesse,
 -- docs/messungen/messung-2026-09-25-schubsen.txt): die Schwelle 0.4
 -- entscheidet in 110 von 110 Stoessen zwischen langem und kurzem Taumel. Von
@@ -61,8 +62,9 @@ TF.Static = TF.Static or {}
 -- mit Strong 50 %, mit Puny 0 %; Kleidung am getroffenen Teil schluckt den
 -- groessten Teil eines Stosses (CombatManager Z. 928-949, 3245-3300). Beide
 -- Taumel schieben den Zombie fast gleich weit, lang 0.66 m, kurz 0.59 m, beide
--- rund 77 Ticks; der Clipname "2m" taeuscht. Die Fussnote sagte bis 0.14.14
--- "etwa 2 m zurueck oder nur einen Schritt", seit 0.14.15 "etwa eine halbe
+-- rund 77 Ticks (25.09.; am 24.09. groesster Weg in 150 Ticks 0.84 und
+-- 0.82 m); der Clipname "2m" taeuscht. Die Fussnote sagte bis 0.14.14
+-- "etwa 2 m zurueck oder nur einen Schritt", seit 0.14.15 "weniger als eine
 -- Kachel". StaggerBack gibt es nur ohne
 -- ZombieHitReaction (CombatManager Z. 2410-2416), und jede Nahkampf-
 -- Schwunganimation setzt eine; es bleiben also die Stoesse. Die zur Kraft
@@ -171,8 +173,9 @@ TF.Static["feeble"] = {
 -- (Axt 2 -17 %, Axt 3 -16 %, Axt 10 mit Fitness 10 -12 %, Spitzhacke -6 bis
 -- -13 %). Gemessen ist mehr: die Schwungdauer folgt 1/CombatSpeed nicht.
 -- Schlaege in die Luft, Takt mit/ohne (Axt: Ax-pert und Axt-Schwung bei
--- anderem Skill, 13.09. bis 25.09.2026): Axt bei Axt 3 und Fitness 5 0.79 bis
--- 0.80 (13. und 23.09.) und 0.763 (25.09.), bei Axt 0 und Fitness 5 0.790
+-- anderem Skill, 13.09. bis 25.09.2026): Axt bei Axt 3 0.79 bis 0.80 (13. und
+-- 23.09., Fitness nicht fest) und 0.763 (25.09., Fitness fest auf 5), bei
+-- Axt 0 und Fitness 5 0.790
 -- (25.09., am 24.09. 0.769), bei Axt 10 und Fitness 10 0.833 (am 24.09.
 -- 0.817); Spitzhacke bei Axt 0 und Fitness 5 0.934 (am 24.09. 0.919). Mit der
 -- Axt also -17 bis -24 %, mit der Spitzhacke -7 bis -8 %. Die Zeile zeigt
@@ -770,8 +773,11 @@ TF.Static["adrenalinejunkie"] = {
     -- zeigen (Sprinting 0: ohne 0.65, mit 0.90 auf Stufe 4, 0.85 auf Stufe 3),
     -- jede Phase mit Trait gegen ihre sauberen Nachbarn ohne; Laeufe 20d,
     -- 21.09., 25.09. und 25.09. nur Stufe 3. Rennen Stufe 3 x1.134-1.138, im
-    -- Mittel 1.136 (8 Paare), Stufe 4 x1.161-1.172, Mittel 1.169 (5 Paare);
-    -- Sprinten Stufe 3 x1.111-1.130, Mittel 1.119 (6 Paare), Stufe 4
+    -- Mittel 1.136 (8 Paare), Stufe 4 x1.161-1.172, Mittel 1.169 (5 Paare;
+    -- die 1.172 ist Phase 16 gegen 15 vom 25.09., Phase 15 hatte 2508 nicht
+    -- gezaehlte Ticks vor der gestoerten Strecke, ohne dieses Paar 1.161-1.171,
+    -- Mittel 1.168); Sprinten Stufe 3 x1.111-1.130, Mittel 1.119 (6 Paare,
+    -- 2 aus 25-adrenalin, 4 aus 25-adrenalin-strong), Stufe 4
     -- x1.143-1.148, Mittel 1.145 (5 Paare). Die Spanne reicht von Mittel zu
     -- Mittel: 14-17 und 12-15. Bestaetigt im Kontrolllauf vom 25.09.2026
     -- (Mess-Mod 6.53.0, Grundtempo je Tick geprueft, kein Paar verworfen):
@@ -1662,9 +1668,12 @@ TF.Static["burglar"] = {
     -- das je Fenster fuer eine neue Figur; bis dahin -50 % je Versuch.
     -- Im Spiel gespielt am 24. und 25.09.2026 (Test Fenster aufbrechen, drei
     -- Laeufe zu je 40 Fenstern ohne und 40 mit Burglar, Strength 5): 61 von
-    -- 120 = 51 % ohne, 31 von 120 = 26 % mit Burglar; je Versuch klemmte es in
-    -- 10 % ohne und 4 % mit Burglar (laut Code 10 und 5). Die Zeile zeigt
-    -- weiter die Werte aus dem Code.
+    -- 120 = 51 % ohne, 31 von 120 = 26 % mit Burglar. Lauf 1 (Mess-Mod 6.50.0:
+    -- 21 und 11 von 40) steht nur in den Notizen, seine Datei hat Lauf 2
+    -- ueberschrieben. Je Versuch klemmte es in 10 % ohne und 4 % mit Burglar
+    -- (laut Code 10 und 5); diese Raten kommen nur aus dem Lauf vom 25.09.2026
+    -- (messung-2026-09-25-fensterringen.txt), die Laeufe davor zaehlten die
+    -- Versuche nicht. Die Zeile zeigt weiter die Werte aus dem Code.
     { id = "windowlock", kind = "fromto", value = { 49, 31 }, text = "UI_TF_eff_windowlock",
       note = "UI_TF_note_windowforced" },
     { id = "hotwire",    kind = "info", text = "UI_TF_eff_hotwire" },
